@@ -1,0 +1,148 @@
+/* ============== ESTILOS BOOTSTRAP ============== */
+.page-item.active .page-link{
+    background: #17a2b8;
+    border-color: #17a2b8;
+}
+/* ============ FIN ESTILOS BOOTSTRAP ============ */
+
+/* ============== ESTILOS GENERALES ============== */
+html, body {
+    height: 100%;
+}
+body{
+    background: #E0E5E8;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #555555;
+}
+/* =============== ESTILOS NAVBAR ================ */
+nav {
+    z-index: 4;
+}
+nav > div {
+    height: 50px;
+}
+#title-navbar {
+    width: 250px;
+}
+#title-navbar a:hover {
+    background: rgba(0,0,0,.03) !important;
+}
+#btns-navbar {
+    width: calc(100% - 250px);
+}
+#menu-manager {
+    display: none;
+}
+/* ======== ESTILOS CONTENERDOR PRINCIPAL ======== */
+#container-main {
+    min-height: calc(100% - 25px);
+    padding-top: 51px;
+    display: flex;
+}
+/* =============== ESTILOS SIDEBAR =============== */
+#sidebar {
+    width: 250px;
+}
+#sidebar #info_user img {
+    width: 60px;
+    background: rgba(0,0,0,0.1);
+}
+#sidebar #info_user .informacion-usuario p {
+    font-size: 13px;
+    font-weight: 500;
+}
+#sidebar > ul > li > a {
+    display: inline-block;
+    width: 100%;
+    padding: 7px 20px;
+}
+#sidebar ul li a:hover {
+    background: #bbf6ff;
+}
+#sidebar ul li a {
+    color: #666666;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 400;
+}
+#sidebar ul li a.active {
+    background: #17a2b8;
+    color: #FFFFFF;
+}
+#sidebar ul li a.active:hover {
+    background: #1a8d9e;
+}
+#sidebar ul li a.dropdown-toggle::after {
+    position: absolute;
+    top: 16px;
+    right: 10px;
+    border-top: .25em solid;
+    border-right: .25em solid transparent;
+    border-left: .25em solid transparent;
+}
+#sidebar ul li .dropdown-item {
+    padding: 0px;
+}
+#sidebar ul li .dropdown-item a {
+    display: inline-block;
+    width: 100%;
+    padding: 3px 10px;
+}
+#sidebar ul li .dropdown-item:active {
+    background: transparent;
+}
+#sidebar ul li .dropdown-item:active a {
+    background: #17a2b8;    
+    color: #ffffff;
+}
+/* ======== ESTILOS CONTENERDOR CONTENIDO ======== */
+#main-containt {
+    width: calc(100% - 250px);
+}
+button i {
+    transition: all ease .3s;
+}
+button.girar i {
+    -webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	rotation: 45deg;
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
+}
+/* =============== ESTILOS FOOTER ================ */
+footer {
+    min-height: 25px;
+}
+/* ============== ESTILOS QUERIES ================ */
+@media (max-width: 450px) {
+    #container-main {
+        display: block;
+    }
+    #title-navbar {
+        padding: -4px 0px;
+        background: rgba(0,0,0,0.1);
+    }
+    #title-navbar, #btns-navbar {
+        width: 50%;
+    }
+    #menu-manager {
+        display: block;
+    }
+    #btns-navbar .btn span {
+        display: none;
+    }
+    #sidebar {
+        position: absolute;
+        top: 51px;
+        height: calc(100% - 51px - 25px);
+        z-index: 3;
+        left: -250px;
+        transition: left ease .3s;
+    }
+    #sidebar.show {
+        left: 0px;
+    }
+    #main-containt {
+        width: 100%;
+    }
+}

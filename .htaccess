@@ -1,0 +1,11 @@
+RewriteEngine on
+RewriteRule ^intranet/([a-zA-Z0-9_/]+)$ intranet.php?data=$1
+
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*[a-z]+)\/?$ $1.php
+</IfModule>
+
+Options All -indexes

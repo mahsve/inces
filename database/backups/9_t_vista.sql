@@ -1,0 +1,16 @@
+INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`, `icon`) VALUES
+(1, 1, 'Informe social', 'informe_social', 0, NULL),
+(2, 1, 'Aprendiz', 'aprendiz', 0, NULL),
+(3, 2, 'Facilitadores', 'facilitador', 0, NULL),
+(4, 2, 'Empresas', 'empresa', 0, NULL),
+(5, 4, 'Actividad económica', 'actividad_economica', 0, NULL),
+(6, 4, 'Ocupación', 'ocupacion', 0, NULL),
+(7, 4, 'Oficio', 'oficio', 0, NULL),
+(8, 4, 'Módulo', 'modulo', 0, NULL),
+(9, 4, 'Asignatura', 'asignatura', 0, NULL),
+(10, 5, 'Rol de usuario', 'rol', 0, NULL),
+(11, 5, 'Módulo sistema', 'modulo_sistema', 0, NULL),
+(12, 5, 'Vista del sistema', 'vista_sistema', 0, NULL),
+(13, 5, 'Usuario', 'usuario', 0, NULL),
+(14, 6, 'Datos personales', 'datos_personales', 0, NULL),
+(15, 6, 'Seguridad', 'seguridad', 0, NULL);

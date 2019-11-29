@@ -1,0 +1,32 @@
+.navbar a#titulo_pagina, .navbar a:hover {
+    background: rgba(255,255,255,.1);
+}
+.navbar a {
+    font-size: 15px;
+    font-weight: 300;
+}
+.navbar a img{
+    height: 25px;
+}
+#contenedor_imagen #ministerio {
+    width: 100%;
+    max-width: 488px;
+}
+.carousel-item {
+    background: #F1EBEB;
+}
+.carousel-item img:first-child {
+    opacity: 0;
+}
+.img_absolute {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+}
+@media (max-width: 450px) {
+    .navbar a span {
+        display: none;
+    }
+}
