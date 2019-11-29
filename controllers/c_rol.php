@@ -35,10 +35,53 @@ if ($_POST['opcion'])
 
                 if (!$errores) // VERIFICAMOS QUE ESTE EN FALSO, O SEA QUE NO HAYA ERRORES OCURRIDOS.
                 {
-                    $objeto->guardarTransaccion(); // GUARDAMOS TODOS LOS REGISTROS.
-                    // MANDAMOS UN MENSAJE
-                    $_SESSION['msj']['type'] = 'success';
-                    $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
+                    $errores = false; // GUARDAMOS UNA VARIABLE PARA GUARDAR SI OCURRIO UN ERROR.
+                    for ($i = 0; $i < count($_POST['vistas']); $i++) // RECORREMOS TODAS LAS VISTAS ASIGNADAS.
+                    {
+                        $registrar = false;
+                        if (isset($_POST['registrar'.$_POST['vistas'][$i]]))
+                            $registrar = true;
+
+                        $modificar = false;
+                        if (isset($_POST['modificar'.$_POST['vistas'][$i]]))
+                            $modificar = true;
+                        
+                        $estatus = false;
+                        if (isset($_POST['estatus'.$_POST['vistas'][$i]]))
+                            $estatus = true;
+
+                        // GUARDAMOS LOS DATOS EN UNA VARIABLE.
+                        $datos2 = [
+                            'vista'     => $_POST['vistas'][$i],
+                            'codigo'    => $resultado,
+                            'registrar' => $registrar,
+                            'modificar' => $modificar,
+                            'act_desc'  => $estatus,
+                            'eliminar'  => 1
+                        ];
+
+                        // REGISTRAMOS CADA UNO DE LOS MODULOS ASIGNADOS AL ROL.
+                        $resultado2 = $objeto->registrarVistasDelRol($datos2);
+                        if (!$resultado2) // SI ALGUNO FALLO GUARDA VERDADERO.
+                        {
+                            $errores = true;
+                        }
+                    }
+
+                    if (!$errores) // VERIFICAMOS QUE ESTE EN FALSO, O SEA QUE NO HAYA ERRORES OCURRIDOS AL REGISTRAR TODAS LAS VISTAS.
+                    {
+                        $objeto->guardarTransaccion(); // GUARDAMOS TODOS LOS REGISTROS.
+                        // MANDAMOS UN MENSAJE
+                        $_SESSION['msj']['type'] = 'success';
+                        $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
+                    }
+                    else
+                    {
+                        $objeto->calcelarTransaccion(); // DESHACEMOS TRANSACCION.
+                        // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS
+                        $_SESSION['msj']['type'] = 'danger';
+                        $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+                    }
                 }
                 else
                 {
@@ -59,6 +102,7 @@ if ($_POST['opcion'])
             $objeto->desconectar();
             header('Location: ../intranet/gestion_rol');
             break;
+        ####
 
         case 'Modificar':
             $datos = [
@@ -96,15 +140,15 @@ if ($_POST['opcion'])
                 for ($i = 0; $i < count($_POST['vistas']); $i++) // RECORREMOS TODAS LAS VISTAS ASIGNADAS.
                 {
                     $registrar = false;
-                    if (isset($_POST['registrar'.($i+1)]))
+                    if (isset($_POST['registrar'.$_POST['vistas'][$i]]))
                         $registrar = true;
 
                     $modificar = false;
-                    if (isset($_POST['modificar'.($i+1)]))
+                    if (isset($_POST['modificar'.$_POST['vistas'][$i]]))
                         $modificar = true;
                     
                     $estatus = false;
-                    if (isset($_POST['estatus'.($i+1)]))
+                    if (isset($_POST['estatus'.$_POST['vistas'][$i]]))
                         $estatus = true;
 
                     // GUARDAMOS LOS DATOS EN UNA VARIABLE.
@@ -150,6 +194,7 @@ if ($_POST['opcion'])
             $objeto->desconectar();
             header('Location: ../intranet/rol');
             break;
+        ####
 
         case 'Eliminar':
             $datos = [
@@ -172,6 +217,7 @@ if ($_POST['opcion'])
             }
             $objeto->desconectar();
             break;
+        ####
     }
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.

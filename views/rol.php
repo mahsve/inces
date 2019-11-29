@@ -67,7 +67,7 @@ $objeto->desconectar();
         {
             var codigo = $(this).attr('data-codigo');
             $.ajax({
-                url : '<?php echo SERVERURL.'controllers/c_modulo_sistema.php'; ?>',
+                url : '<?php echo SERVERURL.'controllers/c_rol.php'; ?>',
                 type: 'POST',
                 data: {
                     opcion: 'Eliminar',
