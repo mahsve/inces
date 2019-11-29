@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-11-2019 a las 14:27:13
+-- Tiempo de generación: 29-11-2019 a las 15:26:23
 -- Versión del servidor: 10.4.8-MariaDB
 -- Versión de PHP: 7.3.11
 
@@ -2863,13 +2863,13 @@ ALTER TABLE `td_modulo`
 -- AUTO_INCREMENT de la tabla `td_rol_vista`
 --
 ALTER TABLE `td_rol_vista`
-  MODIFY `codigo_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codigo_rol` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT de la tabla `t_actividad_economica`
 --
 ALTER TABLE `t_actividad_economica`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_asignatura`
@@ -2929,7 +2929,7 @@ ALTER TABLE `t_justificativo`
 -- AUTO_INCREMENT de la tabla `t_modulo`
 --
 ALTER TABLE `t_modulo`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_modulo_sistema`
@@ -2947,7 +2947,7 @@ ALTER TABLE `t_municipio`
 -- AUTO_INCREMENT de la tabla `t_ocupacion`
 --
 ALTER TABLE `t_ocupacion`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_parroquia`
@@ -2959,7 +2959,7 @@ ALTER TABLE `t_parroquia`
 -- AUTO_INCREMENT de la tabla `t_rol`
 --
 ALTER TABLE `t_rol`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `t_seccion`
@@ -2971,7 +2971,7 @@ ALTER TABLE `t_seccion`
 -- AUTO_INCREMENT de la tabla `t_vista`
 --
 ALTER TABLE `t_vista`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Restricciones para tablas volcadas
@@ -3010,7 +3010,7 @@ ALTER TABLE `td_rol_modulo`
 -- Filtros para la tabla `td_rol_vista`
 --
 ALTER TABLE `td_rol_vista`
-  ADD CONSTRAINT `fk_detalles_rol_servicio` FOREIGN KEY (`codigo_rol`) REFERENCES `t_rol` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_detalles_rol_servicio` FOREIGN KEY (`codigo_rol`) REFERENCES `t_rol` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_detalles_rol_vista` FOREIGN KEY (`codigo_vista`) REFERENCES `t_vista` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
