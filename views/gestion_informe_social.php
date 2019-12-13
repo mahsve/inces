@@ -3,101 +3,134 @@ include_once('models/m_empresa.php');
 $objeto = new model_empresa();
 $objeto->conectar();
 $estados = $objeto->consultarEstados();
-$actividades = $objeto->consultarActividades();
 $objeto->desconectar();
 ?>
 
 <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-    <h4 class="text-uppercase font-weight-normal mb-0"><?php if (!isset($_GET['rif'])) { echo 'Registrar'; } ?></h4>
+    <h4 class="text-uppercase font-weight-normal mb-0"><?php if (!isset($consulta)) echo 'Registrar'; else echo 'Modificar'; ?></h4>
 
-    <a href="informe_social" class="btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">volver</span></a>
+    <a href="<?php echo SERVERURL.'intranet/informe_social'; ?>" class="btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">volver</span></a>
 </div>
 
-<form class="formulario" action="../controllers/c_empresa.php" method="POST" name="formulario">
-    <input type="hidden" name="opcion" value="Registrar"/>
-    <input type="hidden" name="numero2"/>
-  
-    <div class="form-row">
-        <div class="offset-sm-10 col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
-                <input type="date" class="form-control form-control-sm" name="fecha" id="fecha" required/>
-            </div>
+<form class="formulario" action="<?php echo SERVERURL.'controllers/c_empresa.php'; ?>" method="POST" name="formulario">
+    <?php if (!isset($consulta)) { ?>
+        <input type="hidden" name="opcion" value="Registrar"/>
+    <?php } else { ?> 
+        <input type="hidden" name="opcion" value="Modificar"/>
+        <input type="hidden" name="numero" value="<?php echo $consulta['numero']; ?>"/>
+    <?php } ?>
+
+    <div class="d-flex justify-content-between align-items-end rounded shadow-sm mb-3 p-2">
+        <div>
+            <i class="fas fa-plus btn btn-sm btn-primary"></i>
+        </div>
+
+        <div class="form-group has-warning m-0">
+            <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
+            <input type="date" class="form-control form-control-sm" name="fecha" id="fecha" required/>
         </div>
     </div>
 
-    <h5 class="font-weight-normal">Datos del aprendiz</h5>
+    <!-- CONTENEDOR -->
+    <div class="position-relative rounded shadow-sm mb-3 p-2">
+        <div id="datos_aprendiz" class="rounded">
+            <h3 class="font-weight-light text-secondary text-center">Datos del aprendiz</h3>
+
+            <div class="form-row px-2">
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
+                        <select class="custom-select custom-select-sm" name="nacionalidad" id="nacionalidad" required>
+                            <option value="">Elija una opción</option>
+                            <option value="V">Venezolano</option>
+                            <option value="E">Extranjero</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" name="cedula" id="cedula" maxlength="11" placeholder="Ingrese la cédula" required/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" name="nombre_1" id="nombre_1" maxlength="11" placeholder="Ingrese el nombre" required/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="nombre_2" class="small m-0">Segundo nombre</label>
+                        <input type="text" class="form-control form-control-sm" name="nombre_2" id="nombre_2" maxlength="11" placeholder="Ingrese el nombre"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-sm" name="apellido_1" id="apellido_1" maxlength="11" placeholder="Ingrese el apellido" required/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="apellido_2" class="small m-0">Segundo Apellido</label>
+                        <input type="text" class="form-control form-control-sm" name="apellido_2" id="apellido_2" maxlength="11" placeholder="Ingrese el apellido"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="fecha_n" class="small m-0">Fecha de nacimiento<span class="text-danger">*</span></label>
+                        <input type="date" class="form-control form-control-sm" name="fecha_n" id="fecha_n"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-3 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
+                        <input type="text" class="form-control form-control-sm" name="lugar_n" id="lugar_n" maxlength="100" placeholder="Ingrese el lugar de nacimiento"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-2 col-lg-2">
+                    <div class="form-group has-warning mb-2">
+                        <label for="sexo" class="small m-0">Sexo <span class="text-danger">*</span></label>
+                        <select class="custom-select custom-select-sm" name="sexo" id="sexo" required>
+                            <option value="">Elija una opción</option>
+                            <option value="M">Masculino</option>
+                            <option value="F">Femenino</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="datos_hogar" class="rounded" style="display: none;">
+            <h3 class="font-weight-light text-secondary text-center">Datos del hogar</h3>
+        </div>
+
+        <a href="#" id="retroceder_form" class="position-absolute" style="top:10px; left: 10px;"><i class="fas fa-chevron-left"></i></a>
+        <a href="#" id="avanzar_form" class="position-absolute" style="top:10px; right: 10px;"><i class="fas fa-chevron-right"></i></a>
+    </div>
+    <!-- FIN CONTENEDOR -->
+  
+    <?php /*
+    
     <div class="form-row">
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
-                <select class="custom-select custom-select-sm" name="nacionalidad" id="nacionalidad" required>
-                    <option value="">Elija una opción</option>
-                    <option value="V">Venezolano</option>
-                    <option value="E">Extranjero</option>
-                </select>
-            </div>
-        </div>
+        
 
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm" name="cedula" id="cedula" maxlength="11" placeholder="Ingrese la cédula" required/>
-            </div>
-        </div>
+        
 
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm" name="nombre_1" id="nombre_1" maxlength="11" placeholder="Ingrese el nombre" required/>
-            </div>
-        </div>
+        
 
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="nombre_2" class="small m-0">Segundo nombre</label>
-                <input type="text" class="form-control form-control-sm" name="nombre_2" id="nombre_2" maxlength="11" placeholder="Ingrese el nombre"/>
-            </div>
-        </div>
+        
 
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
-                <input type="text" class="form-control form-control-sm" name="apellido_1" id="apellido_1" maxlength="11" placeholder="Ingrese el apellido" required/>
-            </div>
-        </div>
-
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="apellido_2" class="small m-0">Segundo Apellido</label>
-                <input type="text" class="form-control form-control-sm" name="apellido_2" id="apellido_2" maxlength="11" placeholder="Ingrese el apellido"/>
-            </div>
-        </div>
-
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="fecha_n" class="small m-0">Fecha de nacimiento<span class="text-danger">*</span></label>
-                <input type="date" class="form-control form-control-sm" name="fecha_n" id="fecha_n"/>
-            </div>
-        </div>
-
-        <div class="col-sm-3">
-            <div class="form-group has-warning mb-2">
-                <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
-                <input type="text" class="form-control form-control-sm" name="lugar_n" id="lugar_n" maxlength="100" placeholder="Ingrese el lugar de nacimiento"/>
-            </div>
-        </div>
-
-        <div class="col-sm-2">
-            <div class="form-group has-warning mb-2">
-                <label for="sexo" class="small m-0">Sexo <span class="text-danger">*</span></label>
-                <select class="custom-select custom-select-sm" name="sexo" id="sexo" required>
-                    <option value="">Elija una opción</option>
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
-                </select>
-            </div>
-        </div>
+        
 
         <div class="col-sm-2">
             <div class="form-group has-warning mb-2">
@@ -543,6 +576,8 @@ $objeto->desconectar();
         </div>
     </div>
 
+    */ ?>
+
     <div class="pt-2 text-center">
         <button class="btn btn-sm btn-info w-25"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
     </div>
@@ -626,3 +661,5 @@ $objeto->desconectar();
         }
     });
 </script>
+
+<script src="<?php echo SERVERURL; ?>javascripts\gestion_informe_social.js"></script>
