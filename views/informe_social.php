@@ -13,16 +13,17 @@
         <button type="button" id="show_table" class="btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
     </div>
 
-    <form class="formulario" action="<?php echo SERVERURL.'controllers/c_empresa.php'; ?>" method="POST" name="formulario">
+    <form action="<?php echo SERVERURL.'controllers/c_empresa.php'; ?>" method="POST" name="formulario" id="formulario" class="formulario">
         <!-- INPUT DE FECHA DE REGISTRO -->
         <div class="form-row justify-content-end">
             <div class="col-sm-6 col-md-4 col-lg-2 mb-2">
-                <div class="form-group has-warning m-0">
+                <div class="form-group m-0">
                     <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
-                    <input type="date" class="form-control form-control-sm" name="fecha" id="fecha" required/>
+                    <input type="date" name="fecha" id="fecha" class="form-control form-control-sm localStorage1" required="true"/>
                 </div>
             </div>
         </div>
+        <!-- FIN INPUT DE FECHA DE REGISTRO -->
 
         <!-- CONTENEDOR -->
         <div class="d-flex align-items-center rounded border p-2 my-2">
@@ -37,9 +38,9 @@
                     <div class="form-row">
                         <!-- NACIONALIDAD -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="nacionalidad" id="nacionalidad" required>
+                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage1" required="true">
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -49,49 +50,49 @@
 
                         <!-- CEDULA -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="cedula" id="cedula" placeholder="Ingrese la cédula" autocomplete="off" required/>
+                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage1" placeholder="Ingrese la cédula" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NOMBRE 1 -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="nombre_1" id="nombre_1" placeholder="Ingrese el nombre" autocomplete="off" required/>
+                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage1" placeholder="Ingrese el nombre" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NOMBRE 2 -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="nombre_2" class="small m-0">Segundo nombre</label>
-                                <input type="text" class="form-control form-control-sm" name="nombre_2" id="nombre_2" placeholder="Ingrese el nombre" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage1" placeholder="Ingrese el nombre" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- APELLIDO 1 -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="apellido_1" id="apellido_1" placeholder="Ingrese el apellido" autocomplete="off" required/>
+                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage1" placeholder="Ingrese el apellido" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- APELLIDO 2 -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="apellido_2" class="small m-0">Segundo Apellido</label>
-                                <input type="text" class="form-control form-control-sm" name="apellido_2" id="apellido_2" placeholder="Ingrese el apellido" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage1" placeholder="Ingrese el apellido" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- SEXO -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="sexo" class="small m-0">Sexo <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="sexo" id="sexo" required>
+                                <select name="sexo" id="sexo" class="custom-select custom-select-sm localStorage1" required="true">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Femenino</option>
@@ -102,33 +103,34 @@
 
                         <!-- FECHA DE NACIMIENTO -->
                         <div class="col-sm-2 col-lg-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento<span class="text-danger">*</span></label>
-                                <input type="date" class="form-control form-control-sm" name="fecha_n" id="fecha_n" required/>
+                                <input type="date" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage1" required="true"/>
                             </div>
                         </div>
 
                         <!-- LUGAR DE NACIMIENTO -->
                         <div class="col-sm-3 col-lg-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
-                                <input type="text" class="form-control form-control-sm" name="lugar_n" id="lugar_n" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
+                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage1" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
+                            </div>
+                        </div>
+
+                        <!-- EDAD -->
+                        <div class="col-sm-2 col-lg-1">
+                            <div class="form-group mb-2">
+                                <label for="edad" class="small m-0">Edad</label>
+                                <input type="text" name="edad" id="edad" class="form-control form-control-sm localStorage1" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- OCUPACION -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
-                                <label for="ocupacion" class="small m-0">Ocupacion <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="ocupacion" id="ocupacion" required>
-                                    <?php if ($estados) {?>
-                                        <option value="">Elija una opción</option>
-                                        <?php foreach ($estados as $datos) { ?>
-                                            <option value="<?php echo $datos['codigo']; ?>"><?php echo $datos['nombre']; ?></option>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        <option value="">No hay ocupaciones</option>
-                                    <?php } ?>
+                            <div class="form-group mb-2">
+                                <label for="ocupacion" class="small m-0">Ocupación <span class="text-danger">*</span></label>
+                                <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage1" required="true">
+                                    <option value="">Elija una opción</option>
                                 </select>
                             </div>
                         </div>
@@ -139,70 +141,70 @@
                                 <table class="table table-bordered mb-0" style="min-width: 700px;">
                                     <tr>
                                         <td class="align-text-top w-25 p-2">
-                                            <span class="d-inline-block mb-2">Estado civil</span>
+                                            <span class="d-inline-block small mb-2">Estado civil</span>
 
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_s" name="estado_civil" class="custom-control-input" value="S" required>
-                                                <label class="custom-control-label" for="estado_civil_s">Soltero</label>
+                                                <input type="radio" id="estado_civil_1" name="estado_civil" class="custom-control-input localStorage1-radio" value="S" required="true">
+                                                <label class="custom-control-label" for="estado_civil_1">Soltero</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_c" name="estado_civil" class="custom-control-input" value="C" required>
-                                                <label class="custom-control-label" for="estado_civil_c">Casado</label>
+                                                <input type="radio" id="estado_civil_2" name="estado_civil" class="custom-control-input localStorage1-radio" value="C" required="true">
+                                                <label class="custom-control-label" for="estado_civil_2">Casado</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_co" name="estado_civil" class="custom-control-input" value="X" required>
-                                                <label class="custom-control-label" for="estado_civil_co">Concubino</label>
+                                                <input type="radio" id="estado_civil_3" name="estado_civil" class="custom-control-input localStorage1-radio" value="X" required="true">
+                                                <label class="custom-control-label" for="estado_civil_3">Concubino</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_d" name="estado_civil" class="custom-control-input" value="D" required>
-                                                <label class="custom-control-label" for="estado_civil_d">Divorciado</label>
+                                                <input type="radio" id="estado_civil_4" name="estado_civil" class="custom-control-input localStorage1-radio" value="D" required="true">
+                                                <label class="custom-control-label" for="estado_civil_4">Divorciado</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_v" name="estado_civil" class="custom-control-input" value="V" required>
-                                                <label class="custom-control-label" for="estado_civil_v">Viudo</label>
+                                                <input type="radio" id="estado_civil_5" name="estado_civil" class="custom-control-input localStorage1-radio" value="V" required="true">
+                                                <label class="custom-control-label" for="estado_civil_5">Viudo</label>
                                             </div>
                                         </td>
 
                                         <td class="align-text-top w-75 p-2">
-                                            <span class="d-inline-block mb-2">Grado de instrucción</span>
+                                            <span class="d-inline-block small mb-2">Grado de instrucción</span>
                                             
                                             <div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_1" name="grado_instruccion" class="custom-control-input" value="BI" required>
+                                                    <input type="radio" id="grado_instruccion_1" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="BI" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_1">Educ. básica  incompleta</label>
                                                 </div>
 
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_2" name="grado_instruccion" class="custom-control-input" value="BC" required>
+                                                    <input type="radio" id="grado_instruccion_2" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="BC" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_2">Educ. básica completa</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_3" name="grado_instruccion" class="custom-control-input" value="MI" required>
+                                                    <input type="radio" id="grado_instruccion_3" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="MI" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_3">Educ. media diversificada  incompleta</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_4" name="grado_instruccion" class="custom-control-input" value="MC" required>
+                                                    <input type="radio" id="grado_instruccion_4" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="MC" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_4">Educ. media diversificada  completa</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_5" name="grado_instruccion" class="custom-control-input" value="SI" required>
+                                                    <input type="radio" id="grado_instruccion_5" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="SI" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_5">Educ. superior incompleta</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_6" name="grado_instruccion" class="custom-control-input" value="SC" required>
+                                                    <input type="radio" id="grado_instruccion_6" name="grado_instruccion" class="custom-control-input localStorage1-radio" value="SC" required="true">
                                                     <label class="custom-control-label" for="grado_instruccion_6">Educ. superior completa  </label>
                                                 </div>
 
                                                 <div class="form-group form-group form-row align-items-center mt-2 mb-0">
-                                                    <label for="titulo" class="col-sm-4 col-form-label py-0">Título</label>
+                                                    <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control form-control-sm" id="titulo" name="titulo" disabled>
+                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage1" readonly="true">
                                                     </div>
                                                 </div>
                                                 <div class="form-group form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique:</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" class="form-control form-control-sm" id="alguna_mision" name="alguna_mision">
+                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage1">
                                                     </div>
                                                 </div>
                                             </div>
@@ -214,50 +216,43 @@
 
                         <!-- TELEFONO 1 -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="telefono_1" class="small m-0">Telefono 1 <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="telefono_1" id="telefono_1" placeholder="Ingrese el telefono" autocomplete="off" required/>
+                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage1" placeholder="Ingrese el telefono" autocomplete="off" required="true"/>
                             </div>
                         </div>
                         
                         <!-- TELEFONO 2 -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="telefono_2" class="small m-0">Telefono 2 </label>
-                                <input type="text" class="form-control form-control-sm" name="telefono_2" id="telefono_2" placeholder="Ingrese el telefono" autocomplete="off"/>
+                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage1" placeholder="Ingrese el telefono" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- CORREO -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="correo" class="small m-0">Correo</label>
-                                <input type="email" class="form-control form-control-sm" name="correo" id="correo" placeholder="Ingrese el correo" autocomplete="off"/>
+                                <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage1" placeholder="Ingrese el correo" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- SALIDA OCUPACIONAL (OFICIO O CARRERA) -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="oficio" class="small m-0">Salida ocupacional <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="oficio" id="oficio" required>
-                                    <?php if ($estados) {?>
-                                        <option value="">Elija una opción</option>
-                                        <?php foreach ($estados as $datos) { ?>
-                                            <option value="<?php echo $datos['codigo']; ?>"><?php echo $datos['nombre']; ?></option>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        <option value="">No hay ocupaciones</option>
-                                    <?php } ?>
+                                <select name="oficio" id="oficio" class="custom-select custom-select-sm localStorage1" required="true">
+                                    <option value="">Elija una opción</option>
                                 </select>
                             </div>
                         </div>
 
                         <!-- TURNO DE ESTUDIO -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="turno" class="small m-0">Turno<span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="turno" id="turno" required>
+                                <select name="turno" id="turno" class="custom-select custom-select-sm localStorage1" required="true">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Matutino</option>
                                     <option value="V">Vespertino</option>
@@ -273,26 +268,19 @@
                     <div class="form-row">
                         <!-- ESTADO -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="estado" class="small m-0">Estado <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="estado" id="estado" required>
-                                    <?php if ($estados) {?>
-                                        <option value="">Elija una opción</option>
-                                        <?php foreach ($estados as $datos) { ?>
-                                            <option value="<?php echo $datos['codigo']; ?>"><?php echo $datos['nombre']; ?></option>
-                                        <?php } ?>
-                                    <?php } else { ?>
-                                        <option value="">No hay estados</option>
-                                    <?php } ?>
+                                <select name="estado" id="estado" class="custom-select custom-select-sm localStorage2" required="true">
+                                    <option value="">Elija una opción</option>
                                 </select>
                             </div>
                         </div>
 
                         <!-- CIUDAD -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="ciudad" class="small m-0">Ciudad <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="ciudad" id="ciudad" required>
+                                <select name="ciudad" id="ciudad" class="custom-select custom-select-sm localStorage2" required="true">
                                     <option value="">Elija un estado</option>
                                 </select>
                             </div>
@@ -300,9 +288,9 @@
 
                         <!-- MUNICIPIO -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="municipio" class="small m-0">Municipio</label>
-                                <select class="custom-select custom-select-sm" name="municipio" id="municipio" required>
+                                <select name="municipio" id="municipio" class="custom-select custom-select-sm localStorage2" required="true">
                                     <option value="">Elija un estado</option>
                                 </select>
                             </div>
@@ -310,19 +298,19 @@
 
                         <!-- PARROQUIA -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="parroquia" class="small m-0">Parroquia</label>
-                                <select class="custom-select custom-select-sm" name="parroquia" id="parroquia" required>
-                                    <option value="">Elija un estado</option>
+                                <select name="parroquia" id="parroquia" class="custom-select custom-select-sm localStorage2" required="true">
+                                    <option value="">Elija un municipio</option>
                                 </select>
                             </div>
                         </div>
 
                         <!-- TIPO DE AREÁ -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="area" class="small m-0">Area <span class="text-danger">*</span></label>
-                                <select class="custom-select custom-select-sm" name="area" id="area" required>
+                            <div class="form-group mb-2">
+                                <label for="area" class="small m-0">Área <span class="text-danger">*</span></label>
+                                <select name="area" id="area" class="custom-select custom-select-sm localStorage2" required="true">
                                     <option value="">Elija una opción</option>
                                     <option value="R">Rural</option>
                                     <option value="U">Urbana</option>
@@ -332,17 +320,17 @@
 
                         <!-- DIRECCION -->
                         <div class="col-sm-6">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="direccion" class="small m-0">Dirección <span class="text-danger">*</span></label>
-                                <textarea name="direccion" id="direccion" class="form-control form-control-sm" placeholder="Ingrese la dirección del hogar" required></textarea>
+                                <textarea name="direccion" id="direccion" class="form-control form-control-sm localStorage2" placeholder="Ingrese la dirección del hogar" required="true"></textarea>
                             </div>
                         </div>
 
                         <!-- PUNTO DE REFERENCIA -->
                         <div class="col-sm-6">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="punto_referencia" class="small m-0">Punto de referencia <span class="text-danger">*</span></label>
-                                <textarea name="punto_referencia" id="punto_referencia" class="form-control form-control-sm" placeholder="Ingrese punto de refencia" required></textarea>
+                                <textarea name="punto_referencia" id="punto_referencia" class="form-control form-control-sm localStorage2" placeholder="Ingrese punto de refencia" required="true"></textarea>
                             </div>
                         </div>
                     </div>
@@ -358,113 +346,113 @@
                                 <table class="table table-bordered mb-0" style="min-width: 700px;">
                                     <tr>
                                         <td class="align-text-top w-25 p-2" rowspan="2">
-                                            <span class="d-inline-block mb-2">Tipo de vivienda en la que habita  actualmente</span>
+                                            <span class="d-inline-block small mb-2">Tipo de vivienda en la que habita  actualmente</span>
 
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tipo_vivienda_1" name="tipo_vivienda" value="Q" required>
+                                                <input type="radio" name="tipo_vivienda" id="tipo_vivienda_1" class="custom-control-input localStorage3-radio" value="Q" required="true">
                                                 <label class="custom-control-label" for="tipo_vivienda_1">Quinta</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tipo_vivienda_2" name="tipo_vivienda" value="C" required>
+                                                <input type="radio" name="tipo_vivienda" id="tipo_vivienda_2" class="custom-control-input localStorage3-radio" value="C" required="true">
                                                 <label class="custom-control-label" for="tipo_vivienda_2">Casa</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tipo_vivienda_3" name="tipo_vivienda" value="A" required>
+                                                <input type="radio" name="tipo_vivienda" id="tipo_vivienda_3" class="custom-control-input localStorage3-radio" value="A" required="true">
                                                 <label class="custom-control-label" for="tipo_vivienda_3">Apartamento</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tipo_vivienda_4" name="tipo_vivienda" value="R" required>
+                                                <input type="radio" name="tipo_vivienda" id="tipo_vivienda_4" class="custom-control-input localStorage3-radio" value="R" required="true">
                                                 <label class="custom-control-label" for="tipo_vivienda_4">Rancho</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tipo_vivienda_5" name="tipo_vivienda" value="O" required>
+                                                <input type="radio" name="tipo_vivienda" id="tipo_vivienda_5" class="custom-control-input localStorage3-radio" value="O" required="true">
                                                 <label class="custom-control-label" for="tipo_vivienda_5">Otros</label>
                                             </div>
                                         </td>
 
                                         <td class="align-text-top w-25 p-2" rowspan="2" style="vertical-align: top !important;">
-                                            <span class="d-inline-block mb-2">Tenencia de la vivienda</span>
+                                            <span class="d-inline-block small mb-2">Tenencia de la vivienda</span>
 
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tenencia_vivienda_1" name="tenencia_vivienda" value="P" required>
+                                                <input type="radio" name="tenencia_vivienda" id="tenencia_vivienda_1" class="custom-control-input localStorage3-radio" value="P" required="true">
                                                 <label class="custom-control-label" for="tenencia_vivienda_1">Propia</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tenencia_vivienda_2" name="tenencia_vivienda" value="A" required>
+                                                <input type="radio" name="tenencia_vivienda" id="tenencia_vivienda_2" class="custom-control-input localStorage3-radio" value="A" required="true">
                                                 <label class="custom-control-label" for="tenencia_vivienda_2">Alquilada</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tenencia_vivienda_3" name="tenencia_vivienda" value="E" required>
+                                                <input type="radio" name="tenencia_vivienda" id="tenencia_vivienda_3" class="custom-control-input localStorage3-radio" value="E" required="true">
                                                 <label class="custom-control-label" for="tenencia_vivienda_3">Prestada</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" class="custom-control-input" id="tenencia_vivienda_4" name="tenencia_vivienda" value="I" required>
+                                                <input type="radio" name="tenencia_vivienda" id="tenencia_vivienda_4" class="custom-control-input localStorage3-radio" value="I" required="true">
                                                 <label class="custom-control-label" for="tenencia_vivienda_4">Invadida</label>
                                             </div>
                                         </td>
 
                                         <td class="align-text-top w-50 p-2" colspan="2" style="vertical-align: middle !important;">
-                                            <span class="d-inline-block w-100 mb-0">Tipo de vivienda en la que habita  actualmente:</span>
+                                            <span class="d-inline-block small w-100 mb-0">Tipo de vivienda en la que habita  actualmente:</span>
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                         <td class="px-2 py-1">
-                                            <span class="d-inline-block text-secondary w-100"><b>Agua</b></span>
+                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Agua</b></span>
 
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="acueducto" name="tipo_agua" value="A" required>
-                                                <label class="custom-control-label" for="acueducto">Acueducto</label>
+                                                <input type="radio" name="tipo_agua" id="tipo_agua_1" class="custom-control-input localStorage3-radio" value="A" required="true">
+                                                <label class="custom-control-label" for="tipo_agua_1">Acueducto</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="cisterna" name="tipo_agua" value="C" required>
-                                                <label class="custom-control-label" for="cisterna">Cisterna</label>
+                                                <input type="radio" name="tipo_agua" id="tipo_agua_2" class="custom-control-input localStorage3-radio" value="C" required="true">
+                                                <label class="custom-control-label" for="tipo_agua_2">Cisterna</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="pozo" name="tipo_agua" value="P" required>
-                                                <label class="custom-control-label" for="pozo">Pozo</label>
+                                                <input type="radio" name="tipo_agua" id="tipo_agua_3" class="custom-control-input localStorage3-radio" value="P" required="true">
+                                                <label class="custom-control-label" for="tipo_agua_3">Pozo</label>
                                             </div>
 
-                                            <span class="d-inline-block text-secondary w-100 mt-1"><b>Electricidad</b></span>
+                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Electricidad</b></span>
                                             
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="legal" name="tipo_electricidad" value="L" required>
-                                                <label class="custom-control-label" for="legal">Legal</label>
+                                                <input type="radio" name="tipo_electricidad" id="tipo_electricidad_1" class="custom-control-input localStorage3-radio" value="L" required="true">
+                                                <label class="custom-control-label" for="tipo_electricidad_1">Legal</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="ilegal" name="tipo_electricidad" value="I" required>
-                                                <label class="custom-control-label" for="ilegal">Ilegal</label>
+                                                <input type="radio" name="tipo_electricidad" id="tipo_electricidad_2" class="custom-control-input localStorage3-radio" value="I" required="true">
+                                                <label class="custom-control-label" for="tipo_electricidad_2">Ilegal</label>
                                             </div>
                                         </td>
 
                                         <td class="px-2 py-1">
-                                            <span class="d-inline-block text-secondary w-100"><b>Excretas</b></span>
+                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Excretas</b></span>
                                             
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="cloacas" name="tipo_excreta" value="A" required>
-                                                <label class="custom-control-label" for="cloacas">Cloacas</label>
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_1" class="custom-control-input localStorage3-radio" value="A" required="true">
+                                                <label class="custom-control-label" for="tipo_excreta_1">Cloacas</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="letrina" name="tipo_excreta" value="P" required>
-                                                <label class="custom-control-label" for="letrina">Letrina</label>
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_2" class="custom-control-input localStorage3-radio" value="P" required="true">
+                                                <label class="custom-control-label" for="tipo_excreta_2">Letrina</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: 100%">
-                                                <input type="radio" class="custom-control-input" id="pozo_septico" name="tipo_excreta" value="C" required>
-                                                <label class="custom-control-label" for="pozo_septico">Pozo septico</label>
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_3" class="custom-control-input localStorage3-radio" value="C" required="true">
+                                                <label class="custom-control-label" for="tipo_excreta_3">Pozo septico</label>
                                             </div>
 
-                                            <span class="d-inline-block text-secondary w-100 mt-1"><b>Basura</b></span>
+                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Basura</b></span>
                                         
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="tipo_basura_1" name="tipo_basura" value="U" required>
+                                                <input type="radio" name="tipo_basura" id="tipo_basura_1" class="custom-control-input localStorage3-radio" value="U" required="true">
                                                 <label class="custom-control-label" for="tipo_basura_1">Aseo úrbano</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="tipo_basura_2" name="tipo_basura" value="Q" required>
+                                                <input type="radio" name="tipo_basura" id="tipo_basura_2" class="custom-control-input localStorage3-radio" value="Q" required="true">
                                                 <label class="custom-control-label" for="tipo_basura_2">Quema</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" class="custom-control-input" id="tipo_basura_3" name="tipo_basura" value="O" required>
+                                                <input type="radio" name="tipo_basura" id="tipo_basura_3" class="custom-control-input localStorage3-radio" value="O" required="true">
                                                 <label class="custom-control-label" for="tipo_basura_3">Pozo</label>
                                             </div>
                                         </td>
@@ -475,81 +463,80 @@
 
                         <!-- MATERIALES DEL TECHO -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="techo" class="small m-0">Techo <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="techo" id="techo" placeholder="Ingrese los materiales del techo" autocomplete="off" required/>
+                                <input type="text" name="techo" id="techo" class="form-control form-control-sm localStorage3" placeholder="Ingrese los materiales del techo" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- MATERIALES DE LA PARED -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="pared" class="small m-0">Pared <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="pared" id="pared" placeholder="Ingrese los materiales de la pared" autocomplete="off" required/>
+                                <input type="text" name="pared" id="pared" class="form-control form-control-sm localStorage3" placeholder="Ingrese los materiales de la pared" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- MATERIALES DEL PISO -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="piso" class="small m-0">Piso <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="piso" id="piso" placeholder="Ingrese los materiales del piso" autocomplete="off" required/>
+                                <input type="text" name="piso" id="piso" class="form-control form-control-sm localStorage3" placeholder="Ingrese los materiales del piso" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- DESCRIPCION DE LA VIA DE ACCESO -->
                         <div class="col-sm-3">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="via_acceso" class="small m-0">Via de acceso <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="via_acceso" id="via_acceso" placeholder="Descripción de la via de acceso" autocomplete="off" required/>
+                                <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage3" placeholder="Descripción de la via de acceso" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NUMERO DE SALAS -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="sala" class="small m-0">Sala <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="sala" id="sala" placeholder="N° de salas" autocomplete="off" required/>
+                                <input type="text" name="sala" id="sala" placeholder="N° de salas" class="form-control form-control-sm localStorage3" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NUMERO DE COMEDORES -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="comedor" class="small m-0">Comedor <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="comedor" id="comedor" placeholder="N° de comedores" autocomplete="off" required/>
+                                <input type="text" name="comedor" id="comedor" class="form-control form-control-sm localStorage3" placeholder="N° de comedores" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NUMERO DE COCINAS -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="cocina" class="small m-0">Cocina <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="cocina" id="cocina" placeholder="N° de cocinas" autocomplete="off" required/>
+                                <input type="text" name="cocina" id="cocina" class="form-control form-control-sm localStorage3" placeholder="N° de cocinas" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NUMERO DE BAÑOS -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="bano" class="small m-0">Baños <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="bano" id="bano" placeholder="N° de baños" autocomplete="off" required/>
+                                <input type="text" name="bano" id="bano" class="form-control form-control-sm localStorage3" placeholder="N° de baños" autocomplete="off" required="true"/>
                             </div>
                         </div>
 
                         <!-- NUMERO DE DORMITORIOS -->
                         <div class="col-sm-2">
-                            <div class="form-group has-warning mb-2">
+                            <div class="form-group mb-2">
                                 <label for="dormitorio" class="small m-0">Domitorios <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control form-control-sm" name="dormitorio" id="dormitorio" placeholder="N° de dormitorios" autocomplete="off" required/>
+                                <input type="text" name="dormitorio" id="dormitorio" class="form-control form-control-sm localStorage3" placeholder="N° de dormitorios" autocomplete="off" required="true"/>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="datos_familiares" class="position-relative" style="display: none;">
-                    <h3 class="font-weight-normal text-secondary text-center text-uppercase">área socio familiar</h3>
-
+                    <h3 class="font-weight-normal text-secondary text-center text-uppercase">Área socio familiar</h3>
                     <button type="button" id="agregar_familiar" class="btn btn-sm btn-info position-absolute" style="top: 25px; right: 0px;"><i class="fas fa-plus"></i></button>
 
                     <p class="small font-weight-bold text-secondary mb-0">Personas que habitan con el trabajador (a), iniciando desde el jefe del hogar.</p>
@@ -560,21 +547,142 @@
                                 <table id="tabla_datos_familiares" class="table mb-0" style="min-width: 700px;">
                                     <thead class="bg-info text-light">
                                         <tr>
-                                            <th class="font-weight-normal p-2">N°</th>
-                                            <th class="font-weight-normal p-2">Apellido y nombre</th>
-                                            <th class="font-weight-normal p-2">Fecha de N.</th>
-                                            <th class="font-weight-normal p-2">Edad</th>
-                                            <th class="font-weight-normal p-2">Sexo</th>
-                                            <th class="font-weight-normal p-2">Parentesco</th>
-                                            <th class="font-weight-normal p-2">Ocupación</th>
-                                            <th class="font-weight-normal p-2">Trabaja</th>
-                                            <th class="font-weight-normal p-2">Ingresos</th>
-                                            <th></th>
+                                            <th class="font-weight-normal text-center py-2 px-0" width="45">N°</th>
+                                            <th class="font-weight-normal py-2 px-0">Apellido y nombre</th>
+                                            <th class="font-weight-normal py-2 px-0" width="132">Fecha de N.</th>
+                                            <th class="font-weight-normal py-2 px-0" width="60">Edad</th>
+                                            <th class="font-weight-normal py-2 px-0" width="60">Sexo</th>
+                                            <th class="font-weight-normal py-2 px-0" width="140">Parentesco</th>
+                                            <th class="font-weight-normal py-2 px-0" width="144">Ocupación</th>
+                                            <th class="font-weight-normal py-2 px-0" width="65">Trabaja</th>
+                                            <th class="font-weight-normal py-2 px-0" width="100">Ingresos</th>
+                                            <th class="font-weight-normal py-2 px-0" width="40">Resp.</th>
+                                            <th width="28"></th>
                                         </tr>
                                     </thead>
                                     
                                     <tbody></tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="datos_ingresos" style="display: none;">
+                    <h3 class="font-weight-normal text-secondary text-center text-uppercase">Ingreso familiar</h3>
+                
+                    <div class="form-row">
+                        <!-- TABLA DE INGRESOS DE TODA LA FAMILA EN GENERAL -->
+                        <div class="col-sm-12 my-2 pb-2">
+                            <div class="table-responsive pb-2">
+                                <table class="table table-borderless mb-0" style="min-width: 700px;">
+                                    <thead class="bg-info text-light">
+                                        <tr>
+                                            <th class="font-weight-normal w-25 p-2">Ingreso</th>
+                                            <th class="font-weight-normal w-25 p-2">Bolivares</th>
+                                            <th class="font-weight-normal w-25 p-2">Egreso</th>
+                                            <th class="font-weight-normal w-25 p-2">Bolivares</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="align-middle px-1 pt-1 pb-0"><label for="ingreso_pension" class="small">Pensión</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension" id="ingreso_pension" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                            <td class="align-middle px-1 pt-1 pb-0"><label for="egreso_servicios" class="small">Gastos de servicios básicos (agua, luz, teléfono, etc.)</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_servicios" id="egreso_servicios" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="align-middle px-1 py-0"><label for="ingreso_seguro" class="small">Seguro social</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_seguro" id="ingreso_seguro" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                            <td class="align-middle px-1 py-0"><label for="egreso_alimentario" class="small">Alimentación</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_alimentario" id="egreso_alimentario" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="align-middle px-1 py-0"><label for="ingreso_pension_otras" class="small">Otras pensión</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension_otras" id="ingreso_pension_otras" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                            <td class="align-middle px-1 py-0"><label for="egreso_educacion" class="small">Educación</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_educacion" id="egreso_educacion" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="align-middle px-1 py-0"><label for="ingreso_sueldo" class="small">Sueldo  y/o salario</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                            <td class="align-middle px-1 py-0"><label for="egreso_vivienda" class="small">Vivienda(alquiler comdominio)</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="align-middle px-1 py-0"><label for="otros_ingresos" class="small">Otros ingresos</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_ingresos" id="otros_ingresos" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                            <td class="align-middle px-1 py-0"><label for="otros_egresos" class="small">Otros egresos</label></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" required="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="align-middle small px-1 py-0">Total ingresos:</td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" readonly="true" required="true"></td>
+                                            <td class="align-middle small px-1 py-0">Total egresos:</td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_egresos" class="form-control form-control-sm d-inline-block text-right localStorage5" style="height: 50px;" readonly="true" required="true"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="datos_trabajadora_social" style="display: none;">
+                    <h3 class="font-weight-normal text-secondary text-center text-uppercase">Para uso de la trabajadora social</h3>
+                
+                    <div class="form-row">
+                        <!-- CONDICIONES DE LA VIVIENDA -->
+                        <div class="col-lg-6 align-self-end">
+                            <div class="form-group mb-2">
+                                <label for="condicion_vivienda" class="small m-0">Condiciones generales de la vivienda <span class="text-danger">*</span></label>
+                                <textarea name="condicion_vivienda" id="condicion_vivienda" class="form-control form-control-sm localStorage6" required="true"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- RELACION FAMILIAR Y CONDICIONES SOCIOECONÓMICAS -->
+                        <div class="col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="caracteristicas_generales" class="small m-0">Características generales de las relaciones familiares y sus condiciones socioeconómicas <span class="text-danger">*</span></label>
+                                <textarea name="caracteristicas_generales" id="caracteristicas_generales" class="form-control form-control-sm localStorage6" required="true"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- DIAGNOSTICO SOCIAL -->
+                        <div class="col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="diagnostico_social" class="small m-0">Diagnostico social <span class="text-danger">*</span></label>
+                                <textarea name="diagnostico_social" id="diagnostico_social" class="form-control form-control-sm localStorage6" required="true"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- DIAGNOSTICO PRELIMINAR -->
+                        <div class="col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="diagnostico_preliminar" class="small m-0">Diagnostico preliminar <span class="text-danger">*</span></label>
+                                <textarea name="diagnostico_preliminar" id="diagnostico_preliminar" class="form-control form-control-sm localStorage6" required="true"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- CONCLUSIONES Y RECOMENDACIONES -->
+                        <div class="col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="conclusiones" class="small m-0">Conclusiones y recomendaciones <span class="text-danger">*</span></label>
+                                <textarea name="conclusiones" id="conclusiones" class="form-control form-control-sm localStorage6" required="true"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- ENFERMO EN EL GRUPO FAMILIAR -->
+                        <div class="col-lg-6">
+                            <p class="m-0 small">Ay algún enfermo en el grupo familiar <span class="text-danger">*</span></p>
+
+                            <div class="custom-control custom-radio mr-2">
+                                <input type="radio" name="enfermos" id="enfermo_si" class="custom-control-input localStorage6-radio" value="N" required="true">
+                                <label class="custom-control-label" for="enfermo_si">Si</label>
+                            </div>
+                            <div class="custom-control custom-radio">
+                                <input type="radio" name="enfermos" id="enfermo_no" class="custom-control-input localStorage6-radio" value="S" required="true">
+                                <label class="custom-control-label" for="enfermo_no">No</label>
                             </div>
                         </div>
                     </div>
@@ -586,6 +694,12 @@
             </button>
         </div>
         <!-- FIN CONTENEDOR -->
+
+        <!-- BOTON GUARDAR DATOS -->
+        <div class="pt-2 text-center">
+            <button class="btn btn-sm btn-info w-25"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+        </div>
+        <!-- FIN BOTON GUARDAR DATOS -->
     </form>
 </div>
 
@@ -594,6 +708,9 @@
     #content_form {
         width: calc(100% - 70px);
         min-height: 400px;
+    }
+    .formulario textarea {
+        resize: none;
     }
     .move-form {
         height: 30px;
@@ -606,64 +723,3 @@
         cursor: pointer;
     }
 </style>
-
-<?php /* >
-    <?php if ($permisos['registrar']) { ?>
-            
-        <?php } ?>
-    <?php
-    // include_once('models/m_empresa.php');
-    // $objeto = new model_empresa();
-    // $objeto->conectar();
-    // $empresas = $objeto->consultarEmpresas();
-
-    // $datos = ['vista' => $dataGET[0]];
-    // $permisos = $usuario->permisos($datos);
-    // $objeto->desconectar();
-    ?>
-    <table id="listado" class="table table-bordered table-hover w-100">
-            <thead class="">
-                <tr class="text-capitalize">
-                    <th class="font-weight-normal">N° Informe</th>
-                    <th class="font-weight-normal">Nombre</th>
-                    <th class="font-weight-normal">estatus</th>
-                    <?php if ($permisos['modificar'] OR $permisos['act_desc'] OR $permisos['eliminar']) { ?>
-                        <th width="75px" class="font-weight-normal p-2"></th>
-                    <?php } ?>
-                </tr>
-            </thead>
-
-            <tbody>
-                <?php
-                if ($empresas) {
-                    foreach ($empresas as $datos) {
-                ?>
-                <tr class="text-capitalize">
-                    <td><?php echo $datos['rif']; ?></td>
-                    <td><?php echo $datos['nil']; ?></td>
-                    <td><?php echo $datos['razon_social']; ?></td>
-                    <?php if ($permisos['modificar'] OR $permisos['act_desc'] OR $permisos['eliminar']) { ?>
-                    <td class="align-middle p-2">
-                        <?php if ($permisos['modificar']) { ?>
-                            <a href="<?php echo 'gestion_informe_social/'.$datos['rif']; ?>" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
-                        <?php } ?>
-
-                        <?php
-                        if ($permisos['act_desc']) {
-                            if ($datos['estatus'] == 'A') { ?>
-                                <button class="btn btn-sm btn-danger cambiar_estatus" data-codigo="<?php echo $datos['codigo']; ?>" data-estatus="<?php echo $datos['estatus']; ?>"><i class="fas fa-retweet"></i></button>
-                            <?php } else { ?>
-                                <button class="btn btn-sm btn-success cambiar_estatus" data-codigo="<?php echo $datos['codigo']; ?>" data-estatus="<?php echo $datos['estatus']; ?>"><i class="fas fa-retweet "></i></button>
-                            <?php } 
-                        } ?>
-                    </td>
-                    <?php } ?>
-                </tr>
-                <?php
-                    }
-                }
-                ?>
-            </tbody>
-        </table>
-
-*/ ?>
