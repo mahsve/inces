@@ -6,7 +6,7 @@ if ($_POST['opcion'])
     $objeto = new model_ocupacion;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
+        case 'Registrar':
             $datos = [
                 'nombre'    => htmlspecialchars($_POST['nombre'])
             ];
@@ -29,7 +29,7 @@ if ($_POST['opcion'])
             header('Location: ../intranet/gestion_ocupacion');
             break;
         
-        case 'Modificar';
+        case 'Modificar':
             $datos = [
                 'codigo'    => htmlspecialchars($_POST['codigo']),
                 'nombre'    => htmlspecialchars($_POST['nombre'])

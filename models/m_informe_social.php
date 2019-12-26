@@ -1,5 +1,4 @@
 <?php
-
 require_once 'conexion.php';
 class model_informeSocial extends conexion
 {
@@ -24,45 +23,81 @@ class model_informeSocial extends conexion
         mysqli_close($this->data_conexion);
     }
 
-    // FUNCION PARA CONSULTAR LA PREGUNTA DE SEGURIDAD.
-	function consultarPregunta($datos)
+    // FUNCION PARA CONSULTAR
+	function consultarOcupaciones()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT pregunta_seguridad, estatus FROM t_usuario WHERE usuario='$datos[usuario]'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR LA RESPUESTA DE SEGURIDAD.
-	function consultarRespuesta($datos)
+    // FUNCION PARA CONSULTAR
+	function consultarOficios()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT respuesta_seguridad FROM t_usuario WHERE usuario='$datos[usuario]'"; // SENTENTCIA.
+		$sentencia = "SELECT * FROM t_oficio WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA GUARDAR LA NUEVA CONTRASEÑA.
-	function guardarContrasena($datos)
+    // FUNCION PARA CONSULTAR
+	function consultarEstados()
 	{
-		$sentencia = "UPDATE t_usuario SET contrasena='$datos[contrasena]', estatus='A' WHERE usuario='$datos[usuario]' AND (estatus='A' OR estatus='B')"; // SENTENTCIA.
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // EJECUTA LA SENTENCIA.
-        if (mysqli_affected_rows($this->data_conexion) > 0) // VERIFICAMOS QUE SI HAYA ACTUALIZADO.
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
-            $resultado = true; // RETORNAMOS VERDADERO SI ACTUALIZO.
-        }
-        else
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR
+	function consultarCiudades($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
-            $resultado = false; // RETORNAMOS VERDADERO SI ACTUALIZO.
-        }
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR
+	function consultarMunicipios($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR
+	function consultarParroquias($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='$datos[municipio]' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 }

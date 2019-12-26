@@ -1,13 +1,47 @@
 $(function () {
-    function limpiarFormulario(){
-        document.formulario.reset();
-        $('#fecha').val(fecha);
-        $('#tabla_datos_familiares tbody').html('');
-    }
+    let fecha = '';
+    let dataOcupacion = false;
+    let dataParentesco = ['Padre','Madre','Hermano','Hermana','Abuelo','Abuela','Tío','Tía','Primo','Prima','Sobrino','Sobrina'];
+
+    $.ajax({
+        url : url+'controllers/c_informe_social.php',
+        type: 'POST',
+        data: { opcion: 'Traer datos' },
+        success: function (resultados){
+            try {
+                let data = JSON.parse(resultados);
+                fecha = data.fecha;
+                if (data.ocupacion) {
+                    for (let i in data.ocupacion) {
+                        $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
+                    }
+                    dataOcupacion = data.ocupacion;
+                } else {
+                    $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
+                }
+                if (data.oficio) {
+                    for (let i in data.oficio) {
+                        $('#oficio').append('<option value="'+data.oficio[i].codigo+'">'+data.oficio[i].nombre+'</option>');
+                    }
+                } else {
+                    $('#oficio').html('<option value="">No hay oficios</option>');
+                }
+                if (data.estado) {
+                    for (let i in data.estado) {
+                        $('#estado').append('<option value="'+data.estado[i].codigo+'">'+data.estado[i].nombre+'</option>');
+                    }
+                } else {
+                    $('#estado').html('<option value="">No hay estados</option>');
+                }
+            } catch (error) { }
+        },
+        error: function (){
+            console.log('error');
+        }
+    });
 
     // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DEL APRENDIZ.
-    $('#fecha_n').change(calcularEdad);
-    function calcularEdad (){
+    $('#fecha_n').change(function (){
         let year    = $(this).val().substr(0,4);
         let month   = $(this).val().substr(5,2);
         let day     = $(this).val().substr(8,2);
@@ -34,9 +68,126 @@ $(function () {
         //     alert8
         // }
         $('#edad').val(edad);
-    }
+    });
 
-    
+    ////// FUNCIONES DE ALGUNOS CAMPOS.
+    $('.radio_educacion').click(function () {
+        if ($(this).val() == 'SI' || $(this).val() == 'SC')
+            $('#titulo').attr('disabled', false);
+        else
+            $('#titulo').attr('disabled', true);
+    });
+
+    $('#estado').change(function () {
+        if (window.actualizar !== true) {
+            localStorage.removeItem('ciudad');
+            localStorage.removeItem('municipio');
+            localStorage.removeItem('parroquia');
+        }
+
+        if ($(this).val() != '') {
+            $.ajax({
+                url : url+'controllers/c_informe_social.php',
+                type: 'POST',
+                data: { opcion: 'Traer divisiones', estado: $(this).val() },
+                success: function (respuesta) {
+                    $('#ciudad').empty();
+                    $('#municipio').empty();
+                    try {
+                        let data = JSON.parse(respuesta);
+                        if (data.ciudad) {
+                            $('#ciudad').append('<option value="">Elija una opción</option>');
+                            for(let i in data.ciudad){
+                                $('#ciudad').append('<option value="'+data.ciudad[i].codigo+'">'+data.ciudad[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#ciudad').html('<option value="">No hay ciudades</option>');
+                        }
+                        if (data.municipio) {
+                            $('#municipio').append('<option value="">Elija una opción</option>');
+                            for(let i in data.municipio){
+                                $('#municipio').append('<option value="'+data.municipio[i].codigo+'">'+data.municipio[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#municipio').html('<option value="">No hay municipios</option>');
+                        }
+
+                        if (window.actualizar === true) {
+                            window.actualizar = false;
+                            window.actualizar2 = true;
+
+                            $('#ciudad').val(localStorage.getItem('ciudad'));
+                            $('#municipio').val(localStorage.getItem('municipio'));
+                            $('#municipio').trigger('change');
+                        }
+                    } catch (error) { console.log(respuesta); }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        } else {
+            window.actualizar = false;
+            $('#ciudad').html('<option value="">Elija un estado</option>');
+            $('#municipio').html('<option value="">Elija un estado</option>');
+        }
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
+    });
+
+    $('#municipio').change(function () {
+        if (window.actualizar2 !== true) {
+            localStorage.removeItem('parroquia');
+        }
+
+        if ($(this).val() != '') {
+            $.ajax({
+                url : url+'controllers/c_informe_social.php',
+                type: 'POST',
+                data: { opcion: 'Traer parroquias', municipio: $(this).val() },
+                success: function (respuesta) {
+                    $('#parroquia').empty();
+                    try {
+                        let data = JSON.parse(respuesta);
+                        if (data.parroquia) {
+                            $('#parroquia').append('<option value="">Elija una opción</option>');
+                            for(let i in data.parroquia){
+                                $('#parroquia').append('<option value="'+data.parroquia[i].codigo+'">'+data.parroquia[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#parroquia').html('<option value="">No hay parroquias</option>');
+                        }
+
+                        if (window.actualizar2 === true) {
+                            window.actualizar2 = false;
+                            
+                            $('#parroquia').val(localStorage.getItem('parroquia'));
+                        }
+                    } catch (error) { console.log(respuesta); }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        } else {
+            window.actualizar2 = false;
+            $('#parroquia').html('<option value="">Elija un municipio</option>');
+        }
+    });
+
+    function limpiarFormulario(){
+        document.formulario.reset();
+        $('#fecha').val(fecha);
+        $('#tabla_datos_familiares tbody').html('');
+        //////////
+        $('#edad').val(0);
+        $('#titulo').attr('disabled', true);
+        //////////
+        $('#ciudad').html('<option value="">Elija un estado</option>');
+        $('#municipio').html('<option value="">Elija un estado</option>');
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
+        //////////
+        $('.ingresos').val(0);
+    }
 
     // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
     $('#show_form').click(function (){
@@ -47,24 +198,31 @@ $(function () {
         while (vista != 1)
             $('#retroceder_form').trigger('click');
         /////////////////////
+        limpiarFormulario();
         if (localStorage.getItem('confirm_data')){
             setTimeout(() => {
                 if (confirm('Hay datos sin guardar, ¿Quieres seguir editandolos?')) {
-                    $('.localStorage').each(function (){ $(this).val(localStorage.getItem($(this).attr('id'))); });
-                    $('.localStorage-radio').each(function (){
-                        if ($(this).val() == localStorage.getItem($(this).attr('name'))) {
-                            $(this).prop('checked','checked');
-                        }
+                    $('.localStorage').each(function (){
+                        let valor = localStorage.getItem($(this).attr('id'));
+                        if (valor != '' && valor != null && valor != undefined)
+                            $(this).val(localStorage.getItem($(this).attr('id')));
                     });
+                    $('.localStorage-radio').each(function (){
+                        if ($(this).val() == localStorage.getItem($(this).attr('name')))
+                            $(this).prop('checked','checked');
+                    });
+                    let grado_instruccion = localStorage.getItem('grado_instruccion');
+                    if (grado_instruccion == 'SI' || grado_instruccion == 'SC')
+                        $('#titulo').attr('disabled', false);
+
+                    window.actualizar = true;
+                    $('#estado').trigger('change');
                 } else {
                     localStorage.removeItem('confirm_data');
                     $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
                     $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
-                    limpiarFormulario();
                 }
             }, 500);
-        } else {
-            limpiarFormulario();
         }
     });
 
@@ -146,47 +304,42 @@ $(function () {
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" id="edad_'+cantidad+'" class="form-control form-control-sm text-center" value="0" style="width: 56px;" readonly="true"></td>';
             
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="sexo_familiar[]" class="custom-select custom-select-sm" style="width: 56px;">';
+            contenido += '<option value=""></option><option value="M">M</option><option value="F">F</option><option value="I">I</option>';
             contenido += '</select></td>';
             
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="parentesco_familiar" class="custom-select custom-select-sm" style="width: 136px;">';
+            contenido += '<option value="">Elija una opción</option>';
+            for (let i in dataParentesco) {
+                contenido += '<option value="'+i+'">'+dataParentesco[i]+'</option>';
+            }
             contenido += '</select></td>';
 
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="ocupacion_familiar" class="custom-select custom-select-sm" style="width: 140px;">';
+            if (dataOcupacion) {
+                contenido += '<option value="">Elija una opción</option>';
+                for (let i in dataOcupacion) {
+                    contenido += '<option value="'+dataOcupacion[i].codigo+'">'+dataOcupacion[i].nombre+'</option>';
+                }
+            }
             contenido += '</select></td>';
 
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="trabaja_familiar" class="custom-select custom-select-sm" style="width: 61px;">';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="trabaja_familiar" class="custom-select custom-select-sm trabajando" style="width: 61px;" data-posicion="'+cantidad+'">';
+            contenido += '<option value=""></option><option value="S">S</option><option value="N">N</option>';
             contenido += '</select></td>';
 
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" class="form-control form-control-sm" style="width: 96px;"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" id="ingresos_'+cantidad+'" class="form-control form-control-sm text-right" style="width: 96px;" disabled="true"></td>';
             contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label" for="responsable_apre_'+cantidad+'"></label></div></td>';
             contenido += '<td class="py-1 px-0"><button type="button" class="btn btn-sm btn-danger delete-row"><i class="fas fa-times"></i></button></td>';
             contenido += '</tr>';
 
             $('#tabla_datos_familiares tbody').append(contenido);
-            $($('.delete-row')[$('.delete-row').length - 1]).click(eliminarFila);
             $($('.calcular_edad')[$('.calcular_edad').length - 1]).change(calcularEdadF);
+            $($('.trabajando')[$('.trabajando').length - 1]).change(habilitarIngresos);
+            $($('.delete-row')[$('.delete-row').length - 1]).click(eliminarFila);
         } else {
             alert('Solo es permitido un maximo de 10 filas.');
         }
     });
-
-    // FUNCION PARA ELIMINAR FILAS QUE YA NO SON NECESARIAS.
-    function eliminarFila(){
-        $(this).closest('tr').remove();
-
-        let cont = 1;
-        $('#tabla_datos_familiares tbody tr').each(function(){
-            $($(this).children('td')[0]).html(cont);
-            $($($(this).children('td')[2]).children('input')[0]).attr('data-posicion', cont);
-            $($($(this).children('td')[3]).children('input')[0]).attr('id', 'edad_'+cont);
-
-            $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('id', 'responsable_apre_'+cont);
-            $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('value', cont);
-            $($($($(this).children('td')[9]).children('div')[0]).children('label')[0]).attr('for', 'responsable_apre_'+cont);
-
-            cont++;
-        });
-    };
 
     // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DE LOS FAMILIARES.
     function calcularEdadF(){
@@ -214,6 +367,38 @@ $(function () {
         }
         $(idEdad).val(edad);
     }
+
+    function habilitarIngresos(){
+        let idIngresos = '#ingresos_' + $(this).attr('data-posicion');
+        $(idIngresos).attr('disabled',true);
+
+        if ($(this).val() == 'S') {
+            $(idIngresos).attr('disabled',false);
+        } else {
+            $(idIngresos).val('');
+        }
+    }
+
+    // FUNCION PARA ELIMINAR FILAS QUE YA NO SON NECESARIAS.
+    function eliminarFila(){
+        $(this).closest('tr').remove();
+
+        let cont = 1;
+        $('#tabla_datos_familiares tbody tr').each(function(){
+            $($(this).children('td')[0]).html(cont);
+            $($($(this).children('td')[2]).children('input')[0]).attr('data-posicion', cont);
+            $($($(this).children('td')[3]).children('input')[0]).attr('id', 'edad_'+cont);
+
+            $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('id', 'responsable_apre_'+cont);
+            $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('value', cont);
+            $($($($(this).children('td')[9]).children('div')[0]).children('label')[0]).attr('for', 'responsable_apre_'+cont);
+
+            $($($(this).children('td')[7]).children('select')[0]).attr('data-posicion', cont);
+            $($($(this).children('td')[8]).children('input')[0]).attr('id', 'ingresos_'+cont);
+
+            cont++;
+        });
+    };
 
     $('.localStorage').keyup(guardarLocalStorage);
     $('.localStorage').change(guardarLocalStorage);

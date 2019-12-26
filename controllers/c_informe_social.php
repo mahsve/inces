@@ -1,11 +1,42 @@
 <?php
 session_start();
+date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
+$date = date('Y-m-d', time());
+
 if ($_POST['opcion']){
-    require_once('../models/m_ocupacion.php');
-    $objeto = new model_ocupacion;
+    require_once('../models/m_informe_social.php');
+    $objeto = new model_informeSocial;
     
     switch ($_POST['opcion']){
-        case 'Registrar';
+        case 'Traer datos':
+            $data = [];
+            $data['fecha'] = $date;
+            $objeto->conectar();
+            $data['ocupacion'] = $objeto->consultarOcupaciones();
+            $data['oficio'] = $objeto->consultarOficios();
+            $data['estado'] = $objeto->consultarEstados();
+            $objeto->desconectar();
+            echo json_encode($data);
+            break;
+        
+        case 'Traer divisiones':
+            $data = [];
+            $objeto->conectar();
+            $data['ciudad'] = $objeto->consultarCiudades($_POST);
+            $data['municipio'] = $objeto->consultarMunicipios($_POST);
+            $objeto->desconectar();
+            echo json_encode($data);
+            break;
+
+        case 'Traer parroquias':
+            $data = [];
+            $objeto->conectar();
+            $data['parroquia'] = $objeto->consultarParroquias($_POST);
+            $objeto->desconectar();
+            echo json_encode($data);
+            break;
+
+        case 'Registrar':
             $datos = [ 'nombre'    => htmlspecialchars($_POST['nombre']) ];
 
             $objeto->conectar();
@@ -25,9 +56,8 @@ if ($_POST['opcion']){
             $objeto->desconectar();
             header('Location: ../intranet/gestion_ocupacion');
             break;
-        ####
         
-        case 'Modificar';
+        case 'Modificar':
             $datos = [
                 'codigo'    => htmlspecialchars($_POST['codigo']),
                 'nombre'    => htmlspecialchars($_POST['nombre'])
@@ -50,7 +80,6 @@ if ($_POST['opcion']){
             $objeto->desconectar();
             header('Location: ../intranet/ocupacion');
             break;
-        ####
 
         case 'Estatus':
             if ($_POST['estatus'] == 'A')
@@ -80,7 +109,6 @@ if ($_POST['opcion']){
 
             $objeto->desconectar();
             break;
-        ####
     }
 } else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
