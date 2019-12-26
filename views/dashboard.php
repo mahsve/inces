@@ -1,5 +1,5 @@
-<h1 class="font-weight-lighter">Bienvenido al panel principal</h1>
-
+<h1 class="font-weight-lighter text-secondary">Bienvenido al panel principal</h1>
+<!-- 
 <div class="row">
     <div class="col-sm-6 col-lg-3">
         <div class="bg-info rounded text-white px-3 py-1">
@@ -21,4 +21,4 @@
             Cifra 4
         </div>
     </div>
-</div>
+</div> -->

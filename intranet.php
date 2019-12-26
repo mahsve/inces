@@ -1,83 +1,30 @@
 <?php
-session_start(); // DECLARAMOS LA PALABRA RESERVADA SESSION_START PARA TRABAJAR CON SESIONES.
-if (isset($_SESSION['sesion'])) // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
-{
-    if (isset($_GET['data'])) { // VERIFICAMOS SI EXISTE LA VARIABLE VISTA.
-        $dataGET = explode('/',$_GET['data']); // SI EXISTE PROCESAMOS EL STRING DIVIDIENDOLO EN UN ARREGLO.
+include_once 'config/config.php';               // INCLUIMOS EL ARCHIVO DE CONFIGURACION DE LA URL.
+date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
 
-        $vista = $dataGET[0]; // GUARDAMOS EL DATO EN LA POSICION UNO, YA QUE SERA EL NOMBRE DEL ARCHIVO.
-        if (is_file('views/'.$vista.'.php')) { // VERIFICAMOS SI EXISTE EL ARCHIVO.
+session_start();                                // DECLARAMOS LA PALABRA RESERVADA SESSION_START PARA TRABAJAR CON SESIONES.
+if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
+    if (isset($_GET['data'])) {                 // VERIFICAMOS SI EXISTE LA VARIABLE VISTA.
+        $dataGET = explode('/',$_GET['data']);  // SI EXISTE PROCESAMOS EL STRING DIVIDIENDOLO EN UN ARREGLO.
+
+        $vista = $dataGET[0];                   // GUARDAMOS EL DATO EN LA POSICION UNO, YA QUE SERA EL NOMBRE DEL ARCHIVO.
+        if (is_file('views/'.$vista.'.php')) {  // VERIFICAMOS SI EXISTE EL ARCHIVO.
             $q_prefijo = str_replace('gestion_','',$vista); // LE QUITAMOS EL PREFIJO "GESTION_" SI LO POSEE.
-            $q_separado = str_replace('_',' ',$q_prefijo); // REMPLAZAMOS EL SEPARADOR "_" POR UN ESPACIO " ".
-            $titulo = ucfirst($q_separado); // LO VOLVEMOS UN TITULO CON LA PRIMERA LETRA EN MAYUSCULA.
-            
-            $vista = 'views/'.$vista.'.php'; // SI EXISTE REESCRIBIMOS LA VARIABLE CON LA DIRECCION ENTERA.
-        } else {  // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
-            $titulo = 'Dashboard'; // ESTABLECEMOS EL TITULO.
-            $vista = 'views/dashboard.php'; // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
+            $q_separado = str_replace('_',' ',$q_prefijo);  // REMPLAZAMOS EL SEPARADOR "_" POR UN ESPACIO " ".
+            $titulo = ucfirst($q_separado);     // LO VOLVEMOS UN TITULO CON LA PRIMERA LETRA EN MAYUSCULA.
+            $vista = 'views/'.$vista.'.php';    // SI EXISTE REESCRIBIMOS LA VARIABLE CON LA DIRECCION ENTERA.
+        } else {                                // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
+            $titulo = 'Dashboard';              // ESTABLECEMOS EL TITULO.
+            $vista = 'views/dashboard.php';     // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
         }
-    } else { // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
-        $titulo = 'Dashboard'; // ESTABLECEMOS EL TITULO.
-        $vista = 'views/dashboard.php'; // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
+    } else {                                    // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
+        $titulo = 'Dashboard';                  // ESTABLECEMOS EL TITULO.
+        $vista = 'views/dashboard.php';         // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
     }
-
-    include_once 'config/config.php'; // INCLUIMOS EL ARCHIVO DE CONFIGURACION DE LA URL.
-
     $arreglo = [ 'rol' => $_SESSION['usuario']['codigo_rol']]; // OBTENEMOS EL ROL DEL USUARIO Y LO GUARDAMOS EN UN ARREGLO.
-    require_once 'models/m_usuario.php'; // INCLUIMOS EL MODELO DEL USUARIO PARA TRAER LOS MODULOS Y LOS SERVICIOS.
-    $usuario = new model_usuario(); // CREAMOS UN NUEVO OBJETO.
-    $modulos = $usuario->traerModulos($arreglo); // TRAEMOS LOS MODULOS PARA MOSTRARLO EN EL MENU.
-
-    /*
-        $vista=(isset($_GET['vista']))?$_GET['vista']:"";
-
-        require_once('../clases/clase_rol.php');//Trae el archivo clase_rol.php para instanciarlo
-        require_once('../libreria/utilidades.php');//Trae el archivo utilidades.php para luego instanciarlo
-        require_once('../clases/clase_bitacora.php');//Trae el archivo utilidades.php para luego instanciarlo
-        $lobjRol=new clsRol;//Instancia la clase clsRol en $lobjRol, para poder usar sus metodos y atributos
-        $lobjUtil=new clsUtil;//Instancia la clase clsUtil en $lobjRol, para poder usar sus metodos
-        $lobjBitacora=new clsBitacora;//Instancia la clase clsUtil en $lobjRol, para poder usar sus metodos
-        
-        $menu='';//Declaro la variable $menu
-        $lobjRol->set_Rol($_SESSION['idtrol']);//Aquí se envia  mediante un metodo SET a la clase rol el idrol del usuario (que se guardo cuando se logueo en el sistema).
-        $laModulos=$lobjRol->consultar_modulos();//Se consultan y se guardan en la variable $laModulos los módulos que tiene asignado el rol del usuario,
-
-        // Obtengo la carpeta del modulo
-        $carpeta= preg_split("/[\s,]+/", $vista, 0);
-        if($carpeta[0] == '')
-            $activo='active';
-
-        error_reporting(0);
-        $menu.='<li><a href="intranet.php" class="'.$activo.'">Inicio</a></li>';
-
-        for($i=0;$i<count($laModulos);$i++) //Se recorre un ciclo para poder extraer los datos de cada uno de los módulos que tiene asignado el rol
-        {
-            $modulo=strtolower($lobjUtil->quitar_acentos($laModulos[$i][1]));
-            $activo=($modulo == $carpeta[0])?'active':'';
-
-            $menu .= '<li class="dropdown">';
-            $menu .= '<a href="#" class="dropdown-toggle '.$activo.'" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">'.$laModulos[$i][1].'</a>';
-            $menu .= '<ul class="dropdown-menu" style="width: 95%;">';
-
-            $laServicios=$lobjRol->consultar_servicios($laModulos[$i][0]); // aquí se consultan y guardan en la variable $laServicios los servicios que tiene registrado este módulo.
-            for ($j=0; $j <count($laServicios) ; $j++) //Se recorre un ciclo para poder extraer los datos de cada uno de los servicios que tiene asignado el modulo para poder constuir el menú
-            {
-                if($laServicios[$j][3])//Sí el servicio es visible para el menú lo agrega, sino no
-                {
-                    $menu.='<li class="dropdown-item"><a href="?vista='.$laServicios[$j][2].'">'.$laServicios[$j][1].'</a></li>'; //aqui se van agregando cada uno de los servicios al menú.
-                }
-            }
-            $menu.='</ul>';
-            $menu.='</li>'; //se cierra la construccion del menú
-        }
-        
-        // $lcReal_ip=$lobjUtil->get_real_ip();//Ejecuta el función get_real_ip para saber la IP de el usuario.
-        // $lcDireccion=$_SERVER['REQUEST_URI'];//obtiene la direccion en la que se encuentra el usuario
-        // $ldFecha=date('Y-m-d h:m');//obtiene la fecha actual
-
-        // $lobjBitacora->set_Datos($lcDireccion,$ldFecha,$lcReal_ip,'','','',$_SESSION['usuario'],$Acceso_servicio); //envia los datos a la clase bitacora
-        // $lnHecho=$lobjBitacora->registrar_bitacora();//registra los datos en la tabla tbitacora.
-    */
+    require_once 'models/m_usuario.php';        // INCLUIMOS EL MODELO DEL USUARIO PARA TRAER LOS MODULOS Y LOS SERVICIOS.
+    $usuario = new model_usuario();             // CREAMOS UN NUEVO OBJETO.
+    $modulos = $usuario->traerModulos($arreglo);// TRAEMOS LOS MODULOS PARA MOSTRARLO EN EL MENU.
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -104,7 +51,7 @@ if (isset($_SESSION['sesion'])) // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
 
 <body>
     <!-- BARRA SUPERIOR -->
-    <nav class="position-fixed border-bottom border-info w-100">
+    <nav class="position-fixed border-info w-100">
         <div class="d-flex bg-info p-0">
             <!-- TITULO -->
             <div id="title-navbar" class="h-100">
@@ -155,7 +102,7 @@ if (isset($_SESSION['sesion'])) // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
                 <li><a href="<?php echo SERVERURL; ?>intranet" class="<?php if ($titulo == 'Dashboard') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
                 
                 <?php
-                if ($modulos) {
+                 if ($modulos) {
                     foreach ($modulos AS $datos) {
                 ?>
                     <li class="dropdown">
@@ -182,7 +129,8 @@ if (isset($_SESSION['sesion'])) // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
                             <?php } } ?>
                         </ul>
                     </li>
-                <?php } } ?>
+                <?php } }
+                ?>
             </ul>
             <!-- COMPONENTE MENU -->
         </div>
@@ -224,23 +172,10 @@ if (isset($_SESSION['sesion'])) // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
 </body>
 </html>
 <?php
-}
-// SI NO HAY SESION INICIADA, ENTONCES REDIRECCIONA AL INICIO DE SESION CON UN MENSAJE.
-else
-{
+} else {    // SI NO HAY SESION INICIADA, ENTONCES REDIRECCIONA AL INICIO DE SESION CON UN MENSAJE.
     // DEFINIMOS EL MENSAJE QUE QUEREMOS MOSTRAR.
     $_SESSION['msj']['type'] = 'danger';
     $_SESSION['msj']['text'] = '<i class="fas fa-lock mr-2"></i>No tienes permiso, inicie sesión.';
-
-    // SI EXISTE EL METODO GET RETROCEDE Y MANDA AL INICIO.
-    if (isset($_GET['data']))
-    {
-        header('Location: ../iniciar');
-    }
-    // DE LO CONTRARIO SOLO MANDA AL INICIO.
-    else
-    {
-        header('Location: iniciar');
-    }
+    header('Location: '.SERVERURL.'iniciar');
 }
 ?>

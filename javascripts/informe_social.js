@@ -1,46 +1,42 @@
 $(function () {
-    // DATA LOCALSTORAGE 1
-    let dataFormulario1 = [];
-    $('.localStorage1').each(function () {
-        dataFormulario1[$(this).attr('id')] = $(this).val();
-    });
-    dataFormulario1['estado_civil'] = document.formulario.estado_civil.value;
-    dataFormulario1['grado_instruccion'] = document.formulario.grado_instruccion.value;
+    function limpiarFormulario(){
+        document.formulario.reset();
+        $('#fecha').val(fecha);
+        $('#tabla_datos_familiares tbody').html('');
+    }
 
-    // DATA LOCALSTORAGE 2
-    let dataFormulario2 = [];
-    $('.localStorage2').each(function () {
-        dataFormulario2[$(this).attr('id')] = $(this).val();
-    });
+    // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DEL APRENDIZ.
+    $('#fecha_n').change(calcularEdad);
+    function calcularEdad (){
+        let year    = $(this).val().substr(0,4);
+        let month   = $(this).val().substr(5,2);
+        let day     = $(this).val().substr(8,2);
+        let yearA   = fecha.substr(0,4);
+        let monthA  = fecha.substr(5,2);
+        let dayA    = fecha.substr(8,2);
+            
+        let edad = 0;
+        if (year != '' && year != undefined) {
+            if (year <= yearA) {
+                edad = yearA - year;
+                if (month > monthA) {
+                    if (edad != 0) 
+                        edad--;
+                } else if (month == monthA) {
+                    if (day > dayA)
+                        if (edad != 0) 
+                            edad--;
+                }
+            }
+        }
+
+        // if (edad > 16 && edad < 19) {
+        //     alert8
+        // }
+        $('#edad').val(edad);
+    }
+
     
-    // DATA LOCALSTORAGE 3
-    let dataFormulario3 = [];
-    $('.localStorage3').each(function () {
-        dataFormulario3[$(this).attr('id')] = $(this).val();
-    });
-    dataFormulario3['tipo_vivienda'] = document.formulario.tipo_vivienda.value;
-    dataFormulario3['tenencia_vivienda'] = document.formulario.tenencia_vivienda.value;
-    dataFormulario3['tipo_agua'] = document.formulario.tipo_agua.value;
-    dataFormulario3['tipo_electricidad'] = document.formulario.tipo_electricidad.value;
-    dataFormulario3['tipo_excreta'] = document.formulario.tipo_excreta.value;
-    dataFormulario3['tipo_basura'] = document.formulario.tipo_basura.value;
-
-    // DATA LOCALSTORAGE 4
-    let dataFormulario4 = [];
-
-    // DATA LOCALSTORAGE 5
-    let dataFormulario5 = [];
-    $('.localStorage5').each(function () {
-        dataFormulario5[$(this).attr('id')] = $(this).val();
-    });
-    console.log(dataFormulario5);
-
-    // DATA LOCALSTORAGE 6
-    let dataFormulario6 = [];
-    $('.localStorage6').each(function () {
-        dataFormulario6[$(this).attr('id')] = $(this).val();
-    });
-    dataFormulario6['enfermos'] = document.formulario.enfermos.value;
 
     // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
     $('#show_form').click(function (){
@@ -48,21 +44,38 @@ $(function () {
         $('#gestion_form').show(400);
         $('#form_title').html('Registrar');
         /////////////////////
-        while (vista != 1) {
+        while (vista != 1)
             $('#retroceder_form').trigger('click');
-        }
         /////////////////////
-        // if (localStorage.getItem('informe_social')) {
-        //     console.log('si');
-        // } else {
-            
-        // }
+        if (localStorage.getItem('confirm_data')){
+            setTimeout(() => {
+                if (confirm('Hay datos sin guardar, ¿Quieres seguir editandolos?')) {
+                    $('.localStorage').each(function (){ $(this).val(localStorage.getItem($(this).attr('id'))); });
+                    $('.localStorage-radio').each(function (){
+                        if ($(this).val() == localStorage.getItem($(this).attr('name'))) {
+                            $(this).prop('checked','checked');
+                        }
+                    });
+                } else {
+                    localStorage.removeItem('confirm_data');
+                    $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
+                    $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
+                    limpiarFormulario();
+                }
+            }, 500);
+        } else {
+            limpiarFormulario();
+        }
     });
 
     // MOSTRAR LA TABLA CON TODA LA LISTA DE LOS APRENDICES REGISTRADOS.
     $('#show_table').click(function (){
         $('#info_table').show(400);
         $('#gestion_form').hide(400);
+        /////////////////////
+        localStorage.removeItem('confirm_data');
+        $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
+        $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
     });
 
     let vista = 1;
@@ -151,7 +164,7 @@ $(function () {
 
             $('#tabla_datos_familiares tbody').append(contenido);
             $($('.delete-row')[$('.delete-row').length - 1]).click(eliminarFila);
-            $($('.calcular_edad')[$('.calcular_edad').length - 1]).change(calcularEdad);
+            $($('.calcular_edad')[$('.calcular_edad').length - 1]).change(calcularEdadF);
         } else {
             alert('Solo es permitido un maximo de 10 filas.');
         }
@@ -175,15 +188,15 @@ $(function () {
         });
     };
 
-    // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO.
-    function calcularEdad(){
+    // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DE LOS FAMILIARES.
+    function calcularEdadF(){
         let idEdad  = '#edad_'+$(this).attr('data-posicion');
         let year    = $(this).val().substr(0,4);
         let month   = $(this).val().substr(5,2);
         let day     = $(this).val().substr(8,2);
-        let yearA   = 2019;
-        let monthA  = 12;
-        let dayA    = 24;
+        let yearA   = fecha.substr(0,4);
+        let monthA  = fecha.substr(5,2);
+        let dayA    = fecha.substr(8,2);
         
         let edad = 0;
         if (year != '' && year != undefined) {
@@ -200,5 +213,13 @@ $(function () {
             }
         }
         $(idEdad).val(edad);
+    }
+
+    $('.localStorage').keyup(guardarLocalStorage);
+    $('.localStorage').change(guardarLocalStorage);
+    $('.localStorage-radio').click(guardarLocalStorage);
+    function guardarLocalStorage() {
+        localStorage.setItem('confirm_data', true);
+        localStorage.setItem($(this).attr('name'), $(this).val());
     }
 });

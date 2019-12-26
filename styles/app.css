@@ -23,13 +23,16 @@ nav > div {
     height: 50px;
 }
 #title-navbar {
-    width: 250px;
+    width: 280px;
+}
+#title-navbar a {
+    background: rgba(0,0,0,.1) !important;
 }
 #title-navbar a:hover {
-    background: rgba(0,0,0,.03) !important;
+    background: rgba(0,0,0,.15) !important;
 }
 #btns-navbar {
-    width: calc(100% - 250px);
+    width: calc(100% - 280px);
 }
 #menu-manager {
     display: none;
@@ -37,12 +40,12 @@ nav > div {
 /* ======== ESTILOS CONTENERDOR PRINCIPAL ======== */
 #container-main {
     min-height: calc(100% - 25px);
-    padding-top: 51px;
+    padding-top: 50px;
     display: flex;
 }
 /* =============== ESTILOS SIDEBAR =============== */
 #sidebar {
-    width: 250px;
+    width: 280px;
 }
 #sidebar #info_user img {
     width: 60px;
@@ -98,7 +101,7 @@ nav > div {
 }
 /* ======== ESTILOS CONTENERDOR CONTENIDO ======== */
 #main-containt {
-    width: calc(100% - 250px);
+    width: calc(100% - 280px);
 }
 button i {
     transition: all ease .3s;
