@@ -51,34 +51,21 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
 
 <body>
     <!-- BARRA SUPERIOR -->
-    <nav class="position-fixed border-info w-100">
-        <div class="d-flex bg-info p-0">
-            <!-- TITULO -->
-            <div id="title-navbar" class="h-100">
-                <a class="navbar-brand bg-info text-center h-100 w-100 py-1 px-3 m-0" href="<?php echo SERVERURL; ?>intranet">
-                    <img src="<?php echo SERVERURL; ?>images/app/logo-invertido.svg" class="h-100">
-                </a>
-            </div>
-            <!-- FIN TITULO -->
+    <header class="position-fixed border-info w-100">
+        <div class="d-flex justify-content-between align-items-center bg-info">
+            <!-- BOTON GESTION MENU -->
+            <button id="menu-manager" class="btn btn-sm btn-light text-secondary ml-3"><i class="fas fa-bars"></i></button>
 
-            <!-- BOTONES -->
-            <div id="btns-navbar" class="d-flex align-items-center justify-content-between px-3">
-                <div class="btn-menu-gestion">
-                    <button id="menu-manager" class="btn btn-sm btn-light text-secondary"><i class="fas fa-bars"></i></button>
-                </div>
+            <!-- TITULO LOGO -->
+            <a href="<?php echo SERVERURL; ?>intranet" id="header-title" class="d-inline-block h-100 text-center px-3 py-1 m-0">
+                <img src="<?php echo SERVERURL; ?>images/app/logo-invertido.svg" class="h-100">
+            </a>
+            <!-- FIN TITULO LOGO -->
 
-                <div class="navbar-option d-flex">
-                    <a href="<?php SERVERURL; ?>intranet" class="btn btn-sm btn-light text-secondary mr-2"><i class="fas fa-reply"></i><span class="ml-1">Volver</span></a>
-
-                    <form action="<?php echo SERVERURL; ?>controllers/c_sesion.php" method="POST">
-                        <input type="hidden" name="salir" value="Salir">
-                        <button class="btn btn-sm btn-danger"><i class="fas fa-sign-out-alt"></i><span class="ml-1">Salir</span></button>
-                    </form>
-                </div>
-            </div>
-            <!-- FIN BOTONES -->
+            <!-- BOTON SALIR -->
+            <button class="btn btn-sm btn-light text-danger hide-descrip mr-3"><i class="fas fa-sign-out-alt"></i><span class="ml-1">Salir</span></button>
         </div>
-    </nav>
+    </header>
     <!-- FIN MENU SUPERIOR -->
 
     <!-- CONTENEDOR PRINCIPAL -->
@@ -86,51 +73,42 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
         <!-- SIDEBAR -->
         <div id="sidebar" class="bg-white px-0 m-0">
             <!-- INFORMACION DEL USUARIO -->
-            <div id="info_user" class="d-flex px-3 py-2">
+            <div id="info_user" class="d-flex border-bottom px-3 py-2">
                 <img src="<?php echo SERVERURL; ?>images/app/man.png" class="rounded pt-2 px-1 mr-2">
 
-                <div class="informacion-usuario">
-                    <p class="text-info m-0"><i class="fas fa-user text-center mr-2" style="width: 15px;"></i><?php echo $_SESSION['usuario']['nombre1'].' '.$_SESSION['usuario']['apellido1']; ?></p>
-                    <p class="text-info m-0"><i class="fas fa-user-tag text-center mr-2" style="width: 15px;"></i>C.I: <?php echo $_SESSION['usuario']['nacionalidad'].'-'.$_SESSION['usuario']['cedula']; ?></p>
-                    <p class="text-info m-0"><i class="fas fa-address-card text-center mr-2" style="width: 15px;"></i><?php echo $_SESSION['usuario']['nombre']; ?></p>
+                <div id="user-data" class="text-secondary text-uppercase">
+                    <p class="m-0"><i class="fas fa-user text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre1'].' '.$_SESSION['usuario']['apellido1']; ?></span></p>
+                    <p class="m-0"><i class="fas fa-user-tag text-center mr-2"></i><span>C.I: <?php echo $_SESSION['usuario']['nacionalidad'].'-'.$_SESSION['usuario']['cedula']; ?></span></p>
+                    <p class="m-0"><i class="fas fa-address-card text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre']; ?></span></p>
                 </div>
             </div>
             <!-- FIN INFORMACION DEL USUARIO -->
 
             <!-- COMPONENTE MENU -->
-            <ul class="nav flex-column mt-2">
-                <li><a href="<?php echo SERVERURL; ?>intranet" class="<?php if ($titulo == 'Dashboard') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
+            <ul id="menu-list" class="mt-3 px-3">
+                <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
                 
-                <?php
-                 if ($modulos) {
-                    foreach ($modulos AS $datos) {
-                ?>
-                    <li class="dropdown">
-                        <?php
-                            $arreglo = [ 'rol' => $_SESSION['usuario']['codigo_rol'], 'modulo' => $datos['codigo']];
-
-                            $vistas = $usuario->traerVistas($arreglo);
-                            $pestana = false;
-                            if ($vistas) {
-                                foreach ($vistas AS $datos2) {
-                                    if ($titulo == ucfirst(str_replace('_',' ',$datos2['enlace'])))
-                                        $pestana = true;
-                                }
+                <?php if ($modulos) { foreach ($modulos AS $datos) { ?>
+                <li class="dropdown mb-1">
+                    <?php $arreglo = [ 'rol' => $_SESSION['usuario']['codigo_rol'], 'modulo' => $datos['codigo']];
+                        $vistas = $usuario->traerVistas($arreglo);
+                        $pestana = false;
+                        if ($vistas) {
+                            foreach ($vistas AS $datos2) {
+                                if ($titulo == ucfirst(str_replace('_',' ',$datos2['enlace'])))
+                                    $pestana = true;
                             }
-                        ?>
+                        }
+                    ?>
 
-                        <a href="#" class="dropdown-toggle <?php if ($pestana) echo 'active'; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $datos['icon']; ?>"></i><span class="ml-2"><?php echo $datos['nombre']; ?></span></a>
-                        <ul class="dropdown-menu" style="width: 95%;">
-                            <?php 
-                            if ($vistas) {
-                                foreach ($vistas AS $datos2) {
-                            ?>
-                            <li class="dropdown-item"><a href="<?php echo SERVERURL.'intranet/'.$datos2['enlace']; ?>"><i class="text-center <?php echo $datos2['icon']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $datos2['nombre']; ?></span></a></li>
-                            <?php } } ?>
-                        </ul>
-                    </li>
-                <?php } }
-                ?>
+                    <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php if ($pestana) echo 'active'; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $datos['icon']; ?>"></i><span class="ml-2"><?php echo $datos['nombre']; ?></span></a>
+                    <ul class="dropdown-menu w-100">
+                        <?php if ($vistas) { foreach ($vistas AS $datos2) { ?>
+                        <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$datos2['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $datos2['icon']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $datos2['nombre']; ?></span></a></li>
+                        <?php } } ?>
+                    </ul>
+                </li>
+                <?php } } ?>
             </ul>
             <!-- COMPONENTE MENU -->
         </div>
