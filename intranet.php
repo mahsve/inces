@@ -63,7 +63,7 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
             <!-- FIN TITULO LOGO -->
 
             <!-- BOTON SALIR -->
-            <button class="btn btn-sm btn-light text-danger hide-descrip mr-3"><i class="fas fa-sign-out-alt"></i><span class="ml-1">Salir</span></button>
+            <a href="<?php echo SERVERURL; ?>controllers/c_salir.php" class="btn btn-sm btn-light text-danger hide-descrip mr-3"><i class="fas fa-sign-out-alt"></i><span class="ml-1">Salir</span></a>
         </div>
     </header>
     <!-- FIN MENU SUPERIOR -->

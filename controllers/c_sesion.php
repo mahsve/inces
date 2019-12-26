@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // VERIFICAMOS SI SE QUIERE INICIAR SESION.
 if($_POST['entrar'])
 {
@@ -88,17 +87,6 @@ if($_POST['entrar'])
 		$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>El usuario y/o contraseña que ingresó son incorrectas.';
 		header('Location: ../iniciar');
 	}
-}
-// VERIFICAMOS SI SE QUIERE CERRAR SESION.
-else if($_POST['salir'])
-{
-	session_destroy();
-	session_start();
-
-	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-	$_SESSION['msj']['type'] = 'success';
-	$_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha cerrado sesión exitosamente.';
-	header('Location: ../iniciar');
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 else
