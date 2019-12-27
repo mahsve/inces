@@ -2,6 +2,7 @@ $(function () {
     let fecha = '';
     let dataOcupacion = false;
     let dataParentesco = ['Padre','Madre','Hermano','Hermana','Abuelo','Abuela','Tío','Tía','Primo','Prima','Sobrino','Sobrina'];
+    let tipoEnvio = '';
 
     $.ajax({
         url : url+'controllers/c_informe_social.php',
@@ -40,7 +41,7 @@ $(function () {
         }
     });
 
-    // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DEL APRENDIZ.
+    ////// FUNCIONES DE ALGUNOS CAMPOS.
     $('#fecha_n').change(function (){
         let year    = $(this).val().substr(0,4);
         let month   = $(this).val().substr(5,2);
@@ -69,15 +70,12 @@ $(function () {
         // }
         $('#edad').val(edad);
     });
-
-    ////// FUNCIONES DE ALGUNOS CAMPOS.
     $('.radio_educacion').click(function () {
         if ($(this).val() == 'SI' || $(this).val() == 'SC')
             $('#titulo').attr('disabled', false);
         else
             $('#titulo').attr('disabled', true);
     });
-
     $('#estado').change(function () {
         if (window.actualizar !== true) {
             localStorage.removeItem('ciudad');
@@ -133,7 +131,6 @@ $(function () {
         }
         $('#parroquia').html('<option value="">Elija un municipio</option>');
     });
-
     $('#municipio').change(function () {
         if (window.actualizar2 !== true) {
             localStorage.removeItem('parroquia');
@@ -173,7 +170,6 @@ $(function () {
             $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
     });
-
     $('.campos_ingresos').click(function () {
         if ($(this).val() == 0)
             $(this).val('');
@@ -203,27 +199,12 @@ $(function () {
         localStorage.setItem('total_egresos', $('#total_egresos').val());
     });
 
-    function limpiarFormulario(){
-        document.formulario.reset();
-        $('#fecha').val(fecha);
-        $('#tabla_datos_familiares tbody').html('');
-        //////////
-        $('#edad').val(0);
-        $('#titulo').attr('disabled', true);
-        //////////
-        $('#ciudad').html('<option value="">Elija un estado</option>');
-        $('#municipio').html('<option value="">Elija un estado</option>');
-        $('#parroquia').html('<option value="">Elija un municipio</option>');
-        //////////
-        $('.campos_ingresos').val(0);
-        $('.campos_ingresos_0').val(0);
-    }
-
     // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
     $('#show_form').click(function (){
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
         $('#form_title').html('Registrar');
+        tipoEnvio = 'Registrar';
         /////////////////////
         while (vista != 1)
             $('#retroceder_form').trigger('click');
@@ -430,6 +411,52 @@ $(function () {
             cont++;
         });
     };
+
+    function limpiarFormulario(){
+        document.formulario.reset();
+        $('#fecha').val(fecha);
+        $('#tabla_datos_familiares tbody').html('');
+        //////////
+        $('#edad').val(0);
+        $('#titulo').attr('disabled', true);
+        //////////
+        $('#ciudad').html('<option value="">Elija un estado</option>');
+        $('#municipio').html('<option value="">Elija un estado</option>');
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
+        //////////
+        $('.campos_ingresos').val(0);
+        $('.campos_ingresos_0').val(0);
+    }
+
+    $('#guardar_datos').click(function (e) {
+        e.preventDefault();
+        var data = $("#formulario").serializeArray();
+        data.push({ name: 'opcion', value: tipoEnvio });
+        data.push({ name: 'estado_civil', value: document.formulario.estado_civil.value });
+        data.push({ name: 'grado_instruccion', value: document.formulario.grado_instruccion.value });
+        ///////////////////
+        data.push({ name: 'tipo_vivienda', value: document.formulario.tipo_vivienda.value });
+        data.push({ name: 'tenencia_vivienda', value: document.formulario.tenencia_vivienda.value });
+        data.push({ name: 'tipo_agua', value: document.formulario.tipo_agua.value });
+        data.push({ name: 'tipo_electricidad', value: document.formulario.tipo_electricidad.value });
+        data.push({ name: 'tipo_excreta', value: document.formulario.tipo_excreta.value });
+        data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
+
+        console.log(data);
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: data,
+            success: function (respuesta) {
+                alert(respuesta);
+                // if (respuesta == 'Registro exitoso')
+                //     $('#show_table').trigger('click');
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    });
 
     $('.localStorage').keyup(guardarLocalStorage);
     $('.localStorage').change(guardarLocalStorage);

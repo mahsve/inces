@@ -37,24 +37,30 @@ if ($_POST['opcion']){
             break;
 
         case 'Registrar':
-            $datos = [ 'nombre'    => htmlspecialchars($_POST['nombre']) ];
+            $data = [];
+            foreach ($_POST as $key => $value) {
+                if ($value != '') {
+                    $data[$key] = "'".htmlspecialchars($value)."'";
+                } else {
+                    $data[$key] = 'NULL';
+                }
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarOcupacion($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            $objeto->nuevaTransaccion();
+            if ($objeto->registrarDatosPersonales($data)) {
+                if ($objeto->registrarDatosVivienda($data)) {
+                    $objeto->guardarTransaccion();
+                    echo 'Registro exitoso';
+                } else {
+                    $objeto->calcelarTransaccion();
+                    echo 'Registro fallido';
+                }
+            } else {
+                $objeto->calcelarTransaccion();
+                echo 'Registro fallido';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_ocupacion');
             break;
         
         case 'Modificar':
@@ -114,5 +120,5 @@ if ($_POST['opcion']){
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
-	header('Location: ../intranet/dashboard');
+	header('Location: ../intranet');
 }

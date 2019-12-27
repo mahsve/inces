@@ -119,7 +119,7 @@ footer {
 /* ============== ESTILOS QUERIES ================ */
 @media (max-width: 450px) {
     /* ============== COMPONENTES EN GENERAL ============== */
-    button.hide-descrip span{
+    button.hide-descrip span, a.hide-descrip span{
         display: none;
     }
     /* =============== ESTILOS NAVBAR ================ */

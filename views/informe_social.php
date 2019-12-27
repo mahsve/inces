@@ -2,7 +2,7 @@
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
         <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
-        <button type="button" id="show_form" class="btn btn-sm btn-info"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+        <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
     </div>
 </div>
 
@@ -10,10 +10,10 @@
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
         <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
 
-        <button type="button" id="show_table" class="btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
+        <button type="button" id="show_table" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
     </div>
 
-    <form action="<?php echo SERVERURL.'controllers/c_empresa.php'; ?>" method="POST" name="formulario" id="formulario" class="formulario">
+    <form action="<?php echo SERVERURL.'controllers/c_informe_social.php'; ?>" method="POST" name="formulario" id="formulario" class="formulario">
         <!-- INPUT DE FECHA DE REGISTRO -->
         <div class="form-row justify-content-end">
             <div class="col-sm-6 col-md-4 col-lg-2 mb-2">
@@ -706,7 +706,7 @@
 
         <!-- BOTON GUARDAR DATOS -->
         <div class="pt-2 text-center">
-            <button class="btn btn-sm btn-info w-25"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+            <button id="guardar_datos" type="button" class="btn btn-sm btn-info"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
         </div>
         <!-- FIN BOTON GUARDAR DATOS -->
     </form>

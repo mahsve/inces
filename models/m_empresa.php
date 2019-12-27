@@ -24,7 +24,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS EMPRESAS
-	function consultarEmpresas()
+	public function consultarEmpresas()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_empresa"; // SENTENTCIA
@@ -37,7 +37,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS ESTADOS
-	function consultarEstados()
+    public function consultarEstados()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_estado"; // SENTENTCIA
@@ -50,7 +50,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
-	function consultarCiudades($datos)
+	public function consultarCiudades($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."'"; // SENTENTCIA
@@ -63,7 +63,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS ACTIVIDADES ECONOMICAS.
-    function consultarActividades()
+    public function consultarActividades()
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_actividad_economica"; // SENTENTCIA
@@ -76,7 +76,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA REGISTRAR LA PERSONA DE CONTACTO DE LA EMPRESA
-    function registrarPersonaContacto($datos)
+    public function registrarPersonaContacto($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_datos_personales (nacionalidad, cedula, nombre1, nombre2, apellido1, apellido2, sexo, codigo_ciudad, telefono1, tipo_persona) VALUES ('".$datos['nacionalidad']."', '".$datos['cedula']."', '".$datos['nombre_1']."', '".$datos['nombre_2']."', '".$datos['apellido_1']."', '".$datos['apellido_2']."', '".$datos['sexo']."', '".$datos['ciudad_c']."', '".$datos['telefono']."', 'C')"; // SENTENTCIA
@@ -89,7 +89,7 @@ class model_empresa extends conexion
     }
 
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
-    function registrarEmpresa($datos)
+    public function registrarEmpresa($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_empresa (rif, nil, razon_social, codigo_actividad_e, codigo_aportante, telefono1, telefono2, codigo_ciudad, direccion, nacionalidad_contacto, persona_contacto) VALUES ('".$datos['rif']."', '".$datos['nil']."', '".$datos['razon_social']."', '".$datos['actividad_economica']."', '".$datos['codigo_aportante']."', '".$datos['telefono_1']."', '".$datos['telefono_2']."', '".$datos['ciudad']."', '".$datos['direccion']."', '".$datos['nacionalidad']."', '".$datos['cedula']."')"; // SENTENTCIA
