@@ -39,10 +39,14 @@ if ($_POST['opcion']){
         case 'Registrar':
             $data = [];
             foreach ($_POST as $key => $value) {
-                if ($value != '') {
-                    $data[$key] = "'".htmlspecialchars($value)."'";
-                } else {
-                    $data[$key] = 'NULL';
+                if(!is_array($value)) {
+                    if ($value != '')
+                        $data[$key] = "'".htmlspecialchars($value)."'";
+                    else
+                        $data[$key] = 'NULL';
+
+                    if (!isset($_POST['titulo']))
+                        $data['titulo'] = 'NULL';
                 }
             }
 
@@ -50,8 +54,42 @@ if ($_POST['opcion']){
             $objeto->nuevaTransaccion();
             if ($objeto->registrarDatosPersonales($data)) {
                 if ($objeto->registrarDatosVivienda($data)) {
-                    $objeto->guardarTransaccion();
-                    echo 'Registro exitoso';
+                    if ($id = $objeto->registrarFichaAprendiz($data)) {
+                        $error = 0;
+                        if(isset($_POST['nombre_familiar'])){
+                            for ($i=0; $i < count($_POST['nombre_familiar']); $i++) {
+                                $ingresos = 0;
+                                if (isset($_POST['ingresos_familiar'][$i]))
+                                    $ingresos = "'".htmlspecialchars($_POST['ingresos_familiar'][$i])."'";
+                                
+                                $data2 = [
+                                    'id_ficha'              => $id,
+                                    'nombre_familiar'       => "'".htmlspecialchars($_POST['nombre_familiar'][$i])."'",
+                                    'fecha_familiar'        => "'".htmlspecialchars($_POST['fecha_familiar'][$i])."'",
+                                    'sexo_familiar'         => "'".htmlspecialchars($_POST['sexo_familiar'][$i])."'",
+                                    'parentesco_familiar'   => "'".htmlspecialchars($_POST['parentesco_familiar'][$i])."'",
+                                    'ocupacion_familiar'    => "'".htmlspecialchars($_POST['ocupacion_familiar'][$i])."'",
+                                    'trabaja_familiar'      => "'".htmlspecialchars($_POST['trabaja_familiar'][$i])."'",
+                                    'ingresos_familiar'     => $ingresos,
+                                    'responsable'           => 0
+                                ];
+
+                                if (!$objeto->registrarFamilares($data2))
+                                    $error++;
+                            }
+                        }
+
+                        if ($error == 0) {
+                            $objeto->guardarTransaccion();
+                            echo 'Registro exitoso';
+                        } else {
+                            $objeto->calcelarTransaccion();
+                            echo 'Registro fallido';
+                        }
+                    } else {
+                        $objeto->calcelarTransaccion();
+                        echo 'Registro fallido';
+                    }
                 } else {
                     $objeto->calcelarTransaccion();
                     echo 'Registro fallido';
@@ -60,59 +98,6 @@ if ($_POST['opcion']){
                 $objeto->calcelarTransaccion();
                 echo 'Registro fallido';
             }
-            $objeto->desconectar();
-            break;
-        
-        case 'Modificar':
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
-
-            $objeto->conectar();
-            $resultado = $objeto->modificarOcupacion($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
-            }
-            $objeto->desconectar();
-            header('Location: ../intranet/ocupacion');
-            break;
-
-        case 'Estatus':
-            if ($_POST['estatus'] == 'A')
-                $estatus = 'I';
-            else
-                $estatus = 'A';
-
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'estatus'   => htmlspecialchars($estatus)
-            ];
-
-            $objeto->conectar();
-            $resultado = $objeto->estatusOcupacion($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Estatus actualizado.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Error al modificar el estatus.';
-            }
-
             $objeto->desconectar();
             break;
     }

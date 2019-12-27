@@ -97,6 +97,25 @@ header > div {
 #main-containt {
     width: calc(100% - 280px);
 }
+#content_form {
+    width: calc(100% - 70px);
+    min-height: 400px;
+}
+/* --- ESTILOS INFORME SOCIAL --- */
+.formulario textarea {
+    resize: none;
+}
+.move-form {
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.custom-radio label {
+    cursor: pointer;
+}
+/* --- BOTONES GIRAR ICONO --- */
 button i {
     transition: all ease .3s;
 }

@@ -553,7 +553,7 @@
                         <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
                         <div class="col-sm-12 pb-2">
                             <div class="table-responsive pb-2">
-                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 700px;">
+                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 980px;">
                                     <thead class="bg-info text-light">
                                         <tr>
                                             <th class="font-weight-normal text-center py-2 px-0" width="45">N°</th>
@@ -626,9 +626,9 @@
                                         </tr>
                                         <tr>
                                             <td class="align-middle small px-1 py-0">Total ingresos:</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_ingresos" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
                                             <td class="align-middle small px-1 py-0">Total egresos:</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_egresos" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -686,11 +686,11 @@
                             <p class="m-0 small">Ay algún enfermo en el grupo familiar <span class="text-danger">*</span></p>
 
                             <div class="custom-control custom-radio mr-2">
-                                <input type="radio" name="enfermos" id="enfermo_si" class="custom-control-input localStorage-radio" value="N">
+                                <input type="radio" name="enfermos" id="enfermo_si" class="custom-control-input localStorage-radio" value="S">
                                 <label class="custom-control-label" for="enfermo_si">Si</label>
                             </div>
                             <div class="custom-control custom-radio">
-                                <input type="radio" name="enfermos" id="enfermo_no" class="custom-control-input localStorage-radio" value="S">
+                                <input type="radio" name="enfermos" id="enfermo_no" class="custom-control-input localStorage-radio" value="N">
                                 <label class="custom-control-label" for="enfermo_no">No</label>
                             </div>
                         </div>
@@ -715,22 +715,3 @@
 <!-- PASAR DATOS DE PHP A JAVASCRIPT -->
 <script> let url = '<?php echo SERVERURL; ?>'; </script>
 <script src="<?php echo SERVERURL; ?>javascripts/informe_social.js"></script>
-<style>
-    #content_form {
-        width: calc(100% - 70px);
-        min-height: 400px;
-    }
-    .formulario textarea {
-        resize: none;
-    }
-    .move-form {
-        height: 30px;
-        width: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .custom-radio label {
-        cursor: pointer;
-    }
-</style>

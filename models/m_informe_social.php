@@ -23,7 +23,7 @@ class model_informeSocial extends conexion
         mysqli_close($this->data_conexion);
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LAS OCUPACIONES
 	public function consultarOcupaciones()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -36,7 +36,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LOS OFICIOS.
 	public function consultarOficios()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -49,7 +49,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LOS ESTADOS.
 	public function consultarEstados()
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -62,7 +62,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LAS CIUDADES SEGUN EL ESTADO ELEGIDO.
 	public function consultarCiudades($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -75,7 +75,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LOS MUNICIPIOS SEGUN EL ESTADO ELEGIDO.
 	public function consultarMunicipios($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -88,7 +88,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CONSULTAR
+    // FUNCION PARA CONSULTAR LAS PARROQUIAS SEGUN EL MUNICIPIO ELEGIDO.
 	public function consultarParroquias($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -100,7 +100,8 @@ class model_informeSocial extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
+ 
+    // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -114,11 +115,40 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA REGISTRAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
     public function registrarDatosVivienda($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_datos_hogar (nacionalidad, cedula, punto_referencia, tipo_area, tipo_vivienda, tenencia_vivienda, agua, electricidad, excretas, basura, otros, techo, paredes, piso, via_acceso, sala, comedor, cocina, banos, n_dormitorios) 
         VALUES ($datos[nacionalidad], $datos[cedula], $datos[punto_referencia], $datos[area], $datos[tipo_vivienda], $datos[tenencia_vivienda], $datos[tipo_agua], $datos[tipo_electricidad], $datos[tipo_excreta], $datos[tipo_basura], $datos[otros], $datos[techo], $datos[pared], $datos[piso], $datos[via_acceso], $datos[sala], $datos[comedor], $datos[cocina], $datos[bano], $datos[dormitorio])"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
+    public function registrarFichaAprendiz($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_informe_social (fecha, nacionalidad_aprendiz, cedula_aprendiz, codigo_oficio, turno, cedula_facilitador, condicion_vivienda, caracteristicas_generales, diagnostico_social, diagnostico_preliminar, conclusiones, enfermos) 
+        VALUES ($datos[fecha], $datos[nacionalidad], $datos[cedula], $datos[oficio], $datos[turno], '25791966', $datos[condicion_vivienda], $datos[caracteristicas_generales], $datos[diagnostico_social], $datos[diagnostico_preliminar], $datos[conclusiones], $datos[enfermos])"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = mysqli_insert_id ($this->data_conexion);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR LOS DATOS DEL LOS FAMILIARES DEL APRENDIZ.
+    public function registrarFamilares($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_familia (numero_informe, nombre1, nombre2, apellido1, apellido2, fecha_n, sexo, parentesco, codigo_ocupacion, trabaja, ingresos, representante) 
+        VALUES ($datos[id_ficha], $datos[nombre_familiar], $datos[nombre_familiar], $datos[nombre_familiar], $datos[nombre_familiar], $datos[fecha_familiar], $datos[sexo_familiar], $datos[parentesco_familiar], $datos[ocupacion_familiar], $datos[trabaja_familiar], $datos[ingresos_familiar], $datos[responsable])"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
