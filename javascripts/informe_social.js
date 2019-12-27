@@ -174,6 +174,35 @@ $(function () {
         }
     });
 
+    $('.campos_ingresos').click(function () {
+        if ($(this).val() == 0)
+            $(this).val('');
+    });
+    $('.campos_ingresos').blur(function () {
+        if ($(this).val() == '')
+            $(this).val(0);
+    });
+    $('.i_ingresos').keyup(function () {
+        let ingreso_pension = parseInt($('#ingreso_pension').val());
+        let ingreso_seguro = parseInt($('#ingreso_seguro').val());
+        let ingreso_pension_otras = parseInt($('#ingreso_pension_otras').val());
+        let ingreso_sueldo = parseInt($('#ingreso_sueldo').val());
+        let otros_ingresos = parseInt($('#otros_ingresos').val());
+
+        $('#total_ingresos').val(ingreso_pension + ingreso_seguro + ingreso_pension_otras + ingreso_sueldo + otros_ingresos);
+        localStorage.setItem('total_ingresos', $('#total_ingresos').val());
+    });
+    $('.i_egresos').keyup(function () {
+        let egreso_servicios = parseInt($('#egreso_servicios').val());
+        let egreso_alimentario = parseInt($('#egreso_alimentario').val());
+        let egreso_educacion = parseInt($('#egreso_educacion').val());
+        let egreso_vivienda = parseInt($('#egreso_vivienda').val());
+        let otros_egresos = parseInt($('#otros_egresos').val());
+
+        $('#total_egresos').val(egreso_servicios + egreso_alimentario + egreso_educacion + egreso_vivienda + otros_egresos);
+        localStorage.setItem('total_egresos', $('#total_egresos').val());
+    });
+
     function limpiarFormulario(){
         document.formulario.reset();
         $('#fecha').val(fecha);
@@ -186,7 +215,8 @@ $(function () {
         $('#municipio').html('<option value="">Elija un estado</option>');
         $('#parroquia').html('<option value="">Elija un municipio</option>');
         //////////
-        $('.ingresos').val(0);
+        $('.campos_ingresos').val(0);
+        $('.campos_ingresos_0').val(0);
     }
 
     // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
@@ -217,6 +247,7 @@ $(function () {
 
                     window.actualizar = true;
                     $('#estado').trigger('change');
+                    $('#fecha_n').trigger('change');
                 } else {
                     localStorage.removeItem('confirm_data');
                     $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });

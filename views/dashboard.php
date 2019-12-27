@@ -1,4 +1,5 @@
-<h1 class="font-weight-lighter text-secondary">Bienvenido al panel principal</h1>
+<h4 class="text-uppercase text-secondary font-weight-normal mb-0">Panel principal</h4>
+
 <!-- 
 <div class="row">
     <div class="col-sm-6 col-lg-3">

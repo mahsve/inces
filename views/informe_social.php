@@ -1,6 +1,6 @@
 <div id="info_table" style="">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-        <h4 class="text-uppercase font-weight-normal mb-0"><?php echo $titulo; ?></h4>
+        <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
         <button type="button" id="show_form" class="btn btn-sm btn-info"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
     </div>
@@ -8,7 +8,7 @@
 
 <div id="gestion_form" style="display: none;">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-        <h4 id="form_title" class="text-uppercase font-weight-normal mb-0"></h4>
+        <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
 
         <button type="button" id="show_table" class="btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
     </div>
@@ -195,13 +195,13 @@
                                                     <label class="custom-control-label" for="grado_instruccion_6">Educ. superior completa  </label>
                                                 </div>
 
-                                                <div class="form-group form-group form-row align-items-center mt-2 mb-0">
+                                                <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" disabled="true">
                                                     </div>
                                                 </div>
-                                                <div class="form-group form-group form-row align-items-center mt-2 mb-0">
+                                                <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique:</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage">
@@ -451,16 +451,22 @@
                                                 <input type="radio" name="tipo_basura" id="tipo_basura_2" class="custom-control-input localStorage-radio" value="Q">
                                                 <label class="custom-control-label" for="tipo_basura_2">Quema</label>
                                             </div>
-                                            <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" name="tipo_basura" id="tipo_basura_3" class="custom-control-input localStorage-radio" value="O">
-                                                <label class="custom-control-label" for="tipo_basura_3">Pozo</label>
+
+                                            <div class="form-group form-row align-items-center mt-2 mb-1">
+                                                <label for="otros" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Otros:</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" name="otros" id="otros" class="form-control form-control-sm localStorage">
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
-
+                    </div>
+                    
+                    <p class="small font-weight-bold text-info mb-0">Materiales de construcción predominantes:</p>
+                    <div class="form-row">
                         <!-- MATERIALES DEL TECHO -->
                         <div class="col-sm-3">
                             <div class="form-group mb-2">
@@ -492,7 +498,10 @@
                                 <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage" placeholder="Descripción de la via de acceso" autocomplete="off"/>
                             </div>
                         </div>
+                    </div>
 
+                    <p class="small font-weight-bold text-info mb-0">Distribución de la vivienda (coloque el número de ambientes)</p>
+                    <div class="form-row">
                         <!-- NUMERO DE SALAS -->
                         <div class="col-sm-2">
                             <div class="form-group mb-2">
@@ -587,39 +596,39 @@
                                     <tbody>
                                         <tr>
                                             <td class="align-middle px-1 pt-1 pb-0"><label for="ingreso_pension" class="small">Pensión</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension" id="ingreso_pension" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension" id="ingreso_pension" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
                                             <td class="align-middle px-1 pt-1 pb-0"><label for="egreso_servicios" class="small">Gastos de servicios básicos (agua, luz, teléfono, etc.)</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_servicios" id="egreso_servicios" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_servicios" id="egreso_servicios" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_seguro" class="small">Seguro social</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_seguro" id="ingreso_seguro" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_seguro" id="ingreso_seguro" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_alimentario" class="small">Alimentación</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_alimentario" id="egreso_alimentario" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_alimentario" id="egreso_alimentario" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_pension_otras" class="small">Otras pensión</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension_otras" id="ingreso_pension_otras" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension_otras" id="ingreso_pension_otras" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_educacion" class="small">Educación</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_educacion" id="egreso_educacion" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_educacion" id="egreso_educacion" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_sueldo" class="small">Sueldo  y/o salario</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_vivienda" class="small">Vivienda(alquiler comdominio)</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="otros_ingresos" class="small">Otros ingresos</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_ingresos" id="otros_ingresos" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_ingresos" id="otros_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
                                             <td class="align-middle px-1 py-0"><label for="otros_egresos" class="small">Otros egresos</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle small px-1 py-0">Total ingresos:</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
                                             <td class="align-middle small px-1 py-0">Total egresos:</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_egresos" class="form-control form-control-sm d-inline-block text-right ingresos localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
                                         </tr>
                                     </tbody>
                                 </table>
