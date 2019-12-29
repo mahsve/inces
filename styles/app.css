@@ -64,7 +64,7 @@ header > div {
     font-weight: 400;
     transition: all ease .1s;
 }
-#menu-list li a.active {
+#menu-list li a.active, #carga_espera {
     background: rgba(23,184,173,1);
     background: -moz-linear-gradient(45deg, rgba(23,184,173,1) 0%, rgba(23,163,184,1) 100%);
     background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(23,184,173,1)), color-stop(100%, rgba(23,163,184,1)));
@@ -98,7 +98,7 @@ header > div {
     width: calc(100% - 280px);
 }
 #content_form {
-    width: calc(100% - 70px);
+    width: calc(100% - 76px);
     min-height: 400px;
 }
 /* --- ESTILOS INFORME SOCIAL --- */
@@ -111,6 +111,9 @@ header > div {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+#carga_espera {
+    opacity: .95;
 }
 .custom-radio label {
     cursor: pointer;

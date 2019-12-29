@@ -157,6 +157,42 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    public function consultarInformeSocial()
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT t_informe_social.*, t_datos_personales.*, t_oficio.nombre AS oficio, t_ciudad.codigo_estado, t_parroquia.codigo_municipio FROM t_informe_social INNER JOIN t_datos_personales ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula INNER JOIN t_oficio ON t_informe_social.codigo_oficio = t_oficio.codigo INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function consultarDatosVivienda($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_datos_hogar WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function consultarFamiliares($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT * FROM t_familia WHERE numero_informe=$datos[informe]"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
     public function nuevaTransaccion()
     {

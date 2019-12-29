@@ -9,31 +9,31 @@ if ($_POST['opcion']){
     
     switch ($_POST['opcion']){
         case 'Traer datos':
-            $data = [];
-            $data['fecha'] = $date;
+            $resultados = [];
+            $resultados['fecha'] = $date;
             $objeto->conectar();
-            $data['ocupacion'] = $objeto->consultarOcupaciones();
-            $data['oficio'] = $objeto->consultarOficios();
-            $data['estado'] = $objeto->consultarEstados();
+            $resultados['ocupacion'] = $objeto->consultarOcupaciones();
+            $resultados['oficio'] = $objeto->consultarOficios();
+            $resultados['estado'] = $objeto->consultarEstados();
             $objeto->desconectar();
-            echo json_encode($data);
+            echo json_encode($resultados);
             break;
         
         case 'Traer divisiones':
-            $data = [];
+            $resultados = [];
             $objeto->conectar();
-            $data['ciudad'] = $objeto->consultarCiudades($_POST);
-            $data['municipio'] = $objeto->consultarMunicipios($_POST);
+            $resultados['ciudad'] = $objeto->consultarCiudades($_POST);
+            $resultados['municipio'] = $objeto->consultarMunicipios($_POST);
             $objeto->desconectar();
-            echo json_encode($data);
+            echo json_encode($resultados);
             break;
 
         case 'Traer parroquias':
-            $data = [];
+            $resultados = [];
             $objeto->conectar();
-            $data['parroquia'] = $objeto->consultarParroquias($_POST);
+            $resultados['parroquia'] = $objeto->consultarParroquias($_POST);
             $objeto->desconectar();
-            echo json_encode($data);
+            echo json_encode($resultados);
             break;
 
         case 'Registrar':
@@ -99,6 +99,36 @@ if ($_POST['opcion']){
                 echo 'Registro fallido';
             }
             $objeto->desconectar();
+            break;
+
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['informes'] = $objeto->consultarInformeSocial();
+            $objeto->desconectar();
+            echo json_encode($resultados);
+            break;
+
+        case 'Traer datos 2':
+            $data = [];
+            foreach ($_POST as $key => $value) {
+                if(!is_array($value)) {
+                    if ($value != '')
+                        $data[$key] = "'".htmlspecialchars($value)."'";
+                    else
+                        $data[$key] = 'NULL';
+
+                    if (!isset($_POST['titulo']))
+                        $data['titulo'] = 'NULL';
+                }
+            }
+
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['vivienda'] = $objeto->consultarDatosVivienda($data);
+            $resultados['familiares'] = $objeto->consultarFamiliares($data);
+            $objeto->desconectar();
+            echo json_encode($resultados);
             break;
     }
 } else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.

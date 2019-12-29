@@ -4,6 +4,31 @@
 
         <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
     </div>
+
+    <div class="table-responsive pb-2">
+        <table id="listado_aprendices" class="table table-borderless mb-0" style="min-width: 950px;">
+            <thead>
+                <tr class="text-white">
+                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="100">Cédula</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha Nac.</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 text-center" width="45">Edad</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="150">Oficio</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="80">Turno</th>
+                    <th class="bg-info rounded-right p-0 py-1" width="115"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    
 </div>
 
 <div id="gestion_form" style="display: none;">
@@ -16,7 +41,7 @@
     <form action="<?php echo SERVERURL.'controllers/c_informe_social.php'; ?>" method="POST" name="formulario" id="formulario" class="formulario">
         <!-- INPUT DE FECHA DE REGISTRO -->
         <div class="form-row justify-content-end">
-            <div class="col-sm-6 col-md-4 col-lg-2 mb-2">
+            <div class="col-sm-6 col-lg-3 col-xl-2 mb-2">
                 <div class="form-group m-0">
                     <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
                     <input type="date" name="fecha" id="fecha" class="form-control form-control-sm localStorage"/>
@@ -26,7 +51,7 @@
         <!-- FIN INPUT DE FECHA DE REGISTRO -->
 
         <!-- CONTENEDOR -->
-        <div class="d-flex align-items-center rounded border p-2 my-2">
+        <div class="d-flex align-items-center position-relative rounded border p-2 my-2">
             <button type="button" id="retroceder_form" class="btn btn-info rounded-circle move-form" disabled="true">
                 <i class="fas fa-chevron-left"></i>
             </button>
@@ -37,7 +62,7 @@
 
                     <div class="form-row">
                         <!-- NACIONALIDAD -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
                                 <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage">
@@ -49,7 +74,7 @@
                         </div>
 
                         <!-- CEDULA -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
                                 <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage" placeholder="Ingrese la cédula" autocomplete="off"/>
@@ -57,7 +82,7 @@
                         </div>
 
                         <!-- NOMBRE 1 -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
                                 <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
@@ -65,7 +90,7 @@
                         </div>
 
                         <!-- NOMBRE 2 -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="small m-0">Segundo nombre</label>
                                 <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
@@ -73,7 +98,7 @@
                         </div>
 
                         <!-- APELLIDO 1 -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
                                 <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
@@ -81,7 +106,7 @@
                         </div>
 
                         <!-- APELLIDO 2 -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="small m-0">Segundo Apellido</label>
                                 <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
@@ -89,7 +114,7 @@
                         </div>
 
                         <!-- SEXO -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="sexo" class="small m-0">Sexo <span class="text-danger">*</span></label>
                                 <select name="sexo" id="sexo" class="custom-select custom-select-sm localStorage">
@@ -102,7 +127,7 @@
                         </div>
 
                         <!-- FECHA DE NACIMIENTO -->
-                        <div class="col-sm-2 col-lg-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento<span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage"/>
@@ -110,7 +135,7 @@
                         </div>
 
                         <!-- LUGAR DE NACIMIENTO -->
-                        <div class="col-sm-3 col-lg-3">
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
                                 <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
@@ -118,7 +143,7 @@
                         </div>
 
                         <!-- EDAD -->
-                        <div class="col-sm-2 col-lg-1">
+                        <div class="col-sm-6 col-lg-2 col-xl-1">
                             <div class="form-group mb-2">
                                 <label for="edad" class="small m-0">Edad</label>
                                 <input type="text" name="edad" id="edad" class="form-control form-control-sm text-center localStorage" value="0" readonly="true"/>
@@ -126,7 +151,7 @@
                         </div>
 
                         <!-- OCUPACION -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-lg-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="ocupacion" class="small m-0">Ocupación <span class="text-danger">*</span></label>
                                 <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage">
@@ -138,7 +163,7 @@
                         <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
                         <div class="col-sm-12 my-2 pb-2">
                             <div class="table-responsive pb-2">
-                                <table class="table table-bordered mb-0" style="min-width: 700px;">
+                                <table class="table table-bordered mb-0" style="min-width: 850px;">
                                     <tr>
                                         <td class="align-text-top w-25 p-2">
                                             <span class="d-inline-block small mb-2">Estado civil</span>
@@ -215,7 +240,7 @@
                         </div>
 
                         <!-- TELEFONO 1 -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="telefono_1" class="small m-0">Telefono 1 <span class="text-danger">*</span></label>
                                 <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
@@ -223,7 +248,7 @@
                         </div>
                         
                         <!-- TELEFONO 2 -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="telefono_2" class="small m-0">Telefono 2 </label>
                                 <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
@@ -231,7 +256,7 @@
                         </div>
 
                         <!-- CORREO -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-lg-5 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="correo" class="small m-0">Correo</label>
                                 <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage" placeholder="Ingrese el correo" autocomplete="off"/>
@@ -239,7 +264,7 @@
                         </div>
 
                         <!-- SALIDA OCUPACIONAL (OFICIO O CARRERA) -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-lg-5 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="oficio" class="small m-0">Salida ocupacional <span class="text-danger">*</span></label>
                                 <select name="oficio" id="oficio" class="custom-select custom-select-sm localStorage">
@@ -249,7 +274,7 @@
                         </div>
 
                         <!-- TURNO DE ESTUDIO -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="turno" class="small m-0">Turno<span class="text-danger">*</span></label>
                                 <select name="turno" id="turno" class="custom-select custom-select-sm localStorage">
@@ -267,7 +292,7 @@
                 
                     <div class="form-row">
                         <!-- ESTADO -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="estado" class="small m-0">Estado <span class="text-danger">*</span></label>
                                 <select name="estado" id="estado" class="custom-select custom-select-sm localStorage">
@@ -277,7 +302,7 @@
                         </div>
 
                         <!-- CIUDAD -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="ciudad" class="small m-0">Ciudad <span class="text-danger">*</span></label>
                                 <select name="ciudad" id="ciudad" class="custom-select custom-select-sm localStorage">
@@ -287,7 +312,7 @@
                         </div>
 
                         <!-- MUNICIPIO -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="municipio" class="small m-0">Municipio</label>
                                 <select name="municipio" id="municipio" class="custom-select custom-select-sm localStorage">
@@ -297,7 +322,7 @@
                         </div>
 
                         <!-- PARROQUIA -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="parroquia" class="small m-0">Parroquia</label>
                                 <select name="parroquia" id="parroquia" class="custom-select custom-select-sm localStorage">
@@ -307,7 +332,7 @@
                         </div>
 
                         <!-- TIPO DE AREÁ -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="area" class="small m-0">Área <span class="text-danger">*</span></label>
                                 <select name="area" id="area" class="custom-select custom-select-sm localStorage">
@@ -319,7 +344,7 @@
                         </div>
 
                         <!-- DIRECCION -->
-                        <div class="col-sm-6">
+                        <div class="col-sm-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="direccion" class="small m-0">Dirección <span class="text-danger">*</span></label>
                                 <textarea name="direccion" id="direccion" class="form-control form-control-sm localStorage" placeholder="Ingrese la dirección del hogar"></textarea>
@@ -327,7 +352,7 @@
                         </div>
 
                         <!-- PUNTO DE REFERENCIA -->
-                        <div class="col-sm-6">
+                        <div class="col-sm-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="punto_referencia" class="small m-0">Punto de referencia <span class="text-danger">*</span></label>
                                 <textarea name="punto_referencia" id="punto_referencia" class="form-control form-control-sm localStorage" placeholder="Ingrese punto de refencia"></textarea>
@@ -343,9 +368,9 @@
                         <!-- TIPO DE VIVIENDA, TENENCIA Y SERVICIOS PUBLICOS. -->
                         <div class="col-sm-12 my-2 pb-2">
                             <div class="table-responsive pb-2">
-                                <table class="table table-bordered mb-0" style="min-width: 700px;">
+                                <table class="table table-bordered mb-0" style="min-width: 850px;">
                                     <tr>
-                                        <td class="align-text-top w-25 p-2" rowspan="2">
+                                        <td class="align-text-top p-2" rowspan="2" style="width: 20%;">
                                             <span class="d-inline-block small mb-2">Tipo de vivienda en la que habita  actualmente</span>
 
                                             <div class="custom-control custom-radio">
@@ -370,7 +395,7 @@
                                             </div>
                                         </td>
 
-                                        <td class="align-text-top w-25 p-2" rowspan="2" style="vertical-align: top !important;">
+                                        <td class="align-text-top p-2" rowspan="2" style="vertical-align: top !important; width: 20%;">
                                             <span class="d-inline-block small mb-2">Tenencia de la vivienda</span>
 
                                             <div class="custom-control custom-radio">
@@ -391,7 +416,7 @@
                                             </div>
                                         </td>
 
-                                        <td class="align-text-top w-50 p-2" colspan="2" style="vertical-align: middle !important;">
+                                        <td class="align-text-top p-2" colspan="2" style="vertical-align: middle !important; width: 60%;">
                                             <span class="d-inline-block small w-100 mb-0">Tipo de vivienda en la que habita  actualmente:</span>
                                         </td>
                                     </tr>
@@ -468,7 +493,7 @@
                     <p class="small font-weight-bold text-info mb-0">Materiales de construcción predominantes:</p>
                     <div class="form-row">
                         <!-- MATERIALES DEL TECHO -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="techo" class="small m-0">Techo <span class="text-danger">*</span></label>
                                 <input type="text" name="techo" id="techo" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del techo" autocomplete="off"/>
@@ -476,7 +501,7 @@
                         </div>
 
                         <!-- MATERIALES DE LA PARED -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="pared" class="small m-0">Pared <span class="text-danger">*</span></label>
                                 <input type="text" name="pared" id="pared" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales de la pared" autocomplete="off"/>
@@ -484,7 +509,7 @@
                         </div>
 
                         <!-- MATERIALES DEL PISO -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="piso" class="small m-0">Piso <span class="text-danger">*</span></label>
                                 <input type="text" name="piso" id="piso" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del piso" autocomplete="off"/>
@@ -492,7 +517,7 @@
                         </div>
 
                         <!-- DESCRIPCION DE LA VIA DE ACCESO -->
-                        <div class="col-sm-3">
+                        <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="via_acceso" class="small m-0">Via de acceso <span class="text-danger">*</span></label>
                                 <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage" placeholder="Descripción de la via de acceso" autocomplete="off"/>
@@ -503,7 +528,7 @@
                     <p class="small font-weight-bold text-info mb-0">Distribución de la vivienda (coloque el número de ambientes)</p>
                     <div class="form-row">
                         <!-- NUMERO DE SALAS -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="sala" class="small m-0">Sala <span class="text-danger">*</span></label>
                                 <input type="text" name="sala" id="sala" placeholder="N° de salas" class="form-control form-control-sm localStorage" autocomplete="off"/>
@@ -511,7 +536,7 @@
                         </div>
 
                         <!-- NUMERO DE COMEDORES -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="comedor" class="small m-0">Comedor <span class="text-danger">*</span></label>
                                 <input type="text" name="comedor" id="comedor" class="form-control form-control-sm localStorage" placeholder="N° de comedores" autocomplete="off"/>
@@ -519,7 +544,7 @@
                         </div>
 
                         <!-- NUMERO DE COCINAS -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="cocina" class="small m-0">Cocina <span class="text-danger">*</span></label>
                                 <input type="text" name="cocina" id="cocina" class="form-control form-control-sm localStorage" placeholder="N° de cocinas" autocomplete="off"/>
@@ -527,7 +552,7 @@
                         </div>
 
                         <!-- NUMERO DE BAÑOS -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="bano" class="small m-0">Baños <span class="text-danger">*</span></label>
                                 <input type="text" name="bano" id="bano" class="form-control form-control-sm localStorage" placeholder="N° de baños" autocomplete="off"/>
@@ -535,7 +560,7 @@
                         </div>
 
                         <!-- NUMERO DE DORMITORIOS -->
-                        <div class="col-sm-2">
+                        <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="dormitorio" class="small m-0">Domitorios <span class="text-danger">*</span></label>
                                 <input type="text" name="dormitorio" id="dormitorio" class="form-control form-control-sm localStorage" placeholder="N° de dormitorios" autocomplete="off"/>
@@ -553,20 +578,20 @@
                         <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
                         <div class="col-sm-12 pb-2">
                             <div class="table-responsive pb-2">
-                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 980px;">
-                                    <thead class="bg-info text-light">
+                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 950px;">
+                                    <thead class="text-light">
                                         <tr>
-                                            <th class="font-weight-normal text-center py-2 px-0" width="45">N°</th>
-                                            <th class="font-weight-normal py-2 px-0">Apellido y nombre</th>
-                                            <th class="font-weight-normal py-2 px-0" width="132">Fecha de N.</th>
-                                            <th class="font-weight-normal py-2 px-0" width="60">Edad</th>
-                                            <th class="font-weight-normal py-2 px-0" width="60">Sexo</th>
-                                            <th class="font-weight-normal py-2 px-0" width="140">Parentesco</th>
-                                            <th class="font-weight-normal py-2 px-0" width="144">Ocupación</th>
-                                            <th class="font-weight-normal py-2 px-0" width="65">Trabaja</th>
-                                            <th class="font-weight-normal py-2 px-0" width="100">Ingresos</th>
-                                            <th class="font-weight-normal py-2 px-0" width="40">Resp.</th>
-                                            <th width="28"></th>
+                                            <th class="bg-info rounded-left font-weight-normal text-center py-2 px-0" width="45">N°</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0">Apellido y nombre</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="132">Fecha de N.</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="60">Edad</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="60">Sexo</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="140">Parentesco</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="144">Ocupación</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="65">Trabaja</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="100">Ingresos</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="40">Resp.</th>
+                                            <th class="bg-info rounded-right" width="28"></th>
                                         </tr>
                                     </thead>
                                     
@@ -585,12 +610,12 @@
                         <div class="col-sm-12 my-2 pb-2">
                             <div class="table-responsive pb-2">
                                 <table class="table table-borderless mb-0" style="min-width: 700px;">
-                                    <thead class="bg-info text-light">
+                                    <thead class="text-light">
                                         <tr>
-                                            <th class="font-weight-normal w-25 p-2">Ingreso</th>
-                                            <th class="font-weight-normal w-25 p-2">Bolivares</th>
-                                            <th class="font-weight-normal w-25 p-2">Egreso</th>
-                                            <th class="font-weight-normal w-25 p-2">Bolivares</th>
+                                            <th class="bg-info rounded-left font-weight-normal w-25 p-2">Ingreso</th>
+                                            <th class="bg-info font-weight-normal w-25 p-2">Bolivares</th>
+                                            <th class="bg-info font-weight-normal w-25 p-2">Egreso</th>
+                                            <th class="bg-info rounded-right font-weight-normal w-25 p-2">Bolivares</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -701,6 +726,12 @@
             <button type="button" id="avanzar_form" class="btn btn-info rounded-circle move-form">
                 <i class="fas fa-chevron-right"></i>
             </button>
+
+            <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
+                <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                    <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>
+                </div>
+            </div>
         </div>
         <!-- FIN CONTENEDOR -->
 
