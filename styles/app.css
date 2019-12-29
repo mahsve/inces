@@ -1,7 +1,18 @@
 /* ============== COMPONENTES EN GENERAL ============== */
-.page-item.active .page-link{
+.dropdown-item:active {
+    background: none;
+}
+.form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.2rem rgba(23, 163, 184, 0.4);
+}
+.page-item.active .page-link, .custom-control-input:checked ~ .custom-control-label::before {
     background: #17a2b8;
     border-color: #17a2b8;
+}
+.custom-control-input:not(:disabled):active ~ .custom-control-label::before {
+    background: rgba(23, 163, 184, 0.4);
 }
 /* ============== ESTILOS GENERALES ============== */
 html, body {

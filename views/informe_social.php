@@ -129,13 +129,13 @@
                         <!-- FECHA DE NACIMIENTO -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="fecha_n" class="small m-0">Fecha de nacimiento<span class="text-danger">*</span></label>
+                                <label for="fecha_n" class="small m-0">Fecha de nacimiento <span class="text-danger">*</span></label>
                                 <input type="date" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage"/>
                             </div>
                         </div>
 
                         <!-- LUGAR DE NACIMIENTO -->
-                        <div class="col-sm-6 col-lg-4 col-xl-2">
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
                                 <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
@@ -165,8 +165,9 @@
                             <div class="table-responsive pb-2">
                                 <table class="table table-bordered mb-0" style="min-width: 850px;">
                                     <tr>
+                                        <!-- ESTADO CIVIL -->
                                         <td class="align-text-top w-25 p-2">
-                                            <span class="d-inline-block small mb-2">Estado civil</span>
+                                            <span class="d-inline-block small mb-2">Estado civil <span class="text-danger">*</span></span>
 
                                             <div class="custom-control custom-radio">
                                                 <input type="radio" id="estado_civil_1" name="estado_civil" class="custom-control-input localStorage-radio" value="S">
@@ -190,8 +191,9 @@
                                             </div>
                                         </td>
 
+                                        <!-- GRADO DE INSTRUCCION -->
                                         <td class="align-text-top w-75 p-2">
-                                            <span class="d-inline-block small mb-2">Grado de instrucción</span>
+                                            <span class="d-inline-block small mb-2">Grado de instrucción <span class="text-danger">*</span></span>
                                             
                                             <div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
@@ -227,7 +229,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
-                                                    <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique:</label>
+                                                    <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique</label>
                                                     <div class="col-sm-8">
                                                         <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage">
                                                     </div>
@@ -242,7 +244,7 @@
                         <!-- TELEFONO 1 -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_1" class="small m-0">Telefono 1 <span class="text-danger">*</span></label>
+                                <label for="telefono_1" class="small m-0">Teléfono 1 <span class="text-danger">*</span></label>
                                 <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
                             </div>
                         </div>
@@ -250,7 +252,7 @@
                         <!-- TELEFONO 2 -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_2" class="small m-0">Telefono 2 </label>
+                                <label for="telefono_2" class="small m-0">Teléfono 2 </label>
                                 <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
                             </div>
                         </div>
@@ -276,7 +278,7 @@
                         <!-- TURNO DE ESTUDIO -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="turno" class="small m-0">Turno<span class="text-danger">*</span></label>
+                                <label for="turno" class="small m-0">Turno <span class="text-danger">*</span></label>
                                 <select name="turno" id="turno" class="custom-select custom-select-sm localStorage">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Matutino</option>
@@ -370,8 +372,9 @@
                             <div class="table-responsive pb-2">
                                 <table class="table table-bordered mb-0" style="min-width: 850px;">
                                     <tr>
+                                        <!-- TIPO DE VIVIENDA -->
                                         <td class="align-text-top p-2" rowspan="2" style="width: 20%;">
-                                            <span class="d-inline-block small mb-2">Tipo de vivienda en la que habita  actualmente</span>
+                                            <span class="d-inline-block small mb-2">Tipo de vivienda en la que habita  actualmente <span class="text-danger">*</span></span>
 
                                             <div class="custom-control custom-radio">
                                                 <input type="radio" name="tipo_vivienda" id="tipo_vivienda_1" class="custom-control-input localStorage-radio" value="Q">
@@ -395,8 +398,9 @@
                                             </div>
                                         </td>
 
+                                        <!-- TENENCIA DE VIVIENDA -->
                                         <td class="align-text-top p-2" rowspan="2" style="vertical-align: top !important; width: 20%;">
-                                            <span class="d-inline-block small mb-2">Tenencia de la vivienda</span>
+                                            <span class="d-inline-block small mb-2">Tenencia de la vivienda <span class="text-danger">*</span></span>
 
                                             <div class="custom-control custom-radio">
                                                 <input type="radio" name="tenencia_vivienda" id="tenencia_vivienda_1" class="custom-control-input localStorage-radio" value="P">
@@ -416,14 +420,16 @@
                                             </div>
                                         </td>
 
+                                        <!-- SERVICIOS PUBLICOS -->
                                         <td class="align-text-top p-2" colspan="2" style="vertical-align: middle !important; width: 60%;">
-                                            <span class="d-inline-block small w-100 mb-0">Tipo de vivienda en la que habita  actualmente:</span>
+                                            <span class="d-inline-block small w-100 mb-0">Tipo de vivienda en la que habita  actualmente <span class="text-danger">*</span></span>
                                         </td>
                                     </tr>
                                     
                                     <tr>
+                                        <!-- DETALLES 1 -->
                                         <td class="px-2 py-1">
-                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Agua</b></span>
+                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Agua <span class="text-danger">*</span></b></span>
 
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
                                                 <input type="radio" name="tipo_agua" id="tipo_agua_1" class="custom-control-input localStorage-radio" value="A">
@@ -438,7 +444,7 @@
                                                 <label class="custom-control-label" for="tipo_agua_3">Pozo</label>
                                             </div>
 
-                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Electricidad</b></span>
+                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Electricidad <span class="text-danger">*</span></b></span>
                                             
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
                                                 <input type="radio" name="tipo_electricidad" id="tipo_electricidad_1" class="custom-control-input localStorage-radio" value="L">
@@ -450,8 +456,9 @@
                                             </div>
                                         </td>
 
+                                        <!-- DETALLES 2 -->
                                         <td class="px-2 py-1">
-                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Excretas</b></span>
+                                            <span class="d-inline-block text-info w-100" style="font-size: 80%;"><b>Excretas <span class="text-danger">*</span></b></span>
                                             
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
                                                 <input type="radio" name="tipo_excreta" id="tipo_excreta_1" class="custom-control-input localStorage-radio" value="A">
@@ -466,7 +473,7 @@
                                                 <label class="custom-control-label" for="tipo_excreta_3">Pozo septico</label>
                                             </div>
 
-                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Basura</b></span>
+                                            <span class="d-inline-block text-info w-100 mt-1" style="font-size: 80%;"><b>Basura <span class="text-danger">*</span></b></span>
                                         
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
                                                 <input type="radio" name="tipo_basura" id="tipo_basura_1" class="custom-control-input localStorage-radio" value="U">
@@ -478,7 +485,7 @@
                                             </div>
 
                                             <div class="form-group form-row align-items-center mt-2 mb-1">
-                                                <label for="otros" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Otros:</label>
+                                                <label for="otros" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Otros</label>
                                                 <div class="col-sm-8">
                                                     <input type="text" name="otros" id="otros" class="form-control form-control-sm localStorage">
                                                 </div>
@@ -519,7 +526,7 @@
                         <!-- DESCRIPCION DE LA VIA DE ACCESO -->
                         <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="via_acceso" class="small m-0">Via de acceso <span class="text-danger">*</span></label>
+                                <label for="via_acceso" class="small m-0">Vía de acceso <span class="text-danger">*</span></label>
                                 <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage" placeholder="Descripción de la via de acceso" autocomplete="off"/>
                             </div>
                         </div>
@@ -613,9 +620,9 @@
                                     <thead class="text-light">
                                         <tr>
                                             <th class="bg-info rounded-left font-weight-normal w-25 p-2">Ingreso</th>
-                                            <th class="bg-info font-weight-normal w-25 p-2">Bolivares</th>
+                                            <th class="bg-info font-weight-normal w-25 p-2">Bolívares</th>
                                             <th class="bg-info font-weight-normal w-25 p-2">Egreso</th>
-                                            <th class="bg-info rounded-right font-weight-normal w-25 p-2">Bolivares</th>
+                                            <th class="bg-info rounded-right font-weight-normal w-25 p-2">Bolívares</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -640,7 +647,7 @@
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_sueldo" class="small">Sueldo  y/o salario</label></td>
                                             <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
-                                            <td class="align-middle px-1 py-0"><label for="egreso_vivienda" class="small">Vivienda(alquiler comdominio)</label></td>
+                                            <td class="align-middle px-1 py-0"><label for="egreso_vivienda" class="small">Vivienda (alquiler condominio)</label></td>
                                             <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
@@ -650,9 +657,9 @@
                                             <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
                                         </tr>
                                         <tr>
-                                            <td class="align-middle small px-1 py-0">Total ingresos:</td>
+                                            <td class="align-middle small px-1 py-0">Total ingresos</td>
                                             <td class="px-1 pt-1 pb-0"><input type="text" name="total_ingresos" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
-                                            <td class="align-middle small px-1 py-0">Total egresos:</td>
+                                            <td class="align-middle small px-1 py-0">Total egresos</td>
                                             <td class="px-1 pt-1 pb-0"><input type="text" name="total_egresos" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
                                         </tr>
                                     </tbody>
@@ -685,7 +692,7 @@
                         <!-- DIAGNOSTICO SOCIAL -->
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
-                                <label for="diagnostico_social" class="small m-0">Diagnostico social <span class="text-danger">*</span></label>
+                                <label for="diagnostico_social" class="small m-0">Diagnóstico social <span class="text-danger">*</span></label>
                                 <textarea name="diagnostico_social" id="diagnostico_social" class="form-control form-control-sm localStorage"></textarea>
                             </div>
                         </div>
@@ -693,7 +700,7 @@
                         <!-- DIAGNOSTICO PRELIMINAR -->
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
-                                <label for="diagnostico_preliminar" class="small m-0">Diagnostico preliminar <span class="text-danger">*</span></label>
+                                <label for="diagnostico_preliminar" class="small m-0">Diagnóstico preliminar <span class="text-danger">*</span></label>
                                 <textarea name="diagnostico_preliminar" id="diagnostico_preliminar" class="form-control form-control-sm localStorage"></textarea>
                             </div>
                         </div>

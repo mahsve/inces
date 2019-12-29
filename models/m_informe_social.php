@@ -130,7 +130,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
-    public function registrarFichaAprendiz($datos)
+    public function registrarInformeSocial($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_informe_social (fecha, nacionalidad_aprendiz, cedula_aprendiz, codigo_oficio, turno, cedula_facilitador, condicion_vivienda, caracteristicas_generales, diagnostico_social, diagnostico_preliminar, conclusiones, enfermos) 
@@ -157,10 +157,25 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA REGISTRAR LOS INGRESOS Y EGRESOS DE LA FAMILIA.
+    public function registrarGestionDinero($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_gestion_dinero (numero_informe, descripcion, cantidad) 
+        VALUES ($datos[id_ficha], $datos[descripcion], $datos[cantidad])"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LOS APRENDICES REGISTRADOS Y MOSTRARLOS EN UNA LISTA.
     public function consultarInformeSocial()
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT t_informe_social.*, t_datos_personales.*, t_oficio.nombre AS oficio, t_ciudad.codigo_estado, t_parroquia.codigo_municipio FROM t_informe_social INNER JOIN t_datos_personales ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula INNER JOIN t_oficio ON t_informe_social.codigo_oficio = t_oficio.codigo INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo"; // SENTENTCIA
+		$sentencia = "SELECT t_informe_social.*, t_datos_personales.*, t_oficio.nombre AS oficio, t_ciudad.codigo_estado, t_parroquia.codigo_municipio FROM t_informe_social INNER JOIN t_datos_personales ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula INNER JOIN t_oficio ON t_informe_social.codigo_oficio = t_oficio.codigo INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo ORDER BY t_informe_social.numero ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -169,6 +184,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR LOS DATOS DE LA VIVIENDA DE UN APRENDIZ EN CONCRETO.
     public function consultarDatosVivienda($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -181,6 +197,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR A LOS FAMILIARES DEL APRENDIZ CONSULTADO.
     public function consultarFamiliares($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -190,6 +207,117 @@ class model_informeSocial extends conexion
         {
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
 		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LOS INGRESOS Y LOS EGRESOS DE LA FAMILIA DEL APRENDIZ.
+    public function consultarDinero($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT * FROM t_gestion_dinero WHERE numero_informe=$datos[informe]"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function modificarDatosPersonales($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_datos_personales SET
+        nacionalidad=$datos[nacionalidad],
+        cedula=$datos[cedula],
+        nombre1=$datos[nombre_1],
+        nombre2=$datos[nombre_2],
+        apellido1=$datos[apellido_1],
+        apellido2=$datos[apellido_2],
+        sexo=$datos[sexo],
+        fecha_n=$datos[fecha_n],
+        lugar_n=$datos[lugar_n],
+        codigo_ocupacion=$datos[ocupacion],
+        estado_civil=$datos[estado_civil],
+        nivel_instruccion=$datos[grado_instruccion],
+        titulo_acade=$datos[titulo],
+        mision_participado=$datos[alguna_mision],
+        codigo_ciudad=$datos[ciudad],
+        codigo_parroquia=$datos[parroquia],
+        direccion=$datos[direccion],
+        telefono1=$datos[telefono_1],
+        telefono2=$datos[telefono_2],
+        correo=$datos[correo]
+        WHERE nacionalidad=$datos[nacionalidad_v] AND cedula=$datos[cedula_v]"; // SENTENTCIA
+        if (mysqli_query($this->data_conexion,$sentencia))
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
+    public function modificarDatosVivienda($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_datos_hogar SET 
+        punto_referencia=$datos[punto_referencia],
+        tipo_area=$datos[area],
+        tipo_vivienda=$datos[tipo_vivienda],
+        tenencia_vivienda=$datos[tenencia_vivienda],
+        agua=$datos[tipo_agua],
+        electricidad=$datos[tipo_electricidad],
+        excretas=$datos[tipo_excreta],
+        basura=$datos[tipo_basura],
+        otros=$datos[otros],
+        techo=$datos[techo],
+        paredes=$datos[pared],
+        piso=$datos[piso],
+        via_acceso=$datos[via_acceso],
+        sala=$datos[sala],
+        comedor=$datos[comedor],
+        cocina=$datos[cocina],
+        banos=$datos[bano],
+        n_dormitorios=$datos[dormitorio]
+        WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]"; // SENTENTCIA
+        if (mysqli_query($this->data_conexion,$sentencia))
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
+    public function modificarInformeSocial($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_informe_social SET 
+        fecha=$datos[fecha],
+        codigo_oficio=$datos[oficio],
+        turno=$datos[turno],
+        condicion_vivienda=$datos[condicion_vivienda],
+        caracteristicas_generales=$datos[caracteristicas_generales],
+        diagnostico_social=$datos[diagnostico_social],
+        diagnostico_preliminar=$datos[diagnostico_preliminar],
+        conclusiones=$datos[conclusiones],
+        enfermos=$datos[enfermos] 
+        WHERE numero=$datos[informe_social]"; // SENTENTCIA
+        if (mysqli_query($this->data_conexion,$sentencia))
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA ELIMINAR LOS DATOS DE LOS INGRESOS Y REGISTRAR LOS NUEVOS (ACTUALIZADOS).
+    public function eliminarGestionDinero($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "DELETE FROM t_gestion_dinero WHERE numero_informe=$datos[informe_social]"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 

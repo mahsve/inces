@@ -350,6 +350,9 @@ $(function () {
                         }
                     }
                     $('.trabajando').trigger('change');
+                    if (localStorage.getItem('responsable_apre')) 
+                        document.formulario.responsable_apre.value = localStorage.getItem('responsable_apre');
+
                     window.actualizar3 = false;
 
                     window.actualizar = true;
@@ -481,7 +484,7 @@ $(function () {
             contenido += '</select></td>';
 
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" id="ingresos_familiar'+cantidad+'" class="form-control form-control-sm text-right storageFamilia" style="width: 96px;" readonly="true"></td>';
-            contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input storageFamilia-radio" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label" for="responsable_apre_'+cantidad+'"></label></div></td>';
+            contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input localStorage-radio" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label" for="responsable_apre_'+cantidad+'"></label></div></td>';
             contenido += '<td class="py-1 px-0"><button type="button" class="btn btn-sm btn-danger delete-row"><i class="fas fa-times"></i></button></td>';
             contenido += '</tr>';
 
@@ -491,7 +494,7 @@ $(function () {
             $($('.delete-row')[$('.delete-row').length - 1]).click(eliminarFila);
 
             $('tr[data-posicion="'+cantidad+'"] .storageFamilia').change(localStorageFamiliares);
-            // $($('.storageFamilia-radio')[$('.storageFamilia-radio').length - 1]).click(localStorageFamiliaresR);
+            $( $('tr[data-posicion="'+cantidad+'"] .localStorage-radio') ).click(guardarLocalStorage);
 
             if (window.actualizar3 !== true) {
                 if(window.editar !== true){
@@ -674,9 +677,12 @@ $(function () {
                     cedula: dataListado.informes[posicion].cedula
                 },
                 success: function (resultados){
-                    // try {
+                    try {
                         let data = JSON.parse(resultados);
 
+                        window.informe_social = dataListado.informes[posicion].numero;
+                        window.nacionalidad = dataListado.informes[posicion].nacionalidad;
+                        window.cedula = dataListado.informes[posicion].cedula;
                         // PRIMERA PARTE.
                         $('#fecha').val(dataListado.informes[posicion].fecha);
                         $('#nacionalidad').val(dataListado.informes[posicion].nacionalidad);
@@ -692,7 +698,9 @@ $(function () {
                         $('#ocupacion').val(dataListado.informes[posicion].codigo_ocupacion);
                         document.formulario.estado_civil.value = dataListado.informes[posicion].estado_civil;
                         document.formulario.grado_instruccion.value = dataListado.informes[posicion].nivel_instruccion;
-                        $('.radio_educacion').trigger('click');
+                        if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
+                            $('#titulo').attr('disabled', false);
+
                         $('#titulo').val(dataListado.informes[posicion].titulo_acade);
                         $('#alguna_mision').val(dataListado.informes[posicion].mision_participado);
                         $('#telefono_1').val(dataListado.informes[posicion].telefono1);
@@ -736,9 +744,17 @@ $(function () {
                             $('#ocupacion_familiar'+(index+1)).val(data.familiares[index].codigo_ocupacion);
                             $('#trabaja_familiar'+(index+1)).val(data.familiares[index].trabaja);
                             $('#ingresos_familiar'+(index+1)).val(data.familiares[index].ingresos);
+                            if ($('#responsable_apre_'+(index+1)).val() == data.familiares[index].representante)
+                                $('#responsable_apre_'+(index+1)).prop('checked',true);
                         }
                         $('.calcular_edad').trigger('change');
                         $('.trabajando').trigger('change');
+                        // QUINTA PARTE.
+                        for (let i_dine in data.ingresos) {
+                            $('#'+data.ingresos[i_dine].descripcion).val(data.ingresos[i_dine].cantidad);
+                        }
+                        $('.i_ingresos').trigger('keyup');
+                        $('.i_egresos').trigger('keyup');
                         // SEXTA PARTE.
                         $('#condicion_vivienda').val(dataListado.informes[posicion].condicion_vivienda);
                         $('#caracteristicas_generales').val(dataListado.informes[posicion].caracteristicas_generales);
@@ -748,9 +764,9 @@ $(function () {
                         document.formulario.enfermos.value = dataListado.informes[posicion].enfermos;
 
                         $('#carga_espera').hide(400);
-                    // } catch (error) {
-                    //     console.log(resultados);
-                    // }
+                    } catch (error) {
+                        console.log(resultados);
+                    }
                 },
                 error: function (){
                     console.log('error');
@@ -775,14 +791,18 @@ $(function () {
         data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
         ///////////////////
         data.push({ name: 'enfermos', value: document.formulario.enfermos.value });
-
+        ///////////////////
+        data.push({ name: 'informe_social', value: window.informe_social });
+        data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
+        data.push({ name: 'cedula_v', value: window.cedula });
+        
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
             data: data,
             success: function (resultados) {
                 alert(resultados);
-                if (resultados == 'Registro exitoso'){
+                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
                     $('#show_table').trigger('click');
                     buscar_listado();
                 }

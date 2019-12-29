@@ -54,13 +54,17 @@ if ($_POST['opcion']){
             $objeto->nuevaTransaccion();
             if ($objeto->registrarDatosPersonales($data)) {
                 if ($objeto->registrarDatosVivienda($data)) {
-                    if ($id = $objeto->registrarFichaAprendiz($data)) {
-                        $error = 0;
+                    if ($id = $objeto->registrarInformeSocial($data)) {
+                        $errorF = 0;
                         if(isset($_POST['nombre_familiar'])){
                             for ($i=0; $i < count($_POST['nombre_familiar']); $i++) {
                                 $ingresos = 0;
                                 if (isset($_POST['ingresos_familiar'][$i]))
                                     $ingresos = "'".htmlspecialchars($_POST['ingresos_familiar'][$i])."'";
+
+                                $responsable = 0;
+                                if ($_POST['responsable_apre'] == ($i+1))
+                                    $responsable = $_POST['responsable_apre'];
                                 
                                 $data2 = [
                                     'id_ficha'              => $id,
@@ -71,15 +75,30 @@ if ($_POST['opcion']){
                                     'ocupacion_familiar'    => "'".htmlspecialchars($_POST['ocupacion_familiar'][$i])."'",
                                     'trabaja_familiar'      => "'".htmlspecialchars($_POST['trabaja_familiar'][$i])."'",
                                     'ingresos_familiar'     => $ingresos,
-                                    'responsable'           => 0
+                                    'responsable'           => $responsable
                                 ];
 
                                 if (!$objeto->registrarFamilares($data2))
-                                    $error++;
+                                    $errorF++;
                             }
                         }
 
-                        if ($error == 0) {
+                        $errorI = 0;
+                        for ($i2 = 0; $i2 < 10; $i2++) {
+                            $listaDinero = ['ingreso_pension', 'ingreso_seguro', 'ingreso_pension_otras', 'ingreso_sueldo', 'otros_ingresos',
+                            'egreso_servicios', 'egreso_alimentario', 'egreso_educacion', 'egreso_vivienda', 'otros_egresos'];
+                            
+                            $data3 = [
+                                'id_ficha'      => $id,
+                                'descripcion'   => "'".$listaDinero[$i2]."'",
+                                'cantidad'      => $data[$listaDinero[$i2]]
+                            ];
+
+                            if (!$objeto->registrarGestionDinero($data3))
+                                $errorI++;
+                        }
+
+                        if ($errorF == 0) {
                             $objeto->guardarTransaccion();
                             echo 'Registro exitoso';
                         } else {
@@ -125,10 +144,69 @@ if ($_POST['opcion']){
 
             $resultados = [];
             $objeto->conectar();
-            $resultados['vivienda'] = $objeto->consultarDatosVivienda($data);
-            $resultados['familiares'] = $objeto->consultarFamiliares($data);
+            $resultados['vivienda']     = $objeto->consultarDatosVivienda($data);
+            $resultados['familiares']   = $objeto->consultarFamiliares($data);
+            $resultados['ingresos']     = $objeto->consultarDinero($data);
             $objeto->desconectar();
             echo json_encode($resultados);
+            break;
+
+        case 'Modificar':
+            $data = [];
+            foreach ($_POST as $key => $value) {
+                if(!is_array($value)) {
+                    if ($value != '')
+                        $data[$key] = "'".htmlspecialchars($value)."'";
+                    else
+                        $data[$key] = 'NULL';
+
+                    if (!isset($_POST['titulo']))
+                        $data['titulo'] = 'NULL';
+                }
+            }
+
+            $objeto->conectar();
+            $objeto->nuevaTransaccion();
+            if ($objeto->modificarDatosPersonales($data)){
+                if ($objeto->modificarDatosVivienda($data)){
+                    if ($objeto->modificarInformeSocial($data)){
+                        $objeto->eliminarGestionDinero($data);
+
+                        $errorI = 0;
+                        for ($i2 = 0; $i2 < 10; $i2++) {
+                            $listaDinero = ['ingreso_pension', 'ingreso_seguro', 'ingreso_pension_otras', 'ingreso_sueldo', 'otros_ingresos',
+                            'egreso_servicios', 'egreso_alimentario', 'egreso_educacion', 'egreso_vivienda', 'otros_egresos'];
+                            
+                            $data3 = [
+                                'id_ficha'      => $data['informe_social'],
+                                'descripcion'   => "'".$listaDinero[$i2]."'",
+                                'cantidad'      => $data[$listaDinero[$i2]]
+                            ];
+
+                            if (!$objeto->registrarGestionDinero($data3))
+                                $errorI++;
+                        }
+
+                        if ($errorI == 0) {
+                            $objeto->guardarTransaccion();
+                            echo 'Modificacion exitosa';
+                        } else {
+                            $objeto->calcelarTransaccion();
+                            echo 'Modificación fallida';
+                        }
+                    } else {
+                        $objeto->calcelarTransaccion();
+                        echo 'Modificación fallida';
+                    }
+                } else {
+                    $objeto->calcelarTransaccion();
+                    echo 'Modificación fallida';
+                }
+            } else {
+                $objeto->calcelarTransaccion();
+                echo 'Modificación fallida';
+            }
+            $objeto->desconectar();
             break;
     }
 } else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
