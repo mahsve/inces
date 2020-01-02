@@ -1,69 +1,42 @@
-<?php
-include_once('models/m_oficio.php');
-$objeto = new model_oficio();
-$objeto->conectar();
-$oficios = $objeto->consultarOficios();
+<div id="info_table" style="">
+    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
+        <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
-$datos = ['vista' => $dataGET[0]];
-$permisos = $usuario->permisos($datos);
-$objeto->desconectar();
-?>
+        <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+    </div>
 
-<div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-    <h4 class="text-uppercase font-weight-normal mb-0"><?php echo $titulo; ?></h4>
-
-    <?php if ($permisos['registrar']) { ?>
-        <a href="gestion_aprendiz" class="btn btn-sm btn-info"><i class="fas fa-plus"></i><span class="ml-1">Inscribir nuevo</span></a>
-    <?php } ?>
+    <div class="table-responsive pb-2">
+        <table id="listado_aprendices" class="table table-borderless mb-0" style="min-width: 950px;">
+            <thead>
+                <tr class="text-white">
+                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="100">Cédula</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha Nac.</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 text-center" width="45">Edad</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="150">Oficio</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="80">Turno</th>
+                    <th class="bg-info rounded-right p-0 py-1" width="115"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<table id="listado" class="table table-bordered table-hover w-100">
-    <thead class="">
-        <tr class="text-capitalize">
-            <th width="80px" class="font-weight-normal p-2">Código</th>
-            <th class="font-weight-normal p-2">Nombre</th>
-            <th width="70px" class="font-weight-normal p-2">Estatus</th>
-            <?php if ($permisos['modificar'] OR $permisos['act_desc'] OR $permisos['eliminar']) { ?>
-                <th width="75px" class="font-weight-normal p-2"></th>
-            <?php } ?>
-        </tr>
-    </thead>
+<div id="gestion_form" style="display: none;">
+    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
+        <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
 
-    <tbody>
-        <?php
-        if ($oficios) {
-            foreach ($oficios AS $datos) {
-        ?>
-        <tr class="text-capitalize">
-            <td class="align-middle"><?php echo $datos['codigo']; ?></td>
-            <td class="align-middle"><?php echo $datos['nombre']; ?></td>
-            <td class="align-middle text-center">
-                <?php if ($datos['estatus'] == 'A') { ?>
-                    <span class="badge badge-success"><i class="fas fa-check"></i> Activo</span>
-                <?php } else { ?>
-                    <span class="badge badge-danger"><i class="fas fa-times"></i> Inactivo</span>
-                <?php } ?>
-            </td>
-            <?php if ($permisos['modificar'] OR $permisos['act_desc'] OR $permisos['eliminar']) { ?>
-            <td class="align-middle p-2">
-                <?php if ($permisos['modificar']) { ?>
-                    <a href="<?php echo 'gestion_aprendiz/'.$datos['codigo']; ?>" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
-                <?php } ?>
+        <button type="button" id="show_table" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
+    </div>
+</div>
 
-                <?php
-                if ($permisos['act_desc']) {
-                    if ($datos['estatus'] == 'A') { ?>
-                        <button class="btn btn-sm btn-danger cambiar_estatus" data-codigo="<?php echo $datos['codigo']; ?>" data-estatus="<?php echo $datos['estatus']; ?>"><i class="fas fa-retweet"></i></button>
-                    <?php } else { ?>
-                        <button class="btn btn-sm btn-success cambiar_estatus" data-codigo="<?php echo $datos['codigo']; ?>" data-estatus="<?php echo $datos['estatus']; ?>"><i class="fas fa-retweet "></i></button>
-                    <?php } 
-                } ?>
-            </td>
-            <?php } ?>
-        </tr>
-        <?php
-            }
-        }
-        ?>
-    </tbody>
-</table>
+<!-- PASAR DATOS DE PHP A JAVASCRIPT -->
+<script> let url = '<?php echo SERVERURL; ?>'; </script>
+<script src="<?php echo SERVERURL; ?>javascripts/aprendiz.js"></script>

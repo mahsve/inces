@@ -2,6 +2,28 @@
 .dropdown-item:active {
     background: none;
 }
+/* =============== ESTILOS PESTAÑAS NAVS ============== */
+.nav .nav-item a{
+    color: #17a2b8;
+    padding: .25rem .5rem;
+    margin: .125rem;
+}
+.nav .nav-item a.active{
+    background: #17a2b8;
+}
+.icon-tab {
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    background: white;
+    position: relative;
+    top: -1px;
+    border-radius: 50%;
+}
+/* ===============  ============== */
+
+
 .form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
 .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
     border-color: #17a2b8;

@@ -27,8 +27,6 @@
             </tbody>
         </table>
     </div>
-
-    
 </div>
 
 <div id="gestion_form" style="display: none;">
