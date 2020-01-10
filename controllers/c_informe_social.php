@@ -17,7 +17,7 @@ if ($_POST['opcion']){
             $resultados['estado'] = $objeto->consultarEstados();
             $objeto->desconectar();
             echo json_encode($resultados);
-            break;
+        break;
         
         case 'Traer divisiones':
             $resultados = [];
@@ -26,7 +26,7 @@ if ($_POST['opcion']){
             $resultados['municipio'] = $objeto->consultarMunicipios($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
-            break;
+        break;
 
         case 'Traer parroquias':
             $resultados = [];
@@ -34,7 +34,7 @@ if ($_POST['opcion']){
             $resultados['parroquia'] = $objeto->consultarParroquias($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
-            break;
+        break;
 
         case 'Registrar':
             $data = [];
@@ -118,15 +118,16 @@ if ($_POST['opcion']){
                 echo 'Registro fallido';
             }
             $objeto->desconectar();
-            break;
+        break;
 
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
-            $resultados['informes'] = $objeto->consultarInformeSocial();
+            $resultados['informes'] = $objeto->consultarInformeSocial($_POST);
+            $resultados['totla']    = $objeto->consultarInformeSocialTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
-            break;
+        break;
 
         case 'Traer datos 2':
             $data = [];
@@ -149,7 +150,7 @@ if ($_POST['opcion']){
             $resultados['ingresos']     = $objeto->consultarDinero($data);
             $objeto->desconectar();
             echo json_encode($resultados);
-            break;
+        break;
 
         case 'Modificar':
             $data = [];
@@ -207,7 +208,7 @@ if ($_POST['opcion']){
                 echo 'Modificación fallida';
             }
             $objeto->desconectar();
-            break;
+        break;
     }
 } else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.

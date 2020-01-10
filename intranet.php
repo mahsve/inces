@@ -46,6 +46,7 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
     <script src="<?php echo SERVERURL; ?>javascripts/bootstrap/bootstrap.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/sweetalert/sweetalert.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/datatable/datatables.min.js"></script>
+    <script src="<?php echo SERVERURL; ?>javascripts/definir-tabla.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/generales.js"></script>
 </head>
 

@@ -1,4 +1,13 @@
 $(function () {
+    /////////////////////////////////////////////////////////////////////
+    // DATOS DE LA TABLA Y PAGINACION 
+    let numeroDeLaPagina    = 1;
+    let paginasTotales      = 1;
+    $('#cantidad_a_buscar').change(buscar_listado);
+    $('#buscar_por').change(buscar_listado);
+    $('#campo_ordenar').change(buscar_listado);
+    $('#buscar_estatus').change(buscar_listado);
+    /////////////////////////////////////////////////////////////////////
     let fecha = '';             // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
     let dataOcupacion = false;  // VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
     let dataParentesco = ['Padre','Madre','Hermano','Hermana','Abuelo','Abuela','Tío','Tía','Primo','Prima','Sobrino','Sobrina'];
@@ -7,6 +16,7 @@ $(function () {
     let maxFamiliares = 10;     // MAXIMO DE FAMILIARES EN LA TABLA DE FAMILIARES DEL APRENDIZ.
     let dataListado = [];       // VARIABLE PARAGUARDAR LOS RESULTADOS DE LOS APRENDICES CONSULTADOS.
     let dataFamiliares = [];    // 
+    /////////////////////////////////////////////////////////////////////
 
     function llamarDatos()
     {
@@ -49,15 +59,18 @@ $(function () {
             }
         });
     }
-    llamarDatos();
     function buscar_listado(){
         $('#listado_aprendices tbody').html('<tr><td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
 
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
-            data: { opcion: 'Consultar' },
-            success: function (resultados){
+            data: {
+                opcion  : 'Consultar',
+                numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
+                cantidad: parseInt($('#cantidad_a_buscar').val()),
+                estatus : $('#buscar_estatus').val()
+            }, success: function (resultados){
                 try {
                     $('#listado_aprendices tbody').empty();
                     dataListado = JSON.parse(resultados);
@@ -121,8 +134,7 @@ $(function () {
                 } catch (error) {
                     console.log(resultados);
                 }
-            },
-            error: function (){
+            }, error: function (){
                 console.log('error');
             }
         });
@@ -823,4 +835,7 @@ $(function () {
             localStorage.setItem($(this).attr('name'), $(this).val());
         }
     }
+
+    /// AUTOLLAMADOS.
+    llamarDatos();
 });

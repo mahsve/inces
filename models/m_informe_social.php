@@ -172,10 +172,43 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS APRENDICES REGISTRADOS Y MOSTRARLOS EN UNA LISTA.
-    public function consultarInformeSocial()
+    public function consultarInformeSocial($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT t_informe_social.*, t_datos_personales.*, t_oficio.nombre AS oficio, t_ciudad.codigo_estado, t_parroquia.codigo_municipio FROM t_informe_social INNER JOIN t_datos_personales ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula INNER JOIN t_oficio ON t_informe_social.codigo_oficio = t_oficio.codigo INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo ORDER BY t_informe_social.numero ASC"; // SENTENTCIA
+        $sentencia = "SELECT
+            t_informe_social.*,
+            t_datos_personales.*,
+            t_oficio.nombre AS oficio,
+            t_ciudad.codigo_estado,
+            t_parroquia.codigo_municipio
+            FROM t_informe_social
+            INNER JOIN t_datos_personales ON
+            t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            INNER JOIN t_oficio ON
+            t_informe_social.codigo_oficio = t_oficio.codigo
+            INNER JOIN t_ciudad ON
+            t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia ON
+            t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            WHERE t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
+            ORDER BY t_informe_social.numero ASC
+            LIMIT ".$datos['numero'].", ".$datos['cantidad']."
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function consultarInformeSocialTotal($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT *
+            FROM t_informe_social
+            WHERE t_informe_social.estatus LIKE '%".$datos['estatus']."%'
+        "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
