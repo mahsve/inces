@@ -123,8 +123,30 @@ if ($_POST['opcion']){
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
-            $resultados['informes'] = $objeto->consultarInformeSocial($_POST);
-            $resultados['totla']    = $objeto->consultarInformeSocialTotal($_POST);
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $datosLimpios = [];
+            foreach ($_POST as $posicion => $valor) {
+                $datosLimpios[$posicion] = htmlspecialchars($valor);
+            }
+            /////////////////// ESTABLECER ORDER BY ////////////////////
+            $datosLimpios['ordenar_tipo'] = 'ASC';
+            if ($_POST['tipo_ord'] == 1)
+                $datosLimpios['ordenar_tipo'] = 'ASC';
+            else if ($_POST['tipo_ord'] == 2)
+                $datosLimpios['ordenar_tipo'] = 'DESC';
+            ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
+            $datosLimpios['ordenar_por'] = 't_informe_social.numero '.$datosLimpios['ordenar_tipo'];
+            if ($_POST['ordenar'] == 1)
+                $datosLimpios['ordenar_por'] = 't_informe_social.numero '.$datosLimpios['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 2)
+                $datosLimpios['ordenar_por'] = 't_datos_personales.nacionalidad DESC, t_datos_personales.cedula '.$datosLimpios['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 3)
+                $datosLimpios['ordenar_por'] = 't_informe_social.fecha '.$datosLimpios['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 4)
+                $datosLimpios['ordenar_por'] = 'concat (t_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido1) '.$datosLimpios['ordenar_tipo'];
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['informes'] = $objeto->consultarInformeSocial($datosLimpios);
+            // $resultados['total']    = $objeto->consultarInformeSocialTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;

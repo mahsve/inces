@@ -191,15 +191,19 @@ class model_informeSocial extends conexion
             t_datos_personales.codigo_ciudad = t_ciudad.codigo
             LEFT JOIN t_parroquia ON
             t_datos_personales.codigo_parroquia = t_parroquia.codigo
-            WHERE t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
-            ORDER BY t_informe_social.numero ASC
+            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%')
+            AND t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
+            ORDER BY ".$datos['ordenar_por']." 
             LIMIT ".$datos['numero'].", ".$datos['cantidad']."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
-		}
+        }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 

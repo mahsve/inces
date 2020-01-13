@@ -4,63 +4,31 @@ $(function () {
     let numeroDeLaPagina    = 1;
     let paginasTotales      = 1;
     $('#cantidad_a_buscar').change(buscar_listado);
-    $('#buscar_por').change(buscar_listado);
+    $('#ordenar_por').change(buscar_listado);
     $('#campo_ordenar').change(buscar_listado);
+    $('#campo_busqueda').keydown(function (e) {
+        if (e.keyCode == 13) {
+            buscar_listado();
+            window.actualizar_busqueda = false;
+        } else
+            window.actualizar_busqueda = true;
+    });
+    $('#campo_busqueda').blur(function () {
+        if (window.actualizar_busqueda)
+            buscar_listado();
+    });
     $('#buscar_estatus').change(buscar_listado);
     /////////////////////////////////////////////////////////////////////
-    let fecha = '';             // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
-    let dataOcupacion = false;  // VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
-    let dataParentesco = ['Padre','Madre','Hermano','Hermana','Abuelo','Abuela','Tío','Tía','Primo','Prima','Sobrino','Sobrina'];
-    let dataTurno = {'M': 'Matutino', 'V': 'Vespertino'};
-    let tipoEnvio = '';         // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
-    let maxFamiliares = 10;     // MAXIMO DE FAMILIARES EN LA TABLA DE FAMILIARES DEL APRENDIZ.
-    let dataListado = [];       // VARIABLE PARAGUARDAR LOS RESULTADOS DE LOS APRENDICES CONSULTADOS.
-    let dataFamiliares = [];    // 
+    let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
+    let dataOcupacion   = false;// VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
+    let dataParentesco  = ['Padre','Madre','Hermano','Hermana','Abuelo','Abuela','Tío','Tía','Primo','Prima','Sobrino','Sobrina'];
+    let dataTurno       = {'M': 'Matutino', 'V': 'Vespertino'};
+    let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
+    let maxFamiliares   = 10;   // MAXIMO DE FAMILIARES EN LA TABLA DE FAMILIARES DEL APRENDIZ.
+    let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS DE LOS APRENDICES CONSULTADOS.
     /////////////////////////////////////////////////////////////////////
-
-    function llamarDatos()
-    {
-        $.ajax({
-            url : url+'controllers/c_informe_social.php',
-            type: 'POST',
-            data: { opcion: 'Traer datos' },
-            success: function (resultados){
-                try {
-                    let data = JSON.parse(resultados);
-                    fecha = data.fecha;
-                    if (data.ocupacion) {
-                        for (let i in data.ocupacion) {
-                            $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
-                        }
-                        dataOcupacion = data.ocupacion;
-                    } else {
-                        $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
-                    }
-                    if (data.oficio) {
-                        for (let i in data.oficio) {
-                            $('#oficio').append('<option value="'+data.oficio[i].codigo+'">'+data.oficio[i].nombre+'</option>');
-                        }
-                    } else {
-                        $('#oficio').html('<option value="">No hay oficios</option>');
-                    }
-                    if (data.estado) {
-                        for (let i in data.estado) {
-                            $('#estado').append('<option value="'+data.estado[i].codigo+'">'+data.estado[i].nombre+'</option>');
-                        }
-                    } else {
-                        $('#estado').html('<option value="">No hay estados</option>');
-                    }
-
-                    buscar_listado();
-                } catch (error) { }
-            },
-            error: function (){
-                console.log('error');
-            }
-        });
-    }
     function buscar_listado(){
-        $('#listado_aprendices tbody').html('<tr><td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
+        $('#listado_aprendices tbody').html('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
 
         $.ajax({
             url : url+'controllers/c_informe_social.php',
@@ -69,6 +37,9 @@ $(function () {
                 opcion  : 'Consultar',
                 numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
                 cantidad: parseInt($('#cantidad_a_buscar').val()),
+                ordenar : parseInt($('#ordenar_por').val()),
+                tipo_ord: parseInt($('#campo_ordenar').val()),
+                campo   : $('#campo_busqueda').val(),
                 estatus : $('#buscar_estatus').val()
             }, success: function (resultados){
                 try {
@@ -121,26 +92,31 @@ $(function () {
                             contenido += '<td class="text-center py-2 px-1">'+edad+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.informes[i].oficio+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.informes[i].turno]+'</td>';
+                            contenido += '<td class="py-2 px-1">Estatus</td>';
                             contenido += '<td class="py-1 px-1">';
                             contenido += '<button type="button" class="btn btn-sm btn-info editar_informe mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                            contenido += '<button type="button" class="btn btn-sm btn-success mr-1"><i class="fas fa-check"></i></button>';
-                            contenido += '<button type="button" class="btn btn-sm btn-danger"><i class="fas fa-ban"></i></button></td></tr>';
+                            contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
+                            contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
+                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
+                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
+                            contenido += '</div></div></td></tr>';
                             $('#listado_aprendices tbody').append(contenido);
                         }
                         $('.editar_informe').click(editarInforme);
                     } else {
-                        $('#listado_aprendices tbody').append('<tr><td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay informes registrados</td></tr>');
+                        $('#listado_aprendices tbody').append('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay informes registrados</td></tr>');
                     }
                 } catch (error) {
                     console.log(resultados);
                 }
+                window.actualizar_busqueda = false;
             }, error: function (){
                 console.log('error');
-            }
+            }, timer: 15000
         });
     }
-
-    ////// FUNCIONES DE ALGUNOS CAMPOS.
+    /////////////////////////////////////////////////////////////////////
     $('#fecha_n').change(function (){
         let year    = $(this).val().substr(0,4);
         let month   = $(this).val().substr(5,2);
@@ -323,8 +299,7 @@ $(function () {
         if(window.editar !== true)
             localStorage.setItem('total_egresos', $('#total_egresos').val());
     });
-
-    // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
+    /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function (){
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
@@ -378,16 +353,13 @@ $(function () {
             }, 500);
         }
     });
-
-    // MOSTRAR LA TABLA CON TODA LA LISTA DE LOS APRENDICES REGISTRADOS.
     $('#show_table').click(function (){
         $('#info_table').show(400);
         $('#gestion_form').hide(400);
         /////////////////////
         window.editar = false;
         /////////////////////
-        while (vista != 1)
-            $('#retroceder_form').trigger('click');
+        $('#pills-datos-ciudadano-tab').tab('show');
         /////////////////////
         localStorage.removeItem('confirm_data');
         $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
@@ -397,64 +369,8 @@ $(function () {
             localStorage.removeItem('filaFamilia'+index);
         }
     });
-
-    let vista = 1;
-    // RETROCEDER LA VISTA DEL FORMULARIO PARA REGISTRAR NUEVO APRENDIZ.
-    $('#retroceder_form').click(function (){
-        $('#avanzar_form').attr('disabled',false);
-
-        if (vista == 2){
-            $('#datos_extras').hide(300);
-            $('#datos_aprendiz').show(300);
-        } else if (vista == 3) {
-            $('#datos_vivienda').hide(300);
-            $('#datos_extras').show(300);
-        } else if (vista == 4) {
-            $('#datos_familiares').hide(300);
-            $('#datos_vivienda').show(300);
-        } else if (vista == 5){
-            $('#datos_familiares').show(300);
-            $('#datos_ingresos').hide(300);
-        } else if (vista == 6){
-            $('#datos_ingresos').show(300);
-            $('#datos_trabajadora_social').hide(300);
-        }
-
-        if (vista != 1)
-            vista--;
-
-        if (vista == 1)
-            $('#retroceder_form').attr('disabled',true);
-    });
-
-    // AVANZAR LA VISTA DEL FORMULARIO PARA REGISTRAR NUEVO APRENDIZ.
-    $('#avanzar_form').click(function avanzarForm (){
-        $('#retroceder_form').attr('disabled', false);
-
-        if (vista == 1){
-            $('#datos_aprendiz').hide(300);
-            $('#datos_extras').show(300);
-        } else if (vista == 2){
-            $('#datos_extras').hide(300);
-            $('#datos_vivienda').show(300);
-        } else if (vista == 3){
-            $('#datos_vivienda').hide(300);
-            $('#datos_familiares').show(300);
-        } else if (vista == 4){
-            $('#datos_familiares').hide(300);
-            $('#datos_ingresos').show(300);
-        } else if (vista == 5){
-            $('#datos_ingresos').hide(300);
-            $('#datos_trabajadora_social').show(300);
-        }
-        
-        if (vista != 6)
-            vista++;
-        
-        if (vista == 6)
-            $('#avanzar_form').attr('disabled', true);
-    });
-
+    
+    /////////////////////////////////////////////////////////////////////
     // FUNCION PARA AGREGAR NUEVA FILAS EN LA TABLA DE FAMILIARSE DEL APRENDIZ.
     $('#agregar_familiar').click(function (){
         if (window.tabla) {
@@ -518,7 +434,6 @@ $(function () {
             alert('Solo es permitido un maximo de 10 filas.');
         }
     });
-
     // FUNCION PARA GUARDAR LOS DATOS DE LOS FAMILIARES EN EL LOCALSTORAGE
     function localStorageFamiliares() {
         if(window.editar !== true) {
@@ -531,7 +446,6 @@ $(function () {
             localStorage.setItem('filaFamilia'+position, JSON.stringify(arregloFamilia));
         }
     }
-
     // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DE LOS FAMILIARES.
     function calcularEdadF(){
         let idEdad  = '#edad_familiar' + $(this).closest('tr').attr('data-posicion');
@@ -559,7 +473,6 @@ $(function () {
         }
         $(idEdad).val(edad);
     }
-
     // ACTIVAR EL CAMPO DE INGRESOS EN LA TABLA FAMILIAR SI EL MIEMBRO ESTA TRABAJANDO.
     function habilitarIngresos(){
         let posicion = $(this).closest('tr').attr('data-posicion');
@@ -579,7 +492,6 @@ $(function () {
             }
         }
     }
-
     // FUNCION PARA ELIMINAR FILAS QUE YA NO SON NECESARIAS.
     function eliminarFila(){
         let position = $(this).closest('tr').attr('data-posicion');
@@ -628,7 +540,6 @@ $(function () {
             $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
         }
     };
-
     // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
     function limpiarFormulario(){
         document.formulario.reset();
@@ -646,7 +557,9 @@ $(function () {
         $('.campos_ingresos').val(0);
         $('.campos_ingresos_0').val(0);
     }
+    /////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarInforme() {
         let posicion = $(this).attr('data-posicion');
@@ -786,7 +699,6 @@ $(function () {
             });
         }
     }
-
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
         e.preventDefault();
@@ -824,7 +736,6 @@ $(function () {
             }
         });
     });
-
     // FUNCION PARA GUARDAR LOS DATOS DEL APRENDIZ EN LOCALSTORAGE.
     $('.localStorage').keyup(guardarLocalStorage);
     $('.localStorage').change(guardarLocalStorage);
@@ -835,7 +746,50 @@ $(function () {
             localStorage.setItem($(this).attr('name'), $(this).val());
         }
     }
+    /////////////////////////////////////////////////////////////////////
 
-    /// AUTOLLAMADOS.
+    /////////////////////////////////////////////////////////////////////
+    // AUTOLLAMADOS.
+    function llamarDatos()
+    {
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: { opcion: 'Traer datos' },
+            success: function (resultados){
+                try {
+                    let data = JSON.parse(resultados);
+                    fecha = data.fecha;
+                    if (data.ocupacion) {
+                        for (let i in data.ocupacion) {
+                            $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
+                        }
+                        dataOcupacion = data.ocupacion;
+                    } else {
+                        $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
+                    }
+                    if (data.oficio) {
+                        for (let i in data.oficio) {
+                            $('#oficio').append('<option value="'+data.oficio[i].codigo+'">'+data.oficio[i].nombre+'</option>');
+                        }
+                    } else {
+                        $('#oficio').html('<option value="">No hay oficios</option>');
+                    }
+                    if (data.estado) {
+                        for (let i in data.estado) {
+                            $('#estado').append('<option value="'+data.estado[i].codigo+'">'+data.estado[i].nombre+'</option>');
+                        }
+                    } else {
+                        $('#estado').html('<option value="">No hay estados</option>');
+                    }
+
+                    buscar_listado();
+                } catch (error) { }
+            },
+            error: function (){
+                console.log('error');
+            }
+        });
+    }
     llamarDatos();
 });
