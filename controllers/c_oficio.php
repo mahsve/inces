@@ -7,82 +7,88 @@ if ($_POST['opcion'])
     
     switch ($_POST['opcion']) {
         case 'Registrar';
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarOficio($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            $resultado = $objeto->registrarOficio($data);
+            if ($resultado) {
+                echo 'Registro exitoso';
+            } else {
+                echo 'Registro fallido';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_oficio');
-            break;
+        break;
+
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $datosLimpios = [];
+            foreach ($_POST as $posicion => $valor) {
+                $datosLimpios[$posicion] = htmlspecialchars($valor);
+            }
+            /////////////////// ESTABLECER ORDER BY ////////////////////
+            $datosLimpios['ordenar_tipo'] = 'ASC';
+            if ($_POST['tipo_ord'] == 1)
+                $datosLimpios['ordenar_tipo'] = 'ASC';
+            else if ($_POST['tipo_ord'] == 2)
+                $datosLimpios['ordenar_tipo'] = 'DESC';
+            ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
+            $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            if ($_POST['ordenar'] == 1)
+                $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 2)
+                $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['resultados'] = $objeto->consultarOficios($datosLimpios);
+            $resultados['total']    = $objeto->consultarOficiosTotal($datosLimpios);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
 
         case 'Modificar';
-            $datos = [
-                'codigo2'   => htmlspecialchars($_POST['codigo2']),
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarOficio($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
+            $resultado = $objeto->modificarOficio($data);
+            if ($resultado) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/oficio');
-            break;
+        break;
 
         case 'Estatus':
-            if ($_POST['estatus'] == 'A')
-                $estatus = 'I';
-            else
-                $estatus = 'A';
-
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'estatus'   => htmlspecialchars($estatus)
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->estatusOficio($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Estatus actualizado.';
+            $resultado = $objeto->estatusOficio($data);
+            if ($resultado) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Error al modificar el estatus.';
-            }
-
             $objeto->desconectar();
-            break;
+        break;
     }
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.

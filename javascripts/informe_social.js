@@ -1,13 +1,14 @@
 $(function () {
     /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // DATOS DE LA TABLA Y PAGINACION 
     let numeroDeLaPagina    = 1;
-    let paginasTotales      = 1;
-    $('#cantidad_a_buscar').change(buscar_listado);
-    $('#ordenar_por').change(buscar_listado);
-    $('#campo_ordenar').change(buscar_listado);
+    $('#cantidad_a_buscar').change(restablecerN);
+    $('#ordenar_por').change(restablecerN);
+    $('#campo_ordenar').change(restablecerN);
     $('#campo_busqueda').keydown(function (e) {
         if (e.keyCode == 13) {
+            numeroDeLaPagina = 1;
             buscar_listado();
             window.actualizar_busqueda = false;
         } else
@@ -17,7 +18,7 @@ $(function () {
         if (window.actualizar_busqueda)
             buscar_listado();
     });
-    $('#buscar_estatus').change(buscar_listado);
+    $('#buscar_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
     let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
     let dataOcupacion   = false;// VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
@@ -25,11 +26,15 @@ $(function () {
     let dataTurno       = {'M': 'Matutino', 'V': 'Vespertino'};
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
     let maxFamiliares   = 10;   // MAXIMO DE FAMILIARES EN LA TABLA DE FAMILIARES DEL APRENDIZ.
-    let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS DE LOS APRENDICES CONSULTADOS.
+    let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
     /////////////////////////////////////////////////////////////////////
+    function restablecerN () {
+        numeroDeLaPagina = 1;
+        buscar_listado();
+    }
     function buscar_listado(){
         $('#listado_aprendices tbody').html('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
-
+        $("#paginacion").html('<li class="page-item"><a class="page-link text-info"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</a></li>');
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
@@ -45,30 +50,30 @@ $(function () {
                 try {
                     $('#listado_aprendices tbody').empty();
                     dataListado = JSON.parse(resultados);
-                    if (dataListado.informes) {
-                        for (var i in dataListado.informes) {
+                    if (dataListado.resultados) {
+                        for (var i in dataListado.resultados) {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+dataListado.informes[i].numero+'</td>';
+                            contenido += '<td class="text-right py-2 px-1">'+dataListado.resultados[i].numero+'</td>';
 
-                            let yearR   = dataListado.informes[i].fecha.substr(0,4);
-                            let monthR  = dataListado.informes[i].fecha.substr(5,2);
-                            let dayR    = dataListado.informes[i].fecha.substr(8,2);
+                            let yearR   = dataListado.resultados[i].fecha.substr(0,4);
+                            let monthR  = dataListado.resultados[i].fecha.substr(5,2);
+                            let dayR    = dataListado.resultados[i].fecha.substr(8,2);
 
                             contenido += '<td class="py-2 px-1">'+dayR+'-'+monthR+'-'+yearR+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.informes[i].nacionalidad+'-'+dataListado.informes[i].cedula+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
                             
-                            let nombre_completo = dataListado.informes[i].nombre1;
-                            if (dataListado.informes[i].nombre2 != null)
-                                nombre_completo += ' '+dataListado.informes[i].nombre2.substr(0,1)+'.';
-                            nombre_completo += ' '+dataListado.informes[i].apellido1;
-                            if (dataListado.informes[i].apellido2 != null)
-                                nombre_completo += ' '+dataListado.informes[i].apellido2.substr(0,1)+'.';
+                            let nombre_completo = dataListado.resultados[i].nombre1;
+                            if (dataListado.resultados[i].nombre2 != null)
+                                nombre_completo += ' '+dataListado.resultados[i].nombre2.substr(0,1)+'.';
+                            nombre_completo += ' '+dataListado.resultados[i].apellido1;
+                            if (dataListado.resultados[i].apellido2 != null)
+                                nombre_completo += ' '+dataListado.resultados[i].apellido2.substr(0,1)+'.';
                             contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
 
-                            let year    = dataListado.informes[i].fecha_n.substr(0,4);
-                            let month   = dataListado.informes[i].fecha_n.substr(5,2);
-                            let day     = dataListado.informes[i].fecha_n.substr(8,2);
+                            let year    = dataListado.resultados[i].fecha_n.substr(0,4);
+                            let month   = dataListado.resultados[i].fecha_n.substr(5,2);
+                            let day     = dataListado.resultados[i].fecha_n.substr(8,2);
                             let yearA   = fecha.substr(0,4);
                             let monthA  = fecha.substr(5,2);
                             let dayA    = fecha.substr(8,2);
@@ -88,25 +93,38 @@ $(function () {
                                 }
                             }
 
+                            let estatus = '';
+                            if (dataListado.resultados[i].estatus == 'E') {
+                                estatus = '<span class="badge badge-info"><i class="fas fa-clock mr-1"></i>En espera</span>';
+                            } else if (dataListado.resultados[i].estatus == 'A') {
+                                estatus = '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Aceptado</span>';
+                            } else if (dataListado.resultados[i].estatus == 'R') {
+                                estatus = '<span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Rechazado</span>';
+                            }
+
                             contenido += '<td class="text-center py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
                             contenido += '<td class="text-center py-2 px-1">'+edad+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.informes[i].oficio+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.informes[i].turno]+'</td>';
-                            contenido += '<td class="py-2 px-1">Estatus</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].oficio+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
+                            contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
                             contenido += '<td class="py-1 px-1">';
-                            contenido += '<button type="button" class="btn btn-sm btn-info editar_informe mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
+                            contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
                             contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
                             contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
                             contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
                             contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
-                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
+                            contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/r_informe_social?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
                             contenido += '</div></div></td></tr>';
                             $('#listado_aprendices tbody').append(contenido);
                         }
-                        $('.editar_informe').click(editarInforme);
+                        $('.editar_registro').click(editarInforme);
                     } else {
                         $('#listado_aprendices tbody').append('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay informes registrados</td></tr>');
                     }
+
+                    $('#total_registros').html(dataListado.total);
+                    establecer_tabla(numeroDeLaPagina, parseInt($('#cantidad_a_buscar').val()), dataListado.total);
+                    $('.mover').click(cambiarPagina);
                 } catch (error) {
                     console.log(resultados);
                 }
@@ -116,6 +134,17 @@ $(function () {
             }, timer: 15000
         });
     }
+    function cambiarPagina(e) {
+        e.preventDefault();
+        let numero = $(this).attr('data-pagina');
+        numeroDeLaPagina = parseInt(numero);
+        buscar_listado();
+    }
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     $('#fecha_n').change(function (){
         let year    = $(this).val().substr(0,4);
@@ -201,8 +230,8 @@ $(function () {
                                 municipioValor = localStorage.getItem('municipio');
                                 window.actualizar2 = true;
                             } else {
-                                ciudadValor = dataListado.informes[window.posicion].codigo_ciudad;
-                                municipioValor = dataListado.informes[window.posicion].codigo_municipio;
+                                ciudadValor = dataListado.resultados[window.posicion].codigo_ciudad;
+                                municipioValor = dataListado.resultados[window.posicion].codigo_municipio;
                                 window.selectMunicipio = true;
                             }
 
@@ -254,7 +283,7 @@ $(function () {
                             if(window.editar !== true) {
                                 parroquiValor = localStorage.getItem('parroquia')
                             } else {
-                                parroquiValor = dataListado.informes[window.posicion].codigo_parroquia;
+                                parroquiValor = dataListado.resultados[window.posicion].codigo_parroquia;
                             }
                             $('#parroquia').val(parroquiValor);
                         }
@@ -369,7 +398,11 @@ $(function () {
             localStorage.removeItem('filaFamilia'+index);
         }
     });
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     
+
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA AGREGAR NUEVA FILAS EN LA TABLA DE FAMILIARSE DEL APRENDIZ.
     $('#agregar_familiar').click(function (){
@@ -540,25 +573,11 @@ $(function () {
             $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
         }
     };
-    // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
-    function limpiarFormulario(){
-        document.formulario.reset();
-        $('#fecha').val(fecha);
-        window.tabla = true;
-        $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
-        //////////
-        $('#edad').val(0);
-        $('#titulo').attr('disabled', true);
-        //////////
-        $('#ciudad').html('<option value="">Elija un estado</option>');
-        $('#municipio').html('<option value="">Elija un estado</option>');
-        $('#parroquia').html('<option value="">Elija un municipio</option>');
-        //////////
-        $('.campos_ingresos').val(0);
-        $('.campos_ingresos_0').val(0);
-    }
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
+
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarInforme() {
@@ -596,49 +615,49 @@ $(function () {
                 url : url+'controllers/c_informe_social.php',
                 type: 'POST',
                 data: {
-                    opcion: 'Traer datos 2',
-                    informe: dataListado.informes[posicion].numero,
-                    nacionalidad: dataListado.informes[posicion].nacionalidad,
-                    cedula: dataListado.informes[posicion].cedula
+                    opcion: 'Consultar determinado',
+                    informe: dataListado.resultados[posicion].numero,
+                    nacionalidad: dataListado.resultados[posicion].nacionalidad,
+                    cedula: dataListado.resultados[posicion].cedula
                 },
                 success: function (resultados){
                     try {
                         let data = JSON.parse(resultados);
 
-                        window.informe_social = dataListado.informes[posicion].numero;
-                        window.nacionalidad = dataListado.informes[posicion].nacionalidad;
-                        window.cedula = dataListado.informes[posicion].cedula;
+                        window.informe_social = dataListado.resultados[posicion].numero;
+                        window.nacionalidad = dataListado.resultados[posicion].nacionalidad;
+                        window.cedula = dataListado.resultados[posicion].cedula;
                         // PRIMERA PARTE.
-                        $('#fecha').val(dataListado.informes[posicion].fecha);
-                        $('#nacionalidad').val(dataListado.informes[posicion].nacionalidad);
-                        $('#cedula').val(dataListado.informes[posicion].cedula);
-                        $('#nombre_1').val(dataListado.informes[posicion].nombre1);
-                        $('#nombre_2').val(dataListado.informes[posicion].nombre2);
-                        $('#apellido_1').val(dataListado.informes[posicion].apellido1);
-                        $('#apellido_2').val(dataListado.informes[posicion].apellido2);
-                        $('#sexo').val(dataListado.informes[posicion].sexo);
-                        $('#fecha_n').val(dataListado.informes[posicion].fecha_n);
+                        $('#fecha').val(dataListado.resultados[posicion].fecha);
+                        $('#nacionalidad').val(dataListado.resultados[posicion].nacionalidad);
+                        $('#cedula').val(dataListado.resultados[posicion].cedula);
+                        $('#nombre_1').val(dataListado.resultados[posicion].nombre1);
+                        $('#nombre_2').val(dataListado.resultados[posicion].nombre2);
+                        $('#apellido_1').val(dataListado.resultados[posicion].apellido1);
+                        $('#apellido_2').val(dataListado.resultados[posicion].apellido2);
+                        $('#sexo').val(dataListado.resultados[posicion].sexo);
+                        $('#fecha_n').val(dataListado.resultados[posicion].fecha_n);
                         $('#fecha_n').trigger('change');
-                        $('#lugar_n').val(dataListado.informes[posicion].lugar_n);
-                        $('#ocupacion').val(dataListado.informes[posicion].codigo_ocupacion);
-                        document.formulario.estado_civil.value = dataListado.informes[posicion].estado_civil;
-                        document.formulario.grado_instruccion.value = dataListado.informes[posicion].nivel_instruccion;
+                        $('#lugar_n').val(dataListado.resultados[posicion].lugar_n);
+                        $('#ocupacion').val(dataListado.resultados[posicion].codigo_ocupacion);
+                        document.formulario.estado_civil.value = dataListado.resultados[posicion].estado_civil;
+                        document.formulario.grado_instruccion.value = dataListado.resultados[posicion].nivel_instruccion;
                         if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
                             $('#titulo').attr('disabled', false);
 
-                        $('#titulo').val(dataListado.informes[posicion].titulo_acade);
-                        $('#alguna_mision').val(dataListado.informes[posicion].mision_participado);
-                        $('#telefono_1').val(dataListado.informes[posicion].telefono1);
-                        $('#telefono_2').val(dataListado.informes[posicion].telefono2);
-                        $('#correo').val(dataListado.informes[posicion].correo);
-                        $('#oficio').val(dataListado.informes[posicion].codigo_oficio);
-                        $('#turno').val(dataListado.informes[posicion].turno);
+                        $('#titulo').val(dataListado.resultados[posicion].titulo_acade);
+                        $('#alguna_mision').val(dataListado.resultados[posicion].mision_participado);
+                        $('#telefono_1').val(dataListado.resultados[posicion].telefono1);
+                        $('#telefono_2').val(dataListado.resultados[posicion].telefono2);
+                        $('#correo').val(dataListado.resultados[posicion].correo);
+                        $('#oficio').val(dataListado.resultados[posicion].codigo_oficio);
+                        $('#turno').val(dataListado.resultados[posicion].turno);
                         // SEGUNDA PARTE.
-                        $('#estado').val(dataListado.informes[posicion].codigo_estado);
+                        $('#estado').val(dataListado.resultados[posicion].codigo_estado);
                         window.selectCiudad = true;
                         $('#estado').trigger('change');
                         $('#area').val(data.vivienda.tipo_area);
-                        $('#direccion').val(dataListado.informes[posicion].direccion);
+                        $('#direccion').val(dataListado.resultados[posicion].direccion);
                         $('#punto_referencia').val(data.vivienda.punto_referencia);
                         // TERCERA PARTE.
                         document.formulario.tipo_vivienda.value = data.vivienda.tipo_vivienda;
@@ -681,12 +700,12 @@ $(function () {
                         $('.i_ingresos').trigger('keyup');
                         $('.i_egresos').trigger('keyup');
                         // SEXTA PARTE.
-                        $('#condicion_vivienda').val(dataListado.informes[posicion].condicion_vivienda);
-                        $('#caracteristicas_generales').val(dataListado.informes[posicion].caracteristicas_generales);
-                        $('#diagnostico_social').val(dataListado.informes[posicion].diagnostico_social);
-                        $('#diagnostico_preliminar').val(dataListado.informes[posicion].diagnostico_preliminar);
-                        $('#conclusiones').val(dataListado.informes[posicion].conclusiones);
-                        document.formulario.enfermos.value = dataListado.informes[posicion].enfermos;
+                        $('#condicion_vivienda').val(dataListado.resultados[posicion].condicion_vivienda);
+                        $('#caracteristicas_generales').val(dataListado.resultados[posicion].caracteristicas_generales);
+                        $('#diagnostico_social').val(dataListado.resultados[posicion].diagnostico_social);
+                        $('#diagnostico_preliminar').val(dataListado.resultados[posicion].diagnostico_preliminar);
+                        $('#conclusiones').val(dataListado.resultados[posicion].conclusiones);
+                        document.formulario.enfermos.value = dataListado.resultados[posicion].enfermos;
 
                         $('#carga_espera').hide(400);
                     } catch (error) {
@@ -746,8 +765,28 @@ $(function () {
             localStorage.setItem($(this).attr('name'), $(this).val());
         }
     }
+    // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
+    function limpiarFormulario(){
+        document.formulario.reset();
+        $('#fecha').val(fecha);
+        window.tabla = true;
+        $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
+        //////////
+        $('#edad').val(0);
+        $('#titulo').attr('disabled', true);
+        //////////
+        $('#ciudad').html('<option value="">Elija un estado</option>');
+        $('#municipio').html('<option value="">Elija un estado</option>');
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
+        //////////
+        $('.campos_ingresos').val(0);
+        $('.campos_ingresos_0').val(0);
+    }
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
+
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // AUTOLLAMADOS.
     function llamarDatos()

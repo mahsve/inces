@@ -23,11 +23,34 @@ class model_ocupacion extends conexion
         mysqli_close($this->data_conexion);
     }
 
+    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
+    public function registrarOcupacion($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_ocupacion (
+            nombre
+        ) VALUES (
+            ".$datos['nombre']."
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA CONSULTAR TODAS LA OCUPACIONES REGISTRADAS.
-	public function consultarOcupaciones()
+	public function consultarOcupaciones($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_ocupacion"; // SENTENTCIA
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE nombre LIKE '%".$datos['campo']."%'
+            AND estatus LIKE '%".$datos['estatus']."%' 
+            ORDER BY ".$datos['ordenar_por']." 
+            LIMIT ".$datos['numero'].", ".$datos['cantidad']."
+        "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -36,40 +59,32 @@ class model_ocupacion extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
-    public function registrarOcupacion($datos)
-    {
+    // FUNCION PARA CONSULTAR EL NUMERO DE OCUPACIONES REGISTRADAS EN TOTAL.
+	public function consultarOcupacionesTotal($datos)
+	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_ocupacion (nombre) VALUES ('".$datos['nombre']."')";
-        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE nombre LIKE '%".$datos['campo']."%'
+            AND estatus LIKE '%".$datos['estatus']."%'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
         {
-            $resultado = true;
+			$resultado = mysqli_num_rows($consulta);
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-    
-    // FUNCION PARA CONSULTAR UNA OCUPACION EN CONCRETO.
-	public function consultarOcupacion($datos)
-	{
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_ocupacion WHERE codigo='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
+   
+    // FUNCION PARA MODIFICAR UNA OCUPACION EXISTENTE.
     public function modificarOcupacion($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "UPDATE t_ocupacion SET nombre='".$datos['nombre']."' WHERE codigo='".$datos['codigo']."'";
-        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
+        $sentencia = "UPDATE t_ocupacion SET
+            nombre=".$datos['nombre']."
+            WHERE codigo=".$datos['codigo']."
+        ";
+        if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
@@ -79,7 +94,10 @@ class model_ocupacion extends conexion
     public function estatusOcupacion($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "UPDATE t_ocupacion SET estatus='".$datos['estatus']."' WHERE codigo='".$datos['codigo']."'";
+        $sentencia = "UPDATE t_ocupacion SET
+            estatus=".$datos['estatus']."
+            WHERE codigo=".$datos['codigo']."
+        ";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {

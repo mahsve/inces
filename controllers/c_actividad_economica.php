@@ -1,91 +1,95 @@
 <?php 
 session_start();
-if ($_POST['opcion'])
-{
+if ($_POST['opcion']){
     require_once('../models/m_actividad_economica.php');
     $objeto = new model_actividad_economica;
     
     switch ($_POST['opcion']) {
         case 'Registrar';
-            $datos = [
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarActividadEconomica($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            $resultado = $objeto->registrarActividadEconomica($data);
+            if ($resultado) {
+                echo 'Registro exitoso';
+            } else {
+                echo 'Registro fallido';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_actividad_economica');
-            break;
+        break;
+
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $datosLimpios = [];
+            foreach ($_POST as $posicion => $valor) {
+                $datosLimpios[$posicion] = htmlspecialchars($valor);
+            }
+            /////////////////// ESTABLECER ORDER BY ////////////////////
+            $datosLimpios['ordenar_tipo'] = 'ASC';
+            if ($_POST['tipo_ord'] == 1)
+                $datosLimpios['ordenar_tipo'] = 'ASC';
+            else if ($_POST['tipo_ord'] == 2)
+                $datosLimpios['ordenar_tipo'] = 'DESC';
+            ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
+            $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            if ($_POST['ordenar'] == 1)
+                $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 2)
+                $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['resultados'] = $objeto->consultarActividadesEconomicas($datosLimpios);
+            $resultados['total']    = $objeto->consultarActividadesEconomicasTotal($datosLimpios);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
         
         case 'Modificar';
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarActividadEconomica($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
+            $resultado = $objeto->modificarActividadEconomica($data);
+            if ($resultado) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/actividad_economica');
-            break;
+        break;
 
         case 'Estatus':
-            if ($_POST['estatus'] == 'A')
-                $estatus = 'I';
-            else
-                $estatus = 'A';
-
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'estatus'   => htmlspecialchars($estatus)
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->estatusActividadEconomica($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Estatus actualizado.';
+            $resultado = $objeto->estatusActividadEconomica($data);
+            if ($resultado) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Error al modificar el estatus.';
-            }
-
             $objeto->desconectar();
-            break;
+        break;
     }
-}
-// SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
+} else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';

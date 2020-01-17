@@ -139,19 +139,19 @@ if ($_POST['opcion']){
             if ($_POST['ordenar'] == 1)
                 $datosLimpios['ordenar_por'] = 't_informe_social.numero '.$datosLimpios['ordenar_tipo'];
             else if ($_POST['ordenar'] == 2)
-                $datosLimpios['ordenar_por'] = 't_datos_personales.nacionalidad DESC, t_datos_personales.cedula '.$datosLimpios['ordenar_tipo'];
+                $datosLimpios['ordenar_por'] = 't_datos_personales.cedula '.$datosLimpios['ordenar_tipo'];
             else if ($_POST['ordenar'] == 3)
                 $datosLimpios['ordenar_por'] = 't_informe_social.fecha '.$datosLimpios['ordenar_tipo'];
             else if ($_POST['ordenar'] == 4)
                 $datosLimpios['ordenar_por'] = 'concat (t_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido1) '.$datosLimpios['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['informes'] = $objeto->consultarInformeSocial($datosLimpios);
-            // $resultados['total']    = $objeto->consultarInformeSocialTotal($_POST);
+            $resultados['resultados'] = $objeto->consultarInformeSocial($datosLimpios);
+            $resultados['total']    = $objeto->consultarInformeSocialTotal($datosLimpios);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
 
-        case 'Traer datos 2':
+        case 'Consultar determinado':
             $data = [];
             foreach ($_POST as $key => $value) {
                 if(!is_array($value)) {

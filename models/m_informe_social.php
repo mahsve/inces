@@ -194,12 +194,13 @@ class model_informeSocial extends conexion
             WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
                     concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
                     concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
-                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%')
-            AND t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
+                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
+            ) AND t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
             ORDER BY ".$datos['ordenar_por']." 
             LIMIT ".$datos['numero'].", ".$datos['cantidad']."
         "; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
@@ -211,13 +212,20 @@ class model_informeSocial extends conexion
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM t_informe_social
-            WHERE t_informe_social.estatus LIKE '%".$datos['estatus']."%'
+            INNER JOIN t_datos_personales ON
+            t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
+            ) AND t_informe_social.estatus LIKE '%".$datos['estatus']."%'
         "; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
         {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
-		}
+			$resultado = mysqli_num_rows($consulta);
+        }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 

@@ -104,9 +104,6 @@ table .dropdown-toggle::after {
     transition: all ease .3s;
     font-size: 14.5px;
 }
-.dropdown-menu a i.fas {
-    transition: all ease .3s;
-}
 .dropdown-menu a i.fa-check {
     color: #28a745;
 }
