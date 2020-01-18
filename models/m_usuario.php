@@ -36,36 +36,6 @@ class model_usuario extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA TRAER LOS MODULOS A LOS EL USUARIO TIENE PERMISO.
-    function traerModulos($datos)
-    {
-        $this->conectar();
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT t_modulo_sistema.* FROM td_rol_modulo INNER JOIN t_modulo_sistema ON td_rol_modulo.codigo_modulo = t_modulo_sistema.codigo WHERE codigo_rol='".$datos['rol']."'";
-        $consulta  = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-        }
-        $this->desconectar();
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA MOSTRAR LOS SERVICIOS A LOS EL USUARIO TIENE PERMISO.
-    function traerVistas($datos)
-    {
-        $this->conectar();
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT t_vista.* FROM td_rol_vista INNER JOIN t_vista ON td_rol_vista.codigo_vista = t_vista.codigo WHERE codigo_rol='".$datos['rol']."' AND t_vista.codigo_modulo='".$datos['modulo']."'";
-        $consulta  = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-        }
-        $this->desconectar();
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
     // FUNCION PARA TRAER LOS PERMISOS SOBRE LA VISTA
     public function permisos($datos)
     {

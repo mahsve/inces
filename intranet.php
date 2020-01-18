@@ -1,30 +1,40 @@
 <?php
 include_once 'config/config.php';               // INCLUIMOS EL ARCHIVO DE CONFIGURACION DE LA URL.
 date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
+////////////////////////////////////////////////////////////////////////////////
 
-session_start();                                // DECLARAMOS LA PALABRA RESERVADA SESSION_START PARA TRABAJAR CON SESIONES.
-if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SESION ACTIVA.
-    if (isset($_GET['data'])) {                 // VERIFICAMOS SI EXISTE LA VARIABLE VISTA.
-        $dataGET = explode('/',$_GET['data']);  // SI EXISTE PROCESAMOS EL STRING DIVIDIENDOLO EN UN ARREGLO.
-
-        $vista = $dataGET[0];                   // GUARDAMOS EL DATO EN LA POSICION UNO, YA QUE SERA EL NOMBRE DEL ARCHIVO.
-        if (is_file('views/'.$vista.'.php')) {  // VERIFICAMOS SI EXISTE EL ARCHIVO.
-            $q_prefijo = str_replace('gestion_','',$vista); // LE QUITAMOS EL PREFIJO "GESTION_" SI LO POSEE.
-            $q_separado = str_replace('_',' ',$q_prefijo);  // REMPLAZAMOS EL SEPARADOR "_" POR UN ESPACIO " ".
-            $titulo = ucfirst($q_separado);     // LO VOLVEMOS UN TITULO CON LA PRIMERA LETRA EN MAYUSCULA.
-            $vista = 'views/'.$vista.'.php';    // SI EXISTE REESCRIBIMOS LA VARIABLE CON LA DIRECCION ENTERA.
-        } else {                                // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
-            $titulo = 'Dashboard';              // ESTABLECEMOS EL TITULO.
-            $vista = 'views/dashboard.php';     // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
+////////////////////////////////////////////////////////////////////////////////
+session_start();
+if (isset($_SESSION['sesion'])) {
+    require_once 'models/m_sesion.php';
+    $sesion = new model_sesion();
+    $sesion->conectar();
+    $data = [
+        'codigo_rol'    => $_SESSION['usuario']['codigo_rol']
+    ];
+    ///////////////////////////////////////////////////////////////////////////
+    if (isset($_GET['data'])) {
+        $dataGET = explode('/',$_GET['data']);
+        $vista = $dataGET[0];
+        if (is_file('views/'.$vista.'.php')) {
+            ////////////////////////////////////////////////////////////////////
+            $data['text_vista'] = htmlspecialchars($vista);
+            ////////////////////////////////////////////////////////////////////
+            $permisos = $sesion->consultarPermisos($data);
+            ////////////////////////////////////////////////////////////////////
+            $titulo = $permisos['nombre'];
+            $vista = 'views/'.$vista.'.php';
+        } else {
+            $titulo = 'Dashboard';
+            $vista = 'views/dashboard.php';
         }
-    } else {                                    // SI NO EXISTE DECIMOS QUE LA VISTA POR DEFAULT SERA EL DASHBOARD.
-        $titulo = 'Dashboard';                  // ESTABLECEMOS EL TITULO.
-        $vista = 'views/dashboard.php';         // REESCRIBIMOS LA VARIABLE CON LA VISTA POR DEFAULT (DASHBOARD).
+    } else {
+        $titulo = 'Dashboard';
+        $vista  = 'views/dashboard.php';
     }
-    $arreglo = [ 'rol' => $_SESSION['usuario']['codigo_rol']]; // OBTENEMOS EL ROL DEL USUARIO Y LO GUARDAMOS EN UN ARREGLO.
-    require_once 'models/m_usuario.php';        // INCLUIMOS EL MODELO DEL USUARIO PARA TRAER LOS MODULOS Y LOS SERVICIOS.
-    $usuario = new model_usuario();             // CREAMOS UN NUEVO OBJETO.
-    $modulos = $usuario->traerModulos($arreglo);// TRAEMOS LOS MODULOS PARA MOSTRARLO EN EL MENU.
+    ////////////////////////////////////////////////////////////////////////////
+    $menu = $sesion->consultarMenu($data);
+    $sesion->desconectar();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -89,27 +99,26 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
             <ul id="menu-list" class="mt-3 px-3">
                 <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
                 
-                <?php if ($modulos) { foreach ($modulos AS $datos) { ?>
-                <li class="dropdown mb-1">
-                    <?php $arreglo = [ 'rol' => $_SESSION['usuario']['codigo_rol'], 'modulo' => $datos['codigo']];
-                        $vistas = $usuario->traerVistas($arreglo);
-                        $pestana = false;
-                        if ($vistas) {
-                            foreach ($vistas AS $datos2) {
-                                if ($titulo == ucfirst(str_replace('_',' ',$datos2['enlace'])))
-                                    $pestana = true;
-                            }
-                        }
-                    ?>
+                <?php if ($menu) {
+                foreach ($menu AS $modulos) { ?>
+                    <li class="dropdown mb-1">
+                        <?php
+                        $active = '';
+                        foreach ($modulos['vistas'] AS $vistas) {
+                            if ($titulo == $vistas['nombre'])
+                                $active = 'active';
+                        } ?>
 
-                    <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php if ($pestana) echo 'active'; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $datos['icon']; ?>"></i><span class="ml-2"><?php echo $datos['nombre']; ?></span></a>
-                    <ul class="dropdown-menu w-100">
-                        <?php if ($vistas) { foreach ($vistas AS $datos2) { ?>
-                        <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$datos2['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $datos2['icon']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $datos2['nombre']; ?></span></a></li>
-                        <?php } } ?>
-                    </ul>
-                </li>
-                <?php } } ?>
+                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $modulos['icon']; ?>"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
+                
+                        <ul class="dropdown-menu w-100">
+                            <?php foreach ($modulos['vistas'] AS $vistas) { ?>
+                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icon']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
+                            <?php } ?>
+                        </ul>
+                    </li>
+                <?php }
+                } ?>
             </ul>
             <!-- COMPONENTE MENU -->
         </div>
@@ -123,18 +132,6 @@ if (isset($_SESSION['sesion'])) {               // VERIFICAMOS SI HAY ALGUNA SES
                     <div class="bg-white rounded p-3">
                         <?php include_once $vista;?>
                     </div>
-
-                    <?php if (isset($_SESSION['msj'])) { ?>
-                    <!-- MENSAJE ALERTA -->
-                    <div class="alert alert-<?php echo $_SESSION['msj']['type']; ?> alert-dismissible fade show mt-3" role="alert">
-                        <?php echo $_SESSION['msj']['text']; ?>
-
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <!-- FIN MENSAJE ALERTA -->
-                    <?php unset($_SESSION['msj']); } ?>
                 </div>
                 <!-- FIN CONTENEDOR FORMULARIOS Y DASHBOARD -->
             </div>

@@ -23,55 +23,6 @@ class model_rol extends conexion
         mysqli_close($this->data_conexion);
     }
 
-    /////////////////////////////////////
-    /////////////////////////////////////
-    /////////////////////////////////////
-    /////////////////////////////////////
-    // FUNCION PARA COSULTAR LOS MODULOS DISPONIBLES Y AGREGARLOS AL ROL.
-    public function consultarModulos()
-    {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_modulo_sistema"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA CONSULTAR UN ROL EN ESPECIFICO.
-    public function consultarVistas($datos)
-    {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_vista WHERE codigo_modulo='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA CONSULTAR UN ROL EN ESPECIFICO.
-    public function consultarRol($datos)
-    {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_rol WHERE codigo='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-    /////////////////////////////////////
-    /////////////////////////////////////
-    /////////////////////////////////////
-    /////////////////////////////////////
-
-
-
     // FUNCION PARA COSULTAR LOS MODULOS DISPONIBLES Y AGREGARLOS AL ROL.
     public function consultarVistaFormulario()
     {
@@ -218,32 +169,6 @@ class model_rol extends conexion
         {
 			$resultado = mysqli_num_rows($consulta);
         }
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA CONSULTAR LOS MODULOS AGREGADOS A UN ROL Y MOSTRARLO EN LA VISTA.
-    public function consultarModulosDelRol($datos)
-    {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM td_rol_modulo WHERE codigo_rol='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-    
-    // FUNCION 
-    public function consultarVistasDelRol($datos)
-    {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM td_rol_vista WHERE codigo_rol='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
