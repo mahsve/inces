@@ -1,6 +1,7 @@
 <?php 
 session_start();
-if ($_POST['opcion']){
+if ($_POST['opcion'])
+{
     require_once('../models/m_actividad_economica.php');
     $objeto = new model_actividad_economica;
     
@@ -89,7 +90,10 @@ if ($_POST['opcion']){
             $objeto->desconectar();
         break;
     }
-} else { // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
+}
+// SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
+else
+{
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';

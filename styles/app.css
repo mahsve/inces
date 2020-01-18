@@ -161,10 +161,10 @@ table .dropdown-toggle::after {
     opacity: .95;
 }
 /* --- BOTONES GIRAR ICONO --- */
-button i {
+button[data-toggle="collapse"] i.fas.fa-plus {
     transition: all ease .3s;
 }
-button.girar i {
+button[data-toggle="collapse"][aria-expanded="true"] i.fas.fa-plus {
     -webkit-transform: rotate(45deg);
 	-moz-transform: rotate(45deg);
 	rotation: 45deg;
