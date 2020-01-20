@@ -68,6 +68,7 @@ class model_sesion extends conexion
             FROM td_rol_modulo
             INNER JOIN t_modulo_sistema ON td_rol_modulo.codigo_modulo = t_modulo_sistema.codigo
             WHERE td_rol_modulo.codigo_rol='".$datos['codigo_rol']."'
+            ORDER BY t_modulo_sistema.posicion ASC
         ";
         ////////////////////////////////////////////////////////////
         $consulta  = mysqli_query($this->data_conexion, $sentencia);

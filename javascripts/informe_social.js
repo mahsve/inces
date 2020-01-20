@@ -108,11 +108,14 @@ $(function () {
                             contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
                             contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
                             contenido += '<td class="py-1 px-1">';
-                            contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
+                            if (permisos.modificar == 1)
+                                contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
                             contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
                             contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
-                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                            if (permisos.act_desc == 1) {
+                                contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
+                                contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                            }
                             contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/r_informe_social?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
                             contenido += '</div></div></td></tr>';
                             $('#listado_aprendices tbody').append(contenido);
@@ -416,6 +419,7 @@ $(function () {
             let contenido = '';
             contenido += '<tr data-posicion="'+cantidad+'">';
             contenido += '<td class="py-2 px-0 text-center">'+cantidad+'</td>';
+            contenido += '<input type="hidden" name="id_familiar[]" id="id_familiar'+cantidad+'">';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar[]" id="nombre_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="date" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia calcular_edad" style="width: 128px;"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="edad_familiar[]" id="edad_familiar'+cantidad+'" class="form-control form-control-sm text-center storageFamilia" value="0" style="width: 56px;" readonly="true"></td>';
@@ -473,6 +477,7 @@ $(function () {
             let nameInput = $(this).attr('name').replace('[]','');
             let position = $(this).closest('tr').attr('data-posicion');
 
+            localStorage.setItem('confirm_data', true);
             let arregloFamilia = JSON.parse(localStorage.getItem('filaFamilia'+position));
             arregloFamilia[nameInput] = $(this).val();
             arregloFamilia['edad_familiar'] = parseInt($('#edad_familiar'+position).val());
@@ -531,11 +536,16 @@ $(function () {
         ////////////////////
         if(window.editar !== true)
             localStorage.removeItem('filaFamilia'+position);
+        else {
+            let valor_id = $('#id_familiar'+position).val();
+            if (valor_id != '' && valor_id != undefined)
+                window.eliminarFamiliar.push(valor_id);
+        }
         ////////////////////
         $(this).closest('tr').remove();
         ////////////////////
+        let arregloRespaldo = [];
         if(window.editar !== true){
-            let arregloRespaldo = [];
             for (let index = 1; index <= maxFamiliares; index++) {
                 if (localStorage.getItem('filaFamilia'+index)) {
                     arregloRespaldo.push(JSON.parse(localStorage.getItem('filaFamilia'+index)));
@@ -550,6 +560,7 @@ $(function () {
                 $(this).attr('data-posicion', cont);
     
                 $($(this).children('td')[0]).html(cont);
+                $($($(this)).children('input')[0]).attr('id', 'id_familiar'+cont);
                 $($($(this).children('td')[1]).children('input')[0]).attr('id', 'nombre_familiar'+cont);
                 $($($(this).children('td')[2]).children('input')[0]).attr('id', 'fecha_familiar'+cont);
                 $($($(this).children('td')[3]).children('input')[0]).attr('id', 'edad_familiar'+cont);
@@ -565,7 +576,6 @@ $(function () {
     
                 if(window.editar !== true)
                     localStorage.setItem('filaFamilia'+cont, JSON.stringify(arregloRespaldo[cont-1]));
-                
                 cont++;
             });
         } else {
@@ -678,9 +688,11 @@ $(function () {
                         $('#bano').val(data.vivienda.banos);
                         $('#dormitorio').val(data.vivienda.n_dormitorios);
                         // CUARTA PARTE.
+                        window.eliminarFamiliar = [];
                         dataFamiliares = data.familiares;
                         for (let index = 0; index < data.familiares.length; index++) {
                             $('#agregar_familiar').trigger('click');
+                            $('#id_familiar'+(index+1)).val(data.familiares[index].id_familiar);
                             $('#nombre_familiar'+(index+1)).val(data.familiares[index].nombre1);
                             $('#fecha_familiar'+(index+1)).val(data.familiares[index].fecha_n);
                             $('#sexo_familiar'+(index+1)).val(data.familiares[index].sexo);
@@ -688,9 +700,13 @@ $(function () {
                             $('#ocupacion_familiar'+(index+1)).val(data.familiares[index].codigo_ocupacion);
                             $('#trabaja_familiar'+(index+1)).val(data.familiares[index].trabaja);
                             $('#ingresos_familiar'+(index+1)).val(data.familiares[index].ingresos);
-                            if ($('#responsable_apre_'+(index+1)).val() == data.familiares[index].representante)
-                                $('#responsable_apre_'+(index+1)).prop('checked',true);
                         }
+                        $('.localStorage-radio').each(function () {
+                            if ($(this).val() == dataListado.resultados[posicion].representante) {
+                                $(this).prop('checked', true);
+                            }
+                        });
+
                         $('.calcular_edad').trigger('change');
                         $('.trabajando').trigger('change');
                         // QUINTA PARTE.
@@ -738,7 +754,8 @@ $(function () {
         data.push({ name: 'informe_social', value: window.informe_social });
         data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
         data.push({ name: 'cedula_v', value: window.cedula });
-        
+        data.push({ name: 'eliminar_f', value: JSON.stringify(window.eliminarFamiliar) });
+
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',

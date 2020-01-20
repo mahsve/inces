@@ -35,19 +35,4 @@ class model_usuario extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
-    // FUNCION PARA TRAER LOS PERMISOS SOBRE LA VISTA
-    public function permisos($datos)
-    {
-        $this->conectar();
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT td_rol_vista.* FROM td_rol_vista INNER JOIN t_vista ON td_rol_vista.codigo_vista = t_vista.codigo WHERE t_vista.enlace LIKE '%".$datos['vista']."%'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-        $this->desconectar();
-        return $resultado; // RETORNAMOS LOS DATOS.
-    }
 }

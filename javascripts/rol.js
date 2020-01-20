@@ -47,10 +47,10 @@ $(function () {
                         for (var i in dataListado.resultados) {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido += '<td class="text-right py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].numero_m+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].numero_v+'</td>';
+                            contenido += '<td class="text-center py-2 px-1">'+dataListado.resultados[i].numero_m+'</td>';
+                            contenido += '<td class="text-center py-2 px-1">'+dataListado.resultados[i].numero_v+'</td>';
                             contenido += '<td class="py-1 px-1">';
                             contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
                             contenido += '<button type="button" class="btn btn-sm btn-danger eliminar_registro" data-posicion="'+i+'"><i class="fas fa-trash"></i></button>';
@@ -242,7 +242,7 @@ $(function () {
                             contenedorModulo += '</div>';
                             contenedorModulo += '<div class="custom-control custom-checkbox mr-sm-2">';
                             contenedorModulo += '<input type="checkbox" name="estatus'+data[i].vistas[j].codigo+'" class="custom-control-input" id="estatus_'+data[i].vistas[j].codigo+'" value="1">';
-                            contenedorModulo += '<label class="custom-control-label" for="estatus_'+data[i].vistas[j].codigo+'">Gestionar estatus</label>';
+                            contenedorModulo += '<label class="custom-control-label" for="estatus_'+data[i].vistas[j].codigo+'">Gestionar estatus / Eliminar</label>';
                             contenedorModulo += '</div>';
                             //////////////////////////////////////////////////////////////////////////
                             contenedorModulo += '</div>';

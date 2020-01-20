@@ -105,8 +105,50 @@ class model_informeSocial extends conexion
     public function registrarDatosPersonales($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_datos_personales(nacionalidad, cedula, nombre1, nombre2, apellido1, apellido2, sexo, fecha_n, lugar_n, codigo_ocupacion, estado_civil, nivel_instruccion, titulo_acade, mision_participado, codigo_ciudad, codigo_parroquia, direccion, telefono1, telefono2, correo, tipo_persona) 
-        VALUES ($datos[nacionalidad], $datos[cedula], $datos[nombre_1], $datos[nombre_2], $datos[apellido_1], $datos[apellido_2], $datos[sexo], $datos[fecha_n], $datos[lugar_n], $datos[ocupacion], $datos[estado_civil], $datos[grado_instruccion], $datos[titulo], $datos[alguna_mision], $datos[ciudad], $datos[parroquia], $datos[direccion], $datos[telefono_1], $datos[telefono_2], $datos[correo], 'A')"; // SENTENTCIA
+        $sentencia = "INSERT INTO t_datos_personales(
+            nacionalidad,
+            cedula,
+            nombre1,
+            nombre2,
+            apellido1,
+            apellido2,
+            sexo,
+            fecha_n,
+            lugar_n,
+            codigo_ocupacion,
+            estado_civil,
+            nivel_instruccion,
+            titulo_acade,
+            mision_participado,
+            codigo_ciudad,
+            codigo_parroquia,
+            direccion,
+            telefono1,
+            telefono2,
+            correo,
+            tipo_persona
+        ) VALUES (
+            $datos[nacionalidad],
+            $datos[cedula],
+            $datos[nombre_1],
+            $datos[nombre_2],
+            $datos[apellido_1],
+            $datos[apellido_2],
+            $datos[sexo],
+            $datos[fecha_n],
+            $datos[lugar_n],
+            $datos[ocupacion],
+            $datos[estado_civil],
+            $datos[grado_instruccion],
+            $datos[titulo],
+            $datos[alguna_mision],
+            $datos[ciudad],
+            $datos[parroquia],
+            $datos[direccion],
+            $datos[telefono_1],
+            $datos[telefono_2],
+            $datos[correo], 'A'
+        )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -119,8 +161,49 @@ class model_informeSocial extends conexion
     public function registrarDatosVivienda($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_datos_hogar (nacionalidad, cedula, punto_referencia, tipo_area, tipo_vivienda, tenencia_vivienda, agua, electricidad, excretas, basura, otros, techo, paredes, piso, via_acceso, sala, comedor, cocina, banos, n_dormitorios) 
-        VALUES ($datos[nacionalidad], $datos[cedula], $datos[punto_referencia], $datos[area], $datos[tipo_vivienda], $datos[tenencia_vivienda], $datos[tipo_agua], $datos[tipo_electricidad], $datos[tipo_excreta], $datos[tipo_basura], $datos[otros], $datos[techo], $datos[pared], $datos[piso], $datos[via_acceso], $datos[sala], $datos[comedor], $datos[cocina], $datos[bano], $datos[dormitorio])"; // SENTENTCIA
+        $sentencia = "INSERT INTO t_datos_hogar (
+            nacionalidad,
+            cedula,
+            punto_referencia,
+            tipo_area,
+            tipo_vivienda,
+            tenencia_vivienda,
+            agua,
+            electricidad,
+            excretas,
+            basura,
+            otros,
+            techo,
+            paredes,
+            piso,
+            via_acceso,
+            sala,
+            comedor,
+            cocina,
+            banos,
+            n_dormitorios
+        ) VALUES (
+            $datos[nacionalidad],
+            $datos[cedula],
+            $datos[punto_referencia],
+            $datos[area],
+            $datos[tipo_vivienda],
+            $datos[tenencia_vivienda],
+            $datos[tipo_agua],
+            $datos[tipo_electricidad],
+            $datos[tipo_excreta],
+            $datos[tipo_basura],
+            $datos[otros],
+            $datos[techo],
+            $datos[pared],
+            $datos[piso],
+            $datos[via_acceso],
+            $datos[sala],
+            $datos[comedor],
+            $datos[cocina],
+            $datos[bano],
+            $datos[dormitorio]
+        )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -133,8 +216,33 @@ class model_informeSocial extends conexion
     public function registrarInformeSocial($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_informe_social (fecha, nacionalidad_aprendiz, cedula_aprendiz, codigo_oficio, turno, cedula_facilitador, condicion_vivienda, caracteristicas_generales, diagnostico_social, diagnostico_preliminar, conclusiones, enfermos) 
-        VALUES ($datos[fecha], $datos[nacionalidad], $datos[cedula], $datos[oficio], $datos[turno], '25791966', $datos[condicion_vivienda], $datos[caracteristicas_generales], $datos[diagnostico_social], $datos[diagnostico_preliminar], $datos[conclusiones], $datos[enfermos])"; // SENTENTCIA
+        $sentencia = "INSERT INTO t_informe_social (
+            fecha,
+            nacionalidad_aprendiz,
+            cedula_aprendiz,
+            codigo_oficio,
+            turno,
+            cedula_facilitador,
+            condicion_vivienda,
+            caracteristicas_generales,
+            diagnostico_social,
+            diagnostico_preliminar,
+            conclusiones,
+            enfermos
+        ) VALUES (
+            $datos[fecha],
+            $datos[nacionalidad],
+            $datos[cedula],
+            $datos[oficio],
+            $datos[turno],
+            '25791966',
+            $datos[condicion_vivienda],
+            $datos[caracteristicas_generales],
+            $datos[diagnostico_social],
+            $datos[diagnostico_preliminar],
+            $datos[conclusiones],
+            $datos[enfermos]
+        )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -147,8 +255,31 @@ class model_informeSocial extends conexion
     public function registrarFamilares($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_familia (numero_informe, nombre1, nombre2, apellido1, apellido2, fecha_n, sexo, parentesco, codigo_ocupacion, trabaja, ingresos, representante) 
-        VALUES ($datos[id_ficha], $datos[nombre_familiar], $datos[nombre_familiar], $datos[nombre_familiar], $datos[nombre_familiar], $datos[fecha_familiar], $datos[sexo_familiar], $datos[parentesco_familiar], $datos[ocupacion_familiar], $datos[trabaja_familiar], $datos[ingresos_familiar], $datos[responsable])"; // SENTENTCIA
+        $sentencia = "INSERT INTO t_familia (
+            numero_informe,
+            nombre1,
+            nombre2,
+            apellido1,
+            apellido2,
+            fecha_n,
+            sexo,
+            parentesco,
+            codigo_ocupacion,
+            trabaja,
+            ingresos
+        ) VALUES (
+            $datos[id_ficha],
+            $datos[nombre_familiar],
+            $datos[nombre_familiar],
+            $datos[nombre_familiar],
+            $datos[nombre_familiar],
+            $datos[fecha_familiar],
+            $datos[sexo_familiar],
+            $datos[parentesco_familiar],
+            $datos[ocupacion_familiar],
+            $datos[trabaja_familiar],
+            $datos[ingresos_familiar]
+        )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -161,8 +292,15 @@ class model_informeSocial extends conexion
     public function registrarGestionDinero($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_gestion_dinero (numero_informe, descripcion, cantidad) 
-        VALUES ($datos[id_ficha], $datos[descripcion], $datos[cantidad])"; // SENTENTCIA
+        $sentencia = "INSERT INTO t_gestion_dinero (
+            numero_informe,
+            descripcion,
+            cantidad
+        ) VALUES (
+            $datos[id_ficha],
+            $datos[descripcion],
+            $datos[cantidad]
+        )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -233,7 +371,11 @@ class model_informeSocial extends conexion
     public function consultarDatosVivienda($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_datos_hogar WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]"; // SENTENTCIA
+		$sentencia = "SELECT *
+            FROM t_datos_hogar
+            WHERE nacionalidad=$datos[nacionalidad] AND
+            cedula=$datos[cedula]
+        "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -246,7 +388,10 @@ class model_informeSocial extends conexion
     public function consultarFamiliares($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT * FROM t_familia WHERE numero_informe=$datos[informe]"; // SENTENTCIA
+        $sentencia = "SELECT *
+            FROM t_familia
+            WHERE numero_informe=$datos[informe]
+        "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -259,7 +404,10 @@ class model_informeSocial extends conexion
     public function consultarDinero($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT * FROM t_gestion_dinero WHERE numero_informe=$datos[informe]"; // SENTENTCIA
+        $sentencia = "SELECT *
+            FROM t_gestion_dinero
+            WHERE numero_informe=$datos[informe]
+        "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -272,27 +420,28 @@ class model_informeSocial extends conexion
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
-        nacionalidad=$datos[nacionalidad],
-        cedula=$datos[cedula],
-        nombre1=$datos[nombre_1],
-        nombre2=$datos[nombre_2],
-        apellido1=$datos[apellido_1],
-        apellido2=$datos[apellido_2],
-        sexo=$datos[sexo],
-        fecha_n=$datos[fecha_n],
-        lugar_n=$datos[lugar_n],
-        codigo_ocupacion=$datos[ocupacion],
-        estado_civil=$datos[estado_civil],
-        nivel_instruccion=$datos[grado_instruccion],
-        titulo_acade=$datos[titulo],
-        mision_participado=$datos[alguna_mision],
-        codigo_ciudad=$datos[ciudad],
-        codigo_parroquia=$datos[parroquia],
-        direccion=$datos[direccion],
-        telefono1=$datos[telefono_1],
-        telefono2=$datos[telefono_2],
-        correo=$datos[correo]
-        WHERE nacionalidad=$datos[nacionalidad_v] AND cedula=$datos[cedula_v]"; // SENTENTCIA
+            nacionalidad=$datos[nacionalidad],
+            cedula=$datos[cedula],
+            nombre1=$datos[nombre_1],
+            nombre2=$datos[nombre_2],
+            apellido1=$datos[apellido_1],
+            apellido2=$datos[apellido_2],
+            sexo=$datos[sexo],
+            fecha_n=$datos[fecha_n],
+            lugar_n=$datos[lugar_n],
+            codigo_ocupacion=$datos[ocupacion],
+            estado_civil=$datos[estado_civil],
+            nivel_instruccion=$datos[grado_instruccion],
+            titulo_acade=$datos[titulo],
+            mision_participado=$datos[alguna_mision],
+            codigo_ciudad=$datos[ciudad],
+            codigo_parroquia=$datos[parroquia],
+            direccion=$datos[direccion],
+            telefono1=$datos[telefono_1],
+            telefono2=$datos[telefono_2],
+            correo=$datos[correo]
+            WHERE nacionalidad=$datos[nacionalidad_v] AND cedula=$datos[cedula_v]
+        "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
         {
             $resultado = true;
@@ -305,25 +454,26 @@ class model_informeSocial extends conexion
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_hogar SET 
-        punto_referencia=$datos[punto_referencia],
-        tipo_area=$datos[area],
-        tipo_vivienda=$datos[tipo_vivienda],
-        tenencia_vivienda=$datos[tenencia_vivienda],
-        agua=$datos[tipo_agua],
-        electricidad=$datos[tipo_electricidad],
-        excretas=$datos[tipo_excreta],
-        basura=$datos[tipo_basura],
-        otros=$datos[otros],
-        techo=$datos[techo],
-        paredes=$datos[pared],
-        piso=$datos[piso],
-        via_acceso=$datos[via_acceso],
-        sala=$datos[sala],
-        comedor=$datos[comedor],
-        cocina=$datos[cocina],
-        banos=$datos[bano],
-        n_dormitorios=$datos[dormitorio]
-        WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]"; // SENTENTCIA
+            punto_referencia=$datos[punto_referencia],
+            tipo_area=$datos[area],
+            tipo_vivienda=$datos[tipo_vivienda],
+            tenencia_vivienda=$datos[tenencia_vivienda],
+            agua=$datos[tipo_agua],
+            electricidad=$datos[tipo_electricidad],
+            excretas=$datos[tipo_excreta],
+            basura=$datos[tipo_basura],
+            otros=$datos[otros],
+            techo=$datos[techo],
+            paredes=$datos[pared],
+            piso=$datos[piso],
+            via_acceso=$datos[via_acceso],
+            sala=$datos[sala],
+            comedor=$datos[comedor],
+            cocina=$datos[cocina],
+            banos=$datos[bano],
+            n_dormitorios=$datos[dormitorio]
+            WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]
+        "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
         {
             $resultado = true;
@@ -336,17 +486,52 @@ class model_informeSocial extends conexion
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_informe_social SET 
-        fecha=$datos[fecha],
-        codigo_oficio=$datos[oficio],
-        turno=$datos[turno],
-        condicion_vivienda=$datos[condicion_vivienda],
-        caracteristicas_generales=$datos[caracteristicas_generales],
-        diagnostico_social=$datos[diagnostico_social],
-        diagnostico_preliminar=$datos[diagnostico_preliminar],
-        conclusiones=$datos[conclusiones],
-        enfermos=$datos[enfermos] 
-        WHERE numero=$datos[informe_social]"; // SENTENTCIA
+            fecha=$datos[fecha],
+            codigo_oficio=$datos[oficio],
+            turno=$datos[turno],
+            condicion_vivienda=$datos[condicion_vivienda],
+            caracteristicas_generales=$datos[caracteristicas_generales],
+            diagnostico_social=$datos[diagnostico_social],
+            diagnostico_preliminar=$datos[diagnostico_preliminar],
+            conclusiones=$datos[conclusiones],
+            enfermos=$datos[enfermos],
+            representante=$datos[responsable_apre]
+            WHERE numero=$datos[informe_social]
+        "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function modificarFamiliaresAprendiz($datos){
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_familia SET
+            nombre1=$datos[nombre_familiar],
+            nombre2=$datos[nombre_familiar],
+            apellido1=$datos[nombre_familiar],
+            apellido2=$datos[nombre_familiar],
+            fecha_n=$datos[fecha_familiar],
+            sexo=$datos[sexo_familiar],
+            parentesco=$datos[parentesco_familiar],
+            codigo_ocupacion=$datos[ocupacion_familiar],
+            trabaja=$datos[trabaja_familiar],
+            ingresos=$datos[ingresos_familiar]
+            WHERE id_familiar=$datos[id_familiar]
+        "; // SENTENTCIA
+        if (mysqli_query($this->data_conexion, $sentencia))
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function eliminarFamilia ($id) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "DELETE FROM t_familia WHERE id_familiar=$id"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
         {
             $resultado = true;
         }

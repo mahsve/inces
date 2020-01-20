@@ -170,6 +170,9 @@ button[data-toggle="collapse"][aria-expanded="true"] i.fas.fa-plus {
 	rotation: 45deg;
 	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0);
 }
+.mouse-move {
+    cursor: move;
+}
 /* =============== ESTILOS FOOTER ================ */
 footer {
     min-height: 25px;

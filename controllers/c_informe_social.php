@@ -74,8 +74,7 @@ if ($_POST['opcion']){
                                     'parentesco_familiar'   => "'".htmlspecialchars($_POST['parentesco_familiar'][$i])."'",
                                     'ocupacion_familiar'    => "'".htmlspecialchars($_POST['ocupacion_familiar'][$i])."'",
                                     'trabaja_familiar'      => "'".htmlspecialchars($_POST['trabaja_familiar'][$i])."'",
-                                    'ingresos_familiar'     => $ingresos,
-                                    'responsable'           => $responsable
+                                    'ingresos_familiar'     => htmlspecialchars($ingresos)
                                 ];
 
                                 if (!$objeto->registrarFamilares($data2))
@@ -193,8 +192,45 @@ if ($_POST['opcion']){
             if ($objeto->modificarDatosPersonales($data)){
                 if ($objeto->modificarDatosVivienda($data)){
                     if ($objeto->modificarInformeSocial($data)){
-                        $objeto->eliminarGestionDinero($data);
+                        $errorE = 0;
+                        if(isset($_POST['eliminar_f'])){
+                            $_POST['eliminar_f'] = json_decode($_POST['eliminar_f']);
+                            for ($i=0; $i < count($_POST['eliminar_f']); $i++) {
+                                if (!$objeto->eliminarFamilia($_POST['eliminar_f'][$i]))
+                                    $errorE++;
+                            }
+                        }
 
+                        $errorF = 0;
+                        if(isset($_POST['nombre_familiar'])){
+                            for ($i=0; $i < count($_POST['nombre_familiar']); $i++) {
+                                $ingresos = 0;
+                                if (isset($_POST['ingresos_familiar'][$i]))
+                                    $ingresos = "'".htmlspecialchars($_POST['ingresos_familiar'][$i])."'";
+                                    
+                                $data2 = [
+                                    'id_ficha'              => $data['informe_social'],
+                                    'id_familiar'           => "'".htmlspecialchars($_POST['id_familiar'][$i])."'",
+                                    'nombre_familiar'       => "'".htmlspecialchars($_POST['nombre_familiar'][$i])."'",
+                                    'fecha_familiar'        => "'".htmlspecialchars($_POST['fecha_familiar'][$i])."'",
+                                    'sexo_familiar'         => "'".htmlspecialchars($_POST['sexo_familiar'][$i])."'",
+                                    'parentesco_familiar'   => "'".htmlspecialchars($_POST['parentesco_familiar'][$i])."'",
+                                    'ocupacion_familiar'    => "'".htmlspecialchars($_POST['ocupacion_familiar'][$i])."'",
+                                    'trabaja_familiar'      => "'".htmlspecialchars($_POST['trabaja_familiar'][$i])."'",
+                                    'ingresos_familiar'     => htmlspecialchars($ingresos)
+                                ];
+
+                                if ($_POST['id_familiar'][$i] != '') {
+                                    if (!$objeto->modificarFamiliaresAprendiz($data2))
+                                        $errorF++;
+                                } else {
+                                    if (!$objeto->registrarFamilares($data2))
+                                        $errorF++;
+                                }
+                            }
+                        }
+
+                        $objeto->eliminarGestionDinero($data);
                         $errorI = 0;
                         for ($i2 = 0; $i2 < 10; $i2++) {
                             $listaDinero = ['ingreso_pension', 'ingreso_seguro', 'ingreso_pension_otras', 'ingreso_sueldo', 'otros_ingresos',
@@ -210,7 +246,7 @@ if ($_POST['opcion']){
                                 $errorI++;
                         }
 
-                        if ($errorI == 0) {
+                        if ($errorE == 0 AND $errorF == 0 AND $errorI == 0) {
                             $objeto->guardarTransaccion();
                             echo 'Modificacion exitosa';
                         } else {

@@ -22,11 +22,14 @@ if (isset($_SESSION['sesion'])) {
             ////////////////////////////////////////////////////////////////////
             $permisos = $sesion->consultarPermisos($data);
             ////////////////////////////////////////////////////////////////////
-            $titulo = $permisos['nombre'];
-            $vista = 'views/'.$vista.'.php';
+            if ($permisos) {
+                $titulo = $permisos['nombre'];
+                $vista = 'views/'.$vista.'.php';
+            } else {
+                header('Location: '.SERVERURL.'intranet');
+            }
         } else {
-            $titulo = 'Dashboard';
-            $vista = 'views/dashboard.php';
+            header('Location: '.SERVERURL.'intranet');
         }
     } else {
         $titulo = 'Dashboard';
@@ -58,6 +61,7 @@ if (isset($_SESSION['sesion'])) {
     <script src="<?php echo SERVERURL; ?>javascripts/datatable/datatables.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/definir_paginacion.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/generales.js"></script>
+    <script>let permisos = <?php echo json_encode($permisos); ?>;</script>
 </head>
 
 <body>
@@ -97,7 +101,7 @@ if (isset($_SESSION['sesion'])) {
 
             <!-- COMPONENTE MENU -->
             <ul id="menu-list" class="mt-3 px-3">
-                <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
+                <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard' || $titulo == 'Sin acceso') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
                 
                 <?php if ($menu) {
                 foreach ($menu AS $modulos) { ?>
@@ -109,11 +113,11 @@ if (isset($_SESSION['sesion'])) {
                                 $active = 'active';
                         } ?>
 
-                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $modulos['icon']; ?>"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
+                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $modulos['icono']; ?>"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
                 
                         <ul class="dropdown-menu w-100">
                             <?php foreach ($modulos['vistas'] AS $vistas) { ?>
-                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icon']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
+                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
                             <?php } ?>
                         </ul>
                     </li>

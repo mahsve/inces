@@ -6,80 +6,116 @@ if ($_POST['opcion'])
     $objeto = new model_modulo_sistema;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
-            $datos = [
-                'nombre'    => htmlspecialchars($_POST['nombre']),
-                'posicion'  => htmlspecialchars($_POST['posicion']),
-                'icon'      => htmlspecialchars($_POST['icon'])
-            ];
-
-            $objeto->conectar();
-            $resultado = $objeto->registrarModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
+        case 'Registrar':
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            ////////////////////
+            $objeto->conectar();
+            if ($objeto->registrarModulo($data)) {
+                echo 'Registro exitoso';
+            } else {
+                echo 'Registro fallido';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_modulo_sistema');
-            break;
+        break;
 
-        case 'Modificar';
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'nombre'    => htmlspecialchars($_POST['nombre']),
-                'posicion'  => htmlspecialchars($_POST['posicion']),
-                'icon'      => htmlspecialchars($_POST['icon'])
-            ];
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $datosLimpios = [];
+            foreach ($_POST as $posicion => $valor) {
+                $datosLimpios[$posicion] = htmlspecialchars($valor);
+            }
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['resultados'] = $objeto->consultarModulos($datosLimpios);
+            $resultados['total']    = $objeto->consultarModulosTotal($datosLimpios);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Modificar':
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
+            if ($objeto->modificarModulo($data)) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
-            }
-
             $objeto->desconectar();
-            header('Location: ../intranet/modulo_sistema');
-            break;
+        break;
+
+        case 'Modificar orden':
+            $objeto->conectar();
+            $objeto->nuevaTransaccion();
+            $errores = 0;
+            for ($i=0; $i < count($_POST['codigo']); $i++) {
+                $data = [
+                    'codigo'    => htmlspecialchars($_POST['codigo'][$i]),
+                    'posicion'  => htmlspecialchars($_POST['posicion'][$i])
+                ];
+                if (!$objeto->modificarOrdenModulo($data))
+                    $errores++;
+            }
+            if ($errores == 0) {
+                $objeto->guardarTransaccion();
+                echo 'Modificacion exitosa';
+            } else {
+                $objeto->calcelarTransaccion();
+                echo 'Modificación fallida';
+            }
+            $objeto->desconectar();
+        break;
 
         case 'Eliminar':
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo'])
-            ];
-
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
+            ////////////////////
             $objeto->conectar();
-            $resultado = $objeto->eliminarModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha eliminado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al eliminar.';
-            }
+            $objeto->nuevaTransaccion();
+            if ($objeto->eliminarModulo($data)) {
+                $todosLosModulos = $objeto->consultarModulosTodos();
 
+                $errores = 0;
+                for ($i=0; $i < count($todosLosModulos); $i++) {
+                    $data = [
+                        'codigo'    => htmlspecialchars($todosLosModulos[$i]['codigo']),
+                        'posicion'  => $i + 1
+                    ];
+                    if (!$objeto->modificarOrdenModulo($data))
+                        $errores++;
+                }
+                
+                if ($errores == 0) {
+                    $objeto->guardarTransaccion();
+                    echo 'Modificacion exitosa';
+                } else {
+                    $objeto->calcelarTransaccion();
+                    echo 'Modificación fallida';
+                }
+            } else {
+                echo 'Modificación fallida';
+                $objeto->calcelarTransaccion();
+            }
             $objeto->desconectar();
-            break;
+        break;
     }
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
