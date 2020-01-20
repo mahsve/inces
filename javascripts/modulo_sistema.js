@@ -59,10 +59,12 @@ $(function () {
                             contenido += '<td class="text-center py-2 px-1 text-info"><i class="'+dataListado.resultados[i].icono+'"></i></td>';
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
                                 contenido += '<td class="py-1 px-1">';
+                                ////////////////////////////
                                 if (permisos.modificar == 1)
                                     contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
                                 if (permisos.act_desc == 1)
                                     contenido += '<button type="button" class="btn btn-sm btn-danger eliminar_registro" data-posicion="'+i+'"><i class="fas fa-trash"></i></button>';
+                                ////////////////////////////
                                 contenido += '</td>';
                             }
                             contenido += '</tr>';

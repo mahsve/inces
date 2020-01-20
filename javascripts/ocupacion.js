@@ -28,7 +28,13 @@ $(function () {
         buscar_listado();
     }
     function buscar_listado(){
-        $('#listado_tabla tbody').html('<tr><td colspan="4" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
+        let filas = 0;
+        if (permisos.modificar == 1 || permisos.act_desc == 1)
+            filas = 4;
+        else
+            filas = 3;
+
+        $('#listado_tabla tbody').html('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
         $("#paginacion").html('<li class="page-item"><a class="page-link text-info"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</a></li>');
         $.ajax({
             url : url+'controllers/c_ocupacion.php',
@@ -50,29 +56,35 @@ $(function () {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
                             contenido += '<td class="text-right py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
-
-                            let estatus = '';
-                            let botonEs = '';
-                            if (dataListado.resultados[i].estatus == 'A') {
-                                estatus = '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Activo</span>';
-                                botonEs = '<button type="button" class="btn btn-sm btn-danger cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-times" style="padding: 0px 2px;"></i></button>';
-                            } else if (dataListado.resultados[i].estatus == 'I') {
-                                estatus = '<span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Inactivo</span>';
-                                botonEs = '<button type="button" class="btn btn-sm btn-success cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-check"></i></button>';
-                            }
-
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
-                            contenido += '<td class="py-1 px-1">';
-                            contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                            contenido += botonEs;
-                            contenido += '</div></div></td></tr>';
+
+                            if (dataListado.resultados[i].estatus == 'A')
+                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-success"><i class="fas fa-check mr-1"></i>Activo</span></td>';
+                            else if (dataListado.resultados[i].estatus == 'I')
+                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Inactivo</span></td>';
+
+                            if (permisos.modificar == 1 || permisos.act_desc == 1) {
+                                contenido += '<td class="py-1 px-1">';
+                                ////////////////////////////
+                                if (permisos.modificar == 1)
+                                    contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
+                                
+                                if (permisos.act_desc == 1) {
+                                    if (dataListado.resultados[i].estatus == 'A')
+                                        contenido += '<button type="button" class="btn btn-sm btn-danger cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-times" style="padding: 0px 2px;"></i></button>';
+                                    else
+                                        contenido += '<button type="button" class="btn btn-sm btn-success cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-check"></i></button>';
+                                }
+                                ////////////////////////////
+                                contenido += '</td>';
+                            }
+                            contenido += '</tr>';
                             $('#listado_tabla tbody').append(contenido);
                         }
                         $('.editar_registro').click(editarRegistro);
                         $('.cambiar_estatus').click(cambiarEstatus);
                     } else {
-                        $('#listado_tabla tbody').append('<tr><td colspan="4" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay ocupaciones registradas</td></tr>');
+                        $('#listado_tabla tbody').append('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay ocupaciones registradas</td></tr>');
                     }
 
                     $('#total_registros').html(dataListado.total);

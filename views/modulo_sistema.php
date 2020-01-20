@@ -46,7 +46,7 @@
             <thead>
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
-                    <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Nombre del módulo</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="70">Posición</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> px-1 py-2" width="50">Icono</th>
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>

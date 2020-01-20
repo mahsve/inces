@@ -1,7 +1,10 @@
 <div id="info_table" style="">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
         <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
-        <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+        
+        <?php if ($permisos['registrar'] == 1){ ?>
+            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+        <?php } ?>
     </div>
 
     <div class="row justify-content-between">
@@ -50,7 +53,7 @@
         <div class="col-sm-12 col-xl-3 mb-2">
             <div class="form-group d-flex align-items-center text-info position-relative mb-0">
                 <label for="campo_busqueda" class="position-absolute pr-2 m-0" style="right: 2px;"><i class="fas fa-search"></i></label>
-                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right:30px;" placeholder="Buscar por código o nombre" autocomplete="off"/>
+                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right:30px;" placeholder="Buscar por nombre" autocomplete="off"/>
             </div>
         </div>
     </div>
@@ -61,13 +64,15 @@
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="85">Estatus</th>
-                    <th class="bg-info rounded-right p-0 py-1" width="76"></th>
+                    <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> px-1 py-2" width="85">Estatus</th>
+                    <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
+                        <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 76; else echo 40; ?>"></th>
+                    <?php } ?>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="4" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 4; else echo 3; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
                 </tr>
             </tbody>
         </table>
@@ -87,33 +92,35 @@
     </div>
 </div>
 
-<div id="gestion_form" style="display: none;">
-    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-        <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
-        <button type="button" id="show_table" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
-    </div>
+<?php if ($permisos['registrar'] == 1 OR $permisos['modificar']){ ?>
+    <div id="gestion_form" style="display: none;">
+        <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
+            <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
+            <button type="button" id="show_table" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
+        </div>
 
-    <form name="formulario" id="formulario" class="formulario">
-        <div class="form-row">
-            <div class="col-sm-12 offset-md-3 col-md-6">
-                <div class="form-group has-warning mb-2">
-                    <label for="codigo" class="small m-0">Código <span class="text-danger">*</span></label>
-                    <input type="text" name="codigo" id="codigo" class="form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
-                </div>
-                <div class="form-group has-warning mb-2">
-                    <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
-                    <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>
+        <form name="formulario" id="formulario" class="formulario">
+            <div class="form-row">
+                <div class="col-sm-12 offset-md-3 col-md-6">
+                    <div class="form-group has-warning mb-2">
+                        <label for="codigo" class="small m-0">Código <span class="text-danger">*</span></label>
+                        <input type="text" name="codigo" id="codigo" class="form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
+                    </div>
+                    <div class="form-group has-warning mb-2">
+                        <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- BOTON GUARDAR DATOS -->
-        <div class="pt-2 text-center">
-            <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
-        </div>
-        <!-- FIN BOTON GUARDAR DATOS -->
-    </form>
-</div>
+            <!-- BOTON GUARDAR DATOS -->
+            <div class="pt-2 text-center">
+                <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+            </div>
+            <!-- FIN BOTON GUARDAR DATOS -->
+        </form>
+    </div>
+<?php } ?>
 
 <!-- PASAR DATOS DE PHP A JAVASCRIPT -->
 <script> let url = '<?php echo SERVERURL; ?>'; </script>
