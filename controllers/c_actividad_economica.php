@@ -6,7 +6,7 @@ if ($_POST['opcion'])
     $objeto = new model_actividad_economica;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
+        case 'Registrar':
             $data = [];
             foreach ($_POST as $indice => $valor) {
                 if ($valor != '')
@@ -16,8 +16,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarActividadEconomica($data);
-            if ($resultado) {
+            if ($objeto->registrarActividadEconomica($data)) {
                 echo 'Registro exitoso';
             } else {
                 echo 'Registro fallido';
@@ -46,13 +45,13 @@ if ($_POST['opcion'])
             else if ($_POST['ordenar'] == 2)
                 $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados'] = $objeto->consultarActividadesEconomicas($datosLimpios);
-            $resultados['total']    = $objeto->consultarActividadesEconomicasTotal($datosLimpios);
+            $resultados['resultados']   = $objeto->consultarActividadesEconomicas($datosLimpios);
+            $resultados['total']        = $objeto->consultarActividadesEconomicasTotal($datosLimpios);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
         
-        case 'Modificar';
+        case 'Modificar':
             $data = [];
             foreach ($_POST as $indice => $valor) {
                 if ($valor != '')
@@ -62,8 +61,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarActividadEconomica($data);
-            if ($resultado) {
+            if ($objeto->modificarActividadEconomica($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
@@ -81,8 +79,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->estatusActividadEconomica($data);
-            if ($resultado) {
+            if ($objeto->estatusActividadEconomica($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';

@@ -15,8 +15,7 @@ if ($_POST['opcion']) {
             }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarOcupacion($data);
-            if ($resultado) {
+            if ($objeto->registrarOcupacion($data)) {
                 echo 'Registro exitoso';
             } else {
                 echo 'Registro fallido';
@@ -45,8 +44,8 @@ if ($_POST['opcion']) {
             else if ($_POST['ordenar'] == 2)
                 $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados'] = $objeto->consultarOcupaciones($datosLimpios);
-            $resultados['total']    = $objeto->consultarOcupacionesTotal($datosLimpios);
+            $resultados['resultados']   = $objeto->consultarOcupaciones($datosLimpios);
+            $resultados['total']        = $objeto->consultarOcupacionesTotal($datosLimpios);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -61,8 +60,7 @@ if ($_POST['opcion']) {
             }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarOcupacion($data);
-            if ($resultado) {
+            if ($objeto->modificarOcupacion($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
@@ -80,8 +78,7 @@ if ($_POST['opcion']) {
             }
 
             $objeto->conectar();
-            $resultado = $objeto->estatusOcupacion($data);
-            if ($resultado) {
+            if ($objeto->estatusOcupacion($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';

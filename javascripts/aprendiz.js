@@ -3,7 +3,7 @@ $(function () {
     $('#show_form').click(function (){
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
-        $('#form_title').html('Registrar');
+        $('#form_title').html('Inscripción del programa nacional de aprendizaje');
         $('#carga_espera').hide();
         tipoEnvio = 'Registrar';
         /////////////////////

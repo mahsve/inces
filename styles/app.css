@@ -127,15 +127,14 @@ table .dropdown-toggle::after {
 .nav .nav-item a.active{
     background: #17a2b8;
 }
-.icon-tab {
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
-    text-align: center;
-    background: white;
+.nav .nav-item a .icon-alert {
+    color: #e20b0b;
     position: relative;
-    top: -1px;
-    border-radius: 50%;
+    top: 1px;
+    font-size: 20px;
+}
+.nav .nav-item a.active .icon-alert{
+    color: #ffffff;
 }
 /* =============== ESTILOS FORMULARIOS COMPONENTES ============== */
 .form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
@@ -154,6 +153,9 @@ table .dropdown-toggle::after {
     resize: none;
 }
 .custom-radio label {
+    cursor: pointer;
+}
+.custom-control.custom-checkbox label{
     cursor: pointer;
 }
 /* ===============  ESTILOS CUADRO ESPERA ============== */

@@ -65,12 +65,30 @@
     <!-- MAS OPCIONES DE BUSQUEDA Y FILTROS -->
     <div id="mas_opciones_busquedas" class="collapse">
         <div class="card card-body mb-2 px-3 py-2">
-            <h5 class="text-secondary text-uppercase">Mas opciones de búsquedas</h5>
+            <h5 class="text-secondary text-uppercase mb-3">Mas opciones de búsquedas</h5>
+
+            <div class="row">
+                <div class="col-xl-3">
+                    <h5 class="text-secondary">Por oficio</h5>
+
+                    <div id="radios_oficios">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando...
+                    </div>
+                </div>
+
+                <div class="col-xl-3">
+                    <h5 class="text-secondary">Por turno</h5>
+
+                    <div id="radios_turnos">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando...
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="table-responsive pb-2">
-        <table id="listado_aprendices" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
+        <table id="listado_aprendices" class="table table-borderless table-hover mb-0" style="min-width: 1000px;">
             <thead>
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
@@ -130,32 +148,32 @@
             <ul class="nav nav-pills mb-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="pills-datos-ciudadano-tab" data-toggle="pill" href="#pills-datos-ciudadano" role="tab" aria-controls="pills-datos-ciudadano" aria-selected="true">
-                        <i class="fas fa-user-graduate"></i><span class="mx-1">Aprendiz</span><i class="fas fa-times icon-tab text-danger"></i>
+                        <i class="fas fa-user-graduate"></i><span class="ml-1">Aprendiz</span><i id="icon-ciudadano" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="pills-datos-ubicacion-tab" data-toggle="pill" href="#pills-datos-ubicacion" role="tab" aria-controls="pills-datos-ubicacion" aria-selected="false">
-                        <i class="fas fa-map-marked-alt"></i><span class="mx-1">Ubicación</span><i class="fas fa-times icon-tab text-danger"></i>
+                        <i class="fas fa-map-marked-alt"></i><span class="ml-1">Ubicación</span><i id="icon-ubicacion" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="pills-datos-vivienda-tab" data-toggle="pill" href="#pills-datos-vivienda" role="tab" aria-controls="pills-datos-vivienda" aria-selected="false">
-                        <i class="fas fa-hotel"></i><span class="mx-1">Vivienda</span><i class="fas fa-times icon-tab text-danger"></i>
+                        <i class="fas fa-hotel"></i><span class="ml-1">Vivienda</span><i id="icon-vivienda" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="pills-datos-familiares-tab" data-toggle="pill" href="#pills-datos-familiares" role="tab" aria-controls="pills-datos-familiares" aria-selected="false">
-                        <i class="fas fa-users"></i><span class="mx-1">Familiares</span><i class="fas fa-times icon-tab text-danger"></i>
+                        <i class="fas fa-users"></i><span class="ml-1">Familiares</span><i id="icon-familiares" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="pills-datos-ingresos-tab" data-toggle="pill" href="#pills-datos-ingresos" role="tab" aria-controls="pills-datos-ingresos" aria-selected="false">
-                        <i class="fas fa-money-bill-alt"></i><span class="mx-1">Ingresos</span><i class="fas fa-times icon-tab text-danger"></i>
+                        <i class="fas fa-money-bill-alt"></i><span class="ml-1">Ingresos</span><i id="icon-ingresos" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="pills-datos-contacto-tab" data-toggle="pill" href="#pills-datos-contacto" role="tab" aria-controls="pills-datos-contacto" aria-selected="false">
-                        <i class="fas fa-file-signature"></i><span class="mx-1">Recomendación</span><i class="fas fa-times icon-tab text-danger"></i>
+                    <a class="nav-link" id="pills-datos-recomendaciones-tab" data-toggle="pill" href="#pills-datos-recomendaciones" role="tab" aria-controls="pills-datos-recomendaciones" aria-selected="false">
+                        <i class="fas fa-file-signature"></i><span class="ml-1">Recomendación</span><i id="icon-recomendaciones" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
             </ul>
@@ -797,7 +815,7 @@
                     </div>
                 </div>
 
-                <div id="pills-datos-contacto" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-contacto-tab">
+                <div id="pills-datos-recomendaciones" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-recomendaciones-tab">
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">

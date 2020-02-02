@@ -6,7 +6,7 @@ if ($_POST['opcion'])
     $objeto = new model_oficio;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
+        case 'Registrar':
             $data = [];
             foreach ($_POST as $indice => $valor) {
                 if ($valor != '')
@@ -16,8 +16,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->registrarOficio($data);
-            if ($resultado) {
+            if ($objeto->registrarOficio($data)) {
                 echo 'Registro exitoso';
             } else {
                 echo 'Registro fallido';
@@ -46,13 +45,13 @@ if ($_POST['opcion'])
             else if ($_POST['ordenar'] == 2)
                 $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados'] = $objeto->consultarOficios($datosLimpios);
-            $resultados['total']    = $objeto->consultarOficiosTotal($datosLimpios);
+            $resultados['resultados']   = $objeto->consultarOficios($datosLimpios);
+            $resultados['total']        = $objeto->consultarOficiosTotal($datosLimpios);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
 
-        case 'Modificar';
+        case 'Modificar':
             $data = [];
             foreach ($_POST as $indice => $valor) {
                 if ($valor != '')
@@ -62,8 +61,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarOficio($data);
-            if ($resultado) {
+            if ($objeto->modificarOficio($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
@@ -81,8 +79,7 @@ if ($_POST['opcion'])
             }
 
             $objeto->conectar();
-            $resultado = $objeto->estatusOficio($data);
-            if ($resultado) {
+            if ($objeto->estatusOficio($data)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';

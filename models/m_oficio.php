@@ -79,20 +79,6 @@ class model_oficio extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // ELIMINAR DESPUES
-    // FUNCION PARA CONSULTAR UN OFICIO SEGUN EL CODIGO.
-	public function consultarOficio($datos)
-	{
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_oficio WHERE codigo='".$datos['codigo']."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
     // FUNCION PARA MODIFICAR UN OFICIO EXISTENTE.
     function modificarOficio($datos)
     {

@@ -83,7 +83,6 @@ class model_actividad_economica extends conexion
             nombre=".$datos['nombre']."
             WHERE codigo=".$datos['codigo']."
         ";
-        
         if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
         }

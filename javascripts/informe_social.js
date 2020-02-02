@@ -824,12 +824,35 @@ $(function () {
                     } else {
                         $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
                     }
+
+                    $('#radios_oficios').empty();
                     if (data.oficio) {
+                        let contenido_oficio = '';
+                        contenido_oficio += '<div class="custom-control custom-radio">';
+                        contenido_oficio += '<input type="radio" id="oficio_asd_0" name="buscar_oficio" class="custom-control-input" value="" checked>';
+                        contenido_oficio += '<label class="custom-control-label" for="oficio_asd_0">Todos</label>';
+                        contenido_oficio += '</div>';
+
+                        $('#radios_oficios').append(contenido_oficio);
                         for (let i in data.oficio) {
                             $('#oficio').append('<option value="'+data.oficio[i].codigo+'">'+data.oficio[i].nombre+'</option>');
+                        
+                            let contenido_oficio = '';
+                            contenido_oficio += '<div class="custom-control custom-radio">';
+                            contenido_oficio += '<input type="radio" id="oficio_asd_'+data.oficio[i].codigo+'" name="buscar_oficio" class="custom-control-input" value="'+data.oficio[i].codigo+'">';
+                            contenido_oficio += '<label class="custom-control-label" for="oficio_asd_'+data.oficio[i].codigo+'">'+data.oficio[i].nombre+'</label>';
+                            contenido_oficio += '</div>';
+                            $('#radios_oficios').append(contenido_oficio);
                         }
                     } else {
                         $('#oficio').html('<option value="">No hay oficios</option>');
+
+                        let contenido_oficio = '';
+                        contenido_oficio += '<div class="custom-control custom-radio">';
+                        contenido_oficio += '<input type="radio" id="oficio_asd_0" name="buscar_oficio" class="custom-control-input" value="" checked>';
+                        contenido_oficio += '<label class="custom-control-label" for="oficio_asd_0">Todos</label>';
+                        contenido_oficio += '</div>';
+                        $('#radios_oficios').append(contenido_oficio);
                     }
                     if (data.estado) {
                         for (let i in data.estado) {
@@ -846,6 +869,25 @@ $(function () {
                 console.log('error');
             }
         });
+
+        $('#radios_turnos').empty();
+
+        let contenido_oficio = '';
+        contenido_oficio += '<div class="custom-control custom-radio">';
+        contenido_oficio += '<input type="radio" id="turno_asd_0" name="buscar_turno" class="custom-control-input" value="" checked>';
+        contenido_oficio += '<label class="custom-control-label" for="turno_asd_0">Todos</label>';
+        contenido_oficio += '</div>';
+
+        $('#radios_turnos').append(contenido_oficio);
+        for (let i in dataTurno) {
+            let contenido_oficio = '';
+            contenido_oficio += '<div class="custom-control custom-radio">';
+            contenido_oficio += '<input type="radio" id="turno_asd_'+i+'" name="buscar_turno" class="custom-control-input" value="">';
+            contenido_oficio += '<label class="custom-control-label" for="turno_asd_'+i+'">'+dataTurno[i]+'</label>';
+            contenido_oficio += '</div>';
+
+            $('#radios_turnos').append(contenido_oficio);
+        }
     }
     llamarDatos();
 });
