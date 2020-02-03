@@ -45,7 +45,7 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
+                    <th class="bg-info rounded-left font-weight-normal text-right py-2 pl-1 pr-2" width="80">#</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del módulo</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="70">Posición</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> px-1 py-2" width="50">Icono</th>
@@ -86,9 +86,9 @@
         <div class="alert alert-info" role="alert">
             <ul class="m-0">
                 <li>Este sistema utiliza los iconos de <a href="https://fontawesome.com/icons" target="_blank" class="text-dark"><i class="fab fa-font-awesome"></i> Font Awesome</a> | Click para ver el catálogo de iconos</li>
-                <li>Tiene un recuado para ver una vista previa del nombre con el icono, asi se apreciara en el menú.</li>
+                <li>Tiene un recuadro para ver una vista previa del nombre con el icono, asi se apreciara en el menú.</li>
                 <li>El sistema utiliza la versión gratuita de Font Awesome, por lo que varios iconos no estarán disponibles, ni se mostrarán en el menú.</li>
-                <li>Para agregar un icono solo hace falta agregar las clases 'fas' + la clase del icono ejemplo: 'fa-user'</li>
+                <li>Para agregar un icono solo hace falta agregar las clases 'fas' + la clase del icono, ejemplo: 'fa-user'</li>
             </ul>
         </div>
 

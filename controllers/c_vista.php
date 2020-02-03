@@ -6,83 +6,159 @@ if ($_POST['opcion'])
     $objeto = new modelo_vistas;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
-            $datos = [
-                'modulo'    => htmlspecialchars($_POST['modulo']),
-                'nombre'    => htmlspecialchars($_POST['nombre']),
-                'enlace'    => htmlspecialchars($_POST['enlace']),
-                'posicion'  => htmlspecialchars($_POST['posicion']),
-                'icon'      => htmlspecialchars($_POST['icon']),
-            ];
-
+        case 'Traer datos':
+            $resultados = [];
             $objeto->conectar();
-            $resultado = $objeto->registrarVista($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
+            $resultados['modulos'] = $objeto->consultarModulos();
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Registrar';
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            ////////////////////
+            $objeto->conectar();
+            $num_modulos = $objeto->consultarTotalVistasPorModulo($data);
+            $data['posicion'] = $num_modulos + 1;
+            $resultado = $objeto->registrarVista($data);
+            if ($resultado) {
+                echo 'Registro exitoso';
+            } else {
+                echo 'Registro fallido';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_vista_sistema');
-            break;
+        break;
+
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $datosLimpios = [];
+            foreach ($_POST as $posicion => $valor) {
+                $datosLimpios[$posicion] = htmlspecialchars($valor);
+            }
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['resultados'] = $objeto->consultarVistas($datosLimpios);
+            $resultados['total']    = $objeto->consultarVistasTotal($datosLimpios);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
 
         case 'Modificar';
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'modulo'    => htmlspecialchars($_POST['modulo']),
-                'nombre'    => htmlspecialchars($_POST['nombre']),
-                'enlace'    => htmlspecialchars($_POST['enlace']),
-                'posicion'  => htmlspecialchars($_POST['posicion']),
-                'icon'      => htmlspecialchars($_POST['icon']),
-            ];
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
 
             $objeto->conectar();
-            $resultado = $objeto->modificarVista($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
+            if ($objeto->modificarVista($data)) {
+                $vistas = $objeto->consultarVistasModulosTodos();
+
+                $cont = 0; $mod_ = 0;
+                for ($i = 0; $i < count($vistas); $i++) {
+                    if ($mod_ != $vistas[$i]['codigo_modulo']) {
+                        $mod_ = $vistas[$i]['codigo_modulo'];
+                        $cont = 1;
+                    }
+
+                    $data2 = [
+                        'codigo' => $vistas[$i]['codigo'],
+                        'posicion' => $cont
+                    ];
+                    $objeto->modificarOrdenVista($data2);
+                    $cont++;
+                }
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/vista_sistema');
-            break;
+        break;
+
+        case 'Traer vistas':
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
+            ////////////////////
+            $resultados = [];
+            $objeto->conectar();
+            $resultados = $objeto->consultarVistasModulosTodos2($data);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Modificar orden':
+            $objeto->conectar();
+            $objeto->nuevaTransaccion();
+            $errores = 0;
+            for ($i=0; $i < count($_POST['codigo']); $i++) {
+                $data = [
+                    'codigo'    => htmlspecialchars($_POST['codigo'][$i]),
+                    'posicion'  => htmlspecialchars($_POST['posicion'][$i])
+                ];
+                if (!$objeto->modificarOrdenVista($data))
+                    $errores++;
+            }
+            if ($errores == 0) {
+                $objeto->guardarTransaccion();
+                echo 'Modificacion exitosa';
+            } else {
+                $objeto->calcelarTransaccion();
+                echo 'Modificación fallida';
+            }
+            $objeto->desconectar();
+        break;
 
         case 'Eliminar':
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo'])
-            ];
-
+            $data = [];
+            foreach ($_POST as $indice => $valor) {
+                if ($valor != '')
+                    $data[$indice] = "'".htmlspecialchars($valor)."'";
+                else
+                    $data[$indice] = 'NULL';
+            }
+            ////////////////////
             $objeto->conectar();
-            $resultado = $objeto->eliminarVista($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha eliminado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al eliminar.';
-            }
+            $objeto->nuevaTransaccion();
+            if ($objeto->eliminarVista($data)) {
+                $todasLasVistas = $objeto->consultarVistasModulosTodos2($data);
 
+                $errores = 0;
+                for ($i=0; $i < count($todasLasVistas); $i++) {
+                    $data = [
+                        'codigo'    => htmlspecialchars($todasLasVistas[$i]['codigo']),
+                        'posicion'  => $i + 1
+                    ];
+                    if (!$objeto->modificarOrdenVista($data))
+                        $errores++;
+                }
+                
+                if ($errores == 0) {
+                    $objeto->guardarTransaccion();
+                    echo 'Modificacion exitosa';
+                } else {
+                    $objeto->calcelarTransaccion();
+                    echo 'Modificación fallida';
+                }
+            } else {
+                echo 'Modificación fallida';
+                $objeto->calcelarTransaccion();
+            }
             $objeto->desconectar();
-            break;
+        break;
     }
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.

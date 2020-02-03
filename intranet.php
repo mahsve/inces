@@ -52,6 +52,7 @@ if (isset($_SESSION['sesion'])) {
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/fontawesome/css/all.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/datatable/datatables.min.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/datatable/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/design.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/app.css">
     <!-- ARCHIVOS JAVASCRIPTS -->
     <script src="<?php echo SERVERURL; ?>javascripts/jquery/jquery-3.4.1.min.js"></script>
@@ -113,11 +114,11 @@ if (isset($_SESSION['sesion'])) {
                                 $active = 'active';
                         } ?>
 
-                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="<?php echo $modulos['icono']; ?>"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
+                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-center <?php echo $modulos['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
                 
                         <ul class="dropdown-menu w-100">
                             <?php foreach ($modulos['vistas'] AS $vistas) { ?>
-                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:20px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
+                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
                             <?php } ?>
                         </ul>
                     </li>

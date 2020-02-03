@@ -111,4 +111,5 @@
 
 <!-- PASAR DATOS DE PHP A JAVASCRIPT -->
 <script> let url = '<?php echo SERVERURL; ?>'; </script>
+<script> let xls = '<?php echo $_SESSION['usuario']['codigo_rol']; ?>'; </script>
 <script src="<?php echo SERVERURL; ?>javascripts/rol.js"></script>

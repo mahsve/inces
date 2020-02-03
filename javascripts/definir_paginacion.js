@@ -64,4 +64,7 @@ function establecer_tabla(numeroDeLaPagina, cantidadBuscar, totalRegistros) {
 
     //////////////////////////////////////////////////////////////////////////////////
     $("#paginacion").html(contenedorTodo);
+    $('#paginacion .page-item.active').click(function (e) {
+        e.preventDefault();
+    });
 }

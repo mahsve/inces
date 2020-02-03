@@ -1,0 +1,5 @@
+/* ======================= ELEMENTO GENERALES ======================= */
+/* ======= ELEMENTOS CON EL MISMO DISEÑO EN TODA LA APLICACION ====== */
+select {
+    cursor: pointer;
+}

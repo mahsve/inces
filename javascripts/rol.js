@@ -53,7 +53,8 @@ $(function () {
                             contenido += '<td class="text-center py-2 px-1">'+dataListado.resultados[i].numero_v+'</td>';
                             contenido += '<td class="py-1 px-1">';
                             contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                            contenido += '<button type="button" class="btn btn-sm btn-danger eliminar_registro" data-posicion="'+i+'"><i class="fas fa-trash"></i></button>';
+                            if (xls != dataListado.resultados[i].codigo)
+                                contenido += '<button type="button" class="btn btn-sm btn-danger eliminar_registro" data-posicion="'+i+'"><i class="fas fa-trash"></i></button>';
                             contenido += '</div></div></td></tr>';
                             $('#listado_tabla tbody').append(contenido);
                         }
