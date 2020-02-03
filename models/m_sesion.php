@@ -80,6 +80,7 @@ class model_sesion extends conexion
                 INNER JOIN t_vista ON td_rol_vista.codigo_vista = t_vista.codigo
                 WHERE td_rol_vista.codigo_rol='".$datos['codigo_rol']."' AND
                 t_vista.codigo_modulo='".$columna['codigo']."'
+                ORDER BY t_vista.posicion ASC
             ";
             ////////////////////////////////////////////////////////////
             $consulta2  = mysqli_query($this->data_conexion, $sentencia2); // REALIZAMOS LA CONSULTA.
