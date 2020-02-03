@@ -105,9 +105,12 @@
                         <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
                         <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese el nombre del módulo" autocomplete="off"/>
                     </div>
-                    <div class="form-group has-warning mb-2">
-                        <label for="enlace" class="small m-0">Nombre del archivo <span class="text-danger">*</span></label>
-                        <input type="text" name="enlace" id="enlace" class="form-control form-control-sm" placeholder="Ej: archivo_registro" autocomplete="off"/>
+                    <label for="enlace" class="small m-0">Enlace <span class="text-danger">*</span></label>
+                    <div class="input-group input-group-sm mb-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><?php echo SERVERURL; ?>intranet/</span>
+                        </div>
+                        <input type="text" name="enlace" id="enlace" class="form-control" placeholder="archivo_registro"  autocomplete="off">
                     </div>
                     <div class="form-group has-warning mb-2">
                         <label for="icono" class="small m-0">Icono <span class="text-danger">*</span></label>

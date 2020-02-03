@@ -50,7 +50,7 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
+                    <th class="bg-info rounded-left font-weight-normal text-right py-2 pl-1 pr-2" width="80">#</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del rol</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="72">Módulos</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="52">Vistas</th>

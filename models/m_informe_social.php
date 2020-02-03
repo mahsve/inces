@@ -228,7 +228,8 @@ class model_informeSocial extends conexion
             diagnostico_social,
             diagnostico_preliminar,
             conclusiones,
-            enfermos
+            enfermos,
+            representante
         ) VALUES (
             $datos[fecha],
             $datos[nacionalidad],
@@ -241,7 +242,8 @@ class model_informeSocial extends conexion
             $datos[diagnostico_social],
             $datos[diagnostico_preliminar],
             $datos[conclusiones],
-            $datos[enfermos]
+            $datos[enfermos],
+            $datos[responsable_apre]
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
