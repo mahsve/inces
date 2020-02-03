@@ -104,10 +104,10 @@ table .dropdown-toggle::after {
     transition: all ease .3s;
     font-size: 14.5px;
 }
-.dropdown-menu a i.fa-check {
+table .dropdown-menu a i.fa-check {
     color: #28a745;
 }
-.dropdown-menu a i.fa-times {
+table .dropdown-menu a i.fa-times {
     color: #dc3545;
 }
 .dropdown-menu a:hover {
@@ -206,24 +206,33 @@ footer {
     }
     /* =============== ESTILOS SIDEBAR =============== */
     #sidebar {
-        position: absolute;
-        z-index: 3;
+        position: fixed;
         left: -280px;
         transition: left ease .3s;
-        height: calc(100% - 45px - 25px);
+        height: calc(100% - 45px);
+        z-index: 3;
     }
     #sidebar.show {
         left: 0px;
+        border-right: 2px solid rgba(29, 57, 61, 0.4);
     }
     /* ======== ESTILOS CONTENERDOR CONTENIDO ======== */
     #main-containt {
         width: 100%;
     }
+    /* =============== ESTILOS FOOTER ================ */
+    footer span {
+        min-height: 25px;
+        display: flex;
+        align-items: center;
+        background: #17a2b8;
+        z-index: 3;
+    }
 }
 @media (max-width: 378px) {
     /* =============== ESTILOS SIDEBAR =============== */
     #sidebar {
-        height: calc(100% - 45px - 45px);
+        height: calc(100% - 45px);
     }
     /* ======== ESTILOS CONTENERDOR CONTENIDO ======== */
     #container-main {
@@ -232,6 +241,9 @@ footer {
     }
     /* =============== ESTILOS FOOTER ================ */
     footer {
+        min-height: 45px;
+    }
+    footer span {
         min-height: 45px;
     }
 }
