@@ -22,7 +22,7 @@
                 <div class="col-sm-6 col-lg-3 col-xl-3 form-group d-flex align-items-center text-info mb-2">
                     <label for="ordenar_por" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="ordenar_por" class="custom-select custom-select-sm">
-                        <option value="1">Codigo</option>
+                        <option value="1">Usuario</option>
                         <option value="2">Nombre</option>
                     </select>
                 </div>
@@ -40,6 +40,7 @@
                     <select id="buscar_estatus" class="custom-select custom-select-sm">
                         <option value="">Todos</option>
                         <option value="A">Activos</option>
+                        <option value="B">Bloqueados</option>
                         <option value="I">Inactivos</option>
                     </select>
                 </div>
@@ -59,15 +60,18 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
-                    <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="85">Estatus</th>
+                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="150">Usuario</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="100">Cédula</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Nombre</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="170">T. personal</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="120">Rol</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="100">Estatus</th>
                     <th class="bg-info rounded-right p-0 py-1" width="76"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="4" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                    <td colspan="7" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
                 </tr>
             </tbody>
         </table>
@@ -95,14 +99,83 @@
 
     <form name="formulario" id="formulario" class="formulario">
         <div class="form-row">
-            <div class="col-sm-12 offset-md-3 col-md-6">
+            <!-- NACIONALIDAD -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
                 <div class="form-group has-warning mb-2">
-                    <label for="codigo" class="small m-0">Código <span class="text-danger">*</span></label>
-                    <input type="text" name="codigo" id="codigo" class="form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
+                    <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
+                    <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm">
+                        <option value="">Elija una opción</option>
+                        <option value="V">Venezolano</option>
+                        <option value="E">Extranjero</option>
+                    </select>
                 </div>
+            </div>
+
+            <!-- CEDULA -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
                 <div class="form-group has-warning mb-2">
-                    <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
-                    <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>
+                    <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
+                    <input type="text" name="cedula" id="cedula" class="form-control form-control-sm" placeholder="Ej: 20158789" maxlength="8"/>
+                </div>
+            </div>
+
+            <!-- NOMBRE 1 -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
+                    <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" placeholder="Ej: Juan"/>
+                </div>
+            </div>
+
+            <!-- NOMBRE 2 -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="nombre_2" class="small m-0">Segundo nombre</label>
+                    <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" placeholder="Ej: Luis"/>
+                </div>
+            </div>
+
+            <!-- APELLIDO 1 -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
+                    <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" placeholder="Ej: López"/>
+                </div>
+            </div>
+
+            <!-- APELLIDO 2 -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="apellido_2" class="small m-0">Segundo Apellido</label>
+                    <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" placeholder="Ej: Pérez"/>
+                </div>
+            </div>
+
+            <!-- SEXO -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="sexo" class="small m-0">Sexo <span class="text-danger">*</span></label>
+                    <select name="sexo" id="sexo" class="custom-select custom-select-sm">
+                        <option value="">Elija una opción</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- NACIONALIDAD -->
+            <div class="col-sm-6 col-md-3 col-xl-2">
+                <div class="form-group has-warning mb-2">
+                    <label for="tipo_persona" class="small m-0">Tipo personal <span class="text-danger">*</span></label>
+                    <select name="tipo_persona" id="tipo_persona" class="custom-select custom-select-sm">
+                        <option value="">Elija una opción</option>
+                        <option value="A">Admistrador</option>
+                        <option value="B">Admistrativo</option>
+                        <option value="F">Facilitador</option>
+                        <option value="E">Aprendiz</option>
+                        <option value="C">Contacto empresa</option>
+                        <option value="O">Otro</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -117,4 +190,4 @@
 
 <!-- PASAR DATOS DE PHP A JAVASCRIPT -->
 <script> let url = '<?php echo SERVERURL; ?>'; </script>
-<script src="<?php echo SERVERURL; ?>javascripts/oficio.js"></script>
+<script src="<?php echo SERVERURL; ?>javascripts/usuario.js"></script>
