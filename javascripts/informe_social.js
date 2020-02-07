@@ -333,9 +333,9 @@ $(function () {
     });
     /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function (){
+        $('#form_title').html('Registrar');
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
-        $('#form_title').html('Registrar');
         $('#carga_espera').hide();
         tipoEnvio = 'Registrar';
         /////////////////////

@@ -1,7 +1,348 @@
 $(function () {
-    let fecha = '';             // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
-    let tipoEnvio = '';         // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // DATOS DE LA TABLA Y PAGINACION 
+    let numeroDeLaPagina    = 1;
+    $('#cantidad_a_buscar').change(restablecerN);
+    $('#ordenar_por').change(restablecerN);
+    $('#campo_ordenar').change(restablecerN);
+    $('#campo_busqueda').keydown(function (e) {
+        if (e.keyCode == 13) {
+            numeroDeLaPagina = 1;
+            buscar_listado();
+            window.actualizar_busqueda = false;
+        } else
+            window.actualizar_busqueda = true;
+    });
+    $('#campo_busqueda').blur(function () {
+        if (window.actualizar_busqueda)
+            buscar_listado();
+    });
+    $('#buscar_estatus').change(restablecerN);
+    /////////////////////////////////////////////////////////////////////
+    let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
+    let dataListado     = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS CONSULTADOS.
+    /////////////////////////////////////////////////////////////////////
+    function restablecerN () {
+        numeroDeLaPagina = 1;
+        buscar_listado();
+    }
+    function buscar_listado(){
+        let filas = 0;
+        if (permisos.modificar == 1 || permisos.act_desc == 1)
+            filas = 7;
+        else
+            filas = 6;
 
+        $('#listado_tabla tbody').html('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
+        $("#paginacion").html('<li class="page-item"><a class="page-link text-info"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</a></li>');
+        $.ajax({
+            url : url+'controllers/c_empresa.php',
+            type: 'POST',
+            data: {
+                opcion  : 'Consultar',
+                numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
+                cantidad: parseInt($('#cantidad_a_buscar').val()),
+                ordenar : parseInt($('#ordenar_por').val()),
+                tipo_ord: parseInt($('#campo_ordenar').val()),
+                campo   : $('#campo_busqueda').val(),
+                estatus : $('#buscar_estatus').val()
+            }, success: function (resultados){
+                try {
+                    $('#listado_tabla tbody').empty();
+                    dataListado = JSON.parse(resultados);
+                    if (dataListado.resultados) {
+                        for (var i in dataListado.resultados) {
+                            let contenido = '';
+                            contenido += '<tr class="border-bottom text-secondary">';
+                            contenido += '<td class="py-2 pl-1 pr-1">'+dataListado.resultados[i].rif+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nil+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].razon_social+'</td>';
+                            contenido += '<td class="py-2 px-1" style="min-width: 200px;">'+dataListado.resultados[i].actividad_economica+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].telefono1+'</td>';
+                            
+                            if (dataListado.resultados[i].estatus == 'A')
+                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-success"><i class="fas fa-check mr-1"></i>Activo</span></td>';
+                            else if (dataListado.resultados[i].estatus == 'I')
+                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Inactivo</span></td>';
+
+                            if (permisos.modificar == 1 || permisos.act_desc == 1) {
+                                contenido += '<td class="py-1 px-1">';
+                                ////////////////////////////
+                                if (permisos.modificar == 1)
+                                    contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
+                                    
+                                if (permisos.act_desc == 1) {
+                                    if (dataListado.resultados[i].estatus == 'A')
+                                        contenido += '<button type="button" class="btn btn-sm btn-danger cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-times" style="padding: 0px 2px;"></i></button>';
+                                    else
+                                        contenido += '<button type="button" class="btn btn-sm btn-success cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-check"></i></button>';
+                                }
+                                ////////////////////////////
+                                contenido += '</td>';
+                            }
+                            contenido += '</tr>';
+                            $('#listado_tabla tbody').append(contenido);
+                        }
+                        $('.editar_registro').click(editarRegistro);
+                        $('.cambiar_estatus').click(cambiarEstatus);
+                    } else {
+                        $('#listado_tabla tbody').append('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay empresas registradas</td></tr>');
+                    }
+                    //////////////////////////////////////////////
+                    $('#total_registros').html(dataListado.total);
+                    establecer_tabla(numeroDeLaPagina, parseInt($('#cantidad_a_buscar').val()), dataListado.total);
+                    $('.mover').click(cambiarPagina);
+                } catch (error) {
+                    console.log(resultados);
+                }
+                window.actualizar_busqueda = false;
+            }, error: function (){
+                console.log('error');
+            }, timer: 15000
+        });
+    }
+    function cambiarPagina(e) {
+        e.preventDefault();
+        let numero = $(this).attr('data-pagina');
+        numeroDeLaPagina = parseInt(numero);
+        buscar_listado();
+    }
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    $('#rif').keyup(function () {
+        let letraMayus = $('#rif').val().toUpperCase();
+        $('#rif').val(letraMayus);
+    });
+    let validarRif = false;
+    $('#rif').blur(function (){
+        validarRif = false;
+        $('#spinner-rif').hide();
+        $('#spinner-rif-confirm').hide();
+        $('#spinner-rif-confirm').removeClass('fa-check text-success fa-times text-danger');
+
+        if ($('#rif').val() != '') {
+            let parametrosRIF = new RegExp("^([VEJPG]{1})([-])([0-9]{9})$");
+            if (parametrosRIF.test($("#rif").val())) {
+                if (window.rif != $('#rif').val()) {
+                    $.ajax({
+                        url : url+'controllers/c_empresa.php',
+                        type: 'POST',
+                        data: {
+                            opcion: 'Verificar RIF',
+                            rif: $('#rif').val()
+                        },
+                        success: function (resultados) {
+                            try {
+                                $('#spinner-rif').hide();
+                                //////////////////////////////////
+                                let data = JSON.parse(resultados);
+                                if (data == 0) {
+                                    validarRif = true;
+                                    $('#spinner-rif-confirm').addClass('fa-check text-success');
+                                } else {
+                                    validarRif = false;
+                                    $('#spinner-rif-confirm').addClass('fa-times text-danger');
+                                }
+                                $('#spinner-rif-confirm').show(200);
+                            } catch (error) {
+                                console.log(resultados);
+                            }
+                        },
+                        error: function () {
+                            alert('Hubo un error al conectar con el servidor y traer los datos.');
+                        }
+                    });
+                } else {
+                    validarRif = true;
+                }
+            } else {
+                alert('RIF incorrecto.');
+            }
+        }
+    });
+    let validarNacionalidad = true, validarCedula = true;
+    $('#estado').change(buscarCiudades);
+    $('#estado_c').change(buscarCiudades);
+    function buscarCiudades() {
+        let nombreInput = '';
+        if($(this).attr('name') == 'estado')
+            nombreInput = '#ciudad';
+        else
+            nombreInput = '#ciudad_c';
+
+        if ($(this).val() != '') {
+            $.ajax({
+                url : url+'controllers/c_empresa.php',
+                type: 'POST',
+                data: { opcion: 'Traer ciudades', estado: $(this).val() },
+                success: function (resultados) {
+                    try {
+                        let data = JSON.parse(resultados);
+                        $(nombreInput).empty();
+                        if (data.ciudades) {
+                            $(nombreInput).append('<option value="">Elija una opción</option>');
+
+                            for (let i in data.ciudades) {
+                                $(nombreInput).append('<option value="'+data.ciudades[i].codigo+'">'+data.ciudades[i].nombre+'</option>');
+                            }
+                        } else {
+                            $(nombreInput).append('<option value="">No hay ciudades</option>');
+                        }
+
+                        if (window.buscarCiudad = true) {
+                            window.buscarCiudad = false;
+                            $('#ciudad').val(dataListado.resultados[window.posicion].codigo_ciudad);
+                        }
+                        if (window.buscarCiudad_c = true) {
+                            window.buscarCiudad_c = false;
+                            $('#ciudad_c').val(dataListado.resultados[window.posicion].datos_personales.codigo_ciudad);
+                        }
+                        $('#carga_espera').hide(400);
+                    } catch (error) {
+                        console.log(resultados);
+                    }
+                },
+                error: function () {
+                    alert('Hubo un error al conectar con el servidor y traer los datos.');
+                }
+            });
+        } else {
+            $(nombreInput).append('<option value="">Elija un estado</option>');
+        }
+    }
+    /////////////////////////////////////////////////////////////////////
+    $('#show_form').click(function (){
+        $('#form_title').html('Registrar');
+        $('#info_table').hide(400);
+        $('#gestion_form').show(400);
+        $('#carga_espera').hide(400);
+        tipoEnvio = 'Registrar';
+        /////////////////////
+        limpiarFormulario();
+    });
+    $('#show_table').click(function (){
+        $('#info_table').show(400);
+        $('#gestion_form').hide(400);
+        /////////////////////
+        $('#pills-datos-empresa-tab').tab('show');
+    });
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
+    function editarRegistro() {
+        let posicion = $(this).attr('data-posicion');
+        window.posicion = posicion;
+        /////////////////////
+        $('#info_table').hide(400);
+        $('#gestion_form').show(400);
+        $('#form_title').html('Modificar');
+        $('#carga_espera').show();
+        tipoEnvio = 'Modificar';
+        /////////////////////
+        limpiarFormulario();
+        /////////////////////
+        // LLENADO DEL FORMULARIO CON LOS DATOS REGISTRADOS.
+        window.rif = dataListado.resultados[posicion].rif;
+        $('#rif').val(dataListado.resultados[posicion].rif);
+        $('#nil').val(dataListado.resultados[posicion].nil);
+        $('#razon_social').val(dataListado.resultados[posicion].razon_social);
+        $('#actividad_economica').val(dataListado.resultados[posicion].codigo_actividad_e);
+        $('#codigo_aportante').val(dataListado.resultados[posicion].codigo_aportante);
+        $('#telefono_1').val(dataListado.resultados[posicion].telefono1);
+        $('#telefono_2').val(dataListado.resultados[posicion].telefono2);
+        $('#estado').val(dataListado.resultados[posicion].codigo_estado);
+        window.buscarCiudad = true;
+        $('#estado').trigger('change');
+        $('#direccion').val(dataListado.resultados[posicion].direccion);
+        /////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        window.nacionalidad = dataListado.resultados[posicion].datos_personales.nacionalidad;
+        window.cedula = dataListado.resultados[posicion].datos_personales.cedula;
+        $('#nacionalidad').val(dataListado.resultados[posicion].datos_personales.nacionalidad);
+        $('#cedula').val(dataListado.resultados[posicion].datos_personales.cedula);
+        $('#nombre_1').val(dataListado.resultados[posicion].datos_personales.nombre1);
+        $('#nombre_2').val(dataListado.resultados[posicion].datos_personales.nombre2);
+        $('#apellido_1').val(dataListado.resultados[posicion].datos_personales.apellido1);
+        $('#apellido_2').val(dataListado.resultados[posicion].datos_personales.apellido2);
+        $('#sexo').val(dataListado.resultados[posicion].datos_personales.sexo);
+        $('#estado_c').val(dataListado.resultados[posicion].datos_personales.codigo_estado);
+        window.buscarCiudad_c = true;
+        $('#estado_c').trigger('change');
+        $('#telefono').val(dataListado.resultados[posicion].datos_personales.telefono1);
+        $('#correo').val(dataListado.resultados[posicion].datos_personales.correo);
+    }
+    // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
+    $('#guardar_datos').click(function (e) {
+        e.preventDefault();
+        if (validarRif && validarNacionalidad && validarCedula) {
+            var data = $("#formulario").serializeArray();
+            data.push({ name: 'opcion', value: tipoEnvio });
+            data.push({ name: 'rif2', value: window.rif });
+            data.push({ name: 'nacionalidad2', value: window.nacionalidad });
+            data.push({ name: 'cedula2', value: window.cedula });
+
+            $.ajax({
+                url : url+'controllers/c_empresa.php',
+                type: 'POST',
+                data: data,
+                success: function (resultados) {
+                    alert(resultados);
+                    if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
+                        $('#show_table').trigger('click');
+                        buscar_listado();
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        }
+    });
+    // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+    function cambiarEstatus () {
+        let posicion = $(this).attr('data-posicion');
+        let rif = dataListado.resultados[posicion].rif;
+        let estatus = '';
+        if (dataListado.resultados[posicion].estatus == 'A')
+            estatus = 'I';
+        else
+            estatus = 'A';
+        
+        $.ajax({
+            url : url+'controllers/c_empresa.php',
+            type: 'POST',
+            data: {
+                opcion: 'Estatus',
+                rif: rif,
+                estatus: estatus
+            },
+            success: function (resultados) {
+                alert(resultados);
+                if (resultados == 'Modificacion exitosa')
+                    buscar_listado();
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
+    // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
+    function limpiarFormulario(){
+        document.formulario.reset();
+        $('.ocultar-iconos').hide();
+        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
+    }
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // AUTOLLAMADOS.
     llamarDatos();
     function llamarDatos()
     {
@@ -41,6 +382,8 @@ $(function () {
                         $('#estado').append('<option value="">No hay estados</option>');
                         $('#estado_c').append('<option value="">No hay estados</option>');
                     }
+
+                    buscar_listado();
                 } catch (error) {
                     console.log(resultados);
                 }
@@ -50,139 +393,4 @@ $(function () {
             }
         });
     }
-
-    $('#estado').change(buscarCiudades);
-    $('#estado_c').change(buscarCiudades);
-    function buscarCiudades() {
-        let nombreInput = '';
-        if($(this).attr('name') == 'estado')
-            nombreInput = '#ciudad';
-        else
-            nombreInput = '#ciudad_c';
-
-        if ($(this).val() != '') {
-            $.ajax({
-                url : url+'controllers/c_empresa.php',
-                type: 'POST',
-                data: { opcion: 'Traer ciudades', estado: $(this).val() },
-                success: function (resultados) {
-                    try {
-                        let data = JSON.parse(resultados);
-                        $(nombreInput).empty();
-                        if (data.ciudades) {
-                            $(nombreInput).append('<option value="">Elija una opción</option>');
-
-                            for (let i in data.ciudades) {
-                                $(nombreInput).append('<option value="'+data.ciudades[i].codigo+'">'+data.ciudades[i].nombre+'</option>');
-                            }
-                        } else {
-                            $(nombreInput).append('<option value="">No hay ciudades</option>');
-                        }
-                    } catch (error) { console.log(resultados); }
-                },
-                error: function () {
-                    alert('Hubo un error al conectar con el servidor y traer los datos.');
-                }
-            });
-        } else {
-            $(nombreInput).append('<option value="">Elija un estado</option>');
-        }
-    }
-
-    // MOSTRAR EL FORMULARIO PARA REGISTRAR UN NUEVO APRENDIZ.
-    $('#show_form').click(function (){
-        $('#info_table').hide(400);
-        $('#gestion_form').show(400);
-        $('#form_title').html('Registrar');
-        $('#carga_espera').hide();
-        tipoEnvio = 'Registrar';
-        /////////////////////
-        // limpiarFormulario();
-        // if (localStorage.getItem('confirm_data')){
-        //     setTimeout(() => {
-        //         if (confirm('Hay datos sin guardar, ¿Quieres seguir editandolos?')) {
-        //             $('.localStorage').each(function (){
-        //                 let valor = localStorage.getItem($(this).attr('id'));
-        //                 if (valor != '' && valor != null && valor != undefined)
-        //                     $(this).val(localStorage.getItem($(this).attr('id')));
-        //             });
-        //             $('.localStorage-radio').each(function (){
-        //                 if ($(this).val() == localStorage.getItem($(this).attr('name')))
-        //                     $(this).prop('checked','checked');
-        //             });
-        //             let grado_instruccion = localStorage.getItem('grado_instruccion');
-        //             if (grado_instruccion == 'SI' || grado_instruccion == 'SC')
-        //                 $('#titulo').attr('disabled', false);
-
-        //             for (let index = 1; index <= maxFamiliares; index++) {
-        //                 if (localStorage.getItem('filaFamilia'+index)) {
-        //                     window.actualizar3 = true;
-        //                     $('#agregar_familiar').trigger('click');
-
-        //                     let arregloFamilia = JSON.parse(localStorage.getItem('filaFamilia'+index));
-        //                     for(var posicion in arregloFamilia) {
-        //                         if (arregloFamilia[posicion] != '')
-        //                             $('#'+posicion+index).val(arregloFamilia[posicion]);
-        //                     }
-        //                 }
-        //             }
-        //             $('.trabajando').trigger('change');
-        //             if (localStorage.getItem('responsable_apre')) 
-        //                 document.formulario.responsable_apre.value = localStorage.getItem('responsable_apre');
-
-        //             window.actualizar3 = false;
-
-        //             window.actualizar = true;
-        //             $('#estado').trigger('change');
-        //             $('#fecha_n').trigger('change');
-        //         } else {
-        //             localStorage.removeItem('confirm_data');
-        //             $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
-        //             $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
-        //         }
-        //     }, 500);
-        // }
-    });
-
-    // MOSTRAR LA TABLA CON TODA LA LISTA DE LOS APRENDICES REGISTRADOS.
-    $('#show_table').click(function (){
-        $('#info_table').show(400);
-        $('#gestion_form').hide(400);
-        /////////////////////
-        // window.editar = false;
-        // /////////////////////
-        // while (vista != 1)
-        //     $('#retroceder_form').trigger('click');
-        // /////////////////////
-        // localStorage.removeItem('confirm_data');
-        // $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
-        // $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
-        
-        // for (let index = 1; index <= maxFamiliares; index++) {
-        //     localStorage.removeItem('filaFamilia'+index);
-        // }
-    });
-
-    // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
-    $('#guardar_datos').click(function (e) {
-        e.preventDefault();
-        var data = $("#formulario").serializeArray();
-        data.push({ name: 'opcion', value: tipoEnvio });
-        
-        $.ajax({
-            url : url+'controllers/c_empresa.php',
-            type: 'POST',
-            data: data,
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                    // $('#show_table').trigger('click');
-                    // buscar_listado();
-                }
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
-    });
 });
