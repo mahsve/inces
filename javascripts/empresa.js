@@ -161,7 +161,101 @@ $(function () {
             }
         }
     });
-    let validarNacionalidad = true, validarCedula = true;
+    let validarNacionalidad = false, validarCedula = false;
+    $('#nacionalidad').change(function () {
+        if ($('#nacionalidad').val() != '') {
+            validarNacionalidad = true;
+        } else {
+            validarNacionalidad = false;
+        }
+
+        if (window.elegirNacionalidad == true) {
+            window.elegirNacionalidad = false;
+            $('#cedula').trigger('blur');
+        }
+    });
+    $('#cedula').blur(function (){
+        validarCedula = false;
+        $('#spinner-cedula').hide();
+        $('#spinner-cedula-confirm').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
+
+        if($('#nacionalidad').val() != '') {
+            if ($('#cedula').val() != '') {
+                // let parametrosRIF = new RegExp("^([VEJPG]{1})([-])([0-9]{9})$");
+                // if (parametrosRIF.test($("#rif").val())) {
+                    if (window.cedula != $('#cedula').val()) {
+                        $.ajax({
+                            url : url+'controllers/c_empresa.php',
+                            type: 'POST',
+                            data: {
+                                opcion: 'Verificar cedula',
+                                nacionalidad: $('#nacionalidad').val(),
+                                cedula: $('#cedula').val()
+                            },
+                            success: function (resultados) {
+                                try {
+                                    $('#spinner-cedula').hide();
+                                    //////////////////////////////////
+                                    let data = JSON.parse(resultados);
+                                    if (data) {
+                                        if (confirm('Esta persona ya esta registrada,\n¿Quiere agregarla como contacto de esta empresa?')) {
+                                            window.nacionalidad = data[0].nacionalidad;
+                                            window.cedula = data[0].cedula;
+                                            window.registrar_cont = 'no';
+                                            //////////////////////////////////////
+                                            $('#nacionalidad').val(data[0].nacionalidad);
+                                            $('#cedula').val(data[0].cedula);
+                                            $('#nombre_1').val(data[0].nombre1);
+                                            $('#nombre_2').val(data[0].nombre2);
+                                            $('#apellido_1').val(data[0].apellido1);
+                                            $('#apellido_2').val(data[0].apellido2);
+                                            $('#sexo').val(data[0].sexo);
+                                            $('#estado_c').val(data[0].codigo_estado);
+                                            window.ciudad_c = data[0].codigo_ciudad;
+                                            window.buscarCiudad_c2 = true;
+                                            $('#estado_c').trigger('change');
+                                            $('#telefono').val(data[0].telefono1);
+                                            $('#correo').val(data[0].correo);
+                                            //////////////////////////////////////
+                                            $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                            validarNacionalidad = true;
+                                            validarCedula = true;
+                                        } else {
+                                            window.registrar_cont = 'no';
+                                            $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+                                            validarNacionalidad = false;
+                                            validarCedula = false;
+                                        }
+                                    } else {
+                                        window.registrar_cont = 'si';
+                                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                        validarNacionalidad = true;
+                                        validarCedula = true;
+                                    }
+                                    $('#spinner-cedula-confirm').show(200);
+                                } catch (error) {
+                                    console.log(resultados);
+                                }
+                            },
+                            error: function () {
+                                alert('Hubo un error al conectar con el servidor y traer los datos.');
+                            }
+                        });
+                    } else {
+                        validarNacionalidad = true;
+                        validarCedula = true;
+                    }
+                // } else {
+                //     alert('RIF incorrecto.');
+                // }
+            }
+        } else {
+            alert('Elija la nacionalidad');
+            window.elegirNacionalidad = true;
+        }
+    });
+    /////////////////////////////////////////////////////////////////////
     $('#estado').change(buscarCiudades);
     $('#estado_c').change(buscarCiudades);
     function buscarCiudades() {
@@ -190,13 +284,26 @@ $(function () {
                             $(nombreInput).append('<option value="">No hay ciudades</option>');
                         }
 
-                        if (window.buscarCiudad = true) {
-                            window.buscarCiudad = false;
+                        if (window.buscarCiudad == true) {
                             $('#ciudad').val(dataListado.resultados[window.posicion].codigo_ciudad);
+                            delete window.buscarCiudad;
                         }
-                        if (window.buscarCiudad_c = true) {
-                            window.buscarCiudad_c = false;
+
+                        if (window.buscarCiudad_c1 == true) {
                             $('#ciudad_c').val(dataListado.resultados[window.posicion].datos_personales.codigo_ciudad);
+                            delete window.buscarCiudad_c1;
+                        }
+
+                        if (window.buscarCiudad_c == true) {
+                            $('#estado_c').trigger('change');
+                            delete window.buscarCiudad_c;
+                            window.buscarCiudad_c1 = true;
+                        }
+
+                        if (window.buscarCiudad_c2 == true) {
+                            $('#ciudad_c').val(window.ciudad_c);
+                            delete window.buscarCiudad_c2;
+                            delete window.ciudad_c;
                         }
                         $('#carga_espera').hide(400);
                     } catch (error) {
@@ -271,9 +378,13 @@ $(function () {
         $('#sexo').val(dataListado.resultados[posicion].datos_personales.sexo);
         $('#estado_c').val(dataListado.resultados[posicion].datos_personales.codigo_estado);
         window.buscarCiudad_c = true;
-        $('#estado_c').trigger('change');
         $('#telefono').val(dataListado.resultados[posicion].datos_personales.telefono1);
         $('#correo').val(dataListado.resultados[posicion].datos_personales.correo);
+        /////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        validarRif = true;
+        validarNacionalidad = true;
+        validarCedula = true;
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
@@ -284,6 +395,7 @@ $(function () {
             data.push({ name: 'rif2', value: window.rif });
             data.push({ name: 'nacionalidad2', value: window.nacionalidad });
             data.push({ name: 'cedula2', value: window.cedula });
+            data.push({ name: 'registrar_cont', value: window.registrar_cont });
 
             $.ajax({
                 url : url+'controllers/c_empresa.php',
@@ -295,6 +407,10 @@ $(function () {
                         $('#show_table').trigger('click');
                         buscar_listado();
                     }
+                    // delete  window.posicion,
+                    //         window.rif,
+                    //         window.nacionalidad,
+                    //         window.cedula;
                 },
                 error: function () {
                     console.log('error');
@@ -335,6 +451,8 @@ $(function () {
         document.formulario.reset();
         $('.ocultar-iconos').hide();
         $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
+        /////////////////////////////////////////////////////////////////
+        window.buscarCiudad = false;
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////

@@ -74,6 +74,22 @@ class model_empresa extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
+	public function verificarCedula($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+        FROM t_datos_personales
+        INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
+        WHERE nacionalidad=$datos[nacionalidad] AND cedula=$datos[cedula]"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA REGISTRAR LA PERSONA DE CONTACTO DE LA EMPRESA
     public function registrarPersonaContacto($datos)
     {

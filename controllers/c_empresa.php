@@ -40,6 +40,17 @@ if ($_POST['opcion'])
             echo json_encode($data);
         break;
 
+        case 'Verificar cedula':
+            ////////////////////// LIMPIAR DATOS ///////////////////////
+            $cedulaLimpia['nacionalidad'] = "'".htmlspecialchars($_POST['nacionalidad'])."'";
+            $cedulaLimpia['cedula'] = "'".htmlspecialchars($_POST['cedula'])."'";
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $objeto->conectar();
+            $data = $objeto->verificarCedula($cedulaLimpia);
+            $objeto->desconectar();
+            echo json_encode($data);
+        break;
+
         case 'Registrar':
             ////////////////////// LIMPIAR DATOS ///////////////////////
             $dataInsercion = [];
@@ -52,16 +63,22 @@ if ($_POST['opcion'])
             ///////////////////// HACER CONSULTAS //////////////////////
             $objeto->conectar();
             $objeto->nuevaTransaccion();
-            if ($objeto->registrarPersonaContacto($dataInsercion)){
+            if ($_POST['registrar_cont'] == 'si') {
+                $respuestaRegistro = $objeto->registrarPersonaContacto($dataInsercion);
+            } else {
+                $respuestaRegistro = true;
+            }
+            ////////////////////////////////////////////////////////////
+            if ($respuestaRegistro){
                 if ($objeto->registrarEmpresa($dataInsercion)) {
                     echo 'Registro exitoso';
                     $objeto->guardarTransaccion();
                 } else {
-                    echo 'Registro fallido';
+                    echo 'Registro fallido 2';
                     $objeto->calcelarTransaccion();
                 }
             } else {
-                echo 'Registro fallido';
+                echo 'Registro fallido 1 ';
                 $objeto->calcelarTransaccion();
             }
             $objeto->desconectar();
