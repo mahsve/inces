@@ -52,10 +52,11 @@ $(function () {
                     $('#listado_tabla tbody').empty();
                     dataListado = JSON.parse(resultados);
                     if (dataListado.resultados) {
+                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
                         for (var i in dataListado.resultados) {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
 
                             if (dataListado.resultados[i].estatus == 'A')
@@ -80,6 +81,7 @@ $(function () {
                             }
                             contenido += '</tr>';
                             $('#listado_tabla tbody').append(contenido);
+                            cont++;
                         }
                         $('.editar_registro').click(editarRegistro);
                         $('.cambiar_estatus').click(cambiarEstatus);
