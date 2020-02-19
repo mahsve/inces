@@ -388,7 +388,9 @@
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Para uso de la trabajadora social</h3>
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Subir Archivos</h3>
+                        
+                            <p class="d-inline-block text-secondary border-bottom border-info w-100 mb-2" style="border-width: 2px !important;">Puede subir todos los archivos que quiera relacionados al facilitador, PDF, documentos Word, Imagenes (PNG, JPG, JPEG).</p>
                         </div>
 
                         <!-- CONDICIONES DE LA VIVIENDA -->

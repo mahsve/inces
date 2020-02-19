@@ -1,5 +1,8 @@
 <?php 
 session_start();
+date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
+$date = date('Y-m-d', time());
+
 if ($_POST['opcion'])
 {
     require_once('../models/m_facilitador.php');
@@ -9,9 +12,10 @@ if ($_POST['opcion'])
         case 'Traer datos':
             $resultados = [];
             $objeto->conectar();
-            $resultados['ocupacion'] = $objeto->consultarOcupaciones();
-            $resultados['oficio'] = $objeto->consultarOficios();
-            $resultados['estado'] = $objeto->consultarEstados();
+            $resultados['fecha']    = $date;
+            $resultados['ocupacion']= $objeto->consultarOcupaciones();
+            $resultados['oficio']   = $objeto->consultarOficios();
+            $resultados['estado']   = $objeto->consultarEstados();
             $objeto->desconectar();
             echo json_encode($resultados);
         break;

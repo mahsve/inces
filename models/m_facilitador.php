@@ -66,7 +66,7 @@ class model_facilitador extends conexion
 	public function consultarCiudades($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -79,7 +79,7 @@ class model_facilitador extends conexion
 	public function consultarMunicipios($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -92,7 +92,7 @@ class model_facilitador extends conexion
 	public function consultarParroquias($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='$datos[municipio]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -114,7 +114,7 @@ class model_facilitador extends conexion
             apellido2,
             sexo,
             fecha_n,
-            lugar_n,
+            codigo_ocupacion,
             estado_civil,
             nivel_instruccion,
             titulo_acade,
@@ -123,28 +123,30 @@ class model_facilitador extends conexion
             codigo_parroquia,
             direccion,
             telefono1,
+            telefono2,
             correo,
             tipo_persona
         ) VALUES (
-            $datos[nacionalidad],
-            $datos[cedula],
-            $datos[nombre_1],
-            $datos[nombre_2],
-            $datos[apellido_1],
-            $datos[apellido_2],
-            $datos[sexo],
-            $datos[fecha_n],
-            $datos[lugar_n],
-            $datos[estado_civil],
-            $datos[grado_instruccion],
-            $datos[titulo],
-            $datos[alguna_mision],
-            $datos[ciudad],
-            $datos[parroquia],
-            $datos[direccion],
-            $datos[telefono_1],
-            $datos[correo], 
-            'F'
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."',
+            '".$datos['estado']."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)

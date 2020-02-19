@@ -20,6 +20,7 @@ $(function() {
     });
     $('#buscar_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
+    let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
     /////////////////////////////////////////////////////////////////////
@@ -109,7 +110,117 @@ $(function() {
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
-    
+    $('#fecha_n').change(function (){
+        let year    = $(this).val().substr(0,4);
+        let month   = $(this).val().substr(5,2);
+        let day     = $(this).val().substr(8,2);
+        let yearA   = fecha.substr(0,4);
+        let monthA  = fecha.substr(5,2);
+        let dayA    = fecha.substr(8,2);
+            
+        let edad = 0;
+        if (year != '' && year != undefined) {
+            if (year <= yearA) {
+                edad = yearA - year;
+                if (month > monthA) {
+                    if (edad != 0) 
+                        edad--;
+                } else if (month == monthA) {
+                    if (day > dayA)
+                        if (edad != 0) 
+                            edad--;
+                }
+            }
+        }
+        
+        // if (edad > 16 && edad < 19) {
+        //     alert8
+        // }
+        $('#edad').val(edad);
+    });
+    $('.radio_educacion').click(function () {
+        if ($(this).val() == 'SI' || $(this).val() == 'SC')
+            $('#titulo').attr('disabled', false);
+        else {
+            $('#titulo').attr('disabled', true);
+            $('#titulo').val('');
+        }
+    });
+    $('#estado').change(function () {
+        if ($(this).val() != '') {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                data: { opcion: 'Traer divisiones', estado: $(this).val() },
+                success: function (resultados) {
+                    $('#ciudad').empty();
+                    $('#municipio').empty();
+                    try {
+                        let data = JSON.parse(resultados);
+                        if (data.ciudad) {
+                            $('#ciudad').append('<option value="">Elija una opción</option>');
+                            for(let i in data.ciudad){
+                                $('#ciudad').append('<option value="'+data.ciudad[i].codigo+'">'+data.ciudad[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#ciudad').html('<option value="">No hay ciudades</option>');
+                        }
+                        if (data.municipio) {
+                            $('#municipio').append('<option value="">Elija una opción</option>');
+                            for(let i in data.municipio){
+                                $('#municipio').append('<option value="'+data.municipio[i].codigo+'">'+data.municipio[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#municipio').html('<option value="">No hay municipios</option>');
+                        }
+                    } catch (error) {
+                        console.log(resultados);
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        } else {
+            $('#ciudad').html('<option value="">Elija un estado</option>');
+            $('#municipio').html('<option value="">Elija un estado</option>');
+        }
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
+    });
+    $('#municipio').change(function () {
+        if (window.actualizar2 !== true) {
+            localStorage.removeItem('parroquia');
+        }
+
+        if ($(this).val() != '') {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                data: { opcion: 'Traer parroquias', municipio: $(this).val() },
+                success: function (resultados) {
+                    $('#parroquia').empty();
+                    try {
+                        let data = JSON.parse(resultados);
+                        if (data.parroquia) {
+                            $('#parroquia').append('<option value="">Elija una opción</option>');
+                            for(let i in data.parroquia){
+                                $('#parroquia').append('<option value="'+data.parroquia[i].codigo+'">'+data.parroquia[i].nombre+'</option>');
+                            }
+                        } else {
+                            $('#parroquia').html('<option value="">No hay parroquias</option>');
+                        }
+                    } catch (error) {
+                        console.log(resultados);
+                    }
+                },
+                error: function () {
+                    console.log('error');
+                }
+            });
+        } else {
+            $('#parroquia').html('<option value="">Elija un municipio</option>');
+        }
+    });
     /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function (){
         $('#form_title').html('Registrar');
