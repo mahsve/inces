@@ -171,7 +171,7 @@ $(function () {
                 }
             }
         }
-
+        
         // if (edad > 16 && edad < 19) {
         //     alert8
         // }
@@ -420,16 +420,19 @@ $(function () {
             contenido += '<tr data-posicion="'+cantidad+'">';
             contenido += '<td class="py-2 px-0 text-center">'+cantidad+'</td>';
             contenido += '<input type="hidden" name="id_familiar[]" id="id_familiar'+cantidad+'">';
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar[]" id="nombre_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="date" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia calcular_edad" style="width: 128px;"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar1[]" id="nombre_familiar1'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar2[]" id="nombre_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar1[]" id="apellido_familiar1'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar2[]" id="apellido_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia calcular_edad"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="edad_familiar[]" id="edad_familiar'+cantidad+'" class="form-control form-control-sm text-center storageFamilia" value="0" style="width: 56px;" readonly="true"></td>';
             
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="sexo_familiar[]" id="sexo_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia" style="width: 56px;">';
             contenido += '<option value=""></option><option value="M">M</option><option value="F">F</option><option value="I">I</option>';
             contenido += '</select></td>';
             
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="parentesco_familiar[]" id="parentesco_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia" style="width: 136px;">';
-            contenido += '<option value="">Elija una opción</option>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="parentesco_familiar[]" id="parentesco_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia">';
+            contenido += '<option value="">Opción</option>';
             for (let i in dataParentesco) {
                 contenido += '<option value="'+i+'">'+dataParentesco[i]+'</option>';
             }
@@ -437,7 +440,7 @@ $(function () {
 
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="ocupacion_familiar[]" id="ocupacion_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia" style="width: 140px;">';
             if (dataOcupacion) {
-                contenido += '<option value="">Elija una opción</option>';
+                contenido += '<option value="">Opción</option>';
                 for (let i in dataOcupacion) {
                     contenido += '<option value="'+dataOcupacion[i].codigo+'">'+dataOcupacion[i].nombre+'</option>';
                 }
@@ -448,7 +451,7 @@ $(function () {
             contenido += '<option value=""></option><option value="S">S</option><option value="N">N</option>';
             contenido += '</select></td>';
 
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" id="ingresos_familiar'+cantidad+'" class="form-control form-control-sm text-right storageFamilia" style="width: 96px;" readonly="true"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" id="ingresos_familiar'+cantidad+'" class="form-control form-control-sm text-right storageFamilia" readonly="true"></td>';
             contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input localStorage-radio" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label" for="responsable_apre_'+cantidad+'"></label></div></td>';
             contenido += '<td class="py-1 px-0"><button type="button" class="btn btn-sm btn-danger delete-row"><i class="fas fa-times"></i></button></td>';
             contenido += '</tr>';
@@ -463,7 +466,7 @@ $(function () {
 
             if (window.actualizar3 !== true) {
                 if(window.editar !== true){
-                    let localFamilia = {nombre_familiar: '', fecha_familiar: '', edad_familiar: 0, sexo_familiar: '', parentesco_familiar: '', ocupacion_familiar: '', trabaja_familiar: '', ingresos_familiar: ''};
+                    let localFamilia = {nombre_familiar1: '', apellido_familiar2: '', apellido_familiar1: '', nombre_familiar2: '', fecha_familiar: '', edad_familiar: 0, sexo_familiar: '', parentesco_familiar: '', ocupacion_familiar: '', trabaja_familiar: '', ingresos_familiar: ''};
                     localStorage.setItem('filaFamilia'+cantidad, JSON.stringify(localFamilia));
                 }
             }
@@ -561,7 +564,7 @@ $(function () {
     
                 $($(this).children('td')[0]).html(cont);
                 $($($(this)).children('input')[0]).attr('id', 'id_familiar'+cont);
-                $($($(this).children('td')[1]).children('input')[0]).attr('id', 'nombre_familiar'+cont);
+                $($($(this).children('td')[1]).children('input')[0]).attr('id', 'nombre_familiar1'+cont);
                 $($($(this).children('td')[2]).children('input')[0]).attr('id', 'fecha_familiar'+cont);
                 $($($(this).children('td')[3]).children('input')[0]).attr('id', 'edad_familiar'+cont);
                 $($($(this).children('td')[4]).children('select')[0]).attr('id', 'sexo_familiar'+cont);
@@ -693,7 +696,10 @@ $(function () {
                         for (let index = 0; index < data.familiares.length; index++) {
                             $('#agregar_familiar').trigger('click');
                             $('#id_familiar'+(index+1)).val(data.familiares[index].id_familiar);
-                            $('#nombre_familiar'+(index+1)).val(data.familiares[index].nombre1);
+                            $('#nombre_familiar1'+(index+1)).val(data.familiares[index].nombre1);
+                            $('#nombre_familiar2'+(index+1)).val(data.familiares[index].nombre2);
+                            $('#apellido_familiar1'+(index+1)).val(data.familiares[index].apellido1);
+                            $('#apellido_familiar2'+(index+1)).val(data.familiares[index].apellido2);
                             $('#fecha_familiar'+(index+1)).val(data.familiares[index].fecha_n);
                             $('#sexo_familiar'+(index+1)).val(data.familiares[index].sexo);
                             $('#parentesco_familiar'+(index+1)).val(data.familiares[index].parentesco);
@@ -787,7 +793,7 @@ $(function () {
         document.formulario.reset();
         $('#fecha').val(fecha);
         window.tabla = true;
-        $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
+        $('#tabla_datos_familiares tbody').html('<tr><td colspan="14" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
         //////////
         $('#edad').val(0);
         $('#titulo').attr('disabled', true);
@@ -890,4 +896,6 @@ $(function () {
         }
     }
     llamarDatos();
+    $('#fecha_n').datepicker();
+    // $('.input-fecha').datepicker();
 });

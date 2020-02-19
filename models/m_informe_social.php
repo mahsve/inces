@@ -104,7 +104,7 @@ class model_informeSocial extends conexion
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos)
     {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $resultado = false;
         $sentencia = "INSERT INTO t_datos_personales(
             nacionalidad,
             cedula,
@@ -128,26 +128,27 @@ class model_informeSocial extends conexion
             correo,
             tipo_persona
         ) VALUES (
-            $datos[nacionalidad],
-            $datos[cedula],
-            $datos[nombre_1],
-            $datos[nombre_2],
-            $datos[apellido_1],
-            $datos[apellido_2],
-            $datos[sexo],
-            $datos[fecha_n],
-            $datos[lugar_n],
-            $datos[ocupacion],
-            $datos[estado_civil],
-            $datos[grado_instruccion],
-            $datos[titulo],
-            $datos[alguna_mision],
-            $datos[ciudad],
-            $datos[parroquia],
-            $datos[direccion],
-            $datos[telefono_1],
-            $datos[telefono_2],
-            $datos[correo], 'A'
+            '$datos[nacionalidad]',
+            '$datos[cedula]',
+            '$datos[nombre_1]',
+            '$datos[nombre_2]',
+            '$datos[apellido_1]',
+            '$datos[apellido_2]',
+            '$datos[sexo]',
+            '$datos[fecha_n]',
+            '$datos[lugar_n]',
+            '$datos[ocupacion]',
+            '$datos[estado_civil]',
+            '$datos[grado_instruccion]',
+            '$datos[titulo]',
+            '$datos[alguna_mision]',
+            '$datos[ciudad]',
+            '$datos[parroquia]',
+            '$datos[direccion]',
+            '$datos[telefono_1]',
+            '$datos[telefono_2]',
+            '$datos[correo]',
+            'B'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -160,7 +161,7 @@ class model_informeSocial extends conexion
     // FUNCION PARA REGISTRAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
     public function registrarDatosVivienda($datos)
     {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $resultado = false;
         $sentencia = "INSERT INTO t_datos_hogar (
             nacionalidad,
             cedula,
@@ -183,26 +184,26 @@ class model_informeSocial extends conexion
             banos,
             n_dormitorios
         ) VALUES (
-            $datos[nacionalidad],
-            $datos[cedula],
-            $datos[punto_referencia],
-            $datos[area],
-            $datos[tipo_vivienda],
-            $datos[tenencia_vivienda],
-            $datos[tipo_agua],
-            $datos[tipo_electricidad],
-            $datos[tipo_excreta],
-            $datos[tipo_basura],
-            $datos[otros],
-            $datos[techo],
-            $datos[pared],
-            $datos[piso],
-            $datos[via_acceso],
-            $datos[sala],
-            $datos[comedor],
-            $datos[cocina],
-            $datos[bano],
-            $datos[dormitorio]
+            '$datos[nacionalidad]',
+            '$datos[cedula]',
+            '$datos[punto_referencia]',
+            '$datos[area]',
+            '$datos[tipo_vivienda]',
+            '$datos[tenencia_vivienda]',
+            '$datos[tipo_agua]',
+            '$datos[tipo_electricidad]',
+            '$datos[tipo_excreta]',
+            '$datos[tipo_basura]',
+            '$datos[otros]',
+            '$datos[techo]',
+            '$datos[pared]',
+            '$datos[piso]',
+            '$datos[via_acceso]',
+            '$datos[sala]',
+            '$datos[comedor]',
+            '$datos[cocina]',
+            '$datos[bano]',
+            '$datos[dormitorio]'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -222,6 +223,7 @@ class model_informeSocial extends conexion
             cedula_aprendiz,
             codigo_oficio,
             turno,
+            nacionalidad_fac,
             cedula_facilitador,
             condicion_vivienda,
             caracteristicas_generales,
@@ -231,19 +233,20 @@ class model_informeSocial extends conexion
             enfermos,
             representante
         ) VALUES (
-            $datos[fecha],
-            $datos[nacionalidad],
-            $datos[cedula],
-            $datos[oficio],
-            $datos[turno],
-            '25791966',
-            $datos[condicion_vivienda],
-            $datos[caracteristicas_generales],
-            $datos[diagnostico_social],
-            $datos[diagnostico_preliminar],
-            $datos[conclusiones],
-            $datos[enfermos],
-            $datos[responsable_apre]
+            '$datos[fecha]',
+            '$datos[nacionalidad]',
+            '$datos[cedula]',
+            '$datos[oficio]',
+            '$datos[turno]',
+            '$datos[nacionalidad_fac]',
+            '$datos[cedula_facilitador]',
+            '$datos[condicion_vivienda]',
+            '$datos[caracteristicas_generales]',
+            '$datos[diagnostico_social]',
+            '$datos[diagnostico_preliminar]',
+            '$datos[conclusiones]',
+            '$datos[enfermos]',
+            '$datos[responsable_apre]'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -270,17 +273,17 @@ class model_informeSocial extends conexion
             trabaja,
             ingresos
         ) VALUES (
-            $datos[id_ficha],
-            $datos[nombre_familiar],
-            $datos[nombre_familiar],
-            $datos[nombre_familiar],
-            $datos[nombre_familiar],
-            $datos[fecha_familiar],
-            $datos[sexo_familiar],
-            $datos[parentesco_familiar],
-            $datos[ocupacion_familiar],
-            $datos[trabaja_familiar],
-            $datos[ingresos_familiar]
+            '$datos[id_ficha]',
+            '$datos[nombre_familiar1]',
+            '$datos[nombre_familiar2]',
+            '$datos[apellido_familiar1]',
+            '$datos[apellido_familiar2]',
+            '$datos[fecha_familiar]',
+            '$datos[sexo_familiar]',
+            '$datos[parentesco_familiar]',
+            '$datos[ocupacion_familiar]',
+            '$datos[trabaja_familiar]',
+            '$datos[ingresos_familiar]'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -299,9 +302,9 @@ class model_informeSocial extends conexion
             descripcion,
             cantidad
         ) VALUES (
-            $datos[id_ficha],
-            $datos[descripcion],
-            $datos[cantidad]
+            '$datos[id_ficha]',
+            '$datos[descripcion]',
+            '$datos[cantidad]'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)

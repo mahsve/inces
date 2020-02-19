@@ -49,17 +49,16 @@ if (isset($_SESSION['sesion'])) {
     <link rel="shortcut icon" href="<?php echo SERVERURL; ?>images/app/favicon.png" type="image/png">
     <!-- ARCHIVOS DE ESTILOS -->
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/bootstrap-datepicker/bootstrap-datepicker3.min.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/fontawesome/css/all.css">
-    <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/datatable/datatables.min.css">
-    <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/datatable/css/dataTables.bootstrap4.min.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/design.css">
     <link rel="stylesheet" href="<?php echo SERVERURL; ?>styles/app.css">
     <!-- ARCHIVOS JAVASCRIPTS -->
     <script src="<?php echo SERVERURL; ?>javascripts/jquery/jquery-3.4.1.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/popper/popper.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/bootstrap/bootstrap.min.js"></script>
+    <script src="<?php echo SERVERURL; ?>javascripts/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/sweetalert/sweetalert.min.js"></script>
-    <script src="<?php echo SERVERURL; ?>javascripts/datatable/datatables.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/definir_paginacion.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/generales.js"></script>
     <script>let permisos = <?php echo json_encode($permisos); ?>;</script>

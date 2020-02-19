@@ -255,7 +255,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento <span class="text-danger">*</span></label>
-                                <input type="date" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage"/>
+                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage" data-date-format="yyyy-mm-dd" readonly/>
                             </div>
                         </div>
 
@@ -728,18 +728,18 @@
                         <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
                         <div class="col-sm-12 pb-2">
                             <div class="table-responsive pb-2">
-                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 950px;">
+                                <table id="tabla_datos_familiares" class="table table-borderless mb-0" style="min-width: 1100px;">
                                     <thead class="text-light">
                                         <tr>
                                             <th class="bg-info rounded-left font-weight-normal text-center py-2 px-0" width="45">N°</th>
-                                            <th class="bg-info font-weight-normal py-2 px-0">Apellido y nombre</th>
-                                            <th class="bg-info font-weight-normal py-2 px-0" width="132">Fecha de N.</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0 text-center" colspan="4">Nombres y apellidos</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="100">Fecha de N.</th>
                                             <th class="bg-info font-weight-normal py-2 px-0" width="60">Edad</th>
                                             <th class="bg-info font-weight-normal py-2 px-0" width="60">Sexo</th>
-                                            <th class="bg-info font-weight-normal py-2 px-0" width="140">Parentesco</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="100">Parentesco</th>
                                             <th class="bg-info font-weight-normal py-2 px-0" width="144">Ocupación</th>
                                             <th class="bg-info font-weight-normal py-2 px-0" width="65">Trabaja</th>
-                                            <th class="bg-info font-weight-normal py-2 px-0" width="100">Ingresos</th>
+                                            <th class="bg-info font-weight-normal py-2 px-0" width="85">Ingresos</th>
                                             <th class="bg-info font-weight-normal py-2 px-0" width="40">Resp.</th>
                                             <th class="bg-info rounded-right" width="28"></th>
                                         </tr>
