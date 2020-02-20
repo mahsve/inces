@@ -1,11 +1,25 @@
 <?php 
 session_start();
+date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
+$date = date('Y-m-d', time());
+
 if ($_POST['opcion'])
 {
-    require_once('../models/m_oficio.php');
-    $objeto = new model_oficio;
+    require_once('../models/m_aprendiz.php');
+    $objeto = new model_aprendiz;
     
     switch ($_POST['opcion']) {
+        case 'Traer datos':
+            $resultados = [];
+            $resultados['fecha'] = $date;
+            // $objeto->conectar();
+            // $resultados['ocupacion'] = $objeto->consultarOcupaciones();
+            // $resultados['oficio'] = $objeto->consultarOficios();
+            // $resultados['estado'] = $objeto->consultarEstados();
+            // $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
         case 'Registrar':
             $data = [];
             foreach ($_POST as $indice => $valor) {

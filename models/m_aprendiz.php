@@ -1,6 +1,6 @@
 <?php
 require_once 'conexion.php';
-class model_informeSocial extends conexion
+class model_aprendiz extends conexion
 {
     private $data_conexion; // VARIABLE QUE CONTENDRA LA CONEXION.
 
