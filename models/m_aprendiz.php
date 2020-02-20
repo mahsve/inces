@@ -351,7 +351,8 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function consultarInformeSocialTotal($datos) {
+    public function consultarInformeSocialTotal($datos)
+    {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM t_informe_social
@@ -510,7 +511,8 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function modificarFamiliaresAprendiz($datos){
+    public function modificarFamiliaresAprendiz($datos)
+    {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_familia SET
             nombre1='".htmlspecialchars($datos['nombre_familiar1'])."',
@@ -532,7 +534,8 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function eliminarFamilia ($id) {
+    public function eliminarFamilia ($id)
+    {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "DELETE FROM t_familia WHERE id_familiar='".$id."'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.

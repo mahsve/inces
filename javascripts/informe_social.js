@@ -94,11 +94,11 @@ $(function () {
                             }
 
                             let estatus = '';
-                            if (dataListado.resultados[i].estatus == 'E') {
+                            if (dataListado.resultados[i].estatus_informe == 'E') {
                                 estatus = '<span class="badge badge-info"><i class="fas fa-clock mr-1"></i>En espera</span>';
-                            } else if (dataListado.resultados[i].estatus == 'A') {
+                            } else if (dataListado.resultados[i].estatus_informe == 'A') {
                                 estatus = '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Aceptado</span>';
-                            } else if (dataListado.resultados[i].estatus == 'R') {
+                            } else if (dataListado.resultados[i].estatus_informe == 'R') {
                                 estatus = '<span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Rechazado</span>';
                             }
 
@@ -113,14 +113,19 @@ $(function () {
                             contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
                             contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
                             if (permisos.act_desc == 1) {
-                                contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
-                                contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                                if (dataListado.resultados[i].estatus_informe == 'E') {
+                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
+                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                                }
                             }
-                            contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/r_informe_social?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
+                            contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/pdf/r_informe_social?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
                             contenido += '</div></div></td></tr>';
                             $('#listado_aprendices tbody').append(contenido);
                         }
                         $('.editar_registro').click(editarInforme);
+
+                        $('.aceptar_postulante').click(aceptarPostulante);
+                        $('.rechazar_postulante').click(rechazarPostulante);
                     } else {
                         $('#listado_aprendices tbody').append('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay informes registrados</td></tr>');
                     }
@@ -424,7 +429,7 @@ $(function () {
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar2[]" id="nombre_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar1[]" id="apellido_familiar1'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar2[]" id="apellido_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia"></td>';
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia calcular_edad"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia fecha_familiar calcular_edad" style="background: #ffffff;" data-date-format="yyyy-mm-dd" readonly></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="edad_familiar[]" id="edad_familiar'+cantidad+'" class="form-control form-control-sm text-center storageFamilia" value="0" style="width: 56px;" readonly="true"></td>';
             
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="sexo_familiar[]" id="sexo_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia" style="width: 56px;">';
@@ -460,6 +465,7 @@ $(function () {
             $($('.calcular_edad')[$('.calcular_edad').length - 1]).change(calcularEdadF);
             $($('.trabajando')[$('.trabajando').length - 1]).change(habilitarIngresos);
             $($('.delete-row')[$('.delete-row').length - 1]).click(eliminarFila);
+            $($('.fecha_familiar')[$('.fecha_familiar').length - 1]).datepicker();
 
             $('tr[data-posicion="'+cantidad+'"] .storageFamilia').change(localStorageFamiliares);
             $( $('tr[data-posicion="'+cantidad+'"] .localStorage-radio') ).click(guardarLocalStorage);
@@ -565,17 +571,21 @@ $(function () {
                 $($(this).children('td')[0]).html(cont);
                 $($($(this)).children('input')[0]).attr('id', 'id_familiar'+cont);
                 $($($(this).children('td')[1]).children('input')[0]).attr('id', 'nombre_familiar1'+cont);
-                $($($(this).children('td')[2]).children('input')[0]).attr('id', 'fecha_familiar'+cont);
-                $($($(this).children('td')[3]).children('input')[0]).attr('id', 'edad_familiar'+cont);
-                $($($(this).children('td')[4]).children('select')[0]).attr('id', 'sexo_familiar'+cont);
-                $($($(this).children('td')[5]).children('select')[0]).attr('id', 'parentesco_familiar'+cont);
-                $($($(this).children('td')[6]).children('select')[0]).attr('id', 'ocupacion_familiar'+cont);
-                $($($(this).children('td')[7]).children('select')[0]).attr('id', 'trabaja_familiar'+cont);
-                $($($(this).children('td')[8]).children('input')[0]).attr('id', 'ingresos_familiar'+cont);
+                $($($(this).children('td')[2]).children('input')[0]).attr('id', 'nombre_familiar2'+cont);
+                $($($(this).children('td')[3]).children('input')[0]).attr('id', 'apellido_familiar1'+cont);
+                $($($(this).children('td')[4]).children('input')[0]).attr('id', 'apellido_familiar2'+cont);
+
+                $($($(this).children('td')[5]).children('input')[0]).attr('id', 'fecha_familiar'+cont);
+                $($($(this).children('td')[6]).children('input')[0]).attr('id', 'edad_familiar'+cont);
+                $($($(this).children('td')[7]).children('select')[0]).attr('id', 'sexo_familiar'+cont);
+                $($($(this).children('td')[8]).children('select')[0]).attr('id', 'parentesco_familiar'+cont);
+                $($($(this).children('td')[9]).children('select')[0]).attr('id', 'ocupacion_familiar'+cont);
+                $($($(this).children('td')[10]).children('select')[0]).attr('id', 'trabaja_familiar'+cont);
+                $($($(this).children('td')[11]).children('input')[0]).attr('id', 'ingresos_familiar'+cont);
     
-                $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('id', 'responsable_apre_'+cont);
-                $($($($(this).children('td')[9]).children('div')[0]).children('input')[0]).attr('value', cont);
-                $($($($(this).children('td')[9]).children('div')[0]).children('label')[0]).attr('for', 'responsable_apre_'+cont);
+                $($($($(this).children('td')[12]).children('div')[0]).children('input')[0]).attr('id', 'responsable_apre_'+cont);
+                $($($($(this).children('td')[12]).children('div')[0]).children('input')[0]).attr('value', cont);
+                $($($($(this).children('td')[12]).children('div')[0]).children('label')[0]).attr('for', 'responsable_apre_'+cont);
     
                 if(window.editar !== true)
                     localStorage.setItem('filaFamilia'+cont, JSON.stringify(arregloRespaldo[cont-1]));
@@ -583,7 +593,7 @@ $(function () {
             });
         } else {
             window.tabla = true;
-            $('#tabla_datos_familiares tbody').html('<tr><td colspan="11" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
+            $('#tabla_datos_familiares tbody').html('<tr><td colspan="14" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
         }
     };
     /////////////////////////////////////////////////////////////////////
@@ -778,6 +788,42 @@ $(function () {
             }
         });
     });
+    function aceptarPostulante (e) {
+        e.preventDefault();
+
+        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+
+        localStorage.setItem('numero_ficha', numero);
+        location.href = url+'intranet/aprendiz'
+    }
+    function rechazarPostulante (e) {
+        e.preventDefault();
+
+        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+        let estatus = 'R';
+        
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: {
+                opcion: 'Estatus',
+                numero: numero,
+                estatus: estatus
+            },
+            success: function (resultados) {
+                alert(resultados);
+                if (resultados == 'Modificacion exitosa')
+                    buscar_listado();
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
     // FUNCION PARA GUARDAR LOS DATOS DEL APRENDIZ EN LOCALSTORAGE.
     $('.localStorage').keyup(guardarLocalStorage);
     $('.localStorage').change(guardarLocalStorage);
@@ -897,5 +943,4 @@ $(function () {
     }
     llamarDatos();
     $('#fecha_n').datepicker();
-    // $('.input-fecha').datepicker();
 });

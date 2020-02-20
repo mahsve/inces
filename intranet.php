@@ -34,6 +34,7 @@ if (isset($_SESSION['sesion'])) {
     } else {
         $titulo = 'Dashboard';
         $vista  = 'views/dashboard.php';
+        $permisos = [];
     }
     ////////////////////////////////////////////////////////////////////////////
     $menu = $sesion->consultarMenu($data);

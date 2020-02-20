@@ -163,47 +163,21 @@ if ($_POST['opcion']){
         break;
 
         case 'Consultar determinado':
-            $data = [];
-            foreach ($_POST as $key => $value) {
-                if(!is_array($value)) {
-                    if ($value != '')
-                        $data[$key] = "'".htmlspecialchars($value)."'";
-                    else
-                        $data[$key] = 'NULL';
-
-                    if (!isset($_POST['titulo']))
-                        $data['titulo'] = 'NULL';
-                }
-            }
-
             $resultados = [];
             $objeto->conectar();
-            $resultados['vivienda']     = $objeto->consultarDatosVivienda($data);
-            $resultados['familiares']   = $objeto->consultarFamiliares($data);
-            $resultados['ingresos']     = $objeto->consultarDinero($data);
+            $resultados['vivienda']     = $objeto->consultarDatosVivienda($_POST);
+            $resultados['familiares']   = $objeto->consultarFamiliares($_POST);
+            $resultados['ingresos']     = $objeto->consultarDinero($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
 
         case 'Modificar':
-            $data = [];
-            foreach ($_POST as $key => $value) {
-                if(!is_array($value)) {
-                    if ($value != '')
-                        $data[$key] = "'".htmlspecialchars($value)."'";
-                    else
-                        $data[$key] = 'NULL';
-
-                    if (!isset($_POST['titulo']))
-                        $data['titulo'] = 'NULL';
-                }
-            }
-
             $objeto->conectar();
             $objeto->nuevaTransaccion();
-            if ($objeto->modificarDatosPersonales($data)){
-                if ($objeto->modificarDatosVivienda($data)){
-                    if ($objeto->modificarInformeSocial($data)){
+            if ($objeto->modificarDatosPersonales($_POST)){
+                if ($objeto->modificarDatosVivienda($_POST)){
+                    if ($objeto->modificarInformeSocial($_POST)){
                         $errorE = 0;
                         if(isset($_POST['eliminar_f'])){
                             $_POST['eliminar_f'] = json_decode($_POST['eliminar_f']);
@@ -214,47 +188,64 @@ if ($_POST['opcion']){
                         }
 
                         $errorF = 0;
-                        if(isset($_POST['nombre_familiar'])){
-                            for ($i=0; $i < count($_POST['nombre_familiar']); $i++) {
+                        if(isset($_POST['nombre_familiar1'])){
+                            for ($i=0; $i < count($_POST['nombre_familiar1']); $i++) {
                                 $ingresos = 0;
                                 if (isset($_POST['ingresos_familiar'][$i]))
-                                    $ingresos = "'".htmlspecialchars($_POST['ingresos_familiar'][$i])."'";
+                                    $ingresos = $_POST['ingresos_familiar'][$i];
+
+                                $responsable = 0;
+                                if ($_POST['responsable_apre'] == ($i+1))
+                                    $responsable = $_POST['responsable_apre'];
                                     
-                                $data2 = [
-                                    'id_ficha'              => $data['informe_social'],
-                                    'id_familiar'           => "'".htmlspecialchars($_POST['id_familiar'][$i])."'",
-                                    'nombre_familiar'       => "'".htmlspecialchars($_POST['nombre_familiar'][$i])."'",
-                                    'fecha_familiar'        => "'".htmlspecialchars($_POST['fecha_familiar'][$i])."'",
-                                    'sexo_familiar'         => "'".htmlspecialchars($_POST['sexo_familiar'][$i])."'",
-                                    'parentesco_familiar'   => "'".htmlspecialchars($_POST['parentesco_familiar'][$i])."'",
-                                    'ocupacion_familiar'    => "'".htmlspecialchars($_POST['ocupacion_familiar'][$i])."'",
-                                    'trabaja_familiar'      => "'".htmlspecialchars($_POST['trabaja_familiar'][$i])."'",
-                                    'ingresos_familiar'     => htmlspecialchars($ingresos)
+                                $arreglo_familia = [
+                                    'id_ficha'              => $_POST['informe_social'],
+                                    'id_familia'            => $_POST['id_familiar'][$i],
+                                    'nombre_familiar1'      => $_POST['nombre_familiar1'][$i],
+                                    'nombre_familiar2'      => $_POST['nombre_familiar2'][$i],
+                                    'apellido_familiar1'    => $_POST['apellido_familiar1'][$i],
+                                    'apellido_familiar2'    => $_POST['apellido_familiar2'][$i],
+                                    'fecha_familiar'        => $_POST['fecha_familiar'][$i],
+                                    'sexo_familiar'         => $_POST['sexo_familiar'][$i],
+                                    'parentesco_familiar'   => $_POST['parentesco_familiar'][$i],
+                                    'ocupacion_familiar'    => $_POST['ocupacion_familiar'][$i],
+                                    'trabaja_familiar'      => $_POST['trabaja_familiar'][$i],
+                                    'ingresos_familiar'     => $ingresos
                                 ];
 
                                 if ($_POST['id_familiar'][$i] != '') {
-                                    if (!$objeto->modificarFamiliaresAprendiz($data2))
+                                    if (!$objeto->modificarFamiliaresAprendiz($arreglo_familia))
                                         $errorF++;
                                 } else {
-                                    if (!$objeto->registrarFamilares($data2))
+                                    if (!$objeto->registrarFamilares($arreglo_familia))
                                         $errorF++;
                                 }
                             }
                         }
 
-                        $objeto->eliminarGestionDinero($data);
+                        $objeto->eliminarGestionDinero($_POST['informe_social']);
                         $errorI = 0;
                         for ($i2 = 0; $i2 < 10; $i2++) {
-                            $listaDinero = ['ingreso_pension', 'ingreso_seguro', 'ingreso_pension_otras', 'ingreso_sueldo', 'otros_ingresos',
-                            'egreso_servicios', 'egreso_alimentario', 'egreso_educacion', 'egreso_vivienda', 'otros_egresos'];
+                            $listaDinero = [
+                                'ingreso_pension',
+                                'ingreso_seguro',
+                                'ingreso_pension_otras',
+                                'ingreso_sueldo',
+                                'otros_ingresos',
+                                'egreso_servicios',
+                                'egreso_alimentario',
+                                'egreso_educacion',
+                                'egreso_vivienda',
+                                'otros_egresos'
+                            ];
                             
-                            $data3 = [
-                                'id_ficha'      => $data['informe_social'],
-                                'descripcion'   => "'".$listaDinero[$i2]."'",
-                                'cantidad'      => $data[$listaDinero[$i2]]
+                            $arregloGestionDinero = [
+                                'id_ficha'      => $_POST['informe_social'],
+                                'descripcion'   => $listaDinero[$i2],
+                                'cantidad'      => $_POST[$listaDinero[$i2]]
                             ];
 
-                            if (!$objeto->registrarGestionDinero($data3))
+                            if (!$objeto->registrarGestionDinero($arregloGestionDinero))
                                 $errorI++;
                         }
 
@@ -263,18 +254,39 @@ if ($_POST['opcion']){
                             echo 'Modificacion exitosa';
                         } else {
                             $objeto->calcelarTransaccion();
-                            echo 'Modificación fallida';
+
+                            $tipoError = '';
+                            if ($errorE > 0)
+                                $tipoError = 'Eliminar Familiares';
+                            else if ($errorF > 1)
+                                $tipoError = 'Registrar/Modificar Familiares';
+                            else if ($errorI > 1)
+                                $tipoError = 'Modificar ingresos';
+                            else
+                                $tipoError = 'Detalles';
+
+                            echo 'Modificación fallida: '.$tipoError;
                         }
                     } else {
                         $objeto->calcelarTransaccion();
-                        echo 'Modificación fallida';
+                        echo 'Modificación fallida: Informe social';
                     }
                 } else {
                     $objeto->calcelarTransaccion();
-                    echo 'Modificación fallida';
+                    echo 'Modificación fallida: Datos de la vivienda';
                 }
             } else {
                 $objeto->calcelarTransaccion();
+                echo 'Modificación fallida: Datos personales';
+            }
+            $objeto->desconectar();
+        break;
+
+        case 'Estatus':
+            $objeto->conectar();
+            if ($objeto->estatusAprendiz($_POST)) {
+                echo 'Modificacion exitosa';
+            } else {
                 echo 'Modificación fallida';
             }
             $objeto->desconectar();
