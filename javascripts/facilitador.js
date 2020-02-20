@@ -57,8 +57,53 @@ $(function() {
                         for (var i in dataListado.resultados) {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
+                            
+                            let nombre_completo = dataListado.resultados[i].nombre1;
+                            if (dataListado.resultados[i].nombre2 != '' && dataListado.resultados[i].nombre2 != null) {
+                                nombre_completo += ' '+dataListado.resultados[i].nombre2;
+                            }
+                            nombre_completo += ' '+dataListado.resultados[i].apellido1;
+                            if (dataListado.resultados[i].apellido1 != '' && dataListado.resultados[i].apellido1 != null) {
+                                nombre_completo += ' '+dataListado.resultados[i].apellido1;
+                            }
+                            contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
+
+                            let year    = dataListado.resultados[i].fecha_n.substr(0,4);
+                            let month   = dataListado.resultados[i].fecha_n.substr(5,2);
+                            let day     = dataListado.resultados[i].fecha_n.substr(8,2);
+                            let yearA   = fecha.substr(0,4);
+                            let monthA  = fecha.substr(5,2);
+                            let dayA    = fecha.substr(8,2);
+                            
+                            let edad = 0;
+                            if (year != '' && year != undefined) {
+                                if (year <= yearA) {
+                                    edad = yearA - year;
+                                    if (month > monthA) {
+                                        if (edad != 0) 
+                                            edad--;
+                                    } else if (month == monthA) {
+                                        if (day > dayA)
+                                            if (edad != 0) 
+                                                edad--;
+                                    }
+                                }
+                            }
+                                
+                            contenido += '<td class="py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
+                            contenido += '<td class="py-2 text-center px-1">'+edad+'</td>';
+    
+                            let sexo = '';
+                            if (dataListado.resultados[i].sexo == 'M')
+                                sexo = 'Masculino';
+                            else if (dataListado.resultados[i].sexo == 'F')
+                                sexo = 'Femenino';
+                            else
+                                sexo = 'Indefinido';
+
+                            contenido += '<td class="py-2 px-1">'+sexo+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].telefono1+'</td>';
 
                             if (dataListado.resultados[i].estatus == 'A')
                                 contenido += '<td class="text-center py-2 px-1"><span class="badge badge-success"><i class="fas fa-check mr-1"></i>Activo</span></td>';
@@ -70,7 +115,7 @@ $(function() {
                                 ////////////////////////////
                                 if (permisos.modificar == 1)
                                     contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                                
+                                    
                                 if (permisos.act_desc == 1) {
                                     if (dataListado.resultados[i].estatus == 'A')
                                         contenido += '<button type="button" class="btn btn-sm btn-danger cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-times" style="padding: 0px 2px;"></i></button>';
@@ -165,6 +210,10 @@ $(function() {
                         } else {
                             $('#ciudad').html('<option value="">No hay ciudades</option>');
                         }
+                        if (window.cargarCiudad == true) {
+                            window.cargarCiudad = false;
+                            $('#ciudad').val(dataListado.resultados[window.posicion].codigo_ciudad);
+                        }
                         if (data.municipio) {
                             $('#municipio').append('<option value="">Elija una opción</option>');
                             for(let i in data.municipio){
@@ -172,6 +221,12 @@ $(function() {
                             }
                         } else {
                             $('#municipio').html('<option value="">No hay municipios</option>');
+                        }
+                        if (window.cargarParroquia == true) {
+                            $('#municipio').val(dataListado.resultados[window.posicion].codigo_municipio);
+                            $('#municipio').trigger('change');
+                        } else {
+                            $('#carga_espera').hide(400);
                         }
                     } catch (error) {
                         console.log(resultados);
@@ -209,6 +264,12 @@ $(function() {
                         } else {
                             $('#parroquia').html('<option value="">No hay parroquias</option>');
                         }
+                        if (window.cargarParroquia == true) {
+                            window.cargarParroquia = false;
+                            $('#parroquia').val(dataListado.resultados[window.posicion].codigo_parroquia);
+                        }
+
+                        $('#carga_espera').hide(400);
                     } catch (error) {
                         console.log(resultados);
                     }
@@ -235,7 +296,7 @@ $(function() {
         $('#info_table').show(400);
         $('#gestion_form').hide(400);
         /////////////////////
-        // $('#pills-datos-empresa-tab').tab('show');
+        $('#pills-datos-ciudadano-tab').tab('show');
     });
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -256,52 +317,51 @@ $(function() {
         limpiarFormulario();
         /////////////////////
         // LLENADO DEL FORMULARIO CON LOS DATOS REGISTRADOS.
-        window.rif = dataListado.resultados[posicion].rif;
-        $('#rif').val(dataListado.resultados[posicion].rif);
-        $('#nil').val(dataListado.resultados[posicion].nil);
-        $('#razon_social').val(dataListado.resultados[posicion].razon_social);
-        $('#actividad_economica').val(dataListado.resultados[posicion].codigo_actividad_e);
-        $('#codigo_aportante').val(dataListado.resultados[posicion].codigo_aportante);
+        window.nacionalidad = dataListado.resultados[posicion].nacionalidad;
+        window.cedula = dataListado.resultados[posicion].cedula;
+        // PRIMERA PARTE.
+        $('#fecha').val(dataListado.resultados[posicion].fecha);
+        $('#nacionalidad').val(dataListado.resultados[posicion].nacionalidad);
+        $('#cedula').val(dataListado.resultados[posicion].cedula);
+        $('#nombre_1').val(dataListado.resultados[posicion].nombre1);
+        $('#nombre_2').val(dataListado.resultados[posicion].nombre2);
+        $('#apellido_1').val(dataListado.resultados[posicion].apellido1);
+        $('#apellido_2').val(dataListado.resultados[posicion].apellido2);
+        $('#sexo').val(dataListado.resultados[posicion].sexo);
+        $('#fecha_n').val(dataListado.resultados[posicion].fecha_n);
+        $('#fecha_n').trigger('change');
+        $('#lugar_n').val(dataListado.resultados[posicion].lugar_n);
+        $('#ocupacion').val(dataListado.resultados[posicion].codigo_ocupacion);
+        document.formulario.estado_civil.value = dataListado.resultados[posicion].estado_civil;
+        document.formulario.grado_instruccion.value = dataListado.resultados[posicion].nivel_instruccion;
+        if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
+            $('#titulo').attr('disabled', false);
+
+        $('#titulo').val(dataListado.resultados[posicion].titulo_acade);
+        $('#alguna_mision').val(dataListado.resultados[posicion].mision_participado);
         $('#telefono_1').val(dataListado.resultados[posicion].telefono1);
         $('#telefono_2').val(dataListado.resultados[posicion].telefono2);
-        $('#estado').val(dataListado.resultados[posicion].codigo_estado);
-        window.buscarCiudad = true;
-        $('#estado').trigger('change');
+        $('#correo').val(dataListado.resultados[posicion].correo);
         $('#direccion').val(dataListado.resultados[posicion].direccion);
-        /////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////
-        window.nacionalidad = dataListado.resultados[posicion].datos_personales.nacionalidad;
-        window.cedula = dataListado.resultados[posicion].datos_personales.cedula;
-        $('#nacionalidad').val(dataListado.resultados[posicion].datos_personales.nacionalidad);
-        $('#cedula').val(dataListado.resultados[posicion].datos_personales.cedula);
-        $('#nombre_1').val(dataListado.resultados[posicion].datos_personales.nombre1);
-        $('#nombre_2').val(dataListado.resultados[posicion].datos_personales.nombre2);
-        $('#apellido_1').val(dataListado.resultados[posicion].datos_personales.apellido1);
-        $('#apellido_2').val(dataListado.resultados[posicion].datos_personales.apellido2);
-        $('#sexo').val(dataListado.resultados[posicion].datos_personales.sexo);
-        $('#estado_c').val(dataListado.resultados[posicion].datos_personales.codigo_estado);
-        window.buscarCiudad_c = true;
-        $('#telefono').val(dataListado.resultados[posicion].datos_personales.telefono1);
-        $('#correo').val(dataListado.resultados[posicion].datos_personales.correo);
-        /////////////////////////////////////////////////////////////////////
-        /////////////////////////////////////////////////////////////////////
-        validarRif = true;
-        validarNacionalidad = true;
-        validarCedula = true;
+
+        $('#estado').val(dataListado.resultados[posicion].codigo_estado);
+        window.cargarCiudad = true;
+        if (dataListado.resultados[posicion].codigo_parroquia != null) {
+            window.cargarParroquia = true;
+        }
+        $('#estado').trigger('change');
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
         e.preventDefault();
-        if (validarRif && validarNacionalidad && validarCedula) {
+        if (true) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'rif2', value: window.rif });
             data.push({ name: 'nacionalidad2', value: window.nacionalidad });
             data.push({ name: 'cedula2', value: window.cedula });
-            data.push({ name: 'registrar_cont', value: window.registrar_cont });
 
             $.ajax({
-                url : url+'controllers/c_empresa.php',
+                url : url+'controllers/c_facilitador.php',
                 type: 'POST',
                 data: data,
                 success: function (resultados) {
@@ -310,10 +370,6 @@ $(function() {
                         $('#show_table').trigger('click');
                         buscar_listado();
                     }
-                    // delete  window.posicion,
-                    //         window.rif,
-                    //         window.nacionalidad,
-                    //         window.cedula;
                 },
                 error: function () {
                     console.log('error');
@@ -324,7 +380,8 @@ $(function() {
     // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
     function cambiarEstatus () {
         let posicion = $(this).attr('data-posicion');
-        let rif = dataListado.resultados[posicion].rif;
+        let nacionalidad = dataListado.resultados[posicion].nacionalidad;
+        let cedula = dataListado.resultados[posicion].cedula;
         let estatus = '';
         if (dataListado.resultados[posicion].estatus == 'A')
             estatus = 'I';
@@ -332,11 +389,12 @@ $(function() {
             estatus = 'A';
         
         $.ajax({
-            url : url+'controllers/c_empresa.php',
+            url : url+'controllers/c_facilitador.php',
             type: 'POST',
             data: {
                 opcion: 'Estatus',
-                rif: rif,
+                nacionalidad: nacionalidad,
+                cedula: cedula,
                 estatus: estatus
             },
             success: function (resultados) {

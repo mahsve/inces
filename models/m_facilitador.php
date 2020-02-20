@@ -102,10 +102,15 @@ class model_facilitador extends conexion
     }
  
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
-    public function registrarDatosPersonales($datos)
+    public function registrarFacilitador($datos)
     {
+        if ($datos['parroquia'] != '')
+            $datos['parroquia'] = htmlspecialchars($datos['parroquia']);
+        else
+            $datos['parroquia'] = 'NULL';
+
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_datos_personales(
+        $sentencia = "INSERT INTO t_datos_personales (
             nacionalidad,
             cedula,
             nombre1,
@@ -127,26 +132,26 @@ class model_facilitador extends conexion
             correo,
             tipo_persona
         ) VALUES (
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."',
-            '".$datos['estado']."'
+            '".htmlspecialchars($datos['nacionalidad'])."',
+            '".htmlspecialchars($datos['cedula'])."',
+            '".htmlspecialchars($datos['nombre_1'])."',
+            '".htmlspecialchars($datos['nombre_2'])."',
+            '".htmlspecialchars($datos['apellido_1'])."',
+            '".htmlspecialchars($datos['apellido_2'])."',
+            '".htmlspecialchars($datos['sexo'])."',
+            '".htmlspecialchars($datos['fecha_n'])."',
+            '".htmlspecialchars($datos['ocupacion'])."',
+            '".htmlspecialchars($datos['estado_civil'])."',
+            '".htmlspecialchars($datos['grado_instruccion'])."',
+            '".htmlspecialchars($datos['titulo'])."',
+            '".htmlspecialchars($datos['alguna_mision'])."',
+            '".htmlspecialchars($datos['ciudad'])."',
+            $datos[parroquia],
+            '".htmlspecialchars($datos['direccion'])."',
+            '".htmlspecialchars($datos['telefono_1'])."',
+            '".htmlspecialchars($datos['telefono_2'])."',
+            '".htmlspecialchars($datos['correo'])."',
+            'F'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -158,15 +163,17 @@ class model_facilitador extends conexion
 
     public function consultarDatosPersonales ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
+		$sentencia = "SELECT t_datos_personales.*, t_ciudad.codigo_estado, t_parroquia.codigo_municipio
             FROM t_datos_personales
+            INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
             WHERE ( concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR 
                     concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR
                     concat(nacionalidad, ' ', cedula) LIKE '%".$datos['campo']."%' OR 
                     concat(nacionalidad, cedula) LIKE '%".$datos['campo']."%' OR
                     concat(nacionalidad, '-', cedula) LIKE '%".$datos['campo']."%' )
-            AND tipo_persona='F'
-            AND estatus='".$datos['estatus']."'
+            AND t_datos_personales.tipo_persona='F'
+            AND t_datos_personales.estatus LIKE '%".$datos['estatus']."%'
             ORDER BY '".$datos['ordenar_por']."'
             LIMIT ".$datos['numero'].", ".$datos['cantidad']."
         "; // SENTENTCIA
@@ -186,10 +193,9 @@ class model_facilitador extends conexion
                     concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR
                     concat(nacionalidad, ' ', cedula) LIKE '%".$datos['campo']."%' OR 
                     concat(nacionalidad, cedula) LIKE '%".$datos['campo']."%' OR
-                    concat(nacionalidad, '-', cedula) LIKE '%".$datos['campo']."%'
-            ) AND tipo_persona='F'
-            ORDER BY ".$datos['ordenar_por']." 
-            LIMIT ".$datos['numero'].", ".$datos['cantidad']."
+                    concat(nacionalidad, '-', cedula) LIKE '%".$datos['campo']."%' )
+            AND t_datos_personales.tipo_persona='F'
+            AND t_datos_personales.estatus LIKE '%".$datos['estatus']."%'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia))
         {
@@ -198,31 +204,36 @@ class model_facilitador extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function modificarDatosPersonales($datos)
+    public function modificarFacilitador($datos)
     {
+        if ($datos['parroquia'] != '')
+            $datos['parroquia'] = htmlspecialchars($datos['parroquia']);
+        else
+            $datos['parroquia'] = 'NULL';
+            
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
-            nacionalidad=$datos[nacionalidad],
-            cedula=$datos[cedula],
-            nombre1=$datos[nombre_1],
-            nombre2=$datos[nombre_2],
-            apellido1=$datos[apellido_1],
-            apellido2=$datos[apellido_2],
-            sexo=$datos[sexo],
-            fecha_n=$datos[fecha_n],
-            lugar_n=$datos[lugar_n],
-            codigo_ocupacion=$datos[ocupacion],
-            estado_civil=$datos[estado_civil],
-            nivel_instruccion=$datos[grado_instruccion],
-            titulo_acade=$datos[titulo],
-            mision_participado=$datos[alguna_mision],
-            codigo_ciudad=$datos[ciudad],
+            nacionalidad='".htmlspecialchars($datos['nacionalidad'])."',
+            cedula='".htmlspecialchars($datos['cedula'])."',
+            nombre1='".htmlspecialchars($datos['nombre_1'])."',
+            nombre2='".htmlspecialchars($datos['nombre_2'])."',
+            apellido1='".htmlspecialchars($datos['apellido_1'])."',
+            apellido2='".htmlspecialchars($datos['apellido_2'])."',
+            sexo='".htmlspecialchars($datos['sexo'])."',
+            fecha_n='".htmlspecialchars($datos['fecha_n'])."',
+            codigo_ocupacion='".htmlspecialchars($datos['ocupacion'])."',
+            estado_civil='".htmlspecialchars($datos['estado_civil'])."',
+            nivel_instruccion='".htmlspecialchars($datos['grado_instruccion'])."',
+            titulo_acade='".htmlspecialchars($datos['titulo'])."',
+            mision_participado='".htmlspecialchars($datos['alguna_mision'])."',
+            codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
             codigo_parroquia=$datos[parroquia],
-            direccion=$datos[direccion],
-            telefono1=$datos[telefono_1],
-            telefono2=$datos[telefono_2],
-            correo=$datos[correo]
-            WHERE nacionalidad=$datos[nacionalidad_v] AND cedula=$datos[cedula_v]
+            direccion='".htmlspecialchars($datos['direccion'])."',
+            telefono1='".htmlspecialchars($datos['telefono_1'])."',
+            telefono2='".htmlspecialchars($datos['telefono_2'])."',
+            correo='".htmlspecialchars($datos['correo'])."'
+            WHERE nacionalidad='".htmlspecialchars($datos['nacionalidad2'])."'
+            AND cedula='".htmlspecialchars($datos['cedula2'])."'
         "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
         {
@@ -231,31 +242,22 @@ class model_facilitador extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-   
-    // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
-    public function modificarInformeSocial($datos)
+    public function estatusFacilitador ($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "UPDATE t_informe_social SET 
-            fecha=$datos[fecha],
-            codigo_oficio=$datos[oficio],
-            turno=$datos[turno],
-            condicion_vivienda=$datos[condicion_vivienda],
-            caracteristicas_generales=$datos[caracteristicas_generales],
-            diagnostico_social=$datos[diagnostico_social],
-            diagnostico_preliminar=$datos[diagnostico_preliminar],
-            conclusiones=$datos[conclusiones],
-            enfermos=$datos[enfermos],
-            representante=$datos[responsable_apre]
-            WHERE numero=$datos[informe_social]
-        "; // SENTENTCIA
-        if (mysqli_query($this->data_conexion,$sentencia))
+        $sentencia = "UPDATE t_datos_personales SET
+            estatus='".$datos['estatus']."'
+            WHERE nacionalidad='".htmlspecialchars($datos['nacionalidad'])."'
+            AND cedula='".htmlspecialchars($datos['cedula'])."'
+        ";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
         {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-   
+
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
     public function nuevaTransaccion()
     {

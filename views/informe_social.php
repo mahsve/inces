@@ -48,7 +48,7 @@
                         <option value="R">Rechazados</option>
                         <option value="E">En espera</option>
                     </select>
-                    <button type="button" class="btn btn-sm btn-info ml-2" data-toggle="collapse" data-target="#mas_opciones_busquedas" aria-expanded="false" aria-controls="mas_opciones_busquedas"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-sm btn-info ml-2" style="display: none;" data-toggle="collapse" data-target="#mas_opciones_busquedas" aria-expanded="false" aria-controls="mas_opciones_busquedas"><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         </div>
@@ -63,7 +63,7 @@
     </div>
 
     <!-- MAS OPCIONES DE BUSQUEDA Y FILTROS -->
-    <div id="mas_opciones_busquedas" class="collapse">
+    <div id="mas_opciones_busquedas" class="collapse" style="display: none;">
         <div class="card card-body mb-2 px-3 py-2">
             <h5 class="text-secondary text-uppercase mb-3">Mas opciones de búsquedas</h5>
 

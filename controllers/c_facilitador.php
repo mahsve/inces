@@ -38,16 +38,8 @@ if ($_POST['opcion'])
         break;
 
         case 'Registrar':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->registrarOficio($data)) {
+            if ($objeto->registrarFacilitador($_POST)) {
                 echo 'Registro exitoso';
             } else {
                 echo 'Registro fallido';
@@ -70,22 +62,14 @@ if ($_POST['opcion'])
                 $_POST['ordenar_por'] = 't_datos_personales.cedula '.$_POST['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
             $resultados['resultados']   = $objeto->consultarDatosPersonales($_POST);
-            $resultados['total']        = 0;
+            $resultados['total']        = $objeto->consultarDatosPersonalesTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
 
         case 'Modificar':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->modificarOficio($data)) {
+            if ($objeto->modificarFacilitador($_POST)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
@@ -94,16 +78,8 @@ if ($_POST['opcion'])
         break;
 
         case 'Estatus':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->estatusOficio($data)) {
+            if ($objeto->estatusFacilitador($_POST)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';

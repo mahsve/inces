@@ -164,8 +164,12 @@ $(function () {
             success: function (resultados) {
                 alert(resultados);
                 if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                    $('#show_table').trigger('click');
-                    buscar_listado();
+                    if (xls == window.codigo) {
+                        location.reload();
+                    } else {
+                        $('#show_table').trigger('click');
+                        buscar_listado();
+                    }
                 }
             },
             error: function () {

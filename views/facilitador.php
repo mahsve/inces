@@ -69,7 +69,9 @@
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Sexo</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Teléfono</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="92">Estatus</th>
-                    <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1) echo 76; else echo 40; ?>"></th>
+                    <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
+                        <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 76; else echo 40; ?>"></th>
+                    <?php } ?>
                 </tr>
             </thead>
             <tbody>
