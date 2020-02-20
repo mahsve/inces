@@ -116,7 +116,7 @@
                         <i class="fas fa-map-marked-alt"></i><span class="ml-1">Ubicación</span><i id="icon-ubicacion" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" style="display: none;">
                     <a class="nav-link" id="pills-datos-archivos-tab" data-toggle="pill" href="#pills-datos-archivos" role="tab" aria-controls="pills-datos-archivos" aria-selected="false">
                         <i class="fas fa-file-word"></i><span class="ml-1">Archivos</span><i id="icon-archivos" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>

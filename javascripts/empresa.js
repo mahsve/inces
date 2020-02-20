@@ -357,7 +357,7 @@ $(function () {
         $('#rif').val(dataListado.resultados[posicion].rif);
         $('#nil').val(dataListado.resultados[posicion].nil);
         $('#razon_social').val(dataListado.resultados[posicion].razon_social);
-        $('#actividad_economica').val(dataListado.resultados[posicion].codigo_actividad_e);
+        $('#actividad_economica').val(dataListado.resultados[posicion].codigo_actividad);
         $('#codigo_aportante').val(dataListado.resultados[posicion].codigo_aportante);
         $('#telefono_1').val(dataListado.resultados[posicion].telefono1);
         $('#telefono_2').val(dataListado.resultados[posicion].telefono2);
@@ -407,10 +407,6 @@ $(function () {
                         $('#show_table').trigger('click');
                         buscar_listado();
                     }
-                    // delete  window.posicion,
-                    //         window.rif,
-                    //         window.nacionalidad,
-                    //         window.cedula;
                 },
                 error: function () {
                     console.log('error');

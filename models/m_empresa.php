@@ -53,7 +53,7 @@ class model_empresa extends conexion
 	public function consultarCiudades($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado=".$datos['estado']." "; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".htmlspecialchars($datos['estado'])."'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -135,7 +135,7 @@ class model_empresa extends conexion
             rif,
             nil,
             razon_social,
-            codigo_actividad_e,
+            codigo_actividad,
             codigo_aportante,
             telefono1,
             telefono2,
@@ -144,17 +144,17 @@ class model_empresa extends conexion
             nacionalidad_contacto,
             persona_contacto
         ) VALUES (
-            $datos[rif],
-            $datos[nil],
-            $datos[razon_social],
-            $datos[actividad_economica],
-            $datos[codigo_aportante],
-            $datos[telefono_1],
-            $datos[telefono_2],
-            $datos[ciudad],
-            $datos[direccion],
-            $datos[nacionalidad],
-            $datos[cedula]
+            '".$datos['rif']."',
+            '".$datos['nil']."',
+            '".$datos['razon_social']."',
+            '".$datos['actividad_economica']."',
+            '".$datos['codigo_aportante']."',
+            '".$datos['telefono_1']."',
+            '".$datos['telefono_2']."',
+            '".$datos['ciudad']."',
+            '".$datos['direccion']."',
+            '".$datos['nacionalidad']."',
+            '".$datos['cedula']."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0)
@@ -170,7 +170,7 @@ class model_empresa extends conexion
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT t_empresa.*, t_actividad_economica.nombre AS actividad_economica, t_ciudad.codigo_estado
             FROM t_empresa
-            INNER JOIN t_actividad_economica ON t_empresa.codigo_actividad_e = t_actividad_economica.codigo
+            INNER JOIN t_actividad_economica ON t_empresa.codigo_actividad = t_actividad_economica.codigo
             INNER JOIN t_ciudad ON t_empresa.codigo_ciudad = t_ciudad.codigo
             WHERE ( rif LIKE '%".$datos['campo']."%' OR
                     nil LIKE '%".$datos['campo']."%' OR
@@ -221,17 +221,17 @@ class model_empresa extends conexion
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
-            nacionalidad=$datos[nacionalidad],
-            cedula=$datos[cedula],
-            nombre1=$datos[nombre_1],
-            nombre2=$datos[nombre_2],
-            apellido1=$datos[apellido_1],
-            apellido2=$datos[apellido_2],
-            sexo=$datos[sexo],
-            codigo_ciudad=$datos[ciudad_c],
-            telefono1=$datos[telefono],
-            correo=$datos[correo]
-            WHERE nacionalidad=$datos[nacionalidad2] AND cedula=$datos[cedula2]
+            nacionalidad='".$datos['nacionalidad']."',
+            cedula='".$datos['cedula']."',
+            nombre1='".$datos['nombre_1']."',
+            nombre2='".$datos['nombre_2']."',
+            apellido1='".$datos['apellido_1']."',
+            apellido2='".$datos['apellido_2']."',
+            sexo='".$datos['sexo']."',
+            codigo_ciudad='".$datos['ciudad_c']."',
+            telefono1='".$datos['telefono']."',
+            correo='".$datos['correo']."'
+            WHERE nacionalidad='".$datos['nacionalidad2']."' AND cedula='".$datos['cedula2']."'
         "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
         {
@@ -245,18 +245,18 @@ class model_empresa extends conexion
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_empresa SET 
-            rif=$datos[rif],
-            nil=$datos[nil],
-            razon_social=$datos[razon_social],
-            codigo_actividad_e=$datos[actividad_economica],
-            codigo_aportante=$datos[codigo_aportante],
-            telefono1=$datos[telefono_1],
-            telefono2=$datos[telefono_2],
-            codigo_ciudad=$datos[ciudad],
-            direccion=$datos[direccion],
-            nacionalidad_contacto=$datos[nacionalidad],
-            persona_contacto=$datos[cedula]
-            WHERE rif=$datos[rif2]
+            rif='".htmlspecialchars($datos['rif'])."',
+            nil='".htmlspecialchars($datos['nil'])."',
+            razon_social='".htmlspecialchars($datos['razon_social'])."',
+            codigo_actividad='".htmlspecialchars($datos['actividad_economica'])."',
+            codigo_aportante='".htmlspecialchars($datos['codigo_aportante'])."',
+            telefono1='".htmlspecialchars($datos['telefono_1'])."',
+            telefono2='".htmlspecialchars($datos['telefono_2'])."',
+            codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
+            direccion='".htmlspecialchars($datos['direccion'])."',
+            nacionalidad_contacto='".htmlspecialchars($datos['nacionalidad'])."',
+            persona_contacto='".htmlspecialchars($datos['cedula'])."'
+            WHERE rif='".htmlspecialchars($datos['rif2'])."'
         "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia))
         {
