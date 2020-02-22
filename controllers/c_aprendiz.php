@@ -12,11 +12,6 @@ if ($_POST['opcion'])
         case 'Traer datos':
             $resultados = [];
             $resultados['fecha'] = $date;
-            // $objeto->conectar();
-            // $resultados['ocupacion'] = $objeto->consultarOcupaciones();
-            // $resultados['oficio'] = $objeto->consultarOficios();
-            // $resultados['estado'] = $objeto->consultarEstados();
-            // $objeto->desconectar();
             echo json_encode($resultados);
         break;
 

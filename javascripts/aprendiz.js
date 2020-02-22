@@ -48,6 +48,7 @@ $(function () {
                 campo   : $('#campo_busqueda').val(),
                 estatus : $('#buscar_estatus').val()
             }, success: function (resultados){
+                console.log(resultados);
                 try {
                     $('#listado_tabla tbody').empty();
                     dataListado = JSON.parse(resultados);
@@ -99,6 +100,7 @@ $(function () {
             }, timer: 15000
         });
     }
+    buscar_listado();
     function cambiarPagina(e) {
         e.preventDefault();
         let numero = $(this).attr('data-pagina');

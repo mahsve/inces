@@ -915,7 +915,9 @@ $(function () {
                     }
 
                     buscar_listado();
-                } catch (error) { }
+                } catch (error) {
+                    console.log(resultados);
+                }
             },
             error: function (){
                 console.log('error');

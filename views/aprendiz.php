@@ -62,7 +62,7 @@
     </div>
 
     <div class="table-responsive pb-2">
-        <table id="listado_aprendices" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
+        <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
@@ -112,7 +112,7 @@
             <div class="form-row justify-content-end">
                 <div class="col-sm-6 col-lg-3 col-xl-2 mb-2">
                     <div class="form-group m-0">
-                        <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
+                        <label for="fecha" class="small m-0">Fecha de Inscripción <span class="text-danger">*</span></label>
                         <input type="date" name="fecha" id="fecha" class="form-control form-control-sm localStorage"/>
                     </div>
                 </div>
@@ -121,19 +121,103 @@
         
             <ul class="nav nav-pills mb-2" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="pills-datos-ciudadano-tab" data-toggle="pill" href="#pills-datos-ciudadano" role="tab" aria-controls="pills-datos-ciudadano" aria-selected="true">
-                        <i class="fas fa-user-graduate"></i><span class="ml-1">Aprendiz</span><i class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    <a class="nav-link active" id="pills-datos-ficha-tab" data-toggle="pill" href="#pills-datos-ficha" role="tab" aria-controls="pills-datos-ficha" aria-selected="true">
+                        <i class="fas fa-file-invoice"></i><span class="ml-1">Ficha del PNA</span><i class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="pills-datos-ciudadano2-tab" data-toggle="pill" href="#pills-datos-ciudadano2" role="tab" aria-controls="pills-datos-ciudadano2" aria-selected="false">
-                        <i class="fas fa-file-signature"></i><span class="ml-1">Recomendación</span><i id="icon-ciudadano2" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    <a class="nav-link" id="pills-datos-ciudadano-tab" data-toggle="pill" href="#pills-datos-ciudadano" role="tab" aria-controls="pills-datos-ciudadano" aria-selected="false">
+                        <i class="fas fa-user-graduate"></i><span class="ml-1">Aprendiz</span><i id="icon-ciudadano" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
             </ul>
 
             <div class="tab-content border rounded position-relative">
-                <div id="pills-datos-ciudadano" class="tab-pane fade px-3 py-2 show active" role="tabpanel" aria-labelledby="pills-datos-ciudadano-tab">
+                <div id="pills-datos-ficha" class="tab-pane fade px-3 py-2 show active" role="tabpanel" aria-labelledby="pills-datos-ficha-tab">
+                    <div class="form-row">
+                        <!-- TITULO -->
+                        <div class="col-sm-12">
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">PROGRAMA NACIONAL DE APRENDIZAJE</h3>    
+                        </div>
+
+                        <!-- TIPO REGISTRO (INSCRIPCION/RE-INSCRIPCION) -->
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="tipo_ficha" class="small m-0">Tipo registro <span class="text-danger">*</span></label>
+                                <select name="tipo_ficha" id="tipo_ficha" class="custom-select custom-select-sm localStorage">
+                                    <option value="">Elija una opción</option>
+                                    <option value="M">Inscripción</option>
+                                    <option value="F">Re-inscripción</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- CORRELATIVO DE INSCRIPCION -->
+                        <div class="col-sm-6 col-lg-3 col-xl-1">
+                            <div class="form-group mb-2">
+                                <label for="ficha_anterior" class="small m-0">Ficha Ant.</label>
+                                <input type="text" name="ficha_anterior" id="ficha_anterior" class="form-control text-center form-control-sm localStorage" placeholder="N° ficha" readonly/>
+                            </div>
+                        </div>
+
+                        <!-- CORRELATIVO DE INSCRIPCION -->
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="correlativo" class="small m-0">Correlativo de Insc.</label>
+                                <input type="text" name="correlativo" id="correlativo" class="form-control form-control-sm localStorage" placeholder="Correlativo de Inscripción" autocomplete="off"/>
+                            </div>
+                        </div>
+
+                        <!-- NUMERO DE ORDEN -->
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="numero_orden" class="small m-0">N° de orden</label>
+                                <input type="text" name="numero_orden" id="numero_orden" class="form-control form-control-sm localStorage" placeholder="Número de orden" autocomplete="off"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="datos_empresa_anterior" class="form-row">
+                        <!-- TITULO -->
+                        <div class="col-sm-12 mt-4">
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">EMPRESA ANTERIOR</h3>    
+                        </div>
+
+                        <!-- RAZON SOCIAL ANTERIOR -->
+                        <div class="col-sm-12 col-lg-6 col-xl-5">
+                            <div class="form-group mb-2">
+                                <label for="empresa_anterior" class="small m-0">Razon social de la empresa anterior</label>
+                                <input type="text" name="empresa_anterior" id="empresa_anterior" class="form-control form-control-sm localStorage" placeholder="Automatico" readonly/>
+                            </div>
+                        </div>
+
+                        <!-- ESTADO DE LA EMPRESA ANTERIOR -->
+                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="estado_anterior" class="small m-0">Estado</label>
+                                <input type="text" name="estado_anterior" id="estado_anterior" class="form-control form-control-sm localStorage" readonly/>
+                            </div>
+                        </div>
+
+                        <!-- CIUDAD DE LA EMPRESA ANTERIOR -->
+                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="ciudad_anterior" class="small m-0">Ciudad</label>
+                                <input type="text" name="ciudad_anterior" id="ciudad_anterior" class="form-control form-control-sm localStorage" readonly/>
+                            </div>
+                        </div>
+
+                        <!-- DIRECCION DE LA EMPRESA ANTERIOR -->
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="direccion_anterior" class="small m-0">Dirección</label>
+                                <textarea  name="direccion_anterior" id="direccion_anterior" class="form-control form-control-sm localStorage" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pills-datos-ciudadano" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-ciudadano-tab">
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">
@@ -144,7 +228,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
-                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage">
+                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage" r>
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -209,7 +293,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento <span class="text-danger">*</span></label>
-                                <input type="date" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage"/>
+                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage" data-date-format="yyyy-mm-dd" readonly/>
                             </div>
                         </div>
 
@@ -239,13 +323,8 @@
                             </div>
                         </div>
 
-                        
-                    </div>
-                </div>
-
-                <div id="pills-datos-ciudadano2" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-ciudadano2-tab">
-                    <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
-                    <div class="col-sm-12 my-2 pb-2">
+                        <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
+                        <div class="col-sm-12 my-2 pb-2">
                             <div class="table-responsive pb-2">
                                 <table class="table table-bordered mb-0" style="min-width: 850px;">
                                     <tr>
@@ -370,7 +449,8 @@
                                 </select>
                             </div>
                         </div>
-                </div> 
+                    </div>
+                </div>
 
                 <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
                     <div class="d-flex justify-content-center align-items-center w-100 h-100">
