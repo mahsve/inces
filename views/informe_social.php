@@ -91,7 +91,7 @@
         <table id="listado_aprendices" class="table table-borderless table-hover mb-0" style="min-width: 1000px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
+                    <th class="bg-info rounded-left font-weight-normal text-right py-2 pl-1 pr-2" width="80">#</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Cédula</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>
@@ -129,7 +129,6 @@
     <div id="gestion_form" style="display: none;">
         <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
             <h4 id="form_title" class="text-uppercase text-secondary font-weight-normal mb-0"></h4>
-
             <button type="button" id="show_table" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
         </div>
 
@@ -139,7 +138,7 @@
                 <div class="col-sm-6 col-lg-3 col-xl-2 mb-2">
                     <div class="form-group m-0">
                         <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
-                        <input type="date" name="fecha" id="fecha" class="form-control form-control-sm localStorage"/>
+                        <input type="text" name="fecha" id="fecha" class="form-control form-control-sm localStorage bg-white input-fechas" data-date-format="yyyy-mm-dd" placeholder="aaaa-mm-dd" readonly="true"/>
                     </div>
                 </div>
             </div>
@@ -202,7 +201,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
-                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage" placeholder="Ingrese la cédula" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -210,7 +209,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
-                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
+                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -218,7 +217,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="small m-0">Segundo nombre</label>
-                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -226,7 +225,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
-                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
+                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -234,7 +233,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="small m-0">Segundo Apellido</label>
-                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -246,7 +245,6 @@
                                     <option value="">Elija una opción</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Femenino</option>
-                                    <option value="I">Indefinido</option>
                                 </select>
                             </div>
                         </div>
@@ -255,7 +253,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento <span class="text-danger">*</span></label>
-                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage" data-date-format="yyyy-mm-dd" readonly/>
+                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage bg-white input-fechas" data-date-format="yyyy-mm-dd" placeholder="aaaa-mm-dd" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
@@ -263,7 +261,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
-                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
+                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -279,9 +277,12 @@
                         <div class="col-sm-6 col-lg-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="ocupacion" class="small m-0">Ocupación <span class="text-danger">*</span></label>
-                                <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage">
-                                    <option value="">Elija una opción</option>
-                                </select>
+                                <div class="d-flex">
+                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage">
+                                        <option value="">Elija una opción</option>
+                                    </select>
+                                    <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
 
@@ -350,13 +351,13 @@
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" disabled="true">
+                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off" disabled="true"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage">
+                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage" placeholder="(Opcional)" maxlength="150" autocomplete="off"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -366,19 +367,19 @@
                             </div>
                         </div>
 
-                        <!-- TELEFONO 1 -->
+                        <!-- TELEFONO DE HABITACION -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_1" class="small m-0">Teléfono 1 <span class="text-danger">*</span></label>
-                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
+                                <label for="telefono_1" class="small m-0">Tlf. de habitación <span class="text-danger">*</span></label>
+                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
                         
-                        <!-- TELEFONO 2 -->
+                        <!-- TELEFONO CELULAR -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_2" class="small m-0">Teléfono 2 </label>
-                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
+                                <label for="telefono_2" class="small m-0">Tlf. celular </label>
+                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -386,7 +387,7 @@
                         <div class="col-sm-6 col-lg-5 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="correo" class="small m-0">Correo</label>
-                                <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage" placeholder="Ingrese el correo" autocomplete="off"/>
+                                <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage" placeholder="Ingrese el correo" maxlength="80" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -477,7 +478,7 @@
                         <div class="col-sm-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="direccion" class="small m-0">Dirección <span class="text-danger">*</span></label>
-                                <textarea name="direccion" id="direccion" class="form-control form-control-sm localStorage" placeholder="Ingrese la dirección del hogar"></textarea>
+                                <textarea name="direccion" id="direccion" class="form-control form-control-sm localStorage" placeholder="Ingrese la dirección del hogar" autocomplete="off" maxlength="200"></textarea>
                             </div>
                         </div>
 
@@ -485,7 +486,49 @@
                         <div class="col-sm-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="punto_referencia" class="small m-0">Punto de referencia <span class="text-danger">*</span></label>
-                                <textarea name="punto_referencia" id="punto_referencia" class="form-control form-control-sm localStorage" placeholder="Ingrese punto de refencia"></textarea>
+                                <textarea name="punto_referencia" id="punto_referencia" class="form-control form-control-sm localStorage" placeholder="Ingrese punto de refencia" autocomplete="off" maxlength="200"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- TITULO -->
+                        <div class="col-sm-12 mt-3">
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos de facilitador</h3>
+                            <p class="text-secondary m-0">En este caso, la persona que realizo el informe social.</p>
+                        </div>
+
+                        <!-- NACIONALIDAD -->
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="f_nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
+                                <input type="text" name="f_nacionalidad" id="f_nacionalidad" class="form-control form-control-sm localStorage" value="<?php if ($_SESSION['usuario']['nacionalidad'] == 'V') echo 'Venezolano'; else echo 'Extranjero'; ?>" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- CEDULA -->
+                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="f_cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
+                                <input type="text" name="f_cedula" id="f_cedula" class="form-control form-control-sm localStorage" value="<?php echo $_SESSION['usuario']['cedula']; ?>" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- NOMBRE COMPELTO -->
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="nombre_completo_f" class="small m-0">Nombre completo <span class="text-danger">*</span></label>
+                                <div class="d-flex">
+                                    <input type="text" name="nombre_completo_f" id="nombre_completo_f" class="form-control form-control-sm localStorage" value="<?php
+                                        echo $_SESSION['usuario']['nombre1']; 
+                                        if ($_SESSION['usuario']['nombre2'] != '' AND $_SESSION['usuario']['nombre2'] != null) {
+                                            echo ' '.$_SESSION['usuario']['nombre2']; 
+                                        }
+                                        echo ' '.$_SESSION['usuario']['apellido1']; 
+                                        if ($_SESSION['usuario']['apellido2'] != '' AND $_SESSION['usuario']['apellido2'] != null) {
+                                            echo ' '.$_SESSION['usuario']['apellido2']; 
+                                        }
+                                    ?>" autocomplete="off" readonly="true"/>
+                                    <button type="button" id="btn-buscar-facilitador" class="btn btn-sm btn-info ml-2"><i class="fas fa-search"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -618,7 +661,7 @@
                                             <div class="form-group form-row align-items-center mt-2 mb-1">
                                                 <label for="otros" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Otros</label>
                                                 <div class="col-sm-8">
-                                                    <input type="text" name="otros" id="otros" class="form-control form-control-sm localStorage">
+                                                    <input type="text" name="otros" id="otros" class="form-control form-control-sm localStorage" placeholder="(Opcional)" maxlength="100" autocomplete="off"/>
                                                 </div>
                                             </div>
                                         </td>
@@ -636,7 +679,7 @@
                         <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="techo" class="small m-0">Techo <span class="text-danger">*</span></label>
-                                <input type="text" name="techo" id="techo" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del techo" autocomplete="off"/>
+                                <input type="text" name="techo" id="techo" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del techo" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -644,7 +687,7 @@
                         <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="pared" class="small m-0">Pared <span class="text-danger">*</span></label>
-                                <input type="text" name="pared" id="pared" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales de la pared" autocomplete="off"/>
+                                <input type="text" name="pared" id="pared" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales de la pared" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -652,7 +695,7 @@
                         <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="piso" class="small m-0">Piso <span class="text-danger">*</span></label>
-                                <input type="text" name="piso" id="piso" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del piso" autocomplete="off"/>
+                                <input type="text" name="piso" id="piso" class="form-control form-control-sm localStorage" placeholder="Ingrese los materiales del piso" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -660,7 +703,7 @@
                         <div class="col-sm-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="via_acceso" class="small m-0">Vía de acceso <span class="text-danger">*</span></label>
-                                <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage" placeholder="Descripción de la via de acceso" autocomplete="off"/>
+                                <input type="text" name="via_acceso" id="via_acceso" class="form-control form-control-sm localStorage" placeholder="Descripción de la via de acceso" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -673,7 +716,7 @@
                         <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="sala" class="small m-0">Sala <span class="text-danger">*</span></label>
-                                <input type="text" name="sala" id="sala" placeholder="N° de salas" class="form-control form-control-sm localStorage" autocomplete="off"/>
+                                <input type="text" name="sala" id="sala" class="form-control form-control-sm localStorage solo-numeros" placeholder="N° de salas" maxlength="2" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -681,7 +724,7 @@
                         <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="comedor" class="small m-0">Comedor <span class="text-danger">*</span></label>
-                                <input type="text" name="comedor" id="comedor" class="form-control form-control-sm localStorage" placeholder="N° de comedores" autocomplete="off"/>
+                                <input type="text" name="comedor" id="comedor" class="form-control form-control-sm localStorage solo-numeros" placeholder="N° de comedores" maxlength="2" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -689,7 +732,7 @@
                         <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="cocina" class="small m-0">Cocina <span class="text-danger">*</span></label>
-                                <input type="text" name="cocina" id="cocina" class="form-control form-control-sm localStorage" placeholder="N° de cocinas" autocomplete="off"/>
+                                <input type="text" name="cocina" id="cocina" class="form-control form-control-sm localStorage solo-numeros" placeholder="N° de cocinas" maxlength="2" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -697,7 +740,7 @@
                         <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="bano" class="small m-0">Baños <span class="text-danger">*</span></label>
-                                <input type="text" name="bano" id="bano" class="form-control form-control-sm localStorage" placeholder="N° de baños" autocomplete="off"/>
+                                <input type="text" name="bano" id="bano" class="form-control form-control-sm localStorage solo-numeros" placeholder="N° de baños" maxlength="2" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -705,7 +748,7 @@
                         <div class="col-sm-4 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="dormitorio" class="small m-0">Domitorios <span class="text-danger">*</span></label>
-                                <input type="text" name="dormitorio" id="dormitorio" class="form-control form-control-sm localStorage" placeholder="N° de dormitorios" autocomplete="off"/>
+                                <input type="text" name="dormitorio" id="dormitorio" class="form-control form-control-sm localStorage solo-numeros" placeholder="N° de dormitorios" maxlength="2" autocomplete="off"/>
                             </div>
                         </div>
                     </div>
@@ -721,7 +764,6 @@
                         <!-- DESCRIPCION E INSTRUCCIONES -->
                         <div class="col-sm-12 d-flex justify-content-between align-items-center mb-1">
                             <p class="small font-weight-bold text-secondary mb-0">Personas que habitan con el trabajador (a), iniciando desde el jefe del hogar.</p>
-
                             <button type="button" id="agregar_familiar" class="btn btn-sm btn-info"><i class="fas fa-plus"></i></button>
                         </div>
 
@@ -744,8 +786,9 @@
                                             <th class="bg-info rounded-right" width="28"></th>
                                         </tr>
                                     </thead>
-                                    
-                                    <tbody><!-- USO JAVASCRIPT --></tbody>
+                                    <tbody>
+                                        <!-- USO JAVASCRIPT -->
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -774,39 +817,39 @@
                                     <tbody>
                                         <tr>
                                             <td class="align-middle px-1 pt-1 pb-0"><label for="ingreso_pension" class="small">Pensión</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension" id="ingreso_pension" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension" id="ingreso_pension" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                             <td class="align-middle px-1 pt-1 pb-0"><label for="egreso_servicios" class="small">Gastos de servicios básicos (agua, luz, teléfono, etc.)</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_servicios" id="egreso_servicios" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_servicios" id="egreso_servicios" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_seguro" class="small">Seguro social</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_seguro" id="ingreso_seguro" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_seguro" id="ingreso_seguro" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_alimentario" class="small">Alimentación</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_alimentario" id="egreso_alimentario" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_alimentario" id="egreso_alimentario" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_pension_otras" class="small">Otras pensión</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension_otras" id="ingreso_pension_otras" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_pension_otras" id="ingreso_pension_otras" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_educacion" class="small">Educación</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_educacion" id="egreso_educacion" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_educacion" id="egreso_educacion" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="ingreso_sueldo" class="small">Sueldo  y/o salario</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="ingreso_sueldo" id="ingreso_sueldo" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                             <td class="align-middle px-1 py-0"><label for="egreso_vivienda" class="small">Vivienda (alquiler condominio)</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="egreso_vivienda" id="egreso_vivienda" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle px-1 py-0"><label for="otros_ingresos" class="small">Otros ingresos</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_ingresos" id="otros_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_ingresos" id="otros_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_ingresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                             <td class="align-middle px-1 py-0"><label for="otros_egresos" class="small">Otros egresos</label></td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage" style="height: 50px;"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="otros_egresos" id="otros_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos i_egresos localStorage campo-montos" maxlength="9" style="height: 50px;"/></td>
                                         </tr>
                                         <tr>
                                             <td class="align-middle small px-1 py-0">Total ingresos</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_ingresos" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_ingresos" id="total_ingresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"/></td>
                                             <td class="align-middle small px-1 py-0">Total egresos</td>
-                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_egresos" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"></td>
+                                            <td class="px-1 pt-1 pb-0"><input type="text" name="total_egresos" id="total_egresos" class="form-control form-control-sm d-inline-block text-right campos_ingresos_0 localStorage" style="height: 50px;" readonly="true"/></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -826,7 +869,7 @@
                         <div class="col-lg-6 align-self-end">
                             <div class="form-group mb-2">
                                 <label for="condicion_vivienda" class="small m-0">Condiciones generales de la vivienda <span class="text-danger">*</span></label>
-                                <textarea name="condicion_vivienda" id="condicion_vivienda" class="form-control form-control-sm localStorage"></textarea>
+                                <textarea name="condicion_vivienda" id="condicion_vivienda" class="form-control form-control-sm localStorage" maxlength="1000" placeholder="Describir" autocomplete="off"></textarea>
                             </div>
                         </div>
 
@@ -834,7 +877,7 @@
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="caracteristicas_generales" class="small m-0">Características generales de las relaciones familiares y sus condiciones socioeconómicas <span class="text-danger">*</span></label>
-                                <textarea name="caracteristicas_generales" id="caracteristicas_generales" class="form-control form-control-sm localStorage"></textarea>
+                                <textarea name="caracteristicas_generales" id="caracteristicas_generales" class="form-control form-control-sm localStorage" maxlength="1000" placeholder="Describir" autocomplete="off"></textarea>
                             </div>
                         </div>
 
@@ -842,7 +885,7 @@
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="diagnostico_social" class="small m-0">Diagnóstico social <span class="text-danger">*</span></label>
-                                <textarea name="diagnostico_social" id="diagnostico_social" class="form-control form-control-sm localStorage"></textarea>
+                                <textarea name="diagnostico_social" id="diagnostico_social" class="form-control form-control-sm localStorage" maxlength="1000" placeholder="Describir" autocomplete="off"></textarea>
                             </div>
                         </div>
 
@@ -850,7 +893,7 @@
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="diagnostico_preliminar" class="small m-0">Diagnóstico preliminar <span class="text-danger">*</span></label>
-                                <textarea name="diagnostico_preliminar" id="diagnostico_preliminar" class="form-control form-control-sm localStorage"></textarea>
+                                <textarea name="diagnostico_preliminar" id="diagnostico_preliminar" class="form-control form-control-sm localStorage" maxlength="1000" placeholder="Describir" autocomplete="off"></textarea>
                             </div>
                         </div>
 
@@ -858,7 +901,7 @@
                         <div class="col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="conclusiones" class="small m-0">Conclusiones y recomendaciones <span class="text-danger">*</span></label>
-                                <textarea name="conclusiones" id="conclusiones" class="form-control form-control-sm localStorage"></textarea>
+                                <textarea name="conclusiones" id="conclusiones" class="form-control form-control-sm localStorage" maxlength="1000" placeholder="Describir" autocomplete="off"></textarea>
                             </div>
                         </div>
 
@@ -891,6 +934,36 @@
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>
+    </div>
+
+    <div id="modal-buscar-facilitador" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Buscar facilitador</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_buscar_facilitador" class="form-row">
+                        <!-- CEDULA -->
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2 position-relative">
+                                <label for="input-buscar-facilitador" class="small m-0">Buscar facilitador <span class="text-danger">*</span></label>
+                                <input type="text" name="input-buscar-facilitador" id="input-buscar-facilitador" class="form-control form-control-sm" placeholder="Buscar facilitador por cédula o por nombre" autocomplete="off"/>
+                                <div id="resultados-buscar-facilitador" class="caja-resultados-busqueda position-absolute bg-white text-secondary border mt-1 rounded w-100" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i><span class="ml-2">Cerrar</span></button>
+                </div>
+            </div>
+        </div>
     </div>
 <?php } ?>
 

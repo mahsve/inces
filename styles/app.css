@@ -5,6 +5,9 @@ html, body {
 body{
     background: #e4eeee;
 }
+button:disabled {
+    cursor: not-allowed;
+}
 /* =============== ESTILOS NAVBAR ================ */
 header {
     z-index: 4;
@@ -158,6 +161,31 @@ table .dropdown-menu a i.fa-times {
 .custom-control.custom-checkbox label{
     cursor: pointer;
 }
+
+
+/* ===============  ESTILOS CUADRO BUSQUEDA ============== */
+.caja-resultados-busqueda {
+    overflow-y: auto;
+    max-height: 250px;
+}
+.caja-resultados-busqueda p {
+    border-bottom: 1px solid #dee2e6;
+    cursor: pointer;
+}
+.caja-resultados-busqueda p:last-child {
+    border-bottom: none;
+}
+.caja-resultados-busqueda p:hover {
+    background: #F7F7F7;
+}
+.caja-resultados-busqueda p:active {
+    background: #EBF5F4;
+}
+
+
+
+
+
 /* ===============  ESTILOS CUADRO ESPERA ============== */
 #carga_espera {
     opacity: .95;

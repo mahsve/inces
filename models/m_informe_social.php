@@ -66,7 +66,7 @@ class model_informeSocial extends conexion
 	public function consultarCiudades($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -79,7 +79,7 @@ class model_informeSocial extends conexion
 	public function consultarMunicipios($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='$datos[estado]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -92,7 +92,7 @@ class model_informeSocial extends conexion
 	public function consultarParroquias($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='$datos[municipio]' AND estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
@@ -100,7 +100,28 @@ class model_informeSocial extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
- 
+
+    // FUNCION PARA CONSULTAR LOS FACILITADORES ACTIVOS.
+	public function consultarFacilitadores($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+        FROM t_datos_personales
+        WHERE ( concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['buscar']."%' OR 
+                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['buscar']."%' OR
+                concat(nacionalidad, ' ', cedula) LIKE '%".$datos['buscar']."%' OR 
+                concat(nacionalidad, cedula) LIKE '%".$datos['buscar']."%' OR
+                concat(nacionalidad, '-', cedula) LIKE '%".$datos['buscar']."%' )
+        AND tipo_persona='F'
+        AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos)
     {
@@ -238,8 +259,8 @@ class model_informeSocial extends conexion
             '".htmlspecialchars($datos['cedula'])."',
             '".htmlspecialchars($datos['oficio'])."',
             '".htmlspecialchars($datos['turno'])."',
-            '".htmlspecialchars($datos['nacionalidad_fac'])."',
-            '".htmlspecialchars($datos['cedula_facilitador'])."',
+            '".htmlspecialchars($datos['f_nacionalidad'])."',
+            '".htmlspecialchars($datos['f_cedula'])."',
             '".htmlspecialchars($datos['condicion_vivienda'])."',
             '".htmlspecialchars($datos['caracteristicas_generales'])."',
             '".htmlspecialchars($datos['diagnostico_social'])."',
@@ -321,6 +342,8 @@ class model_informeSocial extends conexion
         $sentencia = "SELECT
             t_informe_social.*, t_informe_social.estatus AS estatus_informe,
             t_datos_personales.*,
+            datos_facilitador.nombre1 AS f_nombre1, datos_facilitador.nombre2 AS f_nombre2,
+            datos_facilitador.apellido1 AS f_apellido1, datos_facilitador.apellido2 AS f_apellido2,
             t_oficio.nombre AS oficio,
             t_ciudad.codigo_estado,
             t_parroquia.codigo_municipio
@@ -328,6 +351,9 @@ class model_informeSocial extends conexion
             INNER JOIN t_datos_personales ON
             t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
             AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            INNER JOIN t_datos_personales datos_facilitador ON
+            t_informe_social.nacionalidad_fac = datos_facilitador.nacionalidad
+            AND t_informe_social.cedula_facilitador = datos_facilitador.cedula
             INNER JOIN t_oficio ON
             t_informe_social.codigo_oficio = t_oficio.codigo
             INNER JOIN t_ciudad ON
@@ -494,6 +520,8 @@ class model_informeSocial extends conexion
             fecha='".htmlspecialchars($datos['fecha'])."',
             codigo_oficio='".htmlspecialchars($datos['oficio'])."',
             turno='".htmlspecialchars($datos['turno'])."',
+            nacionalidad_fac='".htmlspecialchars($datos['f_nacionalidad'])."',
+            cedula_facilitador='".htmlspecialchars($datos['f_cedula'])."',
             condicion_vivienda='".htmlspecialchars($datos['condicion_vivienda'])."',
             caracteristicas_generales='".htmlspecialchars($datos['caracteristicas_generales'])."',
             diagnostico_social='".htmlspecialchars($datos['diagnostico_social'])."',

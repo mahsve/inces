@@ -36,9 +36,19 @@ if ($_POST['opcion']){
             echo json_encode($resultados);
         break;
 
+        case 'Traer facilitador':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados = $objeto->consultarFacilitadores($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
         case 'Registrar':
-            $_POST['nacionalidad_fac'] = $_SESSION['usuario']['nacionalidad'];
-            $_POST['cedula_facilitador'] = $_SESSION['usuario']['cedula'];
+            if ($_POST['f_nacionalidad'] == 'Venezolano')
+                $_POST['f_nacionalidad'] = 'V';
+            else
+                $_POST['f_nacionalidad'] = 'E';
 
             $objeto->conectar();
             $objeto->nuevaTransaccion();
@@ -173,6 +183,11 @@ if ($_POST['opcion']){
         break;
 
         case 'Modificar':
+            if ($_POST['f_nacionalidad'] == 'Venezolano')
+                $_POST['f_nacionalidad'] = 'V';
+            else
+                $_POST['f_nacionalidad'] = 'E';
+                
             $objeto->conectar();
             $objeto->nuevaTransaccion();
             if ($objeto->modificarDatosPersonales($_POST)){
@@ -282,7 +297,17 @@ if ($_POST['opcion']){
             $objeto->desconectar();
         break;
 
-        case 'Estatus':
+        case 'Rechazar':
+            $objeto->conectar();
+            if ($objeto->estatusAprendiz($_POST)) {
+                echo 'Modificacion exitosa';
+            } else {
+                echo 'Modificación fallida';
+            }
+            $objeto->desconectar();
+        break;
+
+        case 'Reactivar':
             $objeto->conectar();
             if ($objeto->estatusAprendiz($_POST)) {
                 echo 'Modificacion exitosa';

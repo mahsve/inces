@@ -1,5 +1,25 @@
 /* ======================= ELEMENTO GENERALES ======================= */
 /* ======= ELEMENTOS CON EL MISMO DISEÑO EN TODA LA APLICACION ====== */
+
+/* ======================= ESTILOS DATAPICKER ======================= */
+.datepicker.datepicker-dropdown.dropdown-menu {
+    color: #6c757d;
+}
+.datepicker.datepicker-dropdown.dropdown-menu .datepicker-switch,
+.datepicker.datepicker-dropdown.dropdown-menu th {
+    font-weight: 500 !important;
+}
+.datepicker.datepicker-dropdown.dropdown-menu td.active,
+.datepicker.datepicker-dropdown.dropdown-menu span.active {
+    background: #17a2b8 !important;
+}
+.datepicker.datepicker-dropdown.dropdown-menu td.active:hover,
+.datepicker.datepicker-dropdown.dropdown-menu span.active:hover {
+    background: #138496 !important;
+}
+/* ======================= ESTILOS DATAPICKER ======================= */
+
+
 select {
     cursor: pointer;
 }

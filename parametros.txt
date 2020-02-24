@@ -1,0 +1,31 @@
+ // let ER_caracteresConEspacios = /^([a-zA-Z\x7f-\xff](\s[a-zA-Z\x7f-\xff])*)+$/;
+// let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9\x7f-\xff](\s[a-zA-Z0-9\x7f-\xff])*)+$/;
+// let ER_NumericoSinEspacios=/^([0-9])+$/;
+// let ER_alfaNumericoConEspaciosComa=/^([0-9a-zA-Z.,])+$/;
+// let ER_simetria = /^([0-9a-zA-Z/., +-])+$/;
+// let ER_tension = /^([0-9a-zA-Z/., ])+$/;
+// var ER_hora = /^([0-1]?[0-9]|2[0-3]):([0-9]|[0-5][0-9])$/;
+// let flag = true;
+// let ER_caracteresConEspacios = /^([a-zA-Z\x7f-\xff](\s[a-zA-Z\x7f-\xff])*)+$/;
+//     let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9\x7f-\xff](\s[a-zA-Z0-9\x7f-\xff])*)+$/;
+//     let ER_NumericoSinEspacios=/^([0-9])+$/;
+//     let ER_NumericoConComa=/^([0-9.,])+$/;
+//     let ER_alfaNumericoConEspaciosComa=/^([0-9a-zA-Z.,])+$/;
+//     var ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+//     let ER_simetria = /^([0-9a-zA-Z/., +-])+$/;
+//     let ER_tension = /^([0-9a-zA-Z/., ])+$/;
+//     var ER_hora = /^([0-1]?[0-9]|2[0-3]):([0-9]|[0-5][0-9])$/;
+//     let flag = true;
+
+// let campo_actividad = $('#campo_actividad').val();
+// if(campo_actividad != ''){
+//     if(campo_actividad.match(ER_alfaNumericoConEspacios)){
+//         $('#campo_actividad').css("background-color", "#d4ffdc");
+//     }else{
+//         $('#campo_actividad').css("background-color", "#ffc6c6");
+//         flag = false;
+//     }
+// }else{
+//     $('#campo_actividad').css("background-color", "#ffffff");
+//     flag = false;
+// }
