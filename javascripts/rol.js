@@ -227,9 +227,9 @@ $(function () {
                         contenedorModulo += '<label class="custom-control-label" for="codigo_modulo'+data[i].codigo+'">'+data[i].nombre+'</label>';
                         contenedorModulo += '</div>';
                         //////////////////////////////////////////////////////////////////////////////
-                        contenedorModulo += '<button class="btn btn-sm position-absolute btn-info" type="button" data-toggle="collapse" data-target="#contenedor_vistas'+data[i].codigo+'" aria-expanded="false" aria-controls="contenedor_vistas'+data[i].codigo+'" style="right: 5px; top: 5px;"><i class="fas fa-plus"></i></button>';
+                        contenedorModulo += '<button class="btn btn-sm position-absolute btn-info btn-abrir-collapse" type="button" data-toggle="collapse" data-target="#contenedor_vistas'+data[i].codigo+'" aria-expanded="false" aria-controls="contenedor_vistas'+data[i].codigo+'" style="right: 5px; top: 5px;"><i class="fas fa-plus"></i></button>';
                         //////////////////////////////////////////////////////////////////////////////
-                        contenedorModulo += '<div id="contenedor_vistas'+data[i].codigo+'" class="collapse">';
+                        contenedorModulo += '<div id="contenedor_vistas'+data[i].codigo+'" class="collapse content-collapse">';
                         contenedorModulo += '<div class="border rounded mt-2 p-2">';
                         for (let j in data[i].vistas) {
                             contenedorModulo += '<div class="custom-control custom-checkbox mr-sm-2">';
@@ -260,6 +260,7 @@ $(function () {
                         contenedorModulo += '</div>';    
                         $('#contenedor_modulos').append(contenedorModulo);
                     }
+                    $('.btn-abrir-collapse').click(OcutarDemasVistas);
                     buscar_listado();
                 } catch (error) {
                     console.log(resultados);
@@ -269,6 +270,9 @@ $(function () {
                 console.log('error');
             }
         });
+    }
+    function OcutarDemasVistas (e) {
+        $('.content-collapse').collapse('hide')
     }
     llamarDatos();
 });

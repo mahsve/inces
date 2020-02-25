@@ -27,7 +27,7 @@ class modelo_vistas extends conexion
     public function consultarModulos()
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_modulo_sistema"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_modulo_sistema ORDER BY posicion ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {

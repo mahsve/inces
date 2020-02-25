@@ -127,7 +127,7 @@ $(function () {
                                     contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 reactivar_postulante" data-posicion="'+i+'"><i class="fas fa-redo text-center" style="width:20px;"></i><span class="ml-2">Reactivar</span></a></li>';
                                 }
                             }
-                            contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/pdf/r_informe_social?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
+                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 imprimir_informe" data-posicion="'+i+'"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
                             contenido += '</div></div></td></tr>';
                             $('#listado_aprendices tbody').append(contenido);
                             cont++;
@@ -136,6 +136,7 @@ $(function () {
                         $('.aceptar_postulante').click(aceptarPostulante);
                         $('.rechazar_postulante').click(rechazarPostulante);
                         $('.reactivar_postulante').click(reactivarPostulante);
+                        $('.imprimir_informe').click(imprimirInforme);
                     } else {
                         $('#listado_aprendices tbody').append('<tr><td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay informes registrados</td></tr>');
                     }
@@ -1006,22 +1007,20 @@ $(function () {
     });
     function aceptarPostulante (e) {
         e.preventDefault();
-
         // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
         let posicion = $(this).attr('data-posicion');
         let numero = dataListado.resultados[posicion].numero;
-
+        ///////////////////////////////////////////////////////
         localStorage.setItem('numero_ficha', numero);
         location.href = url+'intranet/aprendiz'
     }
     function rechazarPostulante (e) {
         e.preventDefault();
-
         // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
         let posicion = $(this).attr('data-posicion');
         let numero = dataListado.resultados[posicion].numero;
         let estatus = 'R';
-        
+        ///////////////////////////////////////////////////////
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
@@ -1042,12 +1041,11 @@ $(function () {
     }
     function reactivarPostulante (e) {
         e.preventDefault();
-
         // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
         let posicion = $(this).attr('data-posicion');
         let numero = dataListado.resultados[posicion].numero;
         let estatus = 'E';
-        
+        ///////////////////////////////////////////////////////
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
@@ -1062,6 +1060,26 @@ $(function () {
                     buscar_listado();
             },
             error: function () {
+                console.log('error');
+            }
+        });
+    }
+    function imprimirInforme (e) {
+        e.preventDefault();
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+        ///////////////////////////////////////////////////////
+        $.ajax({
+            url : url+'controllers/pdf/r_informe_social.php',
+            type: 'POST',
+            data: {
+                numero: numero
+            },
+            success: function (resultados){
+                window.open(url+'pdf/'+resultados, '_blank');
+                console.log(resultados); // EN CASO DE ERROR
+            },
+            error: function (){
                 console.log('error');
             }
         });

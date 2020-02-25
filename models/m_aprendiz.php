@@ -23,6 +23,122 @@ class model_aprendiz extends conexion
         mysqli_close($this->data_conexion);
     }
 
+    // FUNCION PARA CONSULTAR LAS OCUPACIONES
+	public function consultarOcupaciones()
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LOS ESTADOS.
+	public function consultarEstados()
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LAS CIUDADES SEGUN EL ESTADO ELEGIDO.
+	public function consultarCiudades($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LOS MUNICIPIOS SEGUN EL ESTADO ELEGIDO.
+	public function consultarMunicipios($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LAS PARROQUIAS SEGUN EL MUNICIPIO ELEGIDO.
+	public function consultarParroquias($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+    
+    // FUNCION PARA CONSULTAR EL APRENDIZ QUE SE DESEA INSCRIBIR DESDE FICHA SOCIAL.
+	public function consultarAprendizPorFicha($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT
+            t_informe_social.*, t_informe_social.estatus AS estatus_informe,
+            t_datos_personales.*,
+            t_ciudad.codigo_estado,
+            t_parroquia.codigo_municipio
+            FROM t_informe_social
+            INNER JOIN t_datos_personales ON
+            t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            INNER JOIN t_ciudad ON
+            t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia ON
+            t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            WHERE t_informe_social.numero='".$datos['numero']."'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+            $data_empresa = [];
+			$resultado = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LAS EMPRESAS
+	public function consultarEmpresas($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT t_empresa.*,
+        t_actividad_economica.nombre AS actividad_economica,
+        t_ciudad.nombre AS ciudad,
+        t_estado.nombre AS estado
+        FROM t_empresa
+        INNER JOIN t_actividad_economica ON t_empresa.codigo_actividad = t_actividad_economica.codigo
+        INNER JOIN t_ciudad ON t_empresa.codigo_ciudad = t_ciudad.codigo
+        INNER JOIN t_estado ON t_ciudad.codigo_estado = t_estado.codigo
+        WHERE rif LIKE '%".$datos['buscar']."%'
+        OR razon_social LIKE '%".$datos['buscar']."%'
+        AND t_empresa.estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA REGISTRAR UN NUEVO OFICIO.
     function registrarOficio($datos)
     {
@@ -43,14 +159,30 @@ class model_aprendiz extends conexion
     }
 
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS REGISTRADOS
-	function consultarOficios($datos)
+	function consultarPlanilla($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
-            FROM t_oficio
-            WHERE ( nombre LIKE '%".$datos['campo']."%' OR
-                    codigo LIKE '%".$datos['campo']."%')
-            AND estatus LIKE '%".$datos['estatus']."%' 
+		$sentencia = "SELECT
+            t_ficha_aprendiz.*, t_ficha_aprendiz.estatus AS estatus_informe,
+            t_datos_personales.*,
+            t_ciudad.codigo_estado,
+            t_parroquia.codigo_municipio
+            FROM t_ficha_aprendiz
+            INNER JOIN t_informe_social
+            ON t_ficha_aprendiz.numero_informe = t_informe_social.numero
+            INNER JOIN t_datos_personales
+            ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            INNER JOIN t_ciudad
+            ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia
+            ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
+            ) AND t_ficha_aprendiz.estatus LIKE '%".$datos['estatus']."%' 
             ORDER BY ".$datos['ordenar_por']." 
             LIMIT ".$datos['numero'].", ".$datos['cantidad']."
         "; // SENTENTCIA
@@ -63,14 +195,22 @@ class model_aprendiz extends conexion
     }
 
     // FUNCION PARA CONSULTAR EL NUMERO DE OFICIOS REGISTRADOS EN TOTAL
-	function consultarOficiosTotal($datos)
+	function consultarPlanillaTotal($datos)
 	{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
-            FROM t_oficio
-            WHERE ( nombre LIKE '%".$datos['campo']."%' OR
-                    codigo LIKE '%".$datos['campo']."%')
-            AND estatus LIKE '%".$datos['estatus']."%' 
+            FROM t_ficha_aprendiz
+            INNER JOIN t_informe_social
+            ON t_ficha_aprendiz.numero_informe = t_informe_social.numero
+            INNER JOIN t_datos_personales
+            ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
+                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
+                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
+            ) AND t_ficha_aprendiz.estatus LIKE '%".$datos['estatus']."%'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia))
         {

@@ -11,21 +11,50 @@ if ($_POST['opcion'])
     switch ($_POST['opcion']) {
         case 'Traer datos':
             $resultados = [];
+            $objeto->conectar();
             $resultados['fecha'] = $date;
+            $resultados['ocupacion'] = $objeto->consultarOcupaciones();
+            $resultados['estado'] = $objeto->consultarEstados();
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+        
+        case 'Traer divisiones':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['ciudad'] = $objeto->consultarCiudades($_POST);
+            $resultados['municipio'] = $objeto->consultarMunicipios($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Traer parroquias':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['parroquia'] = $objeto->consultarParroquias($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Traer aprendiz por ficha':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados = $objeto->consultarAprendizPorFicha($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Traer empresa':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados = $objeto->consultarEmpresas($_POST);
+            $objeto->desconectar();
             echo json_encode($resultados);
         break;
 
         case 'Registrar':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->registrarOficio($data)) {
+            if ($objeto->registrarOficio($_POST)) {
                 echo 'Registro exitoso';
             } else {
                 echo 'Registro fallido';
@@ -36,26 +65,23 @@ if ($_POST['opcion'])
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
-            ////////////////////// LIMPIAR DATOS ///////////////////////
-            $datosLimpios = [];
-            foreach ($_POST as $posicion => $valor) {
-                $datosLimpios[$posicion] = htmlspecialchars($valor);
-            }
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $datosLimpios['ordenar_tipo'] = 'ASC';
+            $_POST['ordenar_tipo'] = 'ASC';
             if ($_POST['tipo_ord'] == 1)
-                $datosLimpios['ordenar_tipo'] = 'ASC';
+                $_POST['ordenar_tipo'] = 'ASC';
             else if ($_POST['tipo_ord'] == 2)
-                $datosLimpios['ordenar_tipo'] = 'DESC';
+                $_POST['ordenar_tipo'] = 'DESC';
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            $_POST['ordenar_por'] = 't_ficha_aprendiz.fecha '.$_POST['ordenar_tipo'];
             if ($_POST['ordenar'] == 1)
-                $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+                $_POST['ordenar_por'] = 't_ficha_aprendiz.fecha '.$_POST['ordenar_tipo'];
             else if ($_POST['ordenar'] == 2)
-                $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
+                $_POST['ordenar_por'] = 't_datos_personales.cedula '.$_POST['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 3)
+                $_POST['ordenar_por'] = 't_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido2 '.$_POST['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarOficios($datosLimpios);
-            $resultados['total']        = $objeto->consultarOficiosTotal($datosLimpios);
+            $resultados['resultados']   = $objeto->consultarPlanilla($_POST);
+            $resultados['total']        = $objeto->consultarPlanillaTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;

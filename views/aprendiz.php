@@ -25,10 +25,9 @@
                 <div class="col-sm-6 col-lg-3 col-xl-3 form-group d-flex align-items-center text-info mb-2">
                     <label for="ordenar_por" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="ordenar_por" class="custom-select custom-select-sm">
-                        <option value="1">N° informe</option>
+                        <option value="1">Fecha Reg.</option>
                         <option value="2">Cédula</option>
-                        <option value="3">Fecha Reg.</option>
-                        <option value="4">Nombre</option>
+                        <option value="3">Nombre</option>
                     </select>
                 </div>
 
@@ -65,21 +64,20 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">N° informe</th>
+                    <th class="bg-info rounded-left font-weight-normal text-right py-2 pl-1 pr-2" width="80">#</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Cédula</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha Nac.</th>
                     <th class="bg-info font-weight-normal px-1 py-2 text-center" width="45">Edad</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="150">Oficio</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="85">Turno</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="92">Estatus</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="150">Tipo de registro</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="105">Estatus</th>
                     <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1) echo 76; else echo 40; ?>"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="10" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                    <td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
                 </tr>
             </tbody>
         </table>
@@ -112,8 +110,8 @@
             <div class="form-row justify-content-end">
                 <div class="col-sm-6 col-lg-3 col-xl-2 mb-2">
                     <div class="form-group m-0">
-                        <label for="fecha" class="small m-0">Fecha de Inscripción <span class="text-danger">*</span></label>
-                        <input type="date" name="fecha" id="fecha" class="form-control form-control-sm localStorage"/>
+                        <label for="fecha" class="small m-0">Fecha <span class="text-danger">*</span></label>
+                        <input type="text" name="fecha" id="fecha" class="form-control form-control-sm localStorage bg-white input-fechas" data-date-format="yyyy-mm-dd" placeholder="aaaa-mm-dd" readonly="true"/>
                     </div>
                 </div>
             </div>
@@ -130,6 +128,16 @@
                         <i class="fas fa-user-graduate"></i><span class="ml-1">Aprendiz</span><i id="icon-ciudadano" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-datos-ubicacion-tab" data-toggle="pill" href="#pills-datos-ubicacion" role="tab" aria-controls="pills-datos-ubicacion" aria-selected="false">
+                        <i class="fas fa-map-marked-alt"></i><span class="ml-1">Ubicación</span><i id="icon-ubicacion" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-datos-empresa-tab" data-toggle="pill" href="#pills-datos-empresa" role="tab" aria-controls="pills-datos-empresa" aria-selected="false">
+                        <i class="fas fa-industry"></i><span class="mx-1">Empresa</span><i id="icon-empresa" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    </a>
+                </li>
             </ul>
 
             <div class="tab-content border rounded position-relative">
@@ -143,20 +151,13 @@
                         <!-- TIPO REGISTRO (INSCRIPCION/RE-INSCRIPCION) -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
+                                <input type="hidden" name="ficha_anterior" id="ficha_anterior">
                                 <label for="tipo_ficha" class="small m-0">Tipo registro <span class="text-danger">*</span></label>
                                 <select name="tipo_ficha" id="tipo_ficha" class="custom-select custom-select-sm localStorage">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Inscripción</option>
                                     <option value="F">Re-inscripción</option>
                                 </select>
-                            </div>
-                        </div>
-                        
-                        <!-- CORRELATIVO DE INSCRIPCION -->
-                        <div class="col-sm-6 col-lg-3 col-xl-1">
-                            <div class="form-group mb-2">
-                                <label for="ficha_anterior" class="small m-0">Ficha Ant.</label>
-                                <input type="text" name="ficha_anterior" id="ficha_anterior" class="form-control text-center form-control-sm localStorage" placeholder="N° ficha" readonly/>
                             </div>
                         </div>
 
@@ -228,7 +229,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nacionalidad" class="small m-0">Nacionalidad <span class="text-danger">*</span></label>
-                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage" r>
+                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm localStorage">
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -240,7 +241,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="cedula" class="small m-0">Cédula <span class="text-danger">*</span></label>
-                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage" placeholder="Ingrese la cédula" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -248,7 +249,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_1" class="small m-0">Primer nombre <span class="text-danger">*</span></label>
-                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
+                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -256,7 +257,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="small m-0">Segundo nombre</label>
-                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -264,7 +265,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_1" class="small m-0">Primer Apellido <span class="text-danger">*</span></label>
-                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
+                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -272,7 +273,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="small m-0">Segundo Apellido</label>
-                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -284,7 +285,6 @@
                                     <option value="">Elija una opción</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Femenino</option>
-                                    <option value="I">Indefinido</option>
                                 </select>
                             </div>
                         </div>
@@ -293,7 +293,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="fecha_n" class="small m-0">Fecha de nacimiento <span class="text-danger">*</span></label>
-                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage" data-date-format="yyyy-mm-dd" readonly/>
+                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm localStorage bg-white input-fechas" data-date-format="yyyy-mm-dd" placeholder="aaaa-mm-dd" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
@@ -301,7 +301,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="lugar_n" class="small m-0">Lugar de nacimiento</label>
-                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" autocomplete="off"/>
+                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm localStorage" placeholder="Ingrese el lugar de nacimiento" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -317,9 +317,12 @@
                         <div class="col-sm-6 col-lg-6 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="ocupacion" class="small m-0">Ocupación <span class="text-danger">*</span></label>
-                                <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage">
-                                    <option value="">Elija una opción</option>
-                                </select>
+                                <div class="d-flex">
+                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm localStorage">
+                                        <option value="">Elija una opción</option>
+                                    </select>
+                                    <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
 
@@ -388,13 +391,13 @@
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" disabled="true">
+                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off" disabled="true"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage">
+                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage" placeholder="(Opcional)" maxlength="150" autocomplete="off"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -404,19 +407,19 @@
                             </div>
                         </div>
 
-                        <!-- TELEFONO 1 -->
+                        <!-- TELEFONO DE HABITACION -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_1" class="small m-0">Teléfono 1 <span class="text-danger">*</span></label>
-                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
+                                <label for="telefono_1" class="small m-0">Tlf. de habitación <span class="text-danger">*</span></label>
+                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
                         
-                        <!-- TELEFONO 2 -->
+                        <!-- TELEFONO CELULAR -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="telefono_2" class="small m-0">Teléfono 2 </label>
-                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage" placeholder="Ingrese el telefono" autocomplete="off"/>
+                                <label for="telefono_2" class="small m-0">Tlf. celular </label>
+                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -424,29 +427,157 @@
                         <div class="col-sm-6 col-lg-5 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="correo" class="small m-0">Correo</label>
-                                <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage" placeholder="Ingrese el correo" autocomplete="off"/>
+                                <input type="email" name="correo" id="correo" class="form-control form-control-sm localStorage" placeholder="Ingrese el correo" maxlength="80" autocomplete="off"/>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- SALIDA OCUPACIONAL (OFICIO O CARRERA) -->
-                        <div class="col-sm-6 col-lg-5 col-xl-3">
+                <div id="pills-datos-ubicacion" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-ubicacion-tab">
+                    <div class="form-row">
+                        <!-- TITULO -->
+                        <div class="col-sm-12">
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Ubicación geográfica de la vivienda</h3>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
                             <div class="form-group mb-2">
-                                <label for="oficio" class="small m-0">Salida ocupacional <span class="text-danger">*</span></label>
-                                <select name="oficio" id="oficio" class="custom-select custom-select-sm localStorage">
+                                <label for="estado" class="small m-0">Estado <span class="text-danger">*</span></label>
+                                <select name="estado" id="estado" class="custom-select custom-select-sm localStorage">
                                     <option value="">Elija una opción</option>
                                 </select>
                             </div>
                         </div>
 
-                        <!-- TURNO DE ESTUDIO -->
-                        <div class="col-sm-6 col-lg-3 col-xl-2">
+                        <!-- CIUDAD -->
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="turno" class="small m-0">Turno <span class="text-danger">*</span></label>
-                                <select name="turno" id="turno" class="custom-select custom-select-sm localStorage">
-                                    <option value="">Elija una opción</option>
-                                    <option value="M">Matutino</option>
-                                    <option value="V">Vespertino</option>
+                                <label for="ciudad" class="small m-0">Ciudad <span class="text-danger">*</span></label>
+                                <select name="ciudad" id="ciudad" class="custom-select custom-select-sm localStorage">
+                                    <option value="">Elija un estado</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <!-- MUNICIPIO -->
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="municipio" class="small m-0">Municipio</label>
+                                <select name="municipio" id="municipio" class="custom-select custom-select-sm localStorage">
+                                    <option value="">Elija un estado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- PARROQUIA -->
+                        <div class="col-sm-6 col-lg-4 col-xl-2">
+                            <div class="form-group mb-2">
+                                <label for="parroquia" class="small m-0">Parroquia</label>
+                                <select name="parroquia" id="parroquia" class="custom-select custom-select-sm localStorage">
+                                    <option value="">Elija un municipio</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- DIRECCION -->
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="direccion" class="small m-0">Dirección <span class="text-danger">*</span></label>
+                                <textarea name="direccion" id="direccion" class="form-control form-control-sm localStorage" placeholder="Ingrese la dirección del hogar" autocomplete="off" maxlength="200"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="pills-datos-empresa" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-empresa-tab">
+                    <div class="form-row">
+                        <!-- TITULO -->
+                        <div class="col-sm-12 position-relative">
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Asignar empresa</h3>    
+                            <button type="button" id="btn-buscar-empresa" class="btn btn-sm btn-info position-absolute ml-2" style="top: 0px; right: 5px;"><i class="fas fa-search"></i><span class="ml-2">Buscar empresa</span></button>
+                        </div>
+
+                        <!-- RIF -->
+                        <div class="col-sm-6 col-md-3 col-xl-2">
+                            <div class="form-group has-warning mb-2">
+                                <label for="rif" class="d-inline-block w-100 position-relative small m-0">RIF <span class="text-danger">*</span>
+                                    <i id="spinner-rif" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="spinner-rif-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
+                                </label>
+                                <input type="text" name="rif" id="rif" class="form-control form-control-sm" placeholder="J-123456789" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- NIL -->
+                        <div class="col-sm-6 col-md-3 col-xl-2">
+                            <div class="form-group has-warning mb-2">
+                                <label for="nil" class="small m-0">NIL <span class="text-danger">*</span></label>
+                                <input type="text" name="nil" id="nil" class="form-control form-control-sm" placeholder="123456-7" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- RAZON SOCIAL -->
+                        <div class="col-sm-8 col-md-6 col-xl-5">
+                            <div class="form-group has-warning mb-2">
+                                <label for="razon_social" class="small m-0">Razón social <span class="text-danger">*</span></label>
+                                <input type="text" name="razon_social" id="razon_social" class="form-control form-control-sm" placeholder="Grupo González S.A." autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- ACTIVIDAD ECONOMICA -->
+                        <div class="col-sm-4 col-md-6 col-xl-3">
+                            <div class="form-group has-warning mb-2">
+                                <label for="actividad_economica" class="small m-0">Actividad económica <span class="text-danger">*</span></label>
+                                <input type="text" name="actividad_economica" id="actividad_economica" class="form-control form-control-sm" placeholder="Exportaciones" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- CODIGO APORTANTE -->
+                        <div class="col-sm-6 col-md-3 col-xl-2">
+                            <div class="form-group has-warning mb-2">
+                                <label for="codigo_aportante" class="small m-0">Código aportante <span class="text-danger">*</span></label>
+                                <input type="text" name="codigo_aportante" id="codigo_aportante" class="form-control form-control-sm" placeholder="12346578" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- TELEFONO 1 -->
+                        <div class="col-sm-6 col-md-3 col-xl-2">
+                            <div class="form-group has-warning mb-2">
+                                <label for="telefono1_e" class="small m-0">Teléfono 1 <span class="text-danger">*</span></label>
+                                <input type="text" name="telefono1_e" id="telefono1_e" class="form-control form-control-sm" placeholder="02551234567" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- TELEFONO 2 -->
+                        <div class="col-sm-6 col-md-3 col-xl-2">
+                            <div class="form-group has-warning mb-2">
+                                <label for="telefono2_e" class="small m-0">Teléfono 2</label>
+                                <input type="text" name="telefono2_e" id="telefono2_e" class="form-control form-control-sm" placeholder="02551234567" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-sm-6 col-md-4 col-xl-3">
+                            <div class="form-group has-warning mb-2">
+                                <label for="estado_e" class="small m-0">Estado <span class="text-danger">*</span></label>
+                                <input type="text" name="estado_e" id="estado_e" class="form-control form-control-sm" placeholder="Portuguesa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- CIUDAD -->
+                        <div class="col-sm-6 col-md-5 col-xl-3">
+                            <div class="form-group has-warning mb-2">
+                                <label for="ciudad_e" class="small m-0">Ciudad <span class="text-danger">*</span></label>
+                                <input type="text" name="ciudad_e" id="ciudad_e" class="form-control form-control-sm" placeholder="Araure" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- DIRECCION -->
+                        <div class="col-sm-12">
+                            <div class="form-group has-warning mb-2">
+                                <label for="direccion_e" class="small m-0">Dirección <span class="text-danger">*</span></label>
+                                <textarea name="direccion_e" id="direccion_e" class="form-control form-control-sm" placeholder="Av. Los Agricultores, Edificio Profinca, Acarigua, Edo. Portuguesa." autocomplete="off" readonly="true"></textarea>
                             </div>
                         </div>
                     </div>
@@ -465,6 +596,36 @@
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>
+    </div>
+
+    <div id="modal-buscar-empresa" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Buscar empresa</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_buscar_empresa" class="form-row">
+                        <!-- CEDULA -->
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2 position-relative">
+                                <label for="input-buscar-empresa" class="small m-0">Buscar empresa <span class="text-danger">*</span></label>
+                                <input type="text" name="input-buscar-empresa" id="input-buscar-empresa" class="form-control form-control-sm" placeholder="Buscar empresa por RIF o por razón social" autocomplete="off"/>
+                                <div id="resultados-buscar-empresa" class="caja-resultados-busqueda position-absolute bg-white text-secondary border mt-1 rounded w-100" style="display: none;"></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer py-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i><span class="ml-2">Cerrar</span></button>
+                </div>
+            </div>
+        </div>
     </div>
 <?php } ?>
 
