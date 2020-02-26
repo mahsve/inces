@@ -44,6 +44,7 @@ if ($_POST['opcion'])
 
             $objeto->conectar();
             if ($objeto->modificarMisDatos($_POST)) {
+                $_SESSION['usuario'] = $objeto->consultarDatosActualizados($_SESSION['usuario']['usuario']);
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
