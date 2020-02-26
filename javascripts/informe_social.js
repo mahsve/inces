@@ -171,6 +171,108 @@ $(function () {
             $(this).val(fecha2);
         }
     });
+    let validarNacionalidad = false, validarCedula = false;
+    $('#nacionalidad').change(function () {
+        if ($('#nacionalidad').val() != '') {
+            validarNacionalidad = true;
+        } else {
+            validarNacionalidad = false;
+        }
+
+        if (window.elegirNacionalidad == true) {
+            window.elegirNacionalidad = false;
+            $('#cedula').trigger('blur');
+        }
+    });
+    $('#cedula').blur(function (){
+        validarCedula = false;
+        $('#spinner-cedula').hide();
+        $('#spinner-cedula-confirm').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
+
+        if($('#nacionalidad').val() != '') {
+            if ($('#cedula').val() != '') {
+                if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
+                    $.ajax({
+                        url : url+'controllers/c_empresa.php',
+                        type: 'POST',
+                        data: {
+                            opcion: 'Verificar cedula',
+                            nacionalidad: $('#nacionalidad').val(),
+                            cedula: $('#cedula').val()
+                        },
+                        success: function (resultados) {
+                            try {
+                                $('#spinner-cedula').hide();
+                                //////////////////////////////////
+                                let data = JSON.parse(resultados);
+                                if (data) {
+                                    swal({
+                                        title   : 'Aprendiz ya registrado',
+                                        text    : 'Esta persona ya esta registrada en el sistema',
+                                        icon    : 'error',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+
+                                    window.registrar_cont = 'no';
+                                    $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+                                    validarNacionalidad = false;
+                                    validarCedula = false;
+                                } else {
+                                    window.registrar_cont = 'si';
+                                    $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                    validarNacionalidad = true;
+                                    validarCedula = true;
+                                }
+                                $('#spinner-cedula-confirm').show(200);
+                            } catch (error) {
+                                swal({
+                                    title   : 'Error',
+                                    text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
+                                    icon    : 'error',
+                                    buttons : false,
+                                    timer   : 4000
+                                });
+                                console.log(resultados);
+                            }
+                        },
+                        error: function () {
+                            swal({
+                                title   : 'Error',
+                                text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                                icon    : 'error',
+                                buttons : false,
+                                timer   : 4000
+                            });
+                            validarNacionalidad = false;
+                            validarCedula = false;
+                        }
+                    });
+                } else {
+                    validarNacionalidad = true;
+                    validarCedula = true;
+                }
+            } else {
+                swal({
+                    title   : 'Atención cédula',
+                    text    : 'No se puede verificar la cédula con el campo vacío.',
+                    icon    : 'info',
+                    buttons : false,
+                    timer   : 4000
+                });
+            }
+        } else {
+            swal({
+                title   : 'Atención nacionalidad',
+                text    : 'Debe elegir una nacionalidad para proseguir',
+                icon    : 'info',
+                buttons : false,
+                timer   : 4000
+            });
+            window.elegirNacionalidad = true;
+        }
+    });
     $('#fecha_n').blur(function (){
         if ($(this).val() == '') {
             $(this).val(window.fecha_nacimiento);
@@ -969,41 +1071,72 @@ $(function () {
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
-        e.preventDefault();
-        var data = $("#formulario").serializeArray();
-        data.push({ name: 'opcion', value: tipoEnvio });
-        data.push({ name: 'estado_civil', value: document.formulario.estado_civil.value });
-        data.push({ name: 'grado_instruccion', value: document.formulario.grado_instruccion.value });
-        ///////////////////
-        data.push({ name: 'tipo_vivienda', value: document.formulario.tipo_vivienda.value });
-        data.push({ name: 'tenencia_vivienda', value: document.formulario.tenencia_vivienda.value });
-        data.push({ name: 'tipo_agua', value: document.formulario.tipo_agua.value });
-        data.push({ name: 'tipo_electricidad', value: document.formulario.tipo_electricidad.value });
-        data.push({ name: 'tipo_excreta', value: document.formulario.tipo_excreta.value });
-        data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
-        ///////////////////
-        data.push({ name: 'enfermos', value: document.formulario.enfermos.value });
-        ///////////////////
-        data.push({ name: 'informe_social', value: window.informe_social });
-        data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
-        data.push({ name: 'cedula_v', value: window.cedula });
-        data.push({ name: 'eliminar_f', value: JSON.stringify(window.eliminarFamiliar) });
+        if (validarNacionalidad && validarCedula) {
+            e.preventDefault();
+            var data = $("#formulario").serializeArray();
+            data.push({ name: 'opcion', value: tipoEnvio });
+            data.push({ name: 'estado_civil', value: document.formulario.estado_civil.value });
+            data.push({ name: 'grado_instruccion', value: document.formulario.grado_instruccion.value });
+            ///////////////////
+            data.push({ name: 'tipo_vivienda', value: document.formulario.tipo_vivienda.value });
+            data.push({ name: 'tenencia_vivienda', value: document.formulario.tenencia_vivienda.value });
+            data.push({ name: 'tipo_agua', value: document.formulario.tipo_agua.value });
+            data.push({ name: 'tipo_electricidad', value: document.formulario.tipo_electricidad.value });
+            data.push({ name: 'tipo_excreta', value: document.formulario.tipo_excreta.value });
+            data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
+            ///////////////////
+            data.push({ name: 'enfermos', value: document.formulario.enfermos.value });
+            ///////////////////
+            data.push({ name: 'informe_social', value: window.informe_social });
+            data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
+            data.push({ name: 'cedula_v', value: window.cedula });
+            data.push({ name: 'eliminar_f', value: JSON.stringify(window.eliminarFamiliar) });
 
-        $.ajax({
-            url : url+'controllers/c_informe_social.php',
-            type: 'POST',
-            data: data,
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                    $('#show_table').trigger('click');
-                    buscar_listado();
+            $.ajax({
+                url : url+'controllers/c_informe_social.php',
+                type: 'POST',
+                data: data,
+                success: function (resultados) {
+                    if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
+                        swal({
+                            title   : resultados,
+                            text    : 'La operación se ejecuto con exito.',
+                            icon    : 'success',
+                            buttons : false,
+                            timer   : 4000
+                        });
+
+                        $('#show_table').trigger('click');
+                        buscar_listado();
+                    } else {
+                        swal({
+                            title   : 'Información',
+                            text    : resultados,
+                            icon    : 'info',
+                            buttons : false,
+                            timer   : 4000
+                        });
+                    }
+                },
+                error: function () {
+                    swal({
+                        title   : 'Error',
+                        text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                        icon    : 'error',
+                        buttons : false,
+                        timer   : 4000
+                    });
                 }
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
+            });
+        } else {
+            swal({
+                title   : 'Formulario incorrecto',
+                text    : 'Revise que todos los campos requeridos no esten vacios y contenga los caracteres permitidos.',
+                icon    : 'info',
+                buttons : false,
+                timer   : 4000
+            });
+        }
     });
     function aceptarPostulante (e) {
         e.preventDefault();
@@ -1016,58 +1149,144 @@ $(function () {
     }
     function rechazarPostulante (e) {
         e.preventDefault();
-        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-        let posicion = $(this).attr('data-posicion');
-        let numero = dataListado.resultados[posicion].numero;
-        let estatus = 'R';
-        ///////////////////////////////////////////////////////
-        $.ajax({
-            url : url+'controllers/c_informe_social.php',
-            type: 'POST',
-            data: {
-                opcion: 'Rechazar',
-                numero: numero,
-                estatus: estatus
-            },
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Modificacion exitosa')
-                    buscar_listado();
-            },
-            error: function () {
-                console.log('error');
-            }
+        swal("Atención", '¿Seguro que quieres rechazar a este aprendiz?', 'warning'
+        ,{
+            buttons: {
+                cancel: "Cancelar",
+                catch: {
+                    text: "Rechazar",
+                    value: "ir",
+                },
+                    defeat: false,
+                },
+            })
+            .then((value) => {
+                switch (value) {
+                    case "ir":
+                        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+                        let posicion = $(this).attr('data-posicion');
+                        let numero = dataListado.resultados[posicion].numero;
+                        let estatus = 'R';
+                        ///////////////////////////////////////////////////////
+                        $.ajax({
+                            url : url+'controllers/c_informe_social.php',
+                            type: 'POST',
+                            data: {
+                                opcion: 'Rechazar',
+                                numero: numero,
+                                estatus: estatus
+                            },
+                            success: function (resultados) {
+                                if (resultados == 'Modificacion exitosa'){
+                                    swal({
+                                        title   : resultados,
+                                        text    : 'La operación se ejecuto con exito.',
+                                        icon    : 'success',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+                                    buscar_listado();
+                                } else {
+                                    swal({
+                                        title   : 'Información',
+                                        text    : resultados,
+                                        icon    : 'info',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+                                }
+                            },
+                            error: function () {
+                                swal({
+                                    title   : 'Error',
+                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                                    icon    : 'error',
+                                    buttons : false,
+                                    timer   : 4000
+                                });
+                            }
+                        });
+                    break;
+                }
         });
     }
     function reactivarPostulante (e) {
         e.preventDefault();
-        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-        let posicion = $(this).attr('data-posicion');
-        let numero = dataListado.resultados[posicion].numero;
-        let estatus = 'E';
-        ///////////////////////////////////////////////////////
-        $.ajax({
-            url : url+'controllers/c_informe_social.php',
-            type: 'POST',
-            data: {
-                opcion: 'Reactivar',
-                numero: numero,
-                estatus: estatus
-            },
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Modificacion exitosa')
-                    buscar_listado();
-            },
-            error: function () {
-                console.log('error');
-            }
+        swal("Atención", '¿Seguro que quieres reactivar a este aprendiz?\n saldra nuevamente en estado de espera hasta que sea aceptado o rechazado nuevamente.', 'warning'
+        ,{
+            buttons: {
+                cancel: "Cancelar",
+                catch: {
+                    text: "Reactivar",
+                    value: "ir",
+                },
+                    defeat: false,
+                },
+            })
+            .then((value) => {
+                switch (value) {
+                    case "ir":
+                        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+                        let posicion = $(this).attr('data-posicion');
+                        let numero = dataListado.resultados[posicion].numero;
+                        let estatus = 'E';
+                        ///////////////////////////////////////////////////////
+                        $.ajax({
+                            url : url+'controllers/c_informe_social.php',
+                            type: 'POST',
+                            data: {
+                                opcion: 'Reactivar',
+                                numero: numero,
+                                estatus: estatus
+                            },
+                            success: function (resultados) {
+                                if (resultados == 'Modificacion exitosa'){
+                                    swal({
+                                        title   : resultados,
+                                        text    : 'La operación se ejecuto con exito.',
+                                        icon    : 'success',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+                                    buscar_listado();
+                                } else {
+                                    swal({
+                                        title   : 'Información',
+                                        text    : resultados,
+                                        icon    : 'info',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+                                }
+                            },
+                            error: function () {
+                                swal({
+                                    title   : 'Error',
+                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                                    icon    : 'error',
+                                    buttons : false,
+                                    timer   : 4000
+                                });
+                            }
+                        });
+                    break;
+                }
         });
+
+        e.preventDefault();
+        
     }
     function imprimirInforme (e) {
         e.preventDefault();
         let posicion = $(this).attr('data-posicion');
         let numero = dataListado.resultados[posicion].numero;
+
+        swal({
+            title   : 'Generando PDF',
+            text    : 'Generando PDF, por favor espera unos segundos hasta que se complete la tarea',
+            icon    : 'info',
+            buttons : false
+        });
         ///////////////////////////////////////////////////////
         $.ajax({
             url : url+'controllers/pdf/r_informe_social.php',
@@ -1076,11 +1295,18 @@ $(function () {
                 numero: numero
             },
             success: function (resultados){
+                swal.close();
                 window.open(url+'pdf/'+resultados, '_blank');
                 console.log(resultados); // EN CASO DE ERROR
             },
             error: function (){
-                console.log('error');
+                swal({
+                    title   : 'Error',
+                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                    icon    : 'error',
+                    buttons : false,
+                    timer   : 4000
+                });
             }
         });
     }
