@@ -600,6 +600,40 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA OBTENER LOS DATOS DEL APRENDIZ Y MOSTRARLO EN EL PDF.
+    public function datosAprendizPDF($numero) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT
+            t_informe_social.*, t_informe_social.estatus AS estatus_informe,
+            t_datos_personales.*,
+            datos_facilitador.nombre1 AS f_nombre1, datos_facilitador.nombre2 AS f_nombre2,
+            datos_facilitador.apellido1 AS f_apellido1, datos_facilitador.apellido2 AS f_apellido2,
+            t_oficio.nombre AS oficio,
+            t_ciudad.codigo_estado,
+            t_parroquia.codigo_municipio
+            FROM t_informe_social
+            INNER JOIN t_datos_personales ON
+            t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
+            AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
+            INNER JOIN t_datos_personales datos_facilitador ON
+            t_informe_social.nacionalidad_fac = datos_facilitador.nacionalidad
+            AND t_informe_social.cedula_facilitador = datos_facilitador.cedula
+            INNER JOIN t_oficio ON
+            t_informe_social.codigo_oficio = t_oficio.codigo
+            INNER JOIN t_ciudad ON
+            t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia ON
+            t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            WHERE t_informe_social.numero='".$numero."'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
     public function nuevaTransaccion()
     {

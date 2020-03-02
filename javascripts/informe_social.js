@@ -306,9 +306,9 @@ $(function () {
     });
     $('.radio_educacion').click(function () {
         if ($(this).val() == 'SI' || $(this).val() == 'SC')
-            $('#titulo').attr('disabled', false);
+            $('#titulo').attr('readonly', false);
         else {
-            $('#titulo').attr('disabled', true);
+            $('#titulo').attr('readonly', true);
             $('#titulo').val('');
         }
 

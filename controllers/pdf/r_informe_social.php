@@ -1,7 +1,14 @@
 <?php 
-date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
-$date = date('Y-m-d H:m:s', time());
-$_POST['numero'];
+// ESTABLECEMOS LA ZONA HORARIA.
+date_default_timezone_set("America/Caracas");
+$fechaHora = date('Y-m-d H:m:s', time());
+$fechaSola = date('Y-m-d', time());
+///////////////////////////////////////////////////
+///////////////////////////////////////////////////
+require_once '../../models/m_informe_social.php';
+$objeto = new model_informeSocial;
+$datosAprendiz = $objeto->datosAprendizPDF($_POST['numero']);
+
 $arreglo_ingresos = ['PENSIÓN','SEGURO SOCIAL','OTRAS PENSION','SUELDO  Y/O SALARIO','OTROS INGRESOS','TOTAL INGRESOS:'];
 $arreglo_egresos = ['GASTOS DE SERVICIOS BASICOS  (AGUA, LUZ, TELEFONO, ETC.)', 'ALIMENTACION', 'EDUCACION', 'VIVIENDA (ALQUILER COMDOMINIO)', 'OTROS EGRESOS', 'TOTAL EGRESOS:'];
 

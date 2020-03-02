@@ -1,4 +1,4 @@
-/* ============== ESTILOS GENERALES ============== */
+/* ///////////////// ESTILOS GENERALES ///////////////// */
 html, body {
     height: 100%;
 }
@@ -8,7 +8,28 @@ body{
 button:disabled {
     cursor: not-allowed;
 }
-/* =============== ESTILOS NAVBAR ================ */
+/* /////////////// FIN ESTILOS GENERALES /////////////// */
+
+/* //////////// REESCRIBIR ESTILOS BOOTSTRAP /////////// */
+.dropdown-item:active {
+    background: none;
+}
+.dropdown-menu a {
+    color: #666666;
+    text-decoration: none;
+    transition: all ease .3s;
+    font-size: 14.5px;
+}
+.dropdown-menu a:hover {
+    color: #ffffff;
+    background: #17a2b8;
+}
+.dropdown-menu a:hover i {
+    color: #ffffff !important;
+}
+/* ////////// FIN REESCRIBIR ESTILOS BOOTSTRAP ///////// */
+
+/* ////////////////// ESTILOS NAVBAR /////////////////// */
 header {
     z-index: 4;
 }
@@ -22,20 +43,21 @@ header > div {
 #menu-manager {
     display: none;
 }
-.dropdown-item:active {
-    background: none;
-}
-/* ======== ESTILOS CONTENERDOR PRINCIPAL ======== */
+/* //////////////// FIN ESTILOS NAVBAR ///////////////// */
+
+/* /////////// ESTILOS CONTENERDOR PRINCIPAL /////////// */
 #container-main {
     min-height: calc(100% - 25px);
     padding-top: 45px;
     display: flex;
 }
-/* =============== ESTILOS SIDEBAR =============== */
+/* ///////// FIN ESTILOS CONTENERDOR PRINCIPAL ///////// */
+
+/* ////////////////// ESTILOS SIDEBAR ////////////////// */
 #sidebar {
     width: 280px;
 }
-/* --- ESTILOS INFORMACION DE USUARIO --- */
+/* ////////////////// ESTILOS USUARIO ////////////////// */
 #sidebar #info_user img {
     width: 60px;
     background-color: #17b0b8e5;
@@ -50,7 +72,7 @@ header > div {
 #sidebar #info_user #user-data p span {
     font-size: 11.5px;
 }
-/* --- ESTILOS MENU --- */
+/* //////////////////// ESTILOS MENU /////////////////// */
 #menu-list {
     list-style: none;
 }
@@ -94,18 +116,14 @@ header > div {
     border-right: .25em solid transparent;
     border-left: .25em solid transparent;
 }
-/* ======== ESTILOS CONTENERDOR CONTENIDO ======== */
+/* //////////////// FIN ESTILOS SIDEBAR //////////////// */
+
+/* /////////// ESTILOS CONTENERDOR CONTENIDO /////////// */
 #main-containt {
     width: calc(100% - 280px);
 }
 table .dropdown-toggle::after {
     display: none;
-}
-.dropdown-menu a {
-    color: #666666;
-    text-decoration: none;
-    transition: all ease .3s;
-    font-size: 14.5px;
 }
 table .dropdown-menu a i.fa-check {
     color: #28a745;
@@ -113,13 +131,12 @@ table .dropdown-menu a i.fa-check {
 table .dropdown-menu a i.fa-times {
     color: #dc3545;
 }
-.dropdown-menu a:hover {
-    color: #ffffff;
-    background: #17a2b8;
+form .required {
+    font-size: 10px;
+    margin-left: 5px;
+    top: 0px;
 }
-.dropdown-menu a:hover i {
-    color: #ffffff;
-}
+/* /////////// ESTILOS CONTENERDOR CONTENIDO /////////// */
 
 /* =============== ESTILOS PESTAÑAS NAVS ============== */
 .nav .nav-item a{
