@@ -377,6 +377,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR EL TOTAL DE LOS APRENDICES REGISTRADOS Y REALIZAR LA PAGINACION.
     public function consultarInformeSocialTotal($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
@@ -419,8 +420,11 @@ class model_informeSocial extends conexion
     public function consultarFamiliares($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT *
+        $sentencia = "SELECT
+            t_familia.*,
+            t_ocupacion.nombre AS ocupacion
             FROM t_familia
+            INNER JOIN t_ocupacion ON t_familia.codigo_ocupacion = t_ocupacion.codigo
             WHERE numero_informe='".$datos['informe']."'
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -447,6 +451,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA MODIFICAR LOS DATOS PERSONALES DEL APRENDIZZ
     public function modificarDatosPersonales($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -480,7 +485,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA REGISTRAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
+    // FUNCION PARA MODIFICAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
     public function modificarDatosVivienda($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -512,7 +517,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
+    // FUNCION PARA MODIFICAR LA FICHA DEL APRENDIZ.
     public function modificarInformeSocial($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -538,6 +543,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA MODIFICAR LOS DATOS DE LA FAMILIA DEL APRENDIZ
     public function modificarFamiliaresAprendiz($datos){
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_familia SET
@@ -560,6 +566,7 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA ELIMINAR UN FAMILIAR DE LA LISTA DE LA FICHA DEL APRENDIZ
     public function eliminarFamilia ($id) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "DELETE FROM t_familia WHERE id_familiar='".$id."'"; // SENTENTCIA
@@ -608,9 +615,12 @@ class model_informeSocial extends conexion
             t_datos_personales.*,
             datos_facilitador.nombre1 AS f_nombre1, datos_facilitador.nombre2 AS f_nombre2,
             datos_facilitador.apellido1 AS f_apellido1, datos_facilitador.apellido2 AS f_apellido2,
+            t_ocupacion.nombre AS ocupacion,
             t_oficio.nombre AS oficio,
-            t_ciudad.codigo_estado,
-            t_parroquia.codigo_municipio
+            t_ciudad.nombre AS ciudad,
+            t_estado.nombre AS estado,
+            t_parroquia.nombre AS parroquia,
+            t_municipio.nombre AS municipio
             FROM t_informe_social
             INNER JOIN t_datos_personales ON
             t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
@@ -618,16 +628,22 @@ class model_informeSocial extends conexion
             INNER JOIN t_datos_personales datos_facilitador ON
             t_informe_social.nacionalidad_fac = datos_facilitador.nacionalidad
             AND t_informe_social.cedula_facilitador = datos_facilitador.cedula
+            INNER JOIN t_ocupacion ON
+            t_datos_personales.codigo_ocupacion = t_ocupacion.codigo
             INNER JOIN t_oficio ON
             t_informe_social.codigo_oficio = t_oficio.codigo
             INNER JOIN t_ciudad ON
             t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            INNER JOIN t_estado ON
+            t_ciudad.codigo_estado = t_estado.codigo
             LEFT JOIN t_parroquia ON
             t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            LEFT JOIN t_municipio ON
+            t_parroquia.codigo_municipio = t_municipio.codigo
             WHERE t_informe_social.numero='".$numero."'
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
         {
 			$resultado = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
         }

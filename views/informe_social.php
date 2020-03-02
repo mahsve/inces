@@ -638,22 +638,22 @@
                                             <span class="d-inline-block w-100 position-relative text-info" style="font-size: 80%;"><b>Excretas <i class="fas fa-asterisk text-danger position-absolute required"></i></b></span>
                                             
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_1" class="custom-control-input localStorage-radio" value="A">
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_1" class="custom-control-input localStorage-radio" value="C">
                                                 <label class="custom-control-label" for="tipo_excreta_1">Cloacas</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_2" class="custom-control-input localStorage-radio" value="P">
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_2" class="custom-control-input localStorage-radio" value="L">
                                                 <label class="custom-control-label" for="tipo_excreta_2">Letrina</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: 100%">
-                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_3" class="custom-control-input localStorage-radio" value="C">
+                                                <input type="radio" name="tipo_excreta" id="tipo_excreta_3" class="custom-control-input localStorage-radio" value="P">
                                                 <label class="custom-control-label" for="tipo_excreta_3">Pozo septico</label>
                                             </div>
 
                                             <span class="d-inline-block w-100 position-relative text-info mt-1" style="font-size: 80%;"><b>Basura <i class="fas fa-asterisk text-danger position-absolute required"></i></b></span>
                                         
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
-                                                <input type="radio" name="tipo_basura" id="tipo_basura_1" class="custom-control-input localStorage-radio" value="U">
+                                                <input type="radio" name="tipo_basura" id="tipo_basura_1" class="custom-control-input localStorage-radio" value="A">
                                                 <label class="custom-control-label" for="tipo_basura_1">Aseo úrbano</label>
                                             </div>
                                             <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 3px);">
