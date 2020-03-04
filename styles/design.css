@@ -17,9 +17,28 @@
 .datepicker.datepicker-dropdown.dropdown-menu span.active:hover {
     background: #138496 !important;
 }
-/* ======================= ESTILOS DATAPICKER ======================= */
+/* ===================== FIN ESTILOS DATAPICKER ===================== */
 
+/* ======================= ESTILOS SWAL MODAL ======================= */
+.swal-modal {
+    border: 1px solid rgba(0, 0, 0, 0.5);
+    border-radius: .3rem;
+}
+.swal-icon {
+    margin: 20px auto 10px !important;
+}
+.swal-title {
+    padding: 5px !important;
+    margin: 0px !important;
+}
+.swal-footer {
+    padding: 15px 7px 7px !important;
+    margin: 0px !important;
+}
+/* ===================== FIN ESTILOS SWAL MODAL ===================== */
 
+/* ==================== ESTILOS ELEMENTOS NATIVOS =================== */
 select {
     cursor: pointer;
 }
+/* ================== FIN ESTILOS ELEMENTOS NATIVOS ================= */

@@ -122,11 +122,48 @@ class model_informeSocial extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA VERIFICAR PRIMERO SI EXISTE ESTA OCUPACION
+	public function verificarOcupacion($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE nombre='".$datos['input_registrar_ocupacion']."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
+        {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
+    public function registrarOcupacion($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_ocupacion (
+            nombre
+        ) VALUES (
+            '".$datos['input_registrar_ocupacion']."'
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos)
     {
+        $valor_null = 'NULL';
+        if ($datos['parroquia'] != '') {
+            $valor_null = htmlspecialchars($datos['parroquia']);
+        }
+
         $resultado = false;
-        $sentencia = "INSERT INTO t_datos_personales(
+        $sentencia = "INSERT INTO t_datos_personales (
             nacionalidad,
             cedula,
             nombre1,
@@ -164,7 +201,7 @@ class model_informeSocial extends conexion
             '".htmlspecialchars($datos['titulo'])."',
             '".htmlspecialchars($datos['alguna_mision'])."',
             '".htmlspecialchars($datos['ciudad'])."',
-            '".htmlspecialchars($datos['parroquia'])."',
+            $valor_null,
             '".htmlspecialchars($datos['direccion'])."',
             '".htmlspecialchars($datos['telefono_1'])."',
             '".htmlspecialchars($datos['telefono_2'])."',
@@ -454,6 +491,11 @@ class model_informeSocial extends conexion
     // FUNCION PARA MODIFICAR LOS DATOS PERSONALES DEL APRENDIZZ
     public function modificarDatosPersonales($datos)
     {
+        $valor_null = 'NULL';
+        if ($datos['parroquia'] != '') {
+            $valor_null = htmlspecialchars($datos['parroquia']);
+        }
+
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
             nacionalidad='".htmlspecialchars($datos['nacionalidad'])."',
@@ -471,7 +513,7 @@ class model_informeSocial extends conexion
             titulo_acade='".htmlspecialchars($datos['titulo'])."',
             mision_participado='".htmlspecialchars($datos['alguna_mision'])."',
             codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
-            codigo_parroquia='".htmlspecialchars($datos['parroquia'])."',
+            codigo_parroquia=$valor_null,
             direccion='".htmlspecialchars($datos['direccion'])."',
             telefono1='".htmlspecialchars($datos['telefono_1'])."',
             telefono2='".htmlspecialchars($datos['telefono_2'])."',

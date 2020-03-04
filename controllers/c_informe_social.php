@@ -1,7 +1,7 @@
 <?php
 session_start();
 date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
-$date = date('Y-m-d', time());
+$date = date('d-m-Y', time());
 
 if ($_POST['opcion']){
     require_once('../models/m_informe_social.php');
@@ -44,11 +44,33 @@ if ($_POST['opcion']){
             echo json_encode($resultados);
         break;
 
+        case 'Registrar ocupacion':
+            $resultados = [];
+            $objeto->conectar();
+            if ($objeto->verificarOcupacion($_POST) == 0) {
+                if ($objeto->registrarOcupacion($_POST) > 0) {
+                    $resultados['ocupacion'] = $objeto->consultarOcupaciones();
+                    echo json_encode($resultados);
+                } else {
+                    echo 'Error al registrar';
+                }
+            } else {
+                echo 'Ya registrado';
+            }
+            $objeto->desconectar();
+        break;
+
         case 'Registrar':
             if ($_POST['f_nacionalidad'] == 'Venezolano')
                 $_POST['f_nacionalidad'] = 'V';
             else
                 $_POST['f_nacionalidad'] = 'E';
+            ////////////////////////////////////////////
+            $fecha_c = $_POST['fecha'];
+            $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+            ////////////////////////////////////////////
+            $fecha_c = $_POST['fecha_n'];
+            $_POST['fecha_n'] = date("Y-m-d", strtotime($fecha_c));
 
             $objeto->conectar();
             $objeto->nuevaTransaccion();
@@ -65,6 +87,9 @@ if ($_POST['opcion']){
                                 $responsable = 0;
                                 if ($_POST['responsable_apre'] == ($i+1))
                                     $responsable = $_POST['responsable_apre'];
+
+                                $fecha_c = $_POST['fecha_familiar'][$i];
+                                $_POST['fecha_familiar'][$i] = date("Y-m-d", strtotime($fecha_c));
                                 
                                 $arreglo_familia = [
                                     'id_ficha'              => $id,
@@ -187,6 +212,12 @@ if ($_POST['opcion']){
                 $_POST['f_nacionalidad'] = 'V';
             else
                 $_POST['f_nacionalidad'] = 'E';
+            ////////////////////////////////////////////
+            $fecha_c = $_POST['fecha'];
+            $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+            ////////////////////////////////////////////
+            $fecha_c = $_POST['fecha_n'];
+            $_POST['fecha_n'] = date("Y-m-d", strtotime($fecha_c));
                 
             $objeto->conectar();
             $objeto->nuevaTransaccion();
@@ -212,6 +243,9 @@ if ($_POST['opcion']){
                                 $responsable = 0;
                                 if ($_POST['responsable_apre'] == ($i+1))
                                     $responsable = $_POST['responsable_apre'];
+
+                                $fecha_c = $_POST['fecha_familiar'][$i];
+                                $_POST['fecha_familiar'][$i] = date("Y-m-d", strtotime($fecha_c));
                                     
                                 $arreglo_familia = [
                                     'id_ficha'              => $_POST['informe_social'],

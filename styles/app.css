@@ -27,6 +27,12 @@ button:disabled {
 .dropdown-menu a:hover i {
     color: #ffffff !important;
 }
+.custom-radio .custom-control-label.inputMal::before {
+    box-shadow: 0px 0px 0px 4px #ffc6c6;
+}
+.custom-radio .custom-control-label.inputBien::before {
+    box-shadow: 0px 0px 0px 4px #d4ffdc;
+}
 /* ////////// FIN REESCRIBIR ESTILOS BOOTSTRAP ///////// */
 
 /* ////////////////// ESTILOS NAVBAR /////////////////// */
@@ -154,7 +160,7 @@ form .required {
     font-size: 20px;
 }
 .nav .nav-item a.active .icon-alert{
-    color: #ffffff;
+    color: #ffc6c6;
 }
 /* =============== ESTILOS FORMULARIOS COMPONENTES ============== */
 .form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
@@ -178,8 +184,6 @@ form .required {
 .custom-control.custom-checkbox label{
     cursor: pointer;
 }
-
-
 /* ===============  ESTILOS CUADRO BUSQUEDA ============== */
 .caja-resultados-busqueda {
     overflow-y: auto;
@@ -198,11 +202,6 @@ form .required {
 .caja-resultados-busqueda p:active {
     background: #EBF5F4;
 }
-
-
-
-
-
 /* ===============  ESTILOS CUADRO ESPERA ============== */
 #carga_espera {
     opacity: .95;
@@ -224,13 +223,6 @@ button[data-toggle="collapse"][aria-expanded="true"] i.fas.fa-plus {
 footer {
     min-height: 25px;
 }
-
-
-
-
-
-
-
 /* ============== ESTILOS QUERIES ================ */
 @media (max-width: 450px) {
     /* ============== COMPONENTES EN GENERAL ============== */

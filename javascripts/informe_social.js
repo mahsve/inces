@@ -1,6 +1,21 @@
 $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+    let ER_caracteresConEspacios = /^([a-zA-Z,.\x7f-\xff](\s[a-zA-Z,.\x7f-\xff])*)+$/;
+    let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
+    let ER_alfaNumericoCompleto=/^([a-zA-Z0-9,.#"\x7f-\xff](\s[a-zA-Z0-9,.#"\x7f-\xff])*)+$/;
+    let ER_NumericoSinEspacios=/^([0-9])+$/;
+    let ER_NumericoConComa=/^([0-9.])+$/;
+    let ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    /////////////////////////////////////////////////////////////////////
+    let pestania1, pestania2, pestania3, pestania4, pestania5, pestania6, pestania7;
+    /////////////////////////////////////////////////////////////////////
+    let colorb = "#d4ffdc";
+    let colorm = "#ffc6c6";
+    let colorn = "#ffffff";
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // DATOS DE LA TABLA Y PAGINACION 
     let numeroDeLaPagina    = 1;
     $('#cantidad_a_buscar').change(restablecerN);
@@ -21,7 +36,6 @@ $(function () {
     $('#buscar_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
     let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
-    let fecha2          = '';   // VARIABLE PARA GUARDAR LA FECHA DE LA FICHA.
     let fechaTemporal   = '';   // VARIABLE PARA GUARDAR UNA FECHA TEMPORAL EN FAMILIAR.
     let dataOcupacion   = false;// VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
     let dataParentescoF = ['Madre', 'Hermana', 'Abuela', 'Tía', 'Prima', 'Sobrina'];
@@ -60,9 +74,9 @@ $(function () {
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
                             contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            let yearR   = dataListado.resultados[i].fecha.substr(0,4);
-                            let monthR  = dataListado.resultados[i].fecha.substr(5,2);
                             let dayR    = dataListado.resultados[i].fecha.substr(8,2);
+                            let monthR  = dataListado.resultados[i].fecha.substr(5,2);
+                            let yearR   = dataListado.resultados[i].fecha.substr(0,4);
                             contenido += '<td class="py-2 px-1">'+dayR+'-'+monthR+'-'+yearR+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
                             
@@ -73,12 +87,12 @@ $(function () {
                             if (dataListado.resultados[i].apellido2 != null)
                                 nombre_completo += ' '+dataListado.resultados[i].apellido2.substr(0,1)+'.';
                             contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
-                            let year    = dataListado.resultados[i].fecha_n.substr(0,4);
-                            let month   = dataListado.resultados[i].fecha_n.substr(5,2);
                             let day     = dataListado.resultados[i].fecha_n.substr(8,2);
-                            let yearA   = fecha.substr(0,4);
-                            let monthA  = fecha.substr(5,2);
-                            let dayA    = fecha.substr(8,2);
+                            let month   = dataListado.resultados[i].fecha_n.substr(5,2);
+                            let year    = dataListado.resultados[i].fecha_n.substr(0,4);
+                            let dayA    = fecha.substr(0,2);
+                            let monthA  = fecha.substr(3,2);
+                            let yearA   = fecha.substr(6,4);
                             
                             let edad = 0;
                             if (year != '' && year != undefined) {
@@ -165,24 +179,10 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
-    // VALIDACIONES
-    $('#fecha').blur(function (){
-        if ($(this).val() == '') {
-            $(this).val(fecha2);
-        }
-    });
-    let validarNacionalidad = false, validarCedula = false;
+    ////////////////////////// VALIDACIONES //////////////////////////
+    let validarCedula = false;
     $('#nacionalidad').change(function () {
-        if ($('#nacionalidad').val() != '') {
-            validarNacionalidad = true;
-        } else {
-            validarNacionalidad = false;
-        }
-
-        if (window.elegirNacionalidad == true) {
-            window.elegirNacionalidad = false;
-            $('#cedula').trigger('blur');
-        }
+        $('#cedula').trigger('blur');
     });
     $('#cedula').blur(function (){
         validarCedula = false;
@@ -193,99 +193,835 @@ $(function () {
         if($('#nacionalidad').val() != '') {
             if ($('#cedula').val() != '') {
                 if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
-                    $.ajax({
-                        url : url+'controllers/c_empresa.php',
-                        type: 'POST',
-                        data: {
-                            opcion: 'Verificar cedula',
-                            nacionalidad: $('#nacionalidad').val(),
-                            cedula: $('#cedula').val()
-                        },
-                        success: function (resultados) {
-                            try {
-                                $('#spinner-cedula').hide();
-                                //////////////////////////////////
-                                let data = JSON.parse(resultados);
-                                if (data) {
+                    if ($('#cedula').val().length > 7) {
+                        $.ajax({
+                            url : url+'controllers/c_empresa.php',
+                            type: 'POST',
+                            data: {
+                                opcion: 'Verificar cedula',
+                                nacionalidad: $('#nacionalidad').val(),
+                                cedula: $('#cedula').val()
+                            },
+                            success: function (resultados) {
+                                try {
+                                    $('#spinner-cedula').hide();
+                                    //////////////////////////////////
+                                    let data = JSON.parse(resultados);
+                                    if (data) {
+                                        swal({
+                                            title   : 'Aprendiz ya registrado',
+                                            text    : 'Esta persona ya esta registrada en el sistema',
+                                            icon    : 'error',
+                                            buttons : false,
+                                            timer   : 4000
+                                        });
+                                        $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+                                    } else {
+                                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                        validarCedula = true;
+                                    }
+                                    $('#spinner-cedula-confirm').show(200);
+                                } catch (error) {
                                     swal({
-                                        title   : 'Aprendiz ya registrado',
-                                        text    : 'Esta persona ya esta registrada en el sistema',
+                                        title   : 'Error',
+                                        text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
                                         icon    : 'error',
                                         buttons : false,
                                         timer   : 4000
                                     });
-
-                                    window.registrar_cont = 'no';
-                                    $('#spinner-cedula-confirm').addClass('fa-times text-danger');
-                                    validarNacionalidad = false;
-                                    validarCedula = false;
-                                } else {
-                                    window.registrar_cont = 'si';
-                                    $('#spinner-cedula-confirm').addClass('fa-check text-success');
-                                    validarNacionalidad = true;
-                                    validarCedula = true;
+                                    console.log(resultados);
                                 }
-                                $('#spinner-cedula-confirm').show(200);
-                            } catch (error) {
+                            },
+                            error: function () {
                                 swal({
                                     title   : 'Error',
-                                    text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
+                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
                                     icon    : 'error',
                                     buttons : false,
                                     timer   : 4000
                                 });
-                                console.log(resultados);
                             }
-                        },
-                        error: function () {
-                            swal({
-                                title   : 'Error',
-                                text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                                icon    : 'error',
-                                buttons : false,
-                                timer   : 4000
-                            });
-                            validarNacionalidad = false;
-                            validarCedula = false;
-                        }
-                    });
+                        });
+                    }
                 } else {
-                    validarNacionalidad = true;
                     validarCedula = true;
                 }
-            } else {
-                swal({
-                    title   : 'Atención cédula',
-                    text    : 'No se puede verificar la cédula con el campo vacío.',
-                    icon    : 'info',
-                    buttons : false,
-                    timer   : 4000
-                });
+            }
+        }
+    });
+    function verificarParte1 () {
+        pestania1 = true;
+        // VERIFICAR EL CAMPO DE NACIONALIDAD
+        let nacionalidad = $("#nacionalidad").val();
+        if(nacionalidad != ''){
+            $("#nacionalidad").css("background-color", colorb);
+        } else {
+            $("#nacionalidad").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE CEDULA
+        let cedula = $("#cedula").val();
+        if(cedula != ''){
+            if(cedula.match(ER_NumericoSinEspacios)){
+                if (cedula.length > 7) {
+                    if (validarCedula) {
+                        $("#cedula").css("background-color", colorb);
+                    } else {
+                        $("#cedula").css("background-color", colorm);
+                        $("#nacionalidad").css("background-color", colorm);
+                        estania1 = false;
+                    }
+                } else {
+                    $("#cedula").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            }else{
+                $("#cedula").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#cedula").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
+        let nombre_1 = $("#nombre_1").val();
+        if(nombre_1 != ''){
+            if(nombre_1.match(ER_caracteresConEspacios)){
+                $("#nombre_1").css("background-color", colorb);
+            }else{
+                $("#nombre_1").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#nombre_1").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
+        let nombre_2 = $("#nombre_2").val();
+        if(nombre_2 != ''){
+            if(nombre_2.match(ER_caracteresConEspacios)){
+                $("#nombre_2").css("background-color", colorb);
+            }else{
+                $("#nombre_2").css("background-color", colorm);
+                pestania1 = false;
             }
         } else {
-            swal({
-                title   : 'Atención nacionalidad',
-                text    : 'Debe elegir una nacionalidad para proseguir',
-                icon    : 'info',
-                buttons : false,
-                timer   : 4000
-            });
-            window.elegirNacionalidad = true;
+            $("#nombre_2").css("background-color", colorn);
         }
-    });
-    $('#fecha_n').blur(function (){
-        if ($(this).val() == '') {
-            $(this).val(window.fecha_nacimiento);
+        // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
+        let apellido_1 = $("#apellido_1").val();
+        if(apellido_1 != ''){
+            if(apellido_1.match(ER_caracteresConEspacios)){
+                $("#apellido_1").css("background-color", colorb);
+            }else{
+                $("#apellido_1").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#apellido_1").css("background-color", colorm);
+            pestania1 = false;
         }
-        $('#fecha_n').trigger('change');
+        // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
+        let apellido_2 = $("#apellido_2").val();
+        if(apellido_2 != ''){
+            if(apellido_2.match(ER_caracteresConEspacios)){
+                $("#apellido_2").css("background-color", colorb);
+            }else{
+                $("#apellido_2").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#apellido_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE SEXO
+        let sexo = $("#sexo").val();
+        if(sexo != ''){
+            $("#sexo").css("background-color", colorb);
+        } else {
+            $("#sexo").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
+        let fecha_n = $("#fecha_n").val();
+        if(fecha_n != ''){
+            let edad_cal = parseInt($('#edad').val());
+            if (edad_cal >= 17 && edad_cal <= 19) {
+                $("#fecha_n").css("background-color", colorb);
+            } else {
+                $("#fecha_n").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#fecha_n").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE LUGAR DE NACIMIENTO
+        let lugar_n = $("#lugar_n").val();
+        if(lugar_n != ''){
+            if(lugar_n.match(ER_alfaNumericoCompleto)){
+                $("#lugar_n").css("background-color", colorb);
+            }else{
+                $("#lugar_n").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#lugar_n").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE OCUPACION
+        let ocupacion = $("#ocupacion").val();
+        if(ocupacion != ''){
+            $("#ocupacion").css("background-color", colorb);
+        } else {
+            $("#ocupacion").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE ESTADO CIVIL
+        let estado_civil = document.formulario.estado_civil.value;
+        $(".radio_estado_c_label").removeClass('inputMal');
+        if(estado_civil == ''){
+            $(".radio_estado_c_label").addClass('inputMal');
+            pestania1 = false;
+        } else {
+            $(".radio_estado_c_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE GRADO DE INSTRUCCION
+        let grado_instruccion = document.formulario.grado_instruccion.value;
+        $(".radio_educacion_label").removeClass('inputMal');
+        if(grado_instruccion == ''){
+            $(".radio_educacion_label").addClass('inputMal');
+            pestania1 = false;
+        } else {
+            $(".radio_educacion_label").addClass('inputBien');
+        }
+        // SI EL CAMPO DE INSTRUCCION ES SUPERIOR, VERIFICAR QUE EL CAMPO TITULO NO ESTE VACIO.
+        if (grado_instruccion == 'SI' || grado_instruccion == 'SC') {
+            let titulo_edu = $("#titulo").val();
+            if(titulo_edu != ''){
+                if(titulo_edu.match(ER_caracteresConEspacios)){
+                    $("#titulo").css("background-color", colorb);
+                }else{
+                    $("#titulo").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            } else {
+                pestania1 = false;
+                $("#titulo").css("background-color", colorm);
+            }
+        }
+        // VERIFICAR EL CAMPO DE MISIONES REALZADAS (NO OBLIGATORIA)
+        let alguna_mision = $("#alguna_mision").val();
+        if(alguna_mision != ''){
+            if(alguna_mision.match(ER_alfaNumericoConEspacios)){
+                $("#alguna_mision").css("background-color", colorb);
+            }else{
+                $("#alguna_mision").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#alguna_mision").css("background-color", colorn);
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania1) {
+            $('#icon-ciudadano').hide();
+        } else {
+            $('#icon-ciudadano').show();
+        }
+    }
+    function verificarParte2 () {
+        pestania2 = true;
+        // VERIFICAR EL TELEFONO DE CASA
+        let telefono_1 = $("#telefono_1").val();
+        if(telefono_1 != ''){
+            if(telefono_1.match(ER_NumericoSinEspacios)){
+                if (telefono_1.length == 7 || telefono_1.length >= 10) {
+                    $("#telefono_1").css("background-color", colorb);
+                } else {
+                    $("#telefono_1").css("background-color", colorm);
+                    pestania2 = false;
+                }
+            }else{
+                $("#telefono_1").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#telefono_1").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // VERIFICAR EL TELEFONO CELULAR
+        let telefono_2 = $("#telefono_2").val();
+        if(telefono_2 != ''){
+            if(telefono_2.match(ER_NumericoSinEspacios)){
+                if (telefono_2.length >= 10) {
+                    $("#telefono_2").css("background-color", colorb);
+                } else {
+                    $("#telefono_2").css("background-color", colorm);
+                    pestania2 = false;
+                }
+            }else{
+                $("#telefono_2").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#telefono_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CORREO ELECTRONICO
+        let correo = $("#correo").val();
+        if(correo != ''){
+            if(correo.match(ER_email)){
+                $("#correo").css("background-color", colorb);
+            }else{
+                $("#correo").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#correo").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE TURNO
+        let turno = $("#turno").val();
+        if(turno != ''){
+            $("#turno").css("background-color", colorb);
+        } else {
+            $("#turno").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // VERIFICAR EL CAMPO DE SALIDA OCUPACIONAL
+        let oficio = $("#oficio").val();
+        if(oficio != ''){
+            $("#oficio").css("background-color", colorb);
+        } else {
+            $("#oficio").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania2) {
+            $('#icon-contacto').hide();
+        } else {
+            $('#icon-contacto').show();
+        }
+    }
+    function verificarParte3 () {
+        pestania3 = true;
+        // VERIFICAR EL CAMPO DE ESTADO
+        let estado = $("#estado").val();
+        if(estado != ''){
+            $("#estado").css("background-color", colorb);
+        } else {
+            $("#estado").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE CIUDAD
+        let ciudad = $("#ciudad").val();
+        if(ciudad != ''){
+            $("#ciudad").css("background-color", colorb);
+        } else {
+            $("#ciudad").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE MUNICIPIO
+        let municipio = $("#municipio").val();
+        if(municipio != ''){
+            $("#municipio").css("background-color", colorb);
+        } else {
+            $("#municipio").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE PARROQUIA
+        let parroquia = $("#parroquia").val();
+        if(parroquia != ''){
+            $("#parroquia").css("background-color", colorb);
+        } else {
+            $("#parroquia").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE AREA
+        let area = $("#area").val();
+        if(area != ''){
+            $("#area").css("background-color", colorb);
+        } else {
+            $("#area").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE DIRECCION
+        let direccion = $("#direccion").val();
+        if(direccion != ''){
+            if(direccion.match(ER_alfaNumericoCompleto)){
+                $("#direccion").css("background-color", colorb);
+            }else{
+                $("#direccion").css("background-color", colorm);
+                pestania3 = false;
+            }
+        }else{
+            $("#direccion").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE PUNTO DE REFERENCIA
+        let punto_referencia = $("#punto_referencia").val();
+        if(punto_referencia != ''){
+            if(punto_referencia.match(ER_alfaNumericoCompleto)){
+                $("#punto_referencia").css("background-color", colorb);
+            }else{
+                $("#punto_referencia").css("background-color", colorm);
+                pestania3 = false;
+            }
+        }else{
+            $("#punto_referencia").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania3) {
+            $('#icon-ubicacion').hide();
+        } else {
+            $('#icon-ubicacion').show();
+        }
+    }
+    function verificarParte4 () {
+        pestania4 = true;
+        // VERIFICAR EL CAMPO DEL TIPO DE VIVIENDA
+        let tipo_vivienda = document.formulario.tipo_vivienda.value;
+        $(".radio_tipo_vivienda_label").removeClass('inputMal');
+        if(tipo_vivienda == ''){
+            $(".radio_tipo_vivienda_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tipo_vivienda_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE TENENCIA DE LA VIVIENDA
+        let tenencia_vivienda = document.formulario.tenencia_vivienda.value;
+        $(".radio_tenencia_vivienda_label").removeClass('inputMal');
+        if(tenencia_vivienda == ''){
+            $(".radio_tenencia_vivienda_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tenencia_vivienda_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DEL TIPO DE AGUA
+        let tipo_agua = document.formulario.tipo_agua.value;
+        $(".radio_tipo_agua_label").removeClass('inputMal');
+        if(tipo_agua == ''){
+            $(".radio_tipo_agua_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tipo_agua_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE ELECTRICIDAD
+        let tipo_electricidad = document.formulario.tipo_electricidad.value;
+        $(".radio_tipo_electricidad_label").removeClass('inputMal');
+        if(tipo_electricidad == ''){
+            $(".radio_tipo_electricidad_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tipo_electricidad_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE EXCRETAS
+        let tipo_excreta = document.formulario.tipo_excreta.value;
+        $(".radio_tipo_excreta_label").removeClass('inputMal');
+        if(tipo_excreta == ''){
+            $(".radio_tipo_excreta_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tipo_excreta_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE LA BASURA
+        let tipo_basura = document.formulario.tipo_basura.value;
+        $(".radio_tipo_basura_label").removeClass('inputMal');
+        if(tipo_basura == ''){
+            $(".radio_tipo_basura_label").addClass('inputMal');
+            pestania4 = false;
+        } else {
+            $(".radio_tipo_basura_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE OTROS EN LAS CARACTERISTICAS DE VIVIENDA
+        let otros = $("#otros").val();
+        if(otros != ''){
+            if(otros.match(ER_alfaNumericoConEspacios)){
+                $("#otros").css("background-color", colorb);
+            }else{
+                $("#otros").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#otros").css("background-color", colorn);
+        }
+        /////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        // VERIFICAR EL CAMPO DE MATERIALES DEL TECHO
+        let techo = $("#techo").val();
+        if(techo != ''){
+            if(techo.match(ER_alfaNumericoConEspacios)){
+                $("#techo").css("background-color", colorb);
+            }else{
+                $("#techo").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#techo").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE MATERIALES DEL PARED
+        let pared = $("#pared").val();
+        if(pared != ''){
+            if(pared.match(ER_alfaNumericoConEspacios)){
+                $("#pared").css("background-color", colorb);
+            }else{
+                $("#pared").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#pared").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE MATERIALES DEL PISO
+        let piso = $("#piso").val();
+        if(piso != ''){
+            if(piso.match(ER_alfaNumericoConEspacios)){
+                $("#piso").css("background-color", colorb);
+            }else{
+                $("#piso").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#piso").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE DESCRIPCION DE VIA DE ACCESO
+        let via_acceso = $("#via_acceso").val();
+        if(via_acceso != ''){
+            if(via_acceso.match(ER_alfaNumericoConEspacios)){
+                $("#via_acceso").css("background-color", colorb);
+            }else{
+                $("#via_acceso").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#via_acceso").css("background-color", colorm);
+            pestania4 = false;
+        }
+        /////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////
+        // VERIFICAR EL CAMPO DE 
+        let sala = $("#sala").val();
+        if(sala != ''){
+            if(sala.match(ER_NumericoSinEspacios)){
+                $("#sala").css("background-color", colorb);
+            }else{
+                $("#sala").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#sala").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE 
+        let comedor = $("#comedor").val();
+        if(comedor != ''){
+            if(comedor.match(ER_NumericoSinEspacios)){
+                $("#comedor").css("background-color", colorb);
+            }else{
+                $("#comedor").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#comedor").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE 
+        let cocina = $("#cocina").val();
+        if(cocina != ''){
+            if(cocina.match(ER_NumericoSinEspacios)){
+                $("#cocina").css("background-color", colorb);
+            }else{
+                $("#cocina").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#cocina").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE 
+        let bano = $("#bano").val();
+        if(bano != ''){
+            if(bano.match(ER_NumericoSinEspacios)){
+                $("#bano").css("background-color", colorb);
+            }else{
+                $("#bano").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#bano").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // VERIFICAR EL CAMPO DE 
+        let dormitorio = $("#dormitorio").val();
+        if(dormitorio != ''){
+            if(dormitorio.match(ER_NumericoSinEspacios)){
+                $("#dormitorio").css("background-color", colorb);
+            }else{
+                $("#dormitorio").css("background-color", colorm);
+                pestania4 = false;
+            }
+        }else{
+            $("#dormitorio").css("background-color", colorm);
+            pestania4 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania4) {
+            $('#icon-vivienda').hide();
+        } else {
+            $('#icon-vivienda').show();
+        }
+    }
+    function verificarParte5 () {
+        pestania5 = true;
+        // VERIFICAR QUE HAYA ALMENOS UN FAMILIAR
+        if (!window.tabla) {
+            let numero_tabla = $('#tabla_datos_familiares tbody tr').length;
+            for (let i_t = 0; i_t < numero_tabla; i_t++) {
+                // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
+                let nombre_familiar1 = $("#nombre_familiar1" + (i_t + 1)).val();
+                if(nombre_familiar1 != ''){
+                    if(nombre_familiar1.match(ER_caracteresConEspacios)){
+                        $("#nombre_familiar1" + (i_t + 1)).css("background-color", colorb);
+                    }else{
+                        $("#nombre_familiar1" + (i_t + 1)).css("background-color", colorm);
+                        pestania5 = false;
+                    }
+                }else{
+                    $("#nombre_familiar1" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
+                let nombre_familiar2 = $("#nombre_familiar2" + (i_t + 1)).val();
+                if(nombre_familiar2 != ''){
+                    if(nombre_familiar2.match(ER_caracteresConEspacios)){
+                        $("#nombre_familiar2" + (i_t + 1)).css("background-color", colorb);
+                    }else{
+                        $("#nombre_familiar2" + (i_t + 1)).css("background-color", colorm);
+                        pestania5 = false;
+                    }
+                } else {
+                    $("#nombre_familiar2" + (i_t + 1)).css("background-color", colorn);
+                }
+                // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
+                let apellido_familiar1 = $("#apellido_familiar1" + (i_t + 1)).val();
+                if(apellido_familiar1 != ''){
+                    if(apellido_familiar1.match(ER_caracteresConEspacios)){
+                        $("#apellido_familiar1" + (i_t + 1)).css("background-color", colorb);
+                    }else{
+                        $("#apellido_familiar1" + (i_t + 1)).css("background-color", colorm);
+                        pestania5 = false;
+                    }
+                }else{
+                    $("#apellido_familiar1" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
+                let apellido_familiar2 = $("#apellido_familiar2" + (i_t + 1)).val();
+                if(apellido_familiar2 != ''){
+                    if(apellido_familiar2.match(ER_caracteresConEspacios)){
+                        $("#apellido_familiar2" + (i_t + 1)).css("background-color", colorb);
+                    }else{
+                        $("#apellido_familiar2" + (i_t + 1)).css("background-color", colorm);
+                        pestania5 = false;
+                    }
+                } else {
+                    $("#apellido_familiar2" + (i_t + 1)).css("background-color", colorn);
+                }
+                // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
+                let fecha_familiar = $("#fecha_familiar" + (i_t + 1)).val();
+                if(fecha_familiar != ''){
+                    $("#fecha_familiar" + (i_t + 1)).css("background-color", colorb);
+                } else {
+                    $("#fecha_familiar" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DE SEXO
+                let sexo_familiar = $("#sexo_familiar" + (i_t + 1)).val();
+                if(sexo_familiar != ''){
+                    $("#sexo_familiar" + (i_t + 1)).css("background-color", colorb);
+                } else {
+                    $("#sexo_familiar" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DE PARENTESCO
+                let parentesco_familiar = $("#parentesco_familiar" + (i_t + 1)).val();
+                if(parentesco_familiar != ''){
+                    $("#parentesco_familiar" + (i_t + 1)).css("background-color", colorb);
+                } else {
+                    $("#parentesco_familiar" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DE OCUPACION
+                let ocupacion_familiar = $("#ocupacion_familiar" + (i_t + 1)).val();
+                if(ocupacion_familiar != ''){
+                    $("#ocupacion_familiar" + (i_t + 1)).css("background-color", colorb);
+                } else {
+                    $("#ocupacion_familiar" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DE TRABAJAR
+                let trabaja_familiar = $("#trabaja_familiar" + (i_t + 1)).val();
+                if(trabaja_familiar != ''){
+                    $("#trabaja_familiar" + (i_t + 1)).css("background-color", colorb);
+                } else {
+                    $("#trabaja_familiar" + (i_t + 1)).css("background-color", colorm);
+                    pestania5 = false;
+                }
+                // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
+                if (trabaja_familiar == 'S') {
+                    let ingresos_familiar = $("#ingresos_familiar" + (i_t + 1)).val();
+                    if(ingresos_familiar != ''){
+                        if(ingresos_familiar.match(ER_NumericoConComa)){
+                            $("#ingresos_familiar" + (i_t + 1)).css("background-color", colorb);
+                        }else{
+                            $("#ingresos_familiar" + (i_t + 1)).css("background-color", colorm);
+                            pestania5 = false;
+                        }
+                    }else{
+                        $("#ingresos_familiar" + (i_t + 1)).css("background-color", colorm);
+                        pestania5 = false;
+                    }
+                } else {
+                    $("#ingresos_familiar" + (i_t + 1)).css("background-color", '');
+                }
+                // VERIFICAR EL CAMPO DE GRADO DE INSTRUCCION
+                let numero_r = document.getElementsByName('responsable_apre').length;
+                $(".radio_responsable_apre_label").removeClass('inputMal inputBien');
+                if (numero_r > 1) {
+                    let responsable_apre = document.formulario.responsable_apre.value;
+                    if(responsable_apre == ''){
+                        $(".radio_responsable_apre_label").addClass('inputMal');
+                        pestania5 = false;
+                    } else {
+                        $(".radio_responsable_apre_label").addClass('inputBien');
+                    }
+                } else {
+                    let elemento1 = document.getElementsByName('responsable_apre')[0];
+                    if ($(elemento1).prop('checked')) {
+                        $(".radio_responsable_apre_label").addClass('inputBien');
+                    } else {
+                        $(".radio_responsable_apre_label").addClass('inputMal');
+                        pestania5 = false;
+                    }
+                }
+            }
+        } else {
+            pestania5 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania5) {
+            $('#icon-familiares').hide();
+        } else {
+            $('#icon-familiares').show();
+        }
+    }
+    function verificarParte6 () {
+        pestania6 = true;
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania6) {
+            $('#icon-ingresos').hide();
+        } else {
+            $('#icon-ingresos').show();
+        }
+    }
+    function verificarParte7 () {
+        pestania7 = true;
+        // VERIFICAR EL CAMPO DE CONDICION DE LA VIVIENDA
+        let condicion_vivienda = $("#condicion_vivienda").val();
+        if(condicion_vivienda != ''){
+            if(condicion_vivienda.match(ER_alfaNumericoCompleto)){
+                $("#condicion_vivienda").css("background-color", colorb);
+            }else{
+                $("#condicion_vivienda").css("background-color", colorm);
+                pestania7 = false;
+            }
+        }else{
+            $("#condicion_vivienda").css("background-color", colorm);
+            pestania7 = false;
+        }
+        // VERIFICAR EL CAMPO DE CARACTERISTICAS GENERALES DE LA FAMILIA
+        let caracteristicas_generales = $("#caracteristicas_generales").val();
+        if(caracteristicas_generales != ''){
+            if(caracteristicas_generales.match(ER_alfaNumericoCompleto)){
+                $("#caracteristicas_generales").css("background-color", colorb);
+            }else{
+                $("#caracteristicas_generales").css("background-color", colorm);
+                pestania7 = false;
+            }
+        }else{
+            $("#caracteristicas_generales").css("background-color", colorm);
+            pestania7 = false;
+        }
+        // VERIFICAR EL CAMPO DE DIAGNOSTICO SOCIAL
+        let diagnostico_social = $("#diagnostico_social").val();
+        if(diagnostico_social != ''){
+            if(diagnostico_social.match(ER_alfaNumericoCompleto)){
+                $("#diagnostico_social").css("background-color", colorb);
+            }else{
+                $("#diagnostico_social").css("background-color", colorm);
+                pestania7 = false;
+            }
+        }else{
+            $("#diagnostico_social").css("background-color", colorm);
+            pestania7 = false;
+        }
+        // VERIFICAR EL CAMPO DE DIAGNOSTICO PRELIMINAR
+        let diagnostico_preliminar = $("#diagnostico_preliminar").val();
+        if(diagnostico_preliminar != ''){
+            if(diagnostico_preliminar.match(ER_alfaNumericoCompleto)){
+                $("#diagnostico_preliminar").css("background-color", colorb);
+            }else{
+                $("#diagnostico_preliminar").css("background-color", colorm);
+                pestania7 = false;
+            }
+        }else{
+            $("#diagnostico_preliminar").css("background-color", colorm);
+            pestania7 = false;
+        }
+        // VERIFICAR EL CAMPO DE CONCLUSION Y RECOMENDACIONES
+        let conclusiones = $("#conclusiones").val();
+        if(conclusiones != ''){
+            if(conclusiones.match(ER_alfaNumericoCompleto)){
+                $("#conclusiones").css("background-color", colorb);
+            }else{
+                $("#conclusiones").css("background-color", colorm);
+                pestania7 = false;
+            }
+        }else{
+            $("#conclusiones").css("background-color", colorm);
+            pestania7 = false;
+        }
+        // VERIFICAR EL CAMPO DE ENFERMOS EN LA FAMILIA
+        let enfermos = document.formulario.enfermos.value;
+        $(".radio_enfermos_label").removeClass('inputMal');
+        if(enfermos == ''){
+            $(".radio_enfermos_label").addClass('inputMal');
+            pestania7 = false;
+        } else {
+            $(".radio_enfermos_label").addClass('inputBien');
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania7) {
+            $('#icon-recomendaciones').hide();
+        } else {
+            $('#icon-recomendaciones').show();
+        }
+    }
+    //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
+    $('.input_fecha').click(function () {
+        fechaTemporal = $(this).val();
     });
+    $('.input_fecha').blur(function () {
+        $(this).val(fechaTemporal);
+    });
+    $('.input_fecha').change(function () {
+        fechaTemporal = $(this).val();
+    });
+    //////////////////////// FUNCIONES CAMPOS ////////////////////////
     $('#fecha_n').change(function (){
-        let year    = $(this).val().substr(0,4);
-        let month   = $(this).val().substr(5,2);
-        let day     = $(this).val().substr(8,2);
-        let yearA   = fecha.substr(0,4);
-        let monthA  = fecha.substr(5,2);
-        let dayA    = fecha.substr(8,2);
+        let day     = $(this).val().substr(0,2);
+        let month   = $(this).val().substr(3,2);
+        let year    = $(this).val().substr(6,4);
+        let dayA    = fecha.substr(0,2);
+        let monthA  = fecha.substr(3,2);
+        let yearA   = fecha.substr(6,4);
             
         let edad = 0;
         if (year != '' && year != undefined) {
@@ -358,16 +1094,37 @@ $(function () {
                             if(window.editar !== true) {
                                 ciudadValor = localStorage.getItem('ciudad');
                                 municipioValor = localStorage.getItem('municipio');
-                                window.actualizar2 = true;
+
+                                if (municipioValor != '') {
+                                    window.actualizar2 = true;
+                                } else {
+                                    window.actualizar2 = false;
+                                }
                             } else {
                                 ciudadValor = dataListado.resultados[window.posicion].codigo_ciudad;
                                 municipioValor = dataListado.resultados[window.posicion].codigo_municipio;
-                                window.selectMunicipio = true;
+
+                                if (municipioValor != '') {
+                                    window.selectMunicipio = true;
+                                } else {
+                                    window.selectMunicipio = false;
+                                    $('#carga_espera').hide(400);
+                                    ///////////////////////////////////////
+                                    verificarParte1();
+                                    verificarParte2();
+                                    verificarParte3();
+                                    verificarParte4();
+                                    verificarParte5();
+                                    verificarParte6();
+                                    verificarParte7();
+                                }
                             }
 
                             $('#ciudad').val(ciudadValor);
-                            $('#municipio').val(municipioValor);
-                            $('#municipio').trigger('change');
+                            if (municipioValor != '') {
+                                $('#municipio').val(municipioValor);
+                                $('#municipio').trigger('change');
+                            }
                         }
                     } catch (error) {
                         console.log(resultados);
@@ -416,6 +1173,15 @@ $(function () {
                                 parroquiValor = localStorage.getItem('parroquia')
                             } else {
                                 parroquiValor = dataListado.resultados[window.posicion].codigo_parroquia;
+                                $('#carga_espera').hide(400);
+                                ///////////////////////////////////////
+                                verificarParte1();
+                                verificarParte2();
+                                verificarParte3();
+                                verificarParte4();
+                                verificarParte5();
+                                verificarParte6();
+                                verificarParte7();
                             }
                             $('#parroquia').val(parroquiValor);
                         }
@@ -432,6 +1198,7 @@ $(function () {
             $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
     });
+    /////////////////////////////////////////////////////////////////////
     $('.campos_ingresos').click(function () {
         if ($(this).val() == 0)
             $(this).val('');
@@ -516,19 +1283,23 @@ $(function () {
         if (localStorage.getItem('confirm_data')){
             setTimeout(() => {
                 if (confirm('Hay datos sin guardar, ¿Quieres seguir editandolos?')) {
+                    ////////////////////////// INPUTS CORRIENTES //////////////////////////
                     $('.localStorage').each(function (){
                         let valor = localStorage.getItem($(this).attr('id'));
                         if (valor != '' && valor != null && valor != undefined)
                             $(this).val(localStorage.getItem($(this).attr('id')));
                     });
+                    $('#cedula').trigger('blur');
+                    //////////////////////////// INPUTS RADIOS ////////////////////////////
                     $('.localStorage-radio').each(function (){
                         if ($(this).val() == localStorage.getItem($(this).attr('name')))
                             $(this).prop('checked','checked');
                     });
+                    /////////////////// VERIFICACION GRADO INSTRUCCION ////////////////////
                     let grado_instruccion = localStorage.getItem('grado_instruccion');
                     if (grado_instruccion == 'SI' || grado_instruccion == 'SC')
-                        $('#titulo').attr('disabled', false);
-
+                        $('#titulo').attr('readonly', false);
+                    //////////////////////////// TABLA FAMILIAR ///////////////////////////
                     for (let index = 1; index <= maxFamiliares; index++) {
                         if (localStorage.getItem('filaFamilia'+index)) {
                             window.actualizar3 = true;
@@ -538,25 +1309,25 @@ $(function () {
                             for(var posicion in arregloFamilia) {
                                 if (arregloFamilia[posicion] != '')
                                     $('#'+posicion+index).val(arregloFamilia[posicion]);
-                                
                                 $('.agregar_parentezco').trigger('change');
                             }
                         }
                     }
-                    
+                    ///////////////// VERIFICACION SI EL FAMILIAR TRABAJA /////////////////
                     $('.trabajando').trigger('change');
                     if (localStorage.getItem('responsable_apre')) 
                         document.formulario.responsable_apre.value = localStorage.getItem('responsable_apre');
-
+                    ////////////////////// EJECUTAR FUNCIONES EXTRAS //////////////////////
                     window.actualizar3 = false;
                     window.actualizar = true;
                     $('#estado').trigger('change');
                     $('#fecha_n').trigger('change');
-                    fecha2 = $('#fecha').val();
                 } else {
+                    ////////////////// ELIMINAR TODO DEL LOCALSTORAGE //////////////////
                     localStorage.removeItem('confirm_data');
                     $('.localStorage').each(function (){ localStorage.removeItem($(this).attr('name')); });
                     $('.localStorage-radio').each(function (){ localStorage.removeItem($(this).attr('name')); });
+                    for (let index = 1; index <= maxFamiliares; index++) { localStorage.removeItem('filaFamilia'+index); }
                 }
             }, 500);
         }
@@ -600,7 +1371,7 @@ $(function () {
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="nombre_familiar2[]" id="nombre_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia" placeholder="Nombre 2"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar1[]" id="apellido_familiar1'+cantidad+'" class="form-control form-control-sm storageFamilia" placeholder="Apellido 1"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="apellido_familiar2[]" id="apellido_familiar2'+cantidad+'" class="form-control form-control-sm storageFamilia" placeholder="Apellido 2"></td>';
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia fecha_familiar bg-white calcular_edad" data-date-format="yyyy-mm-dd" placeholder="aaaa-mm-dd" readonly="true"></td>';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="fecha_familiar[]" id="fecha_familiar'+cantidad+'" class="form-control form-control-sm storageFamilia fecha_familiar calcular_edad" style="background-color: #ffffff;" data-date-format="dd-mm-yyyy" placeholder="aaaa-mm-dd" readonly="true"></td>';
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="edad_familiar[]" id="edad_familiar'+cantidad+'" class="form-control form-control-sm text-center storageFamilia" value="0" style="width: 56px;" readonly="true"></td>';
             
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="sexo_familiar[]" id="sexo_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia agregar_parentezco" style="width: 56px;">';
@@ -610,7 +1381,7 @@ $(function () {
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="parentesco_familiar[]" id="parentesco_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia">';
             contenido += '<option value="">Opción</option></select></td>';
 
-            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="ocupacion_familiar[]" id="ocupacion_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia" style="width: 140px;">';
+            contenido += '<td class="align-middle py-0 pr-1 pl-0"><select name="ocupacion_familiar[]" id="ocupacion_familiar'+cantidad+'" class="custom-select custom-select-sm storageFamilia ocupacion_familiar" style="width: 140px;">';
             if (dataOcupacion) {
                 contenido += '<option value="">Opción</option>';
                 for (let i in dataOcupacion) {
@@ -624,12 +1395,12 @@ $(function () {
             contenido += '</select></td>';
 
             contenido += '<td class="align-middle py-0 pr-1 pl-0"><input type="text" name="ingresos_familiar[]" id="ingresos_familiar'+cantidad+'" class="form-control form-control-sm text-right storageFamilia monto-familiar" readonly="true"></td>';
-            contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input localStorage-radio" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label" for="responsable_apre_'+cantidad+'"></label></div></td>';
+            contenido += '<td class="align-middle py-0 px-0 text-center"><div class="custom-control custom-radio d-inline-block" style="width: 0px;"><input type="radio" class="custom-control-input localStorage-radio" id="responsable_apre_'+cantidad+'" name="responsable_apre" value="'+cantidad+'"><label class="custom-control-label radio_responsable_apre_label" for="responsable_apre_'+cantidad+'"></label></div></td>';
             contenido += '<td class="py-1 px-0"><button type="button" class="btn btn-sm btn-danger delete-row"><i class="fas fa-times"></i></button></td>';
             contenido += '</tr>';
 
             $('#tabla_datos_familiares tbody').append(contenido);
-            $($('.fecha_familiar')[$('.fecha_familiar').length - 1]).datepicker();
+            $($('.fecha_familiar')[$('.fecha_familiar').length - 1]).datepicker({ language: 'es' });
             $($('.calcular_edad')[$('.calcular_edad').length - 1]).change(calcularEdadF);
             $($('.calcular_edad')[$('.calcular_edad').length - 1]).click(function () { fechaTemporal = $(this).val(); });
             $($('.calcular_edad')[$('.calcular_edad').length - 1]).blur(function (){
@@ -666,18 +1437,22 @@ $(function () {
             arregloFamilia[nameInput] = $(this).val();
             arregloFamilia['edad_familiar'] = parseInt($('#edad_familiar'+position).val());
             localStorage.setItem('filaFamilia'+position, JSON.stringify(arregloFamilia));
+
+            if ($('#cedula').val() != '') {
+                $('#cedula').trigger('blur');
+            }
         }
     }
     // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DE LOS FAMILIARES.
     function calcularEdadF(){
         let idEdad  = '#edad_familiar' + $(this).closest('tr').attr('data-posicion');
         
-        let year    = $(this).val().substr(0,4);
-        let month   = $(this).val().substr(5,2);
-        let day     = $(this).val().substr(8,2);
-        let yearA   = fecha.substr(0,4);
-        let monthA  = fecha.substr(5,2);
-        let dayA    = fecha.substr(8,2);
+        let day     = $(this).val().substr(0,2);
+        let month   = $(this).val().substr(3,2);
+        let year    = $(this).val().substr(6,4);
+        let dayA    = fecha.substr(0,2);
+        let monthA  = fecha.substr(3,2);
+        let yearA   = fecha.substr(6,4);
         
         let edad = 0;
         if (year != '' && year != undefined) {
@@ -891,6 +1666,117 @@ $(function () {
         $('#resultados-buscar-facilitador').hide();
         document.form_buscar_facilitador.reset();
     }
+    // MODAL REGISTRAR OCUPACION
+    $('#btn-agregar-ocupacion').click(function () {
+        limpiarModalRegistrarOcupacion();
+        $('#modal-registrar-ocupacion').modal();
+    });
+    $('#input_registrar_ocupacion').keydown(function (e) { if (e.keyCode == 13) e.preventDefault(); });
+    $('#input_registrar_ocupacion').keydown(function (e) { if (e.keyCode == 13) { $('#btn-registrar-ocupacion').trigger('click'); } });
+    $('#btn-registrar-ocupacion').click(function (e) {
+        e.preventDefault();
+        /////////////////////////////////////////////////
+        if ($('#input_registrar_ocupacion').val() != '') {
+            let data = $("#form_registrar_ocupacion").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar ocupacion' });
+
+            $.ajax({
+                url : url+'controllers/c_informe_social.php',
+                type: 'POST',
+                data: data,
+                success: function (resultados){
+                    try {
+                        if (resultados == 'Ya registrado') {
+                            swal({
+                                title   : 'No se registro',
+                                text    : 'La ocupación ya esta registrada y para evitar valores repetidos no se realizo el registro.',
+                                icon    : 'info',
+                                buttons : false,
+                                timer   : 4000
+                            });
+                        } else if (resultados == 'Error al registrar') {
+                            swal({
+                                title   : 'Error',
+                                text    : 'Al parecer hubo un error al intentar registrar la ocupación, vuelva a intentarlo',
+                                icon    : 'error',
+                                buttons : false,
+                                timer   : 4000
+                            });
+                        } else {
+                            let data = JSON.parse(resultados);
+                            let este_valor_o1 = $('#ocupacion').val();
+                            $('#ocupacion').empty();
+                            $('#ocupacion').append('<option value="">Elija una opción</option>');
+                            if (data.ocupacion) {
+                                for (let i in data.ocupacion) {
+                                    $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
+                                }
+                                dataOcupacion = data.ocupacion;
+                            } else {
+                                $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
+                            }
+                            $('#ocupacion').val(este_valor_o1);
+
+                            
+                            if ($('.ocupacion_familiar').length > 0) {
+                                $('.ocupacion_familiar').each(function () {
+                                    let este_valor_o = $(this).val();
+                                    $(this).empty();
+                                    $(this).append('<option value="">Elija una opción</option>');
+                                    if (data.ocupacion) {
+                                        for (let i in data.ocupacion) {
+                                            $(this).append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
+                                        }
+                                    } else {
+                                        $(this).html('<option value="0">No hay ocupaciones</option>');
+                                    }
+                                    $(this).val(este_valor_o);
+                                });
+                            }
+
+                            swal({
+                                title   : 'Exito',
+                                text    : 'La ocupacion se registro con exito',
+                                icon    : 'success',
+                                buttons : false,
+                                timer   : 4000
+                            });
+                        }
+                        $('#modal-registrar-ocupacion').modal('hide');
+                    } catch (error) {
+                        swal({
+                            title   : 'Error',
+                            text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
+                            icon    : 'error',
+                            buttons : false,
+                            timer   : 4000
+                        });
+                        console.log(resultados);
+                    }
+                },
+                error: function (){
+                    swal({
+                        title   : 'Error',
+                        text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                        icon    : 'error',
+                        buttons : false,
+                        timer   : 4000
+                    });
+                }
+            });
+        } else {
+            swal({
+                title   : 'Atención',
+                text    : 'Para proceder con el registro el campo no puede estar vacío.',
+                icon    : 'error',
+                buttons : false,
+                timer   : 4000
+            });
+        }
+    });
+    function limpiarModalRegistrarOcupacion () {
+        document.form_registrar_ocupacion.reset();
+    }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
@@ -946,8 +1832,10 @@ $(function () {
                             window.informe_social = dataListado.resultados[posicion].numero;
                             window.nacionalidad = dataListado.resultados[posicion].nacionalidad;
                             window.cedula = dataListado.resultados[posicion].cedula;
+                            validarCedula = true;
                             // PRIMERA PARTE.
-                            $('#fecha').val(dataListado.resultados[posicion].fecha);
+                            let fecha_nu = dataListado.resultados[posicion].fecha;
+                            $('#fecha').val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
                             $('#nacionalidad').val(dataListado.resultados[posicion].nacionalidad);
                             $('#cedula').val(dataListado.resultados[posicion].cedula);
                             $('#nombre_1').val(dataListado.resultados[posicion].nombre1);
@@ -957,14 +1845,15 @@ $(function () {
                             $('#sexo').val(dataListado.resultados[posicion].sexo);
                             window.fecha_nacimiento = dataListado.resultados[posicion].fecha_n;
                             
-                            $('#fecha_n').val(dataListado.resultados[posicion].fecha_n);
+                            fecha_nu = dataListado.resultados[posicion].fecha_n;
+                            $('#fecha_n').val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
                             $('#fecha_n').trigger('change');
                             $('#lugar_n').val(dataListado.resultados[posicion].lugar_n);
                             $('#ocupacion').val(dataListado.resultados[posicion].codigo_ocupacion);
                             document.formulario.estado_civil.value = dataListado.resultados[posicion].estado_civil;
                             document.formulario.grado_instruccion.value = dataListado.resultados[posicion].nivel_instruccion;
                             if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
-                                $('#titulo').attr('disabled', false);
+                                $('#titulo').attr('readonly', false);
     
                             $('#titulo').val(dataListado.resultados[posicion].titulo_acade);
                             $('#alguna_mision').val(dataListado.resultados[posicion].mision_participado);
@@ -1024,7 +1913,9 @@ $(function () {
                                 $('#nombre_familiar2'+(index+1)).val(data.familiares[index].nombre2);
                                 $('#apellido_familiar1'+(index+1)).val(data.familiares[index].apellido1);
                                 $('#apellido_familiar2'+(index+1)).val(data.familiares[index].apellido2);
-                                $('#fecha_familiar'+(index+1)).val(data.familiares[index].fecha_n);
+
+                                fecha_nu = data.familiares[index].fecha_n;
+                                $('#fecha_familiar'+(index+1)).val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
                                 $('#sexo_familiar'+(index+1)).val(data.familiares[index].sexo);
                                 $('.agregar_parentezco').trigger('change');
     
@@ -1054,8 +1945,6 @@ $(function () {
                             $('#diagnostico_preliminar').val(dataListado.resultados[posicion].diagnostico_preliminar);
                             $('#conclusiones').val(dataListado.resultados[posicion].conclusiones);
                             document.formulario.enfermos.value = dataListado.resultados[posicion].enfermos;
-    
-                            $('#carga_espera').hide(400);
                         } catch (error) {
                             console.log(resultados);
                         }
@@ -1071,73 +1960,75 @@ $(function () {
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
-        if (validarNacionalidad && validarCedula) {
-            e.preventDefault();
-            var data = $("#formulario").serializeArray();
-            data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'estado_civil', value: document.formulario.estado_civil.value });
-            data.push({ name: 'grado_instruccion', value: document.formulario.grado_instruccion.value });
-            ///////////////////
-            data.push({ name: 'tipo_vivienda', value: document.formulario.tipo_vivienda.value });
-            data.push({ name: 'tenencia_vivienda', value: document.formulario.tenencia_vivienda.value });
-            data.push({ name: 'tipo_agua', value: document.formulario.tipo_agua.value });
-            data.push({ name: 'tipo_electricidad', value: document.formulario.tipo_electricidad.value });
-            data.push({ name: 'tipo_excreta', value: document.formulario.tipo_excreta.value });
-            data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
-            ///////////////////
-            data.push({ name: 'enfermos', value: document.formulario.enfermos.value });
-            ///////////////////
-            data.push({ name: 'informe_social', value: window.informe_social });
-            data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
-            data.push({ name: 'cedula_v', value: window.cedula });
-            data.push({ name: 'eliminar_f', value: JSON.stringify(window.eliminarFamiliar) });
+        e.preventDefault();
+        verificarParte1();
+        verificarParte2();
+        verificarParte3();
+        verificarParte4();
+        verificarParte5();
+        verificarParte6();
+        verificarParte7();
+        if (pestania1 && pestania2 && pestania3 && pestania4 && pestania5 && pestania6 && pestania7) {
+            enviarFormulario();
+        }
+    });
+    function enviarFormulario () {
+        var data = $("#formulario").serializeArray();
+        data.push({ name: 'opcion', value: tipoEnvio });
+        data.push({ name: 'estado_civil', value: document.formulario.estado_civil.value });
+        data.push({ name: 'grado_instruccion', value: document.formulario.grado_instruccion.value });
+        ///////////////////
+        data.push({ name: 'tipo_vivienda', value: document.formulario.tipo_vivienda.value });
+        data.push({ name: 'tenencia_vivienda', value: document.formulario.tenencia_vivienda.value });
+        data.push({ name: 'tipo_agua', value: document.formulario.tipo_agua.value });
+        data.push({ name: 'tipo_electricidad', value: document.formulario.tipo_electricidad.value });
+        data.push({ name: 'tipo_excreta', value: document.formulario.tipo_excreta.value });
+        data.push({ name: 'tipo_basura', value: document.formulario.tipo_basura.value });
+        ///////////////////
+        data.push({ name: 'enfermos', value: document.formulario.enfermos.value });
+        ///////////////////
+        data.push({ name: 'informe_social', value: window.informe_social });
+        data.push({ name: 'nacionalidad_v', value: window.nacionalidad });
+        data.push({ name: 'cedula_v', value: window.cedula });
+        data.push({ name: 'eliminar_f', value: JSON.stringify(window.eliminarFamiliar) });
 
-            $.ajax({
-                url : url+'controllers/c_informe_social.php',
-                type: 'POST',
-                data: data,
-                success: function (resultados) {
-                    if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                        swal({
-                            title   : resultados,
-                            text    : 'La operación se ejecuto con exito.',
-                            icon    : 'success',
-                            buttons : false,
-                            timer   : 4000
-                        });
-
-                        $('#show_table').trigger('click');
-                        buscar_listado();
-                    } else {
-                        swal({
-                            title   : 'Información',
-                            text    : resultados,
-                            icon    : 'info',
-                            buttons : false,
-                            timer   : 4000
-                        });
-                    }
-                },
-                error: function () {
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: data,
+            success: function (resultados) {
+                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
                     swal({
-                        title   : 'Error',
-                        text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                        icon    : 'error',
+                        title   : resultados,
+                        text    : 'La operación se ejecuto con exito.',
+                        icon    : 'success',
+                        buttons : false,
+                        timer   : 4000
+                    });
+
+                    $('#show_table').trigger('click');
+                    buscar_listado();
+                } else {
+                    swal({
+                        title   : 'Información',
+                        text    : resultados,
+                        icon    : 'info',
                         buttons : false,
                         timer   : 4000
                     });
                 }
-            });
-        } else {
-            swal({
-                title   : 'Formulario incorrecto',
-                text    : 'Revise que todos los campos requeridos no esten vacios y contenga los caracteres permitidos.',
-                icon    : 'info',
-                buttons : false,
-                timer   : 4000
-            });
-        }
-    });
+            },
+            error: function () {
+                swal({
+                    title   : 'Error',
+                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                    icon    : 'error',
+                    buttons : false,
+                    timer   : 4000
+                });
+            }
+        });
+    }
     function aceptarPostulante (e) {
         e.preventDefault();
         // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
@@ -1324,19 +2215,24 @@ $(function () {
     // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
     function limpiarFormulario(){
         document.formulario.reset();
-        $('#fecha').val(fecha);
         window.tabla = true;
+        $('#fecha').val(fecha);
         $('#tabla_datos_familiares tbody').html('<tr><td colspan="14" class="text-secondary text-center border-bottom p-2">Sin familiares agregados<i class="fas fa-user-times ml-3"></i></td></tr>');
-        //////////
+        ///////////////////////////////////////////////////////////////////
         $('#edad').val(0);
-        $('#titulo').attr('disabled', true);
-        //////////
+        $('#titulo').attr('readonly', true);
+        ///////////////////////////////////////////////////////////////////
         $('#ciudad').html('<option value="">Elija un estado</option>');
         $('#municipio').html('<option value="">Elija un estado</option>');
         $('#parroquia').html('<option value="">Elija un municipio</option>');
-        //////////
+        ///////////////////////////////////////////////////////////////////
         $('.campos_ingresos').val(0);
         $('.campos_ingresos_0').val(0);
+        ///////////////////////////////////////////////////////////////////
+        $('.localStorage').css('background','');
+        $("#fecha_n").css("background-color", colorn);
+        $('.icon-alert').hide();
+        $('.v_radio').removeClass('inputBien inputMal');
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -1345,8 +2241,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // AUTOLLAMADOS.
-    function llamarDatos()
-    {
+    function llamarDatos() {
         $.ajax({
             url : url+'controllers/c_informe_social.php',
             type: 'POST',
@@ -1355,7 +2250,6 @@ $(function () {
                 try {
                     let data = JSON.parse(resultados);
                     fecha = data.fecha;
-                    fecha2= data.fecha;
                     if (data.ocupacion) {
                         for (let i in data.ocupacion) {
                             $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
@@ -1432,5 +2326,5 @@ $(function () {
         }
     }
     llamarDatos();
-    $('.input-fechas').datepicker({ language: 'es' });
+    $('.input_fecha').datepicker({ language: 'es' });
 });
