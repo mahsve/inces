@@ -914,6 +914,34 @@ $(function () {
     }
     function verificarParte6 () {
         pestania6 = true;
+        $('.i_ingresos').each(function () {
+            let valor_dinero = $(this).val();
+            if(valor_dinero != ''){
+                if(valor_dinero.match(ER_NumericoConComa)){
+                    $(this).css("background-color", colorb);
+                }else{
+                    $(this).css("background-color", colorm);
+                    pestania6 = false;
+                }
+            }else{
+                $(this).css("background-color", colorm);
+                pestania6 = false;
+            }
+        });
+        $('.i_egresos').each(function () {
+            let valor_dinero = $(this).val();
+            if(valor_dinero != ''){
+                if(valor_dinero.match(ER_NumericoConComa)){
+                    $(this).css("background-color", colorb);
+                }else{
+                    $(this).css("background-color", colorm);
+                    pestania6 = false;
+                }
+            }else{
+                $(this).css("background-color", colorm);
+                pestania6 = false;
+            }
+        });
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
         if (pestania6) {
             $('#icon-ingresos').hide();

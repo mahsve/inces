@@ -1,10 +1,9 @@
 <?php 
 session_start();
 date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
-$date = date('Y-m-d', time());
+$date = date('d-m-Y', time());
 
-if ($_POST['opcion'])
-{
+if ($_POST['opcion']) {
     require_once('../models/m_aprendiz.php');
     $objeto = new model_aprendiz;
     
@@ -52,12 +51,39 @@ if ($_POST['opcion'])
             echo json_encode($resultados);
         break;
 
-        case 'Registrar':
+        case 'Registrar ocupacion':
+            $resultados = [];
             $objeto->conectar();
-            if ($objeto->registrarOficio($_POST)) {
-                echo 'Registro exitoso';
+            if ($objeto->verificarOcupacion($_POST) == 0) {
+                if ($objeto->registrarOcupacion($_POST) > 0) {
+                    $resultados['ocupacion'] = $objeto->consultarOcupaciones();
+                    echo json_encode($resultados);
+                } else {
+                    echo 'Error al registrar';
+                }
             } else {
-                echo 'Registro fallido';
+                echo 'Ya registrado';
+            }
+            $objeto->desconectar();
+        break;
+
+        case 'Registrar':
+            $fecha_c = $_POST['fecha'];
+            $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+            ////////////////////////////////////////////
+            $objeto->conectar();
+            $objeto->nuevaTransaccion();
+            if ($objeto->registrarAprendiz($_POST)) {
+                if ($objeto->estatusAprendiz($_POST)) {
+                    $objeto->guardarTransaccion();
+                    echo 'Registro exitoso';
+                } else {
+                    $objeto->calcelarTransaccion();
+                    echo 'Registro fallido: Cambiar estatus a Inscripto';
+                }
+            } else {
+                $objeto->calcelarTransaccion();
+                echo 'Registro fallido: Registrar ficha al PNA';
             }
             $objeto->desconectar();
         break;
@@ -78,10 +104,18 @@ if ($_POST['opcion'])
             else if ($_POST['ordenar'] == 2)
                 $_POST['ordenar_por'] = 't_datos_personales.cedula '.$_POST['ordenar_tipo'];
             else if ($_POST['ordenar'] == 3)
-                $_POST['ordenar_por'] = 't_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido2 '.$_POST['ordenar_tipo'];
+                $_POST['ordenar_por'] = 'concat (t_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido1) '.$_POST['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarPlanilla($_POST);
-            $resultados['total']        = $objeto->consultarPlanillaTotal($_POST);
+            $resultados['resultados'] = $objeto->consultarPlanilla($_POST);
+            $resultados['total']    = $objeto->consultarPlanillaTotal($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Consultar determinado':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['empresa']      = $objeto->consultarDatosEmpresa($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;

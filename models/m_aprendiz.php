@@ -139,17 +139,75 @@ class model_aprendiz extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA REGISTRAR UN NUEVO OFICIO.
-    function registrarOficio($datos)
+    // FUNCION PARA VERIFICAR PRIMERO SI EXISTE ESTA OCUPACION
+	public function verificarOcupacion($datos)
+	{
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE nombre='".$datos['input_registrar_ocupacion']."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
+        {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
+    public function registrarOcupacion($datos)
     {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_oficio (
-            codigo,
+        $sentencia = "INSERT INTO t_ocupacion (
             nombre
         ) VALUES (
-            ".$datos['codigo'].",
-            ".$datos['nombre']."
+            '".$datos['input_registrar_ocupacion']."'
         )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR UN NUEVO OFICIO.
+    function registrarAprendiz($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_ficha_aprendiz (
+            fecha,
+            tipo_inscripcion,
+            ficha_anterior,
+            correlativo,
+            numero_orden,
+            numero_informe,
+            empresa_actual
+        ) VALUES (
+            '".$datos['fecha']."',
+            '".$datos['tipo_ficha']."',
+            NULL,
+            '".$datos['correlativo']."',
+            '".$datos['numero_orden']."',
+            '".$datos['informe_social']."',
+            '".$datos['rif']."'
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0)
+        {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
+    public function estatusAprendiz($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_informe_social SET
+            estatus='A'
+            WHERE numero='".$datos['informe_social']."'
+        ";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0)
         {
@@ -219,6 +277,28 @@ class model_aprendiz extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR A LOS FAMILIARES DEL APRENDIZ CONSULTADO.
+    public function consultarDatosEmpresa($datos)
+    {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT t_empresa.*,
+            t_actividad_economica.nombre AS actividad_economica,
+            t_ciudad.nombre AS ciudad,
+            t_estado.nombre AS estado
+            FROM t_empresa
+            INNER JOIN t_actividad_economica ON t_empresa.codigo_actividad = t_actividad_economica.codigo
+            INNER JOIN t_ciudad ON t_empresa.codigo_ciudad = t_ciudad.codigo
+            INNER JOIN t_estado ON t_ciudad.codigo_estado = t_estado.codigo
+            WHERE rif='".$datos['rif']."'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+        {
+			$resultado = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA MODIFICAR UN OFICIO EXISTENTE.
     function modificarOficio($datos)
     {
@@ -248,5 +328,23 @@ class model_aprendiz extends conexion
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
+    public function nuevaTransaccion()
+    {
+		mysqli_query($this->data_conexion,"START TRANSACTION");
+    }
+
+    // FUNCION PARA GUARDAR LOS CAMBIOS DE LA TRANSACCION.
+    public function guardarTransaccion()
+    {
+		mysqli_query($this->data_conexion,"COMMIT");
+    }
+    
+    // FUNCION PARA DESHACER TODA LA TRANSACCION.
+    public function calcelarTransaccion()
+    {
+		mysqli_query($this->data_conexion,"ROLLBACK");
     }
 }
