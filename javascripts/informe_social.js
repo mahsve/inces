@@ -2197,37 +2197,40 @@ $(function () {
     }
     function imprimirInforme (e) {
         e.preventDefault();
-        let posicion = $(this).attr('data-posicion');
-        let numero = dataListado.resultados[posicion].numero;
+        window.open(url+'controllers/pdf/r_informe_social2.php', 'Informe social', "width= 1000, height= 700, center");
 
-        swal({
-            title   : 'Generando PDF',
-            text    : 'Generando PDF, por favor espera unos segundos hasta que se complete la tarea',
-            icon    : 'info',
-            buttons : false
-        });
-        ///////////////////////////////////////////////////////
-        $.ajax({
-            url : url+'controllers/pdf/r_informe_social.php',
-            type: 'POST',
-            data: {
-                numero: numero
-            },
-            success: function (resultados){
-                swal.close();
-                window.open(url+'pdf/'+resultados, '_blank');
-                console.log(resultados); // EN CASO DE ERROR
-            },
-            error: function (){
-                swal({
-                    title   : 'Error',
-                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                    icon    : 'error',
-                    buttons : false,
-                    timer   : 4000
-                });
-            }
-        });
+        // 
+        // let posicion = $(this).attr('data-posicion');
+        // let numero = dataListado.resultados[posicion].numero;
+
+        // swal({
+        //     title   : 'Generando PDF',
+        //     text    : 'Generando PDF, por favor espera unos segundos hasta que se complete la tarea',
+        //     icon    : 'info',
+        //     buttons : false
+        // });
+        // ///////////////////////////////////////////////////////
+        // $.ajax({
+        //     url : url+'controllers/pdf/r_informe_social.php',
+        //     type: 'POST',
+        //     data: {
+        //         numero: numero
+        //     },
+        //     success: function (resultados){
+        //         swal.close();
+        //         window.open(url+'pdf/'+resultados, '_blank');
+        //         console.log(resultados); // EN CASO DE ERROR
+        //     },
+        //     error: function (){
+        //         swal({
+        //             title   : 'Error',
+        //             text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+        //             icon    : 'error',
+        //             buttons : false,
+        //             timer   : 4000
+        //         });
+        //     }
+        // });
     }
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA GUARDAR LOS DATOS DEL APRENDIZ EN LOCALSTORAGE.
