@@ -116,7 +116,7 @@
                         <i class="fas fa-map-marked-alt"></i><span class="ml-1">Ubicación</span><i id="icon-ubicacion" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
-                <li class="nav-item" style="display: none;">
+                <li class="nav-item">
                     <a class="nav-link" id="pills-datos-archivos-tab" data-toggle="pill" href="#pills-datos-archivos" role="tab" aria-controls="pills-datos-archivos" aria-selected="false">
                         <i class="fas fa-file-word"></i><span class="ml-1">Archivos</span><i id="icon-archivos" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
@@ -388,19 +388,24 @@
 
                 <div id="pills-datos-archivos" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-archivos-tab">
                     <div class="form-row">
-                        <!-- TITULO -->
                         <div class="col-sm-12">
                             <h3 class="font-weight-normal text-secondary text-center text-uppercase">Subir Archivos</h3>
-                        
-                            <p class="d-inline-block text-secondary border-bottom border-info w-100 mb-2" style="border-width: 2px !important;">Puede subir todos los archivos que quiera relacionados al facilitador, PDF, documentos Word, Imagenes (PNG, JPG, JPEG).</p>
+
+                            <div class="border mt-3 mb-4 p-2">
+                                <h5 class="font-weight-normal text-secondary text-center text-uppercase mb-2">Archivos subidos</h5>
+                                <div class="border">
+                                    <div id="archivos-guardados" class="form-row overflow-auto py-1 px-2" style="max-height: 350px;"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <p class="text-secondary mb-0 small">Puede subir todos los archivos que quiera relacionados al facilitador, PDF, documentos Word, Imagenes (PNG, JPG, JPEG).</p>
+                                <button id="agregar-input-file" type="button" class="btn btn-sm btn-info" style="top: 5px;"><i class="fas fa-plus"></i></button>
+                            </div>
                         </div>
 
-                        <!-- CONDICIONES DE LA VIVIENDA -->
-                        <div class="col-lg-6 align-self-end">
-                            <div class="form-group mb-2">
-                                <label for="condicion_vivienda" class="small m-0">Condiciones generales de la vivienda <span class="text-danger">*</span></label>
-                                <textarea name="condicion_vivienda" id="condicion_vivienda" class="form-control form-control-sm localStorage"></textarea>
-                            </div>
+                        <div class="col-sm-12 overflow-scroll">
+                            <div id="contenedor-input-file" class="border overflow-auto mb-2 py-1 px-2" style="max-height: 350px;"></div>
                         </div>
                     </div>
                 </div>

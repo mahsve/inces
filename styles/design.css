@@ -1,6 +1,9 @@
 /* ======================= ELEMENTO GENERALES ======================= */
 /* ======= ELEMENTOS CON EL MISMO DISEÑO EN TODA LA APLICACION ====== */
-
+.progress-bar {
+    -webkit-transition: none !important;
+    transition: none !important;
+}
 /* ======================= ESTILOS DATAPICKER ======================= */
 .datepicker.datepicker-dropdown.dropdown-menu {
     color: #6c757d;
@@ -18,6 +21,7 @@
     background: #138496 !important;
 }
 /* ===================== FIN ESTILOS DATAPICKER ===================== */
+
 
 /* ======================= ESTILOS SWAL MODAL ======================= */
 .swal-modal {
@@ -40,5 +44,16 @@
 /* ==================== ESTILOS ELEMENTOS NATIVOS =================== */
 select {
     cursor: pointer;
+}
+.custom-file, .custom-file input.custom-file-input, .custom-file label.custom-file-label {
+    height: calc(1.5em + .6rem + 2px);
+    font-size: 13px;
+}
+.custom-file label::after {
+    height: calc(1.5em + .6rem);
+    padding-top: .25rem;
+    padding-bottom: .25rem;
+    font-size: 13px;
+    content: 'Elegir';
 }
 /* ================== FIN ESTILOS ELEMENTOS NATIVOS ================= */

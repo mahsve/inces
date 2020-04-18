@@ -163,10 +163,10 @@ form .required {
     color: #ffc6c6;
 }
 /* =============== ESTILOS FORMULARIOS COMPONENTES ============== */
-.form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
-.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+.custom-file-input:focus, .form-control:focus, .custom-select:focus, .custom-control-input:focus ~ .custom-control-label::before,
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before, .custom-file-input:focus ~ .custom-file-label {
     border-color: #17a2b8;
-    box-shadow: 0 0 0 0.2rem rgba(23, 163, 184, 0.4);
+    box-shadow: 0 0 0 0.2rem rgba(23, 163, 184, 0.4) ;
 }
 .page-item.active .page-link, .custom-control-input:checked ~ .custom-control-label::before {
     background: #17a2b8;

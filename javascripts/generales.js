@@ -1,8 +1,7 @@
 $(function () {
     // FUNCION PARA MOSTRAR Y ESCONDER EL MENU EN PANTALLAS PEQUEÑAS.
     $('#menu-manager').click(gestionMenu);
-    function gestionMenu ()
-    {
+    function gestionMenu () {
         // SI TIENE LA CLASE MOSTRAR LA QUITA.
         if ($('#sidebar').hasClass('show'))
             $('#sidebar').removeClass('show');

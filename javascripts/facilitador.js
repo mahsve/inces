@@ -1,6 +1,20 @@
 $(function() {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+    let ER_caracteresConEspacios = /^([a-zA-Z,.\x7f-\xff](\s[a-zA-Z,.\x7f-\xff])*)+$/;
+    let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
+    let ER_NumericoSinEspacios=/^([0-9])+$/;
+    let ER_NumericoConComa=/^([0-9.])+$/;
+    let ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    /////////////////////////////////////////////////////////////////////
+    let pestania1, pestania2, pestania3;
+    /////////////////////////////////////////////////////////////////////
+    let colorb = "#d4ffdc";
+    let colorm = "#ffc6c6";
+    let colorn = "#ffffff";
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // DATOS DE LA TABLA Y PAGINACION
     let numeroDeLaPagina    = 1;
     $('#cantidad_a_buscar').change(restablecerN);
@@ -21,8 +35,12 @@ $(function() {
     $('#buscar_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
     let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
+    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR UNA FECHA TEMPORAL EN FAMILIAR.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
+    let formatos_acce   = ['jpeg', 'jpg', 'png', 'pdf', 'word'];
+    let mensaje_input_file = '<h6 class="text-center py-2 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar archivos</h6>';
+    let mensaje_conte_arch = '<div class="col-sm-12"><h6 class="text-center py-2 m-0 text-uppercase text-secondary">No hay archivos guardados</h6></div>';
     /////////////////////////////////////////////////////////////////////
     function restablecerN () {
         numeroDeLaPagina = 1;
@@ -155,6 +173,345 @@ $(function() {
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    ////////////////////////// VALIDACIONES //////////////////////////
+    function verificarParte1 () {
+        pestania1 = true;
+        // VERIFICAR EL CAMPO DE NACIONALIDAD
+        let nacionalidad = $("#nacionalidad").val();
+        if(nacionalidad != ''){
+            $("#nacionalidad").css("background-color", colorb);
+        } else {
+            $("#nacionalidad").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE CEDULA
+        let cedula = $("#cedula").val();
+        if(cedula != ''){
+            if(cedula.match(ER_NumericoSinEspacios)){
+                if (cedula.length > 7) {
+                    if (validarCedula) {
+                        $("#cedula").css("background-color", colorb);
+                    } else {
+                        $("#cedula").css("background-color", colorm);
+                        $("#nacionalidad").css("background-color", colorm);
+                        estania1 = false;
+                    }
+                } else {
+                    $("#cedula").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            }else{
+                $("#cedula").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#cedula").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
+        let nombre_1 = $("#nombre_1").val();
+        if(nombre_1 != ''){
+            if(nombre_1.match(ER_caracteresConEspacios)){
+                $("#nombre_1").css("background-color", colorb);
+            }else{
+                $("#nombre_1").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#nombre_1").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
+        let nombre_2 = $("#nombre_2").val();
+        if(nombre_2 != ''){
+            if(nombre_2.match(ER_caracteresConEspacios)){
+                $("#nombre_2").css("background-color", colorb);
+            }else{
+                $("#nombre_2").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#nombre_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
+        let apellido_1 = $("#apellido_1").val();
+        if(apellido_1 != ''){
+            if(apellido_1.match(ER_caracteresConEspacios)){
+                $("#apellido_1").css("background-color", colorb);
+            }else{
+                $("#apellido_1").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#apellido_1").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
+        let apellido_2 = $("#apellido_2").val();
+        if(apellido_2 != ''){
+            if(apellido_2.match(ER_caracteresConEspacios)){
+                $("#apellido_2").css("background-color", colorb);
+            }else{
+                $("#apellido_2").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#apellido_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE SEXO
+        let sexo = $("#sexo").val();
+        if(sexo != ''){
+            $("#sexo").css("background-color", colorb);
+        } else {
+            $("#sexo").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
+        let fecha_n = $("#fecha_n").val();
+        if(fecha_n != ''){
+            let edad_cal = parseInt($('#edad').val());
+            if (edad_cal >= 17 && edad_cal <= 19) {
+                $("#fecha_n").css("background-color", colorb);
+            } else {
+                $("#fecha_n").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#fecha_n").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE LUGAR DE NACIMIENTO
+        let lugar_n = $("#lugar_n").val();
+        if(lugar_n != ''){
+            if(lugar_n.match(ER_alfaNumericoCompleto)){
+                $("#lugar_n").css("background-color", colorb);
+            }else{
+                $("#lugar_n").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#lugar_n").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE OCUPACION
+        let ocupacion = $("#ocupacion").val();
+        if(ocupacion != ''){
+            $("#ocupacion").css("background-color", colorb);
+        } else {
+            $("#ocupacion").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL CAMPO DE ESTADO CIVIL
+        let estado_civil = document.formulario.estado_civil.value;
+        $(".radio_estado_c_label").removeClass('inputMal');
+        if(estado_civil == ''){
+            $(".radio_estado_c_label").addClass('inputMal');
+            pestania1 = false;
+        } else {
+            $(".radio_estado_c_label").addClass('inputBien');
+        }
+        // VERIFICAR EL CAMPO DE GRADO DE INSTRUCCION
+        let grado_instruccion = document.formulario.grado_instruccion.value;
+        $(".radio_educacion_label").removeClass('inputMal');
+        if(grado_instruccion == ''){
+            $(".radio_educacion_label").addClass('inputMal');
+            pestania1 = false;
+        } else {
+            $(".radio_educacion_label").addClass('inputBien');
+        }
+        // SI EL CAMPO DE INSTRUCCION ES SUPERIOR, VERIFICAR QUE EL CAMPO TITULO NO ESTE VACIO.
+        if (grado_instruccion == 'SI' || grado_instruccion == 'SC') {
+            let titulo_edu = $("#titulo").val();
+            if(titulo_edu != ''){
+                if(titulo_edu.match(ER_caracteresConEspacios)){
+                    $("#titulo").css("background-color", colorb);
+                }else{
+                    $("#titulo").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            } else {
+                pestania1 = false;
+                $("#titulo").css("background-color", colorm);
+            }
+        }
+        // VERIFICAR EL CAMPO DE MISIONES REALZADAS (NO OBLIGATORIA)
+        let alguna_mision = $("#alguna_mision").val();
+        if(alguna_mision != ''){
+            if(alguna_mision.match(ER_alfaNumericoConEspacios)){
+                $("#alguna_mision").css("background-color", colorb);
+            }else{
+                $("#alguna_mision").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#alguna_mision").css("background-color", colorn);
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania1) {
+            $('#icon-ciudadano').hide();
+        } else {
+            $('#icon-ciudadano').show();
+        }
+    }
+    function verificarParte2 () {
+        pestania2 = true;
+        // VERIFICAR EL TELEFONO DE CASA
+        let telefono_1 = $("#telefono_1").val();
+        if(telefono_1 != ''){
+            if(telefono_1.match(ER_NumericoSinEspacios)){
+                if (telefono_1.length == 7 || telefono_1.length >= 10) {
+                    $("#telefono_1").css("background-color", colorb);
+                } else {
+                    $("#telefono_1").css("background-color", colorm);
+                    pestania2 = false;
+                }
+            }else{
+                $("#telefono_1").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#telefono_1").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // VERIFICAR EL TELEFONO CELULAR
+        let telefono_2 = $("#telefono_2").val();
+        if(telefono_2 != ''){
+            if(telefono_2.match(ER_NumericoSinEspacios)){
+                if (telefono_2.length >= 10) {
+                    $("#telefono_2").css("background-color", colorb);
+                } else {
+                    $("#telefono_2").css("background-color", colorm);
+                    pestania2 = false;
+                }
+            }else{
+                $("#telefono_2").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#telefono_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CORREO ELECTRONICO
+        let correo = $("#correo").val();
+        if(correo != ''){
+            if(correo.match(ER_email)){
+                $("#correo").css("background-color", colorb);
+            }else{
+                $("#correo").css("background-color", colorm);
+                pestania2 = false;
+            }
+        }else{
+            $("#correo").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE TURNO
+        let turno = $("#turno").val();
+        if(turno != ''){
+            $("#turno").css("background-color", colorb);
+        } else {
+            $("#turno").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // VERIFICAR EL CAMPO DE SALIDA OCUPACIONAL
+        let oficio = $("#oficio").val();
+        if(oficio != ''){
+            $("#oficio").css("background-color", colorb);
+        } else {
+            $("#oficio").css("background-color", colorm);
+            pestania2 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania2) {
+            $('#icon-contacto').hide();
+        } else {
+            $('#icon-contacto').show();
+        }
+    }
+    function verificarParte3 () {
+        pestania3 = true;
+        // VERIFICAR EL CAMPO DE ESTADO
+        let estado = $("#estado").val();
+        if(estado != ''){
+            $("#estado").css("background-color", colorb);
+        } else {
+            $("#estado").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE CIUDAD
+        let ciudad = $("#ciudad").val();
+        if(ciudad != ''){
+            $("#ciudad").css("background-color", colorb);
+        } else {
+            $("#ciudad").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE MUNICIPIO
+        let municipio = $("#municipio").val();
+        if(municipio != ''){
+            $("#municipio").css("background-color", colorb);
+        } else {
+            $("#municipio").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE PARROQUIA
+        let parroquia = $("#parroquia").val();
+        if(parroquia != ''){
+            $("#parroquia").css("background-color", colorb);
+        } else {
+            $("#parroquia").css("background-color", colorn);
+        }
+        // VERIFICAR EL CAMPO DE AREA
+        let area = $("#area").val();
+        if(area != ''){
+            $("#area").css("background-color", colorb);
+        } else {
+            $("#area").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE DIRECCION
+        let direccion = $("#direccion").val();
+        if(direccion != ''){
+            if(direccion.match(ER_alfaNumericoCompleto)){
+                $("#direccion").css("background-color", colorb);
+            }else{
+                $("#direccion").css("background-color", colorm);
+                pestania3 = false;
+            }
+        }else{
+            $("#direccion").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // VERIFICAR EL CAMPO DE PUNTO DE REFERENCIA
+        let punto_referencia = $("#punto_referencia").val();
+        if(punto_referencia != ''){
+            if(punto_referencia.match(ER_alfaNumericoCompleto)){
+                $("#punto_referencia").css("background-color", colorb);
+            }else{
+                $("#punto_referencia").css("background-color", colorm);
+                pestania3 = false;
+            }
+        }else{
+            $("#punto_referencia").css("background-color", colorm);
+            pestania3 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania3) {
+            $('#icon-ubicacion').hide();
+        } else {
+            $('#icon-ubicacion').show();
+        }
+    }
+    //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
+    $('.input_fecha').click(function () {
+        fechaTemporal = $(this).val();
+    });
+    $('.input_fecha').blur(function () {
+        $(this).val(fechaTemporal);
+    });
+    $('.input_fecha').change(function () {
+        fechaTemporal = $(this).val();
+    });
+    //////////////////////// FUNCIONES CAMPOS ////////////////////////
     $('#fecha_n').change(function (){
         let year    = $(this).val().substr(0,4);
         let month   = $(this).val().substr(5,2);
@@ -288,6 +645,8 @@ $(function() {
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
         $('#carga_espera').hide(400);
+        $('#archivos-guardados').html(mensaje_conte_arch);
+        $('#contenedor-input-file').html(mensaje_input_file);
         tipoEnvio = 'Registrar';
         /////////////////////
         limpiarFormulario();
@@ -301,6 +660,187 @@ $(function() {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
+    
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // FUNCION PARA AGREGAR NUEVOS INPUTS PARA SUBIR NUEVOS ARCHIVOS.
+    $('#agregar-input-file').click(function (e) {
+        e.preventDefault();
+        if ($('#contenedor-input-file').html() == mensaje_input_file) {
+            $('#contenedor-input-file').empty();
+        }
+        
+        let contenedor_file = '';
+        let numero_input_file = $('.nuevo-input-file').length;
+        contenedor_file += '<div class="nuevo-input-file p-1" style="min-width: 800px;">';
+        contenedor_file += '<form class="archivo-formulario d-flex w-100 align-items-start" enctype="multipart/form-data">';
+        contenedor_file += '<div class="form-row" style="width: calc(100% - 26px);">';
+        
+        // CAMPOS PARA SUBIR LAS IMAGENES
+        contenedor_file += '<div class="col-sm-4">';
+        contenedor_file += '<label class="small m-0">Archivo <span class="text-danger">*</span></label>';
+        contenedor_file += '<div class="custom-file custom-file-sm">';
+        contenedor_file += '<input type="file" name="archivo_input_file[]" class="archivo-input-file custom-file-input" accept=".jpeg, .jpg, .png, .pdf, .word">';
+        contenedor_file += '<label class="custom-file-label py-1 m-0">Seleccionar Archivo</label>';
+        contenedor_file += '</div>';
+        contenedor_file += '</div>';
+        /////////////////////////////////////////////
+        contenedor_file += '<div class="col-sm-6">';
+        contenedor_file += '<div class="form-group m-0">';
+        contenedor_file += '<label class="small m-0">Descripción <span class="text-danger">*</span></label>';
+        contenedor_file += '<input type="text" name="descripcion_archivo[]" class="descripcion-archivo form-control form-control-sm"/>';
+        contenedor_file += '</div>';
+        contenedor_file += '</div>';
+        /////////////////////////////////////////////
+        contenedor_file += '<div class="col-sm-2 align-self-end">';
+        contenedor_file += '<button type="button" class="btn btn-sm btn-info btn-block btn-enviar-archivo" data-posicion="'+numero_input_file+'" disabled="true"><i class="fas fa-upload"></i> Enviar</button>';
+        contenedor_file += '</div>';
+        // CAMPOS PARA SUBIR LAS IMAGENES
+
+        contenedor_file += '</div>';
+        contenedor_file += '<button type="button" class="btn btn-sm btn-danger rounded-circle ml-2 btn-eliminar-input-file" style="padding-top: 2px; padding-bottom: 2px;" data-posicion="'+numero_input_file+'"><i class="fas fa-times"></i></button>';
+        contenedor_file += '</form>';
+
+        contenedor_file += '<div class="progress barra-envio-archivo mt-2">';
+        contenedor_file += '<div class="progress-bar bg-info" role="progressbar" style="width: 0%"></div>';
+        contenedor_file += '</div>';
+
+        contenedor_file += '<p class="mensaje-error-archivo small text-danger mt-1 mb-0" style="display: none;"></p>';
+        contenedor_file += '<hr class="my-1">';
+        contenedor_file += '</div>';
+
+        $('#contenedor-input-file').append(contenedor_file);
+        $($('.btn-enviar-archivo')[numero_input_file]).click(enviarArchivo);
+        $($('.btn-eliminar-input-file')[numero_input_file]).click(eliminarInputFile);
+
+        $($('.archivo-input-file')[numero_input_file]).change(btnEnviarHabilitado);
+        $($('.descripcion-archivo')[numero_input_file]).keyup(btnEnviarHabilitado);
+        function btnEnviarHabilitado () {
+            let btnHabilitador  = true;
+            let inputFileImage  = $($('.archivo-input-file')[numero_input_file])[0];
+            if (inputFileImage.files[0] != undefined) {
+                let fileName    = inputFileImage.files[0].name.split('.');
+                let nfileName   = fileName.length - 1;
+                $($('.custom-file-label')[numero_input_file]).html(inputFileImage.files[0].name);
+                if (formatos_acce.indexOf(fileName[nfileName]) == -1) {
+                    btnHabilitador = false;
+                    $($('.mensaje-error-archivo')[numero_input_file]).show();
+                    $($('.mensaje-error-archivo')[numero_input_file]).html("<b>[Error]: Unicos formatos (.jpeg, .jpg, .png, .pdf, .word)</b>");
+                } else {
+                    $($('.mensaje-error-archivo')[numero_input_file]).hide();
+                }
+            } else {
+                btnHabilitador = false;
+            }
+
+            let descripcion_archivo = $($('.descripcion-archivo')[numero_input_file]).val();
+            if (descripcion_archivo != '') {
+                if(!descripcion_archivo.match(ER_alfaNumericoConEspacios)) {
+                    btnHabilitador = false;
+                }
+            } else {
+                btnHabilitador = false;
+            }
+
+            if (btnHabilitador) {
+                $($('.btn-enviar-archivo')[numero_input_file]).attr('disabled', false);
+            } else {
+                $($('.btn-enviar-archivo')[numero_input_file]).attr('disabled', true);
+            }
+        }
+    });
+    function enviarArchivo () {
+        let posicion_arch = $(this).attr('data-posicion');
+        let inputFileImage = $($('.archivo-input-file')[posicion_arch])[0];
+        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).addClass('bg-info');
+        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).removeClass('bg-danger');
+        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).css('width', '0%');
+        $($('.mensaje-error-archivo')[posicion_arch]).hide();
+
+        let fileName    = inputFileImage.files[0].name;
+        let file        = inputFileImage.files[0];
+        let data        = new FormData();
+        data.append('archivo', file);
+
+        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).animate({ width: "80%" }, 5000);
+        $($('.btn-enviar-archivo')[posicion_arch]).attr('disabled', true);
+        $.ajax({
+            url : url+'controllers/c_imagenes_temporales.php',
+            type: 'POST',
+            data: data,
+            contentType: false,
+            processData: false,
+            cache: false,
+            success: function(respuesta) {
+                $($('.barra-envio-archivo .progress-bar')[posicion_arch]).animate({width: "100%"}, 2000, function () {
+                    console.log(respuesta);
+                    if (respuesta == 'Exitoso') {
+                        mostrarImagen();
+                        let numero_img_temp = $('.archivo-temporal').length - 1;
+
+                        // $($('.nombre_imagen')[posicion_arch]).val(fileName);
+                        // $($('.descripcion_imagen')[posicion_arch]).val($($('.descripcion_img')[posicion_arch]).val());
+                        // $($('.imagen_imagen')[posicion_arch]).attr('src', 'temp/'+fileName);
+                        // $($('.descripcion_imagen2')[posicion_arch]).html($($('.descripcion_img')[posicion_arch]).val());
+
+                        $($('.btn-eliminar-input-file')[posicion_arch]).trigger('click');
+                    } else if (respuesta == 'Error') {
+                        $($('.mensaje-error-archivo')[posicion_arch]).show();
+                        $($('.mensaje-error-archivo')[posicion_arch]).html('[Error] No se pude subir el archivo.');
+                        $($('.btn-enviar-archivo')[posicion_arch]).attr('disabled', false);
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).stop();
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).removeClass('bg-info');
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).addClass('bg-danger');
+                    } else if (respuesta == 'Vacio') {
+                        $($('.mensaje-error-archivo')[posicion_arch]).show();
+                        $($('.mensaje-error-archivo')[posicion_arch]).html('<b>[Error]: No ha seleccionado ningún archivo.</b>');
+                        $($('.btn-enviar-archivo')[posicion_arch]).attr('disabled', false);
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).stop();
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).removeClass('bg-info');
+                        $($('.barra-envio-archivo .progress-bar')[posicion_arch]).addClass('bg-danger');
+                    }
+                });
+            }, error: function (msjError){
+                $($('.mensaje-error-archivo')[posicion_arch]).show();
+                $($('.mensaje-error-archivo')[posicion_arch]).html('<b>[Error]: Problemas de conexión.</b>');
+                $($('.btn-enviar-archivo')[posicion_arch]).attr('disabled', false);
+                $($('.barra-envio-archivo .progress-bar')[posicion_arch]).stop();
+                $($('.barra-envio-archivo .progress-bar')[posicion_arch]).removeClass('bg-info');
+                $($('.barra-envio-archivo .progress-bar')[posicion_arch]).addClass('bg-danger');
+                console.log('Error: '+msjError.status+' - '+msjError.statusText);
+            }
+        });
+    }
+    function eliminarInputFile() {
+        let posicion = $(this).attr('data-posicion');
+        let nueva_posicion;
+        $($('.nuevo-input-file')[posicion]).remove();
+        /////////////////////////////////////////////
+        nueva_posicion = 0;
+        $('.btn-enviar-archivo').each(function () {
+            $(this).attr('data-posicion', nueva_posicion);
+            nueva_posicion++;
+        });
+        /////////////////////////////////////////////
+        nueva_posicion = 0;
+        $('.btn-eliminar-input-file').each(function () {
+            $(this).attr('data-posicion', nueva_posicion);
+            nueva_posicion++;
+        });
+        /////////////////////////////////////////////
+        if ($('#contenedor-input-file').html() == '') {
+            $('#contenedor-input-file').html(mensaje_input_file);
+        }
+    }
+    function mostrarImagen () {
+        let contenido_archivo = '';
+        contenido_archivo += '';
+        $('#archivos-guardados').append();
+    }
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
@@ -312,6 +852,7 @@ $(function() {
         $('#gestion_form').show(400);
         $('#form_title').html('Modificar');
         $('#carga_espera').show();
+        $('#contenedor-archivos').html(mensaje_input_file);
         tipoEnvio = 'Modificar';
         /////////////////////
         limpiarFormulario();
@@ -417,6 +958,7 @@ $(function() {
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////

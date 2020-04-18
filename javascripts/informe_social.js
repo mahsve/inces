@@ -2197,11 +2197,13 @@ $(function () {
     }
     function imprimirInforme (e) {
         e.preventDefault();
-        window.open(url+'controllers/pdf/r_informe_social2.php', 'Informe social', "width= 1000, height= 700, center");
+
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+        window.open(url+'controllers/reportes/r_informe_social?n='+numero, '_blank');
 
         // 
-        // let posicion = $(this).attr('data-posicion');
-        // let numero = dataListado.resultados[posicion].numero;
+        // 
 
         // swal({
         //     title   : 'Generando PDF',
