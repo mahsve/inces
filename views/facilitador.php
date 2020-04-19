@@ -394,7 +394,7 @@
                             <div class="border mt-3 mb-4 p-2">
                                 <h5 class="font-weight-normal text-secondary text-center text-uppercase mb-2">Archivos subidos</h5>
                                 <div class="border">
-                                    <div id="archivos-guardados" class="form-row overflow-auto py-1 px-2" style="max-height: 350px;"></div>
+                                    <div id="archivos-guardados" class="form-row overflow-auto p-3" style="max-height: 350px;"></div>
                                 </div>
                             </div>
 

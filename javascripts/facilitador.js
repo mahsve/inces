@@ -38,9 +38,9 @@ $(function() {
     let fechaTemporal   = '';   // VARIABLE PARA GUARDAR UNA FECHA TEMPORAL EN FAMILIAR.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
-    let formatos_acce   = ['jpeg', 'jpg', 'png', 'pdf', 'word'];
+    let formatos_acce   = ['jpeg', 'jpg', 'png', 'pdf', 'doc', 'docx'];
+    let mensaje_conte_arch = '<div class="col-sm-12"><h6 class="text-center m-0 text-uppercase text-secondary"><i class="fas fa-archive text-dark"></i> No hay archivos guardados</h6></div>';
     let mensaje_input_file = '<h6 class="text-center py-2 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar archivos</h6>';
-    let mensaje_conte_arch = '<div class="col-sm-12"><h6 class="text-center py-2 m-0 text-uppercase text-secondary">No hay archivos guardados</h6></div>';
     /////////////////////////////////////////////////////////////////////
     function restablecerN () {
         numeroDeLaPagina = 1;
@@ -649,6 +649,8 @@ $(function() {
         $('#contenedor-input-file').html(mensaje_input_file);
         tipoEnvio = 'Registrar';
         /////////////////////
+        window.eliminarArchivos = [];
+        /////////////////////
         limpiarFormulario();
     });
     $('#show_table').click(function (){
@@ -680,7 +682,7 @@ $(function() {
         contenedor_file += '<div class="col-sm-4">';
         contenedor_file += '<label class="small m-0">Archivo <span class="text-danger">*</span></label>';
         contenedor_file += '<div class="custom-file custom-file-sm">';
-        contenedor_file += '<input type="file" name="archivo_input_file[]" class="archivo-input-file custom-file-input" accept=".jpeg, .jpg, .png, .pdf, .word">';
+        contenedor_file += '<input type="file" name="archivo_input_file[]" class="archivo-input-file custom-file-input" accept=".jpeg, .jpg, .png, .pdf, .doc, .docx">';
         contenedor_file += '<label class="custom-file-label py-1 m-0">Seleccionar Archivo</label>';
         contenedor_file += '</div>';
         contenedor_file += '</div>';
@@ -715,6 +717,7 @@ $(function() {
 
         $($('.archivo-input-file')[numero_input_file]).change(btnEnviarHabilitado);
         $($('.descripcion-archivo')[numero_input_file]).keyup(btnEnviarHabilitado);
+        $($('.descripcion-archivo')[numero_input_file]).keypress(desabilitarEnter);
         function btnEnviarHabilitado () {
             let btnHabilitador  = true;
             let inputFileImage  = $($('.archivo-input-file')[numero_input_file])[0];
@@ -725,7 +728,7 @@ $(function() {
                 if (formatos_acce.indexOf(fileName[nfileName]) == -1) {
                     btnHabilitador = false;
                     $($('.mensaje-error-archivo')[numero_input_file]).show();
-                    $($('.mensaje-error-archivo')[numero_input_file]).html("<b>[Error]: Unicos formatos (.jpeg, .jpg, .png, .pdf, .word)</b>");
+                    $($('.mensaje-error-archivo')[numero_input_file]).html("<b>[Error]: Unicos formatos (.jpeg, .jpg, .png, .pdf, .doc, docx)</b>");
                 } else {
                     $($('.mensaje-error-archivo')[numero_input_file]).hide();
                 }
@@ -752,6 +755,7 @@ $(function() {
     function enviarArchivo () {
         let posicion_arch = $(this).attr('data-posicion');
         let inputFileImage = $($('.archivo-input-file')[posicion_arch])[0];
+
         $($('.barra-envio-archivo .progress-bar')[posicion_arch]).addClass('bg-info');
         $($('.barra-envio-archivo .progress-bar')[posicion_arch]).removeClass('bg-danger');
         $($('.barra-envio-archivo .progress-bar')[posicion_arch]).css('width', '0%');
@@ -773,16 +777,26 @@ $(function() {
             cache: false,
             success: function(respuesta) {
                 $($('.barra-envio-archivo .progress-bar')[posicion_arch]).animate({width: "100%"}, 2000, function () {
-                    console.log(respuesta);
                     if (respuesta == 'Exitoso') {
                         mostrarImagen();
+                        let getDescripcion = $($('.descripcion-archivo')[posicion_arch]).val();
+                        let fileName2   = fileName.split('.');
+                        let nfileName   = fileName2.length - 1;
+                        let iconoArchivo = '';
+                        if (fileName2[nfileName] == 'doc' || fileName2[nfileName] == 'docx') {
+                            iconoArchivo = url+'images/app/icono-word.png';
+                        } else if (fileName2[nfileName] == 'pdf') {
+                            iconoArchivo = url+'images/app/icono-pdf.png';
+                        } else {
+                            iconoArchivo = url+'images/temp/'+fileName;
+                        }
+                        
                         let numero_img_temp = $('.archivo-temporal').length - 1;
-
-                        // $($('.nombre_imagen')[posicion_arch]).val(fileName);
-                        // $($('.descripcion_imagen')[posicion_arch]).val($($('.descripcion_img')[posicion_arch]).val());
-                        // $($('.imagen_imagen')[posicion_arch]).attr('src', 'temp/'+fileName);
-                        // $($('.descripcion_imagen2')[posicion_arch]).html($($('.descripcion_img')[posicion_arch]).val());
-
+                        $($('.nombre-archivo-temp')[numero_img_temp]).val(fileName);
+                        $($('.descrip-archivo-temp')[numero_img_temp]).val(getDescripcion);
+                        $($('.previzualizacion-archivo')[numero_img_temp]).attr('src', iconoArchivo);
+                        $($('.p-descripcion-archivo')[numero_img_temp]).html(getDescripcion);
+                        
                         $($('.btn-eliminar-input-file')[posicion_arch]).trigger('click');
                     } else if (respuesta == 'Error') {
                         $($('.mensaje-error-archivo')[posicion_arch]).show();
@@ -833,9 +847,42 @@ $(function() {
         }
     }
     function mostrarImagen () {
+        if ($('#archivos-guardados').html() == mensaje_conte_arch) {
+            $('#archivos-guardados').empty();
+        }
+
         let contenido_archivo = '';
-        contenido_archivo += '';
-        $('#archivos-guardados').append();
+        let numero_archivo = $('.archivo-temporal').length;
+        contenido_archivo += '<div class="col-sm-2 archivo-temporal position-relative">';
+        contenido_archivo += '<button type="button" class="btn btn-sm btn-danger rounded-circle btn-eliminar-arch position-absolute" style="padding-top: 2px; padding-bottom: 2px; top: -7px; right: -3px;" data-eliminar="0"><i class="fas fa-times"></i></button>';
+        
+        contenido_archivo += '<input type="hidden" name="id_archivo_temp[]" class="id-archivo-temp" value="0">';
+        contenido_archivo += '<input type="hidden" name="nombre_archivo_temp[]" class="nombre-archivo-temp">';
+        contenido_archivo += '<input type="hidden" name="descrip_archivo_temp[]" class="descrip-archivo-temp">';
+
+        contenido_archivo += '<div class="bg-info p-2 rounded">';
+        contenido_archivo += '<div><img class="previzualizacion-archivo bg-white border rounded w-100 mb-1 p-2"></div>';
+        contenido_archivo += '<p class="p-descripcion-archivo text-white m-0 small text-capitalize"></p>';
+        contenido_archivo += '</div>';
+
+        contenido_archivo += '</div>';
+        $('#archivos-guardados').append(contenido_archivo);
+
+        $($('.btn-eliminar-arch')[numero_archivo]).click(function (e) {
+            e.preventDefault();
+            $(this).closest('div').find(".archivo-temporal")['prevObject'].remove();
+            if ($(this).attr('data-eliminar') != 0) {
+                window.eliminarArchivos.push($(this).attr('data-eliminar'));
+            }
+            if ($('#archivos-guardados').html() == '') {
+                $('#archivos-guardados').html(mensaje_conte_arch);
+            }
+        });
+    }
+    function desabilitarEnter (e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+        }
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
