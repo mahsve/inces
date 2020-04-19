@@ -6,19 +6,17 @@ if ($_POST['opcion']) {
     
     switch ($_POST['opcion']) {
         case 'Registrar':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->registrarOcupacion($data)) {
-                echo 'Registro exitoso';
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaR($_POST) == 0) {
+                // SE PROCEDE A REGISTRAR
+                if ($objeto->registrarOcupacion($_POST)) {
+                    echo 'Registro exitoso';
+                } else {
+                    echo 'Registro fallido';
+                }
             } else {
-                echo 'Registro fallido';
+                echo 'Ya está registrado';
             }
             $objeto->desconectar();
         break;
@@ -26,59 +24,44 @@ if ($_POST['opcion']) {
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
-            ////////////////////// LIMPIAR DATOS ///////////////////////
-            $datosLimpios = [];
-            foreach ($_POST as $posicion => $valor) {
-                $datosLimpios[$posicion] = htmlspecialchars($valor);
-            }
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $datosLimpios['ordenar_tipo'] = 'ASC';
+            $_POST['ordenar_tipo'] = 'ASC';
             if ($_POST['tipo_ord'] == 1)
-                $datosLimpios['ordenar_tipo'] = 'ASC';
+                $_POST['ordenar_tipo'] = 'ASC';
             else if ($_POST['tipo_ord'] == 2)
-                $datosLimpios['ordenar_tipo'] = 'DESC';
+                $_POST['ordenar_tipo'] = 'DESC';
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+            $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
             if ($_POST['ordenar'] == 1)
-                $datosLimpios['ordenar_por'] = 'codigo '.$datosLimpios['ordenar_tipo'];
+                $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
             else if ($_POST['ordenar'] == 2)
-                $datosLimpios['ordenar_por'] = 'nombre '.$datosLimpios['ordenar_tipo'];
+                $_POST['ordenar_por'] = 'nombre '.$_POST['ordenar_tipo'];
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarOcupaciones($datosLimpios);
-            $resultados['total']        = $objeto->consultarOcupacionesTotal($datosLimpios);
+            $resultados['resultados']   = $objeto->consultarOcupaciones($_POST);
+            $resultados['total']        = $objeto->consultarOcupacionesTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
         
         case 'Modificar':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->modificarOcupacion($data)) {
-                echo 'Modificacion exitosa';
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaM($_POST) == 0) {
+                // SE PROCEDE A MODIFICAR
+                if ($objeto->modificarOcupacion($_POST)) {
+                    echo 'Modificación exitosa';
+                } else {
+                    echo 'Modificación fallida';
+                }
             } else {
-                echo 'Modificación fallida';
+                echo 'Ya está registrado';
             }
             $objeto->desconectar();
         break;
 
         case 'Estatus':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->estatusOcupacion($data)) {
+            if ($objeto->estatusOcupacion($_POST)) {
                 echo 'Modificacion exitosa';
             } else {
                 echo 'Modificación fallida';
@@ -86,10 +69,8 @@ if ($_POST['opcion']) {
             $objeto->desconectar();
         break;
     }
-}
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
+} else {
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';

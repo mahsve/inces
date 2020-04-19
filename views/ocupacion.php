@@ -3,7 +3,7 @@
         <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
         <?php if ($permisos['registrar'] == 1){ ?>
-            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip" disabled="true"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
         <?php } ?>
     </div>
 
@@ -27,6 +27,7 @@
                     <select id="ordenar_por" class="custom-select custom-select-sm">
                         <option value="1">Codigo</option>
                         <option value="2">Nombre</option>
+                        <option value="3">Formulario</option>
                     </select>
                 </div>
 
@@ -53,7 +54,7 @@
         <div class="col-sm-12 col-xl-3 mb-2">
             <div class="form-group d-flex align-items-center text-info position-relative mb-0">
                 <label for="campo_busqueda" class="position-absolute pr-2 m-0" style="right: 2px;"><i class="fas fa-search"></i></label>
-                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right:30px;" placeholder="Buscar por nombre" autocomplete="off"/>
+                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right: 30px;" placeholder="Buscar por nombre" autocomplete="off"/>
             </div>
         </div>
     </div>
@@ -64,6 +65,7 @@
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal text-right py-2 pl-1 pr-2" width="80">#</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre de la ocupación</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Formulario</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> px-1 py-2" width="85">Estatus</th>
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
                         <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 76; else echo 40; ?>"></th>
@@ -72,15 +74,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 4; else echo 3; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
+                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 5; else echo 4; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <p class="font-weight-bold text-secondary" style="font-size: 13px;">Total registros
+        <div class="col-sm-12 col-md-6 align-self-center">
+            <p class="font-weight-bold text-secondary m-0" style="font-size: 13px;">Total registros
                 <span id="total_registros">0</span>
             </p>
         </div>
@@ -89,6 +91,8 @@
                 <ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul>
             </nav>
         </div>
+
+        <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
 
@@ -103,15 +107,26 @@
             <div class="form-row">
                 <div class="col-sm-12 offset-md-3 col-md-6">
                     <div class="form-group has-warning mb-2">
-                        <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
+                        <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese la ocupación" autocomplete="off"/>
                     </div>
+                    <div class="form-group has-warning mb-2">
+                        <label for="c_formulario" class="d-inline-block w-100 position-relative small m-0">Formulario<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <select name="c_formulario" id="c_formulario" class="custom-select custom-select-sm">
+                            <option value="">Elija el formulario a mostrar</option>
+                            <option value="A">Aprendiz</option>
+                            <option value="B">Familia del aprendiz</option>
+                            <option value="F">Facilitador</option>
+                        </select>
+                    </div>
+
+                    <div id="contenedor-mensaje2"></div>
                 </div>
             </div>
 
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">
-                <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+                <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>

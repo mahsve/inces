@@ -4,7 +4,6 @@ $(function() {
     let ER_caracteresConEspacios = /^([a-zA-Z,.\x7f-\xff](\s[a-zA-Z,.\x7f-\xff])*)+$/;
     let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
     let ER_NumericoSinEspacios=/^([0-9])+$/;
-    let ER_NumericoConComa=/^([0-9.])+$/;
     let ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     /////////////////////////////////////////////////////////////////////
     let pestania1, pestania2, pestania3;
@@ -12,6 +11,7 @@ $(function() {
     let colorb = "#d4ffdc";
     let colorm = "#ffc6c6";
     let colorn = "#ffffff";
+    
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -948,8 +948,7 @@ $(function() {
         $('#ocupacion').val(dataListado.resultados[posicion].codigo_ocupacion);
         document.formulario.estado_civil.value = dataListado.resultados[posicion].estado_civil;
         document.formulario.grado_instruccion.value = dataListado.resultados[posicion].nivel_instruccion;
-        if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
-            $('#titulo').attr('disabled', false);
+        if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC') { $('#titulo').attr('readonly', false); }
 
         $('#titulo').val(dataListado.resultados[posicion].titulo_acade);
         $('#alguna_mision').val(dataListado.resultados[posicion].mision_participado);

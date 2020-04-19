@@ -438,7 +438,7 @@
 
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">
-                <button id="guardar_datos" type="button" class="btn btn-sm btn-info"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+                <button id="guardar_datos" type="button" class="btn btn-sm btn-info"><i class="fas fa-save"></i> <span>Guardar</span></button>
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>

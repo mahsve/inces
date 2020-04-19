@@ -56,4 +56,7 @@ select {
     font-size: 13px;
     content: 'Elegir';
 }
+.custom-file-label {
+    overflow: hidden;
+}
 /* ================== FIN ESTILOS ELEMENTOS NATIVOS ================= */
