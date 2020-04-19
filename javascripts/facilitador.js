@@ -40,7 +40,7 @@ $(function() {
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
     let formatos_acce   = ['jpeg', 'jpg', 'png', 'pdf', 'doc', 'docx'];
     let mensaje_conte_arch = '<div class="col-sm-12"><h6 class="text-center m-0 text-uppercase text-secondary"><i class="fas fa-archive text-dark"></i> No hay archivos guardados</h6></div>';
-    let mensaje_input_file = '<h6 class="text-center py-2 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar archivos</h6>';
+    let mensaje_input_file = '<h6 class="text-center py-2 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top; cursor: default;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar archivos</h6>';
     /////////////////////////////////////////////////////////////////////
     function restablecerN () {
         numeroDeLaPagina = 1;
@@ -178,11 +178,80 @@ $(function() {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     ////////////////////////// VALIDACIONES //////////////////////////
+    let validarCedula = false;
+    $('#nacionalidad').change(function () {
+        $('#cedula').trigger('blur');
+    });
+    $('#cedula').blur(function (){
+        validarCedula = false;
+        $('#spinner-cedula').hide();
+        $('#spinner-cedula-confirm').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
+
+        if($('#nacionalidad').val() != '') {
+            if ($('#cedula').val() != '') {
+                if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
+                    if ($('#cedula').val().length > 7) {
+                        $.ajax({
+                            url : url+'controllers/c_empresa.php',
+                            type: 'POST',
+                            data: {
+                                opcion: 'Verificar cedula',
+                                nacionalidad: $('#nacionalidad').val(),
+                                cedula: $('#cedula').val()
+                            },
+                            success: function (resultados) {
+                                try {
+                                    $('#spinner-cedula').hide();
+                                    //////////////////////////////////
+                                    let data = JSON.parse(resultados);
+                                    if (data) {
+                                        swal({
+                                            title   : 'Aprendiz ya registrado',
+                                            text    : 'Esta persona ya esta registrada en el sistema',
+                                            icon    : 'error',
+                                            buttons : false,
+                                            timer   : 4000
+                                        });
+                                        $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+                                    } else {
+                                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                        validarCedula = true;
+                                    }
+                                    $('#spinner-cedula-confirm').show(200);
+                                } catch (error) {
+                                    swal({
+                                        title   : 'Error',
+                                        text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
+                                        icon    : 'error',
+                                        buttons : false,
+                                        timer   : 4000
+                                    });
+                                    console.log(resultados);
+                                }
+                            },
+                            error: function () {
+                                swal({
+                                    title   : 'Error',
+                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
+                                    icon    : 'error',
+                                    buttons : false,
+                                    timer   : 4000
+                                });
+                            }
+                        });
+                    }
+                } else {
+                    validarCedula = true;
+                }
+            }
+        }
+    });
     function verificarParte1 () {
         pestania1 = true;
         // VERIFICAR EL CAMPO DE NACIONALIDAD
         let nacionalidad = $("#nacionalidad").val();
-        if(nacionalidad != ''){
+        if (nacionalidad != ''){
             $("#nacionalidad").css("background-color", colorb);
         } else {
             $("#nacionalidad").css("background-color", colorm);
@@ -190,7 +259,7 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DE CEDULA
         let cedula = $("#cedula").val();
-        if(cedula != ''){
+        if (cedula != '') {
             if(cedula.match(ER_NumericoSinEspacios)){
                 if (cedula.length > 7) {
                     if (validarCedula) {
@@ -198,7 +267,7 @@ $(function() {
                     } else {
                         $("#cedula").css("background-color", colorm);
                         $("#nacionalidad").css("background-color", colorm);
-                        estania1 = false;
+                        pestania1 = false;
                     }
                 } else {
                     $("#cedula").css("background-color", colorm);
@@ -208,26 +277,26 @@ $(function() {
                 $("#cedula").css("background-color", colorm);
                 pestania1 = false;
             }
-        }else{
+        } else {
             $("#cedula").css("background-color", colorm);
             pestania1 = false;
         }
         // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
         let nombre_1 = $("#nombre_1").val();
-        if(nombre_1 != ''){
+        if (nombre_1 != '') {
             if(nombre_1.match(ER_caracteresConEspacios)){
                 $("#nombre_1").css("background-color", colorb);
             }else{
                 $("#nombre_1").css("background-color", colorm);
                 pestania1 = false;
             }
-        }else{
+        } else {
             $("#nombre_1").css("background-color", colorm);
             pestania1 = false;
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
         let nombre_2 = $("#nombre_2").val();
-        if(nombre_2 != ''){
+        if (nombre_2 != '') {
             if(nombre_2.match(ER_caracteresConEspacios)){
                 $("#nombre_2").css("background-color", colorb);
             }else{
@@ -239,20 +308,20 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
         let apellido_1 = $("#apellido_1").val();
-        if(apellido_1 != ''){
+        if (apellido_1 != '') {
             if(apellido_1.match(ER_caracteresConEspacios)){
                 $("#apellido_1").css("background-color", colorb);
             }else{
                 $("#apellido_1").css("background-color", colorm);
                 pestania1 = false;
             }
-        }else{
+        } else {
             $("#apellido_1").css("background-color", colorm);
             pestania1 = false;
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
         let apellido_2 = $("#apellido_2").val();
-        if(apellido_2 != ''){
+        if (apellido_2 != '') {
             if(apellido_2.match(ER_caracteresConEspacios)){
                 $("#apellido_2").css("background-color", colorb);
             }else{
@@ -264,7 +333,7 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DE SEXO
         let sexo = $("#sexo").val();
-        if(sexo != ''){
+        if (sexo != '') {
             $("#sexo").css("background-color", colorb);
         } else {
             $("#sexo").css("background-color", colorm);
@@ -272,9 +341,9 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
         let fecha_n = $("#fecha_n").val();
-        if(fecha_n != ''){
+        if (fecha_n != '') {
             let edad_cal = parseInt($('#edad').val());
-            if (edad_cal >= 17 && edad_cal <= 19) {
+            if (edad_cal >= 20) {
                 $("#fecha_n").css("background-color", colorb);
             } else {
                 $("#fecha_n").css("background-color", colorm);
@@ -286,8 +355,8 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DE LUGAR DE NACIMIENTO
         let lugar_n = $("#lugar_n").val();
-        if(lugar_n != ''){
-            if(lugar_n.match(ER_alfaNumericoCompleto)){
+        if (lugar_n != '') {
+            if(lugar_n.match(ER_alfaNumericoConEspacios)){
                 $("#lugar_n").css("background-color", colorb);
             }else{
                 $("#lugar_n").css("background-color", colorm);
@@ -298,16 +367,63 @@ $(function() {
         }
         // VERIFICAR EL CAMPO DE OCUPACION
         let ocupacion = $("#ocupacion").val();
-        if(ocupacion != ''){
+        if (ocupacion != '') {
             $("#ocupacion").css("background-color", colorb);
         } else {
             $("#ocupacion").css("background-color", colorm);
             pestania1 = false;
         }
+        // VERIFICAR EL TELEFONO DE CASA
+        let telefono_1 = $("#telefono_1").val();
+        if (telefono_1 != '') {
+            if(telefono_1.match(ER_NumericoSinEspacios)){
+                if (telefono_1.length >= 10) {
+                    $("#telefono_1").css("background-color", colorb);
+                } else {
+                    $("#telefono_1").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            }else{
+                $("#telefono_1").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#telefono_1").css("background-color", colorm);
+            pestania1 = false;
+        }
+        // VERIFICAR EL TELEFONO CELULAR
+        let telefono_2 = $("#telefono_2").val();
+        if(telefono_2 != ''){
+            if(telefono_2.match(ER_NumericoSinEspacios)){
+                if (telefono_2.length >= 10) {
+                    $("#telefono_2").css("background-color", colorb);
+                } else {
+                    $("#telefono_2").css("background-color", colorm);
+                    pestania1 = false;
+                }
+            }else{
+                $("#telefono_2").css("background-color", colorm);
+                pestania1 = false;
+            }
+        }else{
+            $("#telefono_2").css("background-color", colorn);
+        }
+        // VERIFICAR EL CORREO ELECTRONICO
+        let correo = $("#correo").val();
+        if (correo != '') {
+            if(correo.match(ER_email)){
+                $("#correo").css("background-color", colorb);
+            }else{
+                $("#correo").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#correo").css("background-color", colorn);
+        }
         // VERIFICAR EL CAMPO DE ESTADO CIVIL
         let estado_civil = document.formulario.estado_civil.value;
         $(".radio_estado_c_label").removeClass('inputMal');
-        if(estado_civil == ''){
+        if (estado_civil == '') {
             $(".radio_estado_c_label").addClass('inputMal');
             pestania1 = false;
         } else {
@@ -358,148 +474,58 @@ $(function() {
     }
     function verificarParte2 () {
         pestania2 = true;
-        // VERIFICAR EL TELEFONO DE CASA
-        let telefono_1 = $("#telefono_1").val();
-        if(telefono_1 != ''){
-            if(telefono_1.match(ER_NumericoSinEspacios)){
-                if (telefono_1.length == 7 || telefono_1.length >= 10) {
-                    $("#telefono_1").css("background-color", colorb);
-                } else {
-                    $("#telefono_1").css("background-color", colorm);
-                    pestania2 = false;
-                }
-            }else{
-                $("#telefono_1").css("background-color", colorm);
-                pestania2 = false;
-            }
-        }else{
-            $("#telefono_1").css("background-color", colorm);
-            pestania2 = false;
-        }
-        // VERIFICAR EL TELEFONO CELULAR
-        let telefono_2 = $("#telefono_2").val();
-        if(telefono_2 != ''){
-            if(telefono_2.match(ER_NumericoSinEspacios)){
-                if (telefono_2.length >= 10) {
-                    $("#telefono_2").css("background-color", colorb);
-                } else {
-                    $("#telefono_2").css("background-color", colorm);
-                    pestania2 = false;
-                }
-            }else{
-                $("#telefono_2").css("background-color", colorm);
-                pestania2 = false;
-            }
-        }else{
-            $("#telefono_2").css("background-color", colorn);
-        }
-        // VERIFICAR EL CORREO ELECTRONICO
-        let correo = $("#correo").val();
-        if(correo != ''){
-            if(correo.match(ER_email)){
-                $("#correo").css("background-color", colorb);
-            }else{
-                $("#correo").css("background-color", colorm);
-                pestania2 = false;
-            }
-        }else{
-            $("#correo").css("background-color", colorn);
-        }
-        // VERIFICAR EL CAMPO DE TURNO
-        let turno = $("#turno").val();
-        if(turno != ''){
-            $("#turno").css("background-color", colorb);
-        } else {
-            $("#turno").css("background-color", colorm);
-            pestania2 = false;
-        }
-        // VERIFICAR EL CAMPO DE SALIDA OCUPACIONAL
-        let oficio = $("#oficio").val();
-        if(oficio != ''){
-            $("#oficio").css("background-color", colorb);
-        } else {
-            $("#oficio").css("background-color", colorm);
-            pestania2 = false;
-        }
-        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania2) {
-            $('#icon-contacto').hide();
-        } else {
-            $('#icon-contacto').show();
-        }
-    }
-    function verificarParte3 () {
-        pestania3 = true;
         // VERIFICAR EL CAMPO DE ESTADO
         let estado = $("#estado").val();
-        if(estado != ''){
+        if (estado != '') {
             $("#estado").css("background-color", colorb);
         } else {
             $("#estado").css("background-color", colorm);
-            pestania3 = false;
+            pestania2 = false;
         }
         // VERIFICAR EL CAMPO DE CIUDAD
         let ciudad = $("#ciudad").val();
-        if(ciudad != ''){
+        if (ciudad != '') {
             $("#ciudad").css("background-color", colorb);
         } else {
             $("#ciudad").css("background-color", colorm);
-            pestania3 = false;
+            pestania2 = false;
         }
         // VERIFICAR EL CAMPO DE MUNICIPIO
         let municipio = $("#municipio").val();
-        if(municipio != ''){
+        if (municipio != '') {
             $("#municipio").css("background-color", colorb);
         } else {
             $("#municipio").css("background-color", colorn);
         }
         // VERIFICAR EL CAMPO DE PARROQUIA
         let parroquia = $("#parroquia").val();
-        if(parroquia != ''){
+        if (parroquia != '') {
             $("#parroquia").css("background-color", colorb);
         } else {
             $("#parroquia").css("background-color", colorn);
         }
-        // VERIFICAR EL CAMPO DE AREA
-        let area = $("#area").val();
-        if(area != ''){
-            $("#area").css("background-color", colorb);
-        } else {
-            $("#area").css("background-color", colorm);
-            pestania3 = false;
-        }
         // VERIFICAR EL CAMPO DE DIRECCION
         let direccion = $("#direccion").val();
-        if(direccion != ''){
-            if(direccion.match(ER_alfaNumericoCompleto)){
+        if (direccion != '') {
+            if(direccion.match(ER_alfaNumericoConEspacios)){
                 $("#direccion").css("background-color", colorb);
             }else{
                 $("#direccion").css("background-color", colorm);
-                pestania3 = false;
+                pestania2 = false;
             }
-        }else{
+        } else {
             $("#direccion").css("background-color", colorm);
-            pestania3 = false;
-        }
-        // VERIFICAR EL CAMPO DE PUNTO DE REFERENCIA
-        let punto_referencia = $("#punto_referencia").val();
-        if(punto_referencia != ''){
-            if(punto_referencia.match(ER_alfaNumericoCompleto)){
-                $("#punto_referencia").css("background-color", colorb);
-            }else{
-                $("#punto_referencia").css("background-color", colorm);
-                pestania3 = false;
-            }
-        }else{
-            $("#punto_referencia").css("background-color", colorm);
-            pestania3 = false;
+            pestania2 = false;
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania3) {
+        if (pestania2) {
             $('#icon-ubicacion').hide();
         } else {
             $('#icon-ubicacion').show();
         }
+    }
+    function verificarParte3 () {
+
     }
     //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
     $('.input_fecha').click(function () {
@@ -542,9 +568,9 @@ $(function() {
     });
     $('.radio_educacion').click(function () {
         if ($(this).val() == 'SI' || $(this).val() == 'SC')
-            $('#titulo').attr('disabled', false);
+            $('#titulo').attr('readonly', false);
         else {
-            $('#titulo').attr('disabled', true);
+            $('#titulo').attr('readonly', true);
             $('#titulo').val('');
         }
     });
@@ -680,7 +706,7 @@ $(function() {
         
         // CAMPOS PARA SUBIR LAS IMAGENES
         contenedor_file += '<div class="col-sm-4">';
-        contenedor_file += '<label class="small m-0">Archivo <span class="text-danger">*</span></label>';
+        contenedor_file += '<label class="d-inline-block w-100 position-relative small m-0">Archivo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>';
         contenedor_file += '<div class="custom-file custom-file-sm">';
         contenedor_file += '<input type="file" name="archivo_input_file[]" class="archivo-input-file custom-file-input" accept=".jpeg, .jpg, .png, .pdf, .doc, .docx">';
         contenedor_file += '<label class="custom-file-label py-1 m-0">Seleccionar Archivo</label>';
@@ -689,7 +715,7 @@ $(function() {
         /////////////////////////////////////////////
         contenedor_file += '<div class="col-sm-6">';
         contenedor_file += '<div class="form-group m-0">';
-        contenedor_file += '<label class="small m-0">Descripción <span class="text-danger">*</span></label>';
+        contenedor_file += '<label class="d-inline-block w-100 position-relative small m-0">Descripción<i class="fas fa-asterisk text-danger position-absolute required"></i></label>';
         contenedor_file += '<input type="text" name="descripcion_archivo[]" class="descripcion-archivo form-control form-control-sm"/>';
         contenedor_file += '</div>';
         contenedor_file += '</div>';
@@ -942,29 +968,35 @@ $(function() {
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar_datos').click(function (e) {
         e.preventDefault();
-        if (true) {
-            var data = $("#formulario").serializeArray();
-            data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'nacionalidad2', value: window.nacionalidad });
-            data.push({ name: 'cedula2', value: window.cedula });
-
-            $.ajax({
-                url : url+'controllers/c_facilitador.php',
-                type: 'POST',
-                data: data,
-                success: function (resultados) {
-                    alert(resultados);
-                    if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                        $('#show_table').trigger('click');
-                        buscar_listado();
-                    }
-                },
-                error: function () {
-                    console.log('error');
-                }
-            });
+        verificarParte1();
+        verificarParte2();
+        verificarParte3();
+        if (pestania1 && pestania2 && pestania3) {
+            enviarFormulario();
         }
     });
+    function enviarFormulario () {
+        var data = $("#formulario").serializeArray();
+        data.push({ name: 'opcion', value: tipoEnvio });
+        data.push({ name: 'nacionalidad2', value: window.nacionalidad });
+        data.push({ name: 'cedula2', value: window.cedula });
+
+        $.ajax({
+            url : url+'controllers/c_facilitador.php',
+            type: 'POST',
+            data: data,
+            success: function (resultados) {
+                alert(resultados);
+                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
+                    $('#show_table').trigger('click');
+                    buscar_listado();
+                }
+            },
+            error: function () {
+                console.log('error');
+            }
+        });
+    }
     // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
     function cambiarEstatus () {
         let posicion = $(this).attr('data-posicion');

@@ -12,7 +12,7 @@ if (isset($_SESSION['sesion'])) {
     $data = [
         'codigo_rol'    => $_SESSION['usuario']['codigo_rol']
     ];
-
+    ///////////////////////////////////////////////////////////////////////////
     $files = glob('images/temp/*');
     foreach($files as $file){
         if(is_file($file)) { unlink($file); }
