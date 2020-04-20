@@ -47,15 +47,14 @@ if ($_POST['opcion']){
         case 'Registrar ocupacion':
             $resultados = [];
             $objeto->conectar();
-            if ($objeto->verificarOcupacion($_POST) == 0) {
+            if ($objeto->confirmarExistenciaOcupacionR($_POST) == 0) {
                 if ($objeto->registrarOcupacion($_POST) > 0) {
-                    $resultados['ocupacion'] = $objeto->consultarOcupaciones();
-                    echo json_encode($resultados);
+                    
                 } else {
-                    echo 'Error al registrar';
+                    json_encode('Error al registrar');
                 }
             } else {
-                echo 'Ya registrado';
+                json_encode('Ya registrado');
             }
             $objeto->desconectar();
         break;

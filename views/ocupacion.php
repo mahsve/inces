@@ -72,11 +72,7 @@
                     <?php } ?>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 5; else echo 4; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
-                </tr>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
@@ -86,12 +82,13 @@
                 <span id="total_registros">0</span>
             </p>
         </div>
+
         <div class="col-sm-12 col-md-6">
             <nav aria-label="Page navigation">
                 <ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul>
             </nav>
         </div>
-
+        
         <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
@@ -106,11 +103,11 @@
         <form name="formulario" id="formulario" class="formulario">
             <div class="form-row">
                 <div class="col-sm-12 offset-md-3 col-md-6">
-                    <div class="form-group has-warning mb-2">
+                    <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese la ocupación" autocomplete="off"/>
                     </div>
-                    <div class="form-group has-warning mb-2">
+                    <div class="form-group mb-2">
                         <label for="c_formulario" class="d-inline-block w-100 position-relative small m-0">Formulario<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <select name="c_formulario" id="c_formulario" class="custom-select custom-select-sm">
                             <option value="">Elija el formulario a mostrar</option>
@@ -119,14 +116,13 @@
                             <option value="F">Facilitador</option>
                         </select>
                     </div>
-
                     <div id="contenedor-mensaje2"></div>
                 </div>
             </div>
 
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">
-                <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
+                <button id="guardar-datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>

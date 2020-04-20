@@ -1,44 +1,36 @@
 <?php
 require_once 'conexion.php';
-class model_facilitador extends conexion
-{
+class model_facilitador extends conexion{
     private $data_conexion; // VARIABLE QUE CONTENDRA LA CONEXION.
 
     // DEFINIMOS EL CONSTRUCTOR.
-    public function model_facilitador ()
-    {
+    public function model_facilitador () {
         $this->conexion(); // SE DEFINE LA CLASE PARA HEREDAR SUS ATRIBUTOS.
     }
 
     // FUNCION PARA ABRIR CONEXION.
-    public function conectar ()
-    {
+    public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
     }
 
     // FUNCION PARA CERRAR CONEXION.
-    public function desconectar ()
-    {
+    public function desconectar () {
         mysqli_close($this->data_conexion);
     }
 
     // FUNCION PARA CONSULTAR LAS OCUPACIONES
-	public function consultarOcupaciones()
-	{
+	public function consultarOcupaciones () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
+        while ($columna = mysqli_fetch_assoc($consulta)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
     // FUNCION PARA CONSULTAR LOS OFICIOS.
-	public function consultarOficios()
-	{
+	public function consultarOficios () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -48,10 +40,8 @@ class model_facilitador extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
     // FUNCION PARA CONSULTAR LOS ESTADOS.
-	public function consultarEstados()
-	{
+	public function consultarEstados () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -61,10 +51,8 @@ class model_facilitador extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
     // FUNCION PARA CONSULTAR LAS CIUDADES SEGUN EL ESTADO ELEGIDO.
-	public function consultarCiudades($datos)
-	{
+	public function consultarCiudades ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -74,10 +62,8 @@ class model_facilitador extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
     // FUNCION PARA CONSULTAR LOS MUNICIPIOS SEGUN EL ESTADO ELEGIDO.
-	public function consultarMunicipios($datos)
-	{
+	public function consultarMunicipios ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -87,10 +73,8 @@ class model_facilitador extends conexion
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
-
     // FUNCION PARA CONSULTAR LAS PARROQUIAS SEGUN EL MUNICIPIO ELEGIDO.
-	public function consultarParroquias($datos)
-	{
+	public function consultarParroquias ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -101,13 +85,44 @@ class model_facilitador extends conexion
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
  
-    // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
-    public function registrarFacilitador($datos)
-    {
-        if ($datos['parroquia'] != '')
-            $datos['parroquia'] = htmlspecialchars($datos['parroquia']);
-        else
-            $datos['parroquia'] = 'NULL';
+    // FUNCION PARA CONFIRMAR QUE NO ESTE REGISTRADO
+	public function confirmarExistenciaOcupacionR ($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE nombre='".htmlspecialchars($datos["nueva_nombre_ocupacion"])."'
+            AND formulario='".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+    // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
+    public function registrarOcupacion ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_ocupacion (
+            nombre,
+            formulario
+        ) VALUES (
+            '".ucfirst(strtolower(htmlspecialchars($datos["nueva_nombre_ocupacion"])))."',
+            '".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    //////////////////////////////////////////////////////
+    // FUCIONES PRINCIPALES DEL MODULO ///////////////////
+    //////////////////////////////////////////////////////
+
+    // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL FACILITADOR.
+    public function registrarFacilitador ($datos) {
+        if ($datos['parroquia'] != '') { $datos['parroquia'] = htmlspecialchars($datos['parroquia']); }
+        else { $datos['parroquia'] = 'NULL'; }
 
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_datos_personales (
@@ -134,82 +149,113 @@ class model_facilitador extends conexion
         ) VALUES (
             '".htmlspecialchars($datos['nacionalidad'])."',
             '".htmlspecialchars($datos['cedula'])."',
-            '".htmlspecialchars($datos['nombre_1'])."',
-            '".htmlspecialchars($datos['nombre_2'])."',
-            '".htmlspecialchars($datos['apellido_1'])."',
-            '".htmlspecialchars($datos['apellido_2'])."',
+            '".ucwords(strtolower(htmlspecialchars($datos['nombre_1'])))."',
+            '".ucwords(strtolower(htmlspecialchars($datos['nombre_2'])))."',
+            '".ucwords(strtolower(htmlspecialchars($datos['apellido_1'])))."',
+            '".ucwords(strtolower(htmlspecialchars($datos['apellido_2'])))."',
             '".htmlspecialchars($datos['sexo'])."',
             '".htmlspecialchars($datos['fecha_n'])."',
             '".htmlspecialchars($datos['ocupacion'])."',
             '".htmlspecialchars($datos['estado_civil'])."',
             '".htmlspecialchars($datos['grado_instruccion'])."',
-            '".htmlspecialchars($datos['titulo'])."',
-            '".htmlspecialchars($datos['alguna_mision'])."',
+            '".ucfirst(strtolower(htmlspecialchars($datos['titulo'])))."',
+            '".ucfirst(strtolower(htmlspecialchars($datos['alguna_mision'])))."',
             '".htmlspecialchars($datos['ciudad'])."',
             $datos[parroquia],
-            '".htmlspecialchars($datos['direccion'])."',
+            '".ucfirst(strtolower(htmlspecialchars($datos['direccion'])))."',
             '".htmlspecialchars($datos['telefono_1'])."',
             '".htmlspecialchars($datos['telefono_2'])."',
-            '".htmlspecialchars($datos['correo'])."',
+            '".strtolower(htmlspecialchars($datos['correo']))."',
             'F'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA REGISTRAR LOS ARCHIVOS DEL FACILITADOR.
+    public function registrarArchivo ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_documentos (
+            nacionalidad,
+            cedula,
+            entension,
+            descripcion
+        ) VALUES (
+            '".htmlspecialchars($datos['nacionalidad'])."',
+            '".htmlspecialchars($datos['cedula'])."',
+            '".htmlspecialchars($datos['extension'])."',
+            '".ucfirst(strtolower(htmlspecialchars($datos["descripcion"])))."'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = mysqli_insert_id($this->data_conexion);
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR TODOS LOS FACILITADORES REGISTRADOS.
     public function consultarDatosPersonales ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT t_datos_personales.*, t_ciudad.codigo_estado, t_parroquia.codigo_municipio
             FROM t_datos_personales
             INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
             LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
-            WHERE ( concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR 
-                    concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR
-                    concat(nacionalidad, ' ', cedula) LIKE '%".$datos['campo']."%' OR 
-                    concat(nacionalidad, cedula) LIKE '%".$datos['campo']."%' OR
-                    concat(nacionalidad, '-', cedula) LIKE '%".$datos['campo']."%' )
+            WHERE (
+                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
+                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
+                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
+                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
+                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%')
             AND t_datos_personales.tipo_persona='F'
-            AND t_datos_personales.estatus LIKE '%".$datos['estatus']."%'
-            ORDER BY '".$datos['ordenar_por']."'
+            AND t_datos_personales.estatus LIKE '%".htmlspecialchars($datos['estatus'])."%'
+            ORDER BY ".$datos['ordenar_por']."
             LIMIT ".$datos['numero'].", ".$datos['cantidad']."
         "; // SENTENTCIA
+
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
+        while ($columna = mysqli_fetch_assoc($consulta)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+
+            // CONSULTAR LOS ARCHIVOS DE LOS FACILITADORES
+            $archivos = [];
+            $sentencia1 = "SELECT * FROM t_documentos WHERE nacionalidad='".$columna['nacionalidad']."' AND cedula='".$columna['cedula']."'"; // SENTENTCIA
+            $consulta1 = mysqli_query($this->data_conexion, $sentencia1); // REALIZAMOS LA CONSULTA.
+            while ($columna1 = mysqli_fetch_assoc($consulta1)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
+                $archivos[] = $columna1;
+            }
+
+            $columna['detalles_archivos'] = $archivos;
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function consultarDatosPersonalesTotal($datos) {
+    // FUNCION PARA CONSULTAR EL NUMERO TOTAL DE FACILITADORES REGISTRADOS.
+    public function consultarDatosPersonalesTotal ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM t_datos_personales
-            WHERE ( concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR 
-                    concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['campo']."%' OR
-                    concat(nacionalidad, ' ', cedula) LIKE '%".$datos['campo']."%' OR 
-                    concat(nacionalidad, cedula) LIKE '%".$datos['campo']."%' OR
-                    concat(nacionalidad, '-', cedula) LIKE '%".$datos['campo']."%' )
+            WHERE (
+                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
+                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
+                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
+                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
+                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' )
             AND t_datos_personales.tipo_persona='F'
-            AND t_datos_personales.estatus LIKE '%".$datos['estatus']."%'
+            AND t_datos_personales.estatus LIKE '%".htmlspecialchars($datos['estatus'])."%'
         "; // SENTENTCIA
-        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
-        {
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function modificarFacilitador($datos)
-    {
-        if ($datos['parroquia'] != '')
-            $datos['parroquia'] = htmlspecialchars($datos['parroquia']);
-        else
-            $datos['parroquia'] = 'NULL';
+    // FUNCION PARA MODIFICAR LOS DATOS PERSONALES DEL FACILITADOR.
+    public function modificarFacilitador ($datos) {
+        if ($datos['parroquia'] != '') { $datos['parroquia'] = htmlspecialchars($datos['parroquia']); }
+        else { $datos['parroquia'] = 'NULL'; }
             
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
@@ -235,15 +281,37 @@ class model_facilitador extends conexion
             WHERE nacionalidad='".htmlspecialchars($datos['nacionalidad2'])."'
             AND cedula='".htmlspecialchars($datos['cedula2'])."'
         "; // SENTENTCIA
-        if (mysqli_query($this->data_conexion,$sentencia))
-        {
+        if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    public function estatusFacilitador ($datos)
-    {
+    // FUNCION PARA MODIFICAR LOS ARCHIVOS DEL FACILITADOR.
+    public function modificarArchivo ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "UPDATE t_documentos SET
+            entension='".htmlspecialchars($datos['extension'])."',
+            descripcion='".ucfirst(strtolower(htmlspecialchars($datos["descripcion"])))."'
+            WHERE numero_doc='".htmlspecialchars($datos['id_archivo'])."'
+        "; // SENTENTCIA
+        if (mysqli_query($this->data_conexion,$sentencia)) {
+            $resultado = true;
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function eliminarArchivo ($id) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "DELETE FROM t_documentos WHERE numero_doc='".htmlspecialchars($id)."'"; // SENTENTCIA
+        if (mysqli_query($this->data_conexion,$sentencia)) {
+            $resultado = mysqli_affected_rows($this->data_conexion);
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CAMBIAR EL ESTATUS DE ALGUN FACILITADOR.
+    public function estatusFacilitador ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
             estatus='".$datos['estatus']."'
@@ -259,20 +327,17 @@ class model_facilitador extends conexion
     }
 
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
-    public function nuevaTransaccion()
-    {
+    public function nuevaTransaccion () {
 		mysqli_query($this->data_conexion,"START TRANSACTION");
     }
 
     // FUNCION PARA GUARDAR LOS CAMBIOS DE LA TRANSACCION.
-    public function guardarTransaccion()
-    {
+    public function guardarTransaccion () {
 		mysqli_query($this->data_conexion,"COMMIT");
     }
     
     // FUNCION PARA DESHACER TODA LA TRANSACCION.
-    public function calcelarTransaccion()
-    {
+    public function calcelarTransaccion () {
 		mysqli_query($this->data_conexion,"ROLLBACK");
     }
 }

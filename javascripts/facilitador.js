@@ -1,16 +1,18 @@
 $(function() {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+    // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
     let ER_caracteresConEspacios = /^([a-zA-Z,.\x7f-\xff](\s[a-zA-Z,.\x7f-\xff])*)+$/;
     let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
     let ER_NumericoSinEspacios=/^([0-9])+$/;
     let ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    /////////////////////////////////////////////////////////////////////
+    // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let pestania1, pestania2, pestania3;
+    // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
+    let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
+    let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
+    let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
     /////////////////////////////////////////////////////////////////////
-    let colorb = "#d4ffdc";
-    let colorm = "#ffc6c6";
-    let colorn = "#ffffff";
     
 
     /////////////////////////////////////////////////////////////////////
@@ -24,13 +26,12 @@ $(function() {
         if (e.keyCode == 13) {
             numeroDeLaPagina = 1;
             buscar_listado();
-            window.actualizar_busqueda = false;
-        } else
+        } else {
             window.actualizar_busqueda = true;
+        }
     });
     $('#campo_busqueda').blur(function () {
-        if (window.actualizar_busqueda)
-            buscar_listado();
+        if (window.actualizar_busqueda) { buscar_listado(); }
     });
     $('#buscar_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
@@ -48,35 +49,63 @@ $(function() {
     }
     function buscar_listado(){
         let filas = 0;
-        if (permisos.modificar == 1 || permisos.act_desc == 1)
-            filas = 8;
-        else
-            filas = 7;
+        if (permisos.modificar == 1 || permisos.act_desc == 1) { filas = 8; }
+        else { filas = 7; }
 
-        $('#listado_tabla tbody').html('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
-        $("#paginacion").html('<li class="page-item"><a class="page-link text-info"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</a></li>');
-        $.ajax({
-            url : url+'controllers/c_facilitador.php',
-            type: 'POST',
-            data: {
-                opcion  : 'Consultar',
-                numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
-                cantidad: parseInt($('#cantidad_a_buscar').val()),
-                ordenar : parseInt($('#ordenar_por').val()),
-                tipo_ord: parseInt($('#campo_ordenar').val()),
-                campo   : $('#campo_busqueda').val(),
-                estatus : $('#buscar_estatus').val()
-            }, success: function (resultados){
-                try {
+        let contenido_tabla = '';
+        contenido_tabla += '<tr>';
+        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+        contenido_tabla += '<i class="fas fa-spinner fa-spin"></i> <span style="font-weight: 500;">Cargando...</span>';
+        contenido_tabla += '</td>';
+        contenido_tabla += '</tr>';
+        $('#listado_tabla tbody').html(contenido_tabla);
+
+        let contenido_paginacion = '';
+        contenido_paginacion += '<li class="page-item">';
+        contenido_paginacion += '<a class="page-link text-info">';
+        contenido_paginacion += '<i class="fas fa-spinner fa-spin"></i>';
+        contenido_paginacion += '</a>';
+        contenido_paginacion += '</li>';
+        $("#paginacion").html(contenido_paginacion);
+
+        // DESABILITAMOS LOS BOTONES PARA EVITAR ACCIONES MIENTRAS SE EJECUTA LA CONSULTA
+        let cantidad_a_buscar = $('#cantidad_a_buscar').val();
+        $('#cantidad_a_buscar').attr('disabled', true);
+        ////////////////////////////////////
+        let ordenar_por = $('#ordenar_por').val();
+        $('#ordenar_por').attr('disabled', true);
+        ////////////////////////////////////
+        let campo_ordenar = $('#campo_ordenar').val();
+        $('#campo_ordenar').attr('disabled', true);
+        ////////////////////////////////////
+        let buscar_estatus = $('#buscar_estatus').val();
+        $('#buscar_estatus').attr('disabled', true);
+        ////////////////////////////////////
+        let campo_busqueda = $('#campo_busqueda').val();
+        $('#campo_busqueda').attr('disabled', true);
+
+        // DESABILITAMOS LA OPCION DE AGREGAR NUEVOS DATOS HASTA QUE NO TERMINE LA CONSULTA.
+        $('#show_form').attr('disabled', true);
+        setTimeout(() => {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    opcion  : 'Consultar',
+                    numero  : parseInt(numeroDeLaPagina-1) * parseInt(cantidad_a_buscar),
+                    cantidad: parseInt(cantidad_a_buscar),
+                    ordenar : parseInt(ordenar_por),
+                    tipo_ord: parseInt(campo_ordenar),
+                    campo   : campo_busqueda,
+                    estatus : buscar_estatus
+                },
+                success: function (resultados){
                     $('#listado_tabla tbody').empty();
-                    dataListado = JSON.parse(resultados);
+
+                    dataListado = resultados;
                     if (dataListado.resultados) {
-                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
                         for (var i in dataListado.resultados) {
-                            let contenido = '';
-                            contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
-                            
                             let nombre_completo = dataListado.resultados[i].nombre1;
                             if (dataListado.resultados[i].nombre2 != '' && dataListado.resultados[i].nombre2 != null) {
                                 nombre_completo += ' '+dataListado.resultados[i].nombre2;
@@ -85,85 +114,107 @@ $(function() {
                             if (dataListado.resultados[i].apellido1 != '' && dataListado.resultados[i].apellido1 != null) {
                                 nombre_completo += ' '+dataListado.resultados[i].apellido1;
                             }
-                            contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
 
-                            let year    = dataListado.resultados[i].fecha_n.substr(0,4);
-                            let month   = dataListado.resultados[i].fecha_n.substr(5,2);
-                            let day     = dataListado.resultados[i].fecha_n.substr(8,2);
-                            let yearA   = fecha.substr(0,4);
-                            let monthA  = fecha.substr(5,2);
-                            let dayA    = fecha.substr(8,2);
-                            
-                            let edad = 0;
-                            if (year != '' && year != undefined) {
-                                if (year <= yearA) {
-                                    edad = yearA - year;
-                                    if (month > monthA) {
-                                        if (edad != 0) 
-                                            edad--;
-                                    } else if (month == monthA) {
-                                        if (day > dayA)
-                                            if (edad != 0) 
-                                                edad--;
-                                    }
-                                }
-                            }
-                                
+                            let day     = dataListado.resultados[i].fecha_n.substr(8, 2);
+                            let month   = dataListado.resultados[i].fecha_n.substr(5, 2);
+                            let year    = dataListado.resultados[i].fecha_n.substr(0, 4);
+                            dataListado.resultados[i].fecha_n = day+'-'+month+'-'+year;
+                            let edad = calcularEdad(fecha, dataListado.resultados[i].fecha_n);
+
+                            let sexo = '';
+                            if (dataListado.resultados[i].sexo == 'M') { sexo = 'Masculino'; }
+                            else if (dataListado.resultados[i].sexo == 'F') { sexo = 'Femenino'; }
+
+                            let estatus_td = '';
+                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span style="font-weight: 500;">Activo</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span style="font-weight: 500;">Inactivo</span></span>'; }
+
+                            let contenido = '';
+                            contenido += '<tr class="border-bottom text-secondary">';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
+                            contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
                             contenido += '<td class="py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
                             contenido += '<td class="py-2 text-center px-1">'+edad+'</td>';
-    
-                            let sexo = '';
-                            if (dataListado.resultados[i].sexo == 'M')
-                                sexo = 'Masculino';
-                            else if (dataListado.resultados[i].sexo == 'F')
-                                sexo = 'Femenino';
-                            else
-                                sexo = 'Indefinido';
-
                             contenido += '<td class="py-2 px-1">'+sexo+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].telefono1+'</td>';
-
-                            if (dataListado.resultados[i].estatus == 'A')
-                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-success"><i class="fas fa-check mr-1"></i>Activo</span></td>';
-                            else if (dataListado.resultados[i].estatus == 'I')
-                                contenido += '<td class="text-center py-2 px-1"><span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Inactivo</span></td>';
-
+                            contenido += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
                                 contenido += '<td class="py-1 px-1">';
                                 ////////////////////////////
-                                if (permisos.modificar == 1)
-                                    contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                                    
+                                if (permisos.modificar == 1) {
+                                    contenido += '<button type="button" class="btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>';
+                                }
                                 if (permisos.act_desc == 1) {
-                                    if (dataListado.resultados[i].estatus == 'A')
-                                        contenido += '<button type="button" class="btn btn-sm btn-danger cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-times" style="padding: 0px 2px;"></i></button>';
-                                    else
-                                        contenido += '<button type="button" class="btn btn-sm btn-success cambiar_estatus" data-posicion="'+i+'"><i class="fas fa-check"></i></button>';
+                                    if (dataListado.resultados[i].estatus == 'A') { contenido += '<button type="button" class="btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
+                                    else { contenido += '<button type="button" class="btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
                                 }
                                 ////////////////////////////
                                 contenido += '</td>';
                             }
                             contenido += '</tr>';
                             $('#listado_tabla tbody').append(contenido);
-                            cont++;
                         }
-                        $('.editar_registro').click(editarRegistro);
-                        $('.cambiar_estatus').click(cambiarEstatus);
+                        $('.editar-registro').click(editarRegistro);
+                        $('.cambiar-estatus').click(cambiarEstatus);
                     } else {
-                        $('#listado_tabla tbody').append('<tr><td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay facilitadores registrados</td></tr>');
+                        contenido_tabla = '';
+                        contenido_tabla += '<tr>';
+                        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay facilitadores registrados.</span>';
+                        contenido_tabla += '</td>';
+                        contenido_tabla += '</tr>';
+                        $('#listado_tabla tbody').html(contenido_tabla);
                     }
 
+                    // SE HABILITA LA FUNCION PARA QUE PUEDA REALIZAR BUSQUEDA AL TERMINAR LA ANTERIOR.
+                    window.actualizar_busqueda = false;
+                    // MOSTRAR EL TOTAL DE REGISTROS ENCONTRADOS.
                     $('#total_registros').html(dataListado.total);
+                    // HABILITAR LA PAGINACION PARA MOSTRAR MAS DATOS.
                     establecer_tabla(numeroDeLaPagina, parseInt($('#cantidad_a_buscar').val()), dataListado.total);
+                    // LE AGREGAMOS FUNCIONALIDAD A LOS BOTONES PARA CAMBIAR LA PAGINACION.
                     $('.mover').click(cambiarPagina);
-                } catch (error) {
-                    console.log(resultados);
-                }
-                window.actualizar_busqueda = false;
-            }, error: function (){
-                console.log('error');
-            }, timer: 15000
-        });
+
+                    $('#cantidad_a_buscar').attr('disabled', false);
+                    $('#ordenar_por').attr('disabled', false);
+                    $('#campo_ordenar').attr('disabled', false);
+                    $('#buscar_estatus').attr('disabled', false);
+                    $('#campo_busqueda').attr('disabled', false);
+                    // HABILITAMOS EL BOTON PARA AGREGAR NUEVOS DATOS.
+                    $('#show_form').attr('disabled', false);
+                },
+                error: function (msjError) {
+                    contenido_tabla = '';
+                    contenido_tabla += '<tr>';
+                    contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom text-danger p-2">';
+                    contenido_tabla += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                    contenido_tabla += '<button type="button" id="btn-recargar-tabla" class="btn btn-sm btn-info ml-2"><i class="fas fa-sync-alt"></i></button>';
+                    contenido_tabla += '</td>';
+                    contenido_tabla += '</tr>';
+                    $('#listado_tabla tbody').html(contenido_tabla);
+                    $('#btn-recargar-tabla').click(buscar_listado);
+
+                    contenido_paginacion = '';
+                    contenido_paginacion += '<li class="page-item">';
+                    contenido_paginacion += '<a class="page-link text-danger">';
+                    contenido_paginacion += '<i class="fas fa-ethernet"></i>';
+                    contenido_paginacion += '</a>';
+                    contenido_paginacion += '</li>';
+                    $('#paginacion').html(contenido_paginacion);
+
+                    $('#cantidad_a_buscar').attr('disabled', false);
+                    $('#ordenar_por').attr('disabled', false);
+                    $('#campo_ordenar').attr('disabled', false);
+                    $('#buscar_estatus').attr('disabled', false);
+                    $('#campo_busqueda').attr('disabled', false);
+                    // HABILITAMOS EL BOTON PARA AGREGAR NUEVOS DATOS.
+                    $('#show_form').attr('disabled', false);
+                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                    console.log('Error: '+msjError.status+' - '+msjError.statusText);
+                    console.log(msjError.responseText);
+                }, timer: 15000
+            });
+        }, 500);
     }
     function cambiarPagina(e) {
         e.preventDefault();
@@ -441,7 +492,7 @@ $(function() {
         // SI EL CAMPO DE INSTRUCCION ES SUPERIOR, VERIFICAR QUE EL CAMPO TITULO NO ESTE VACIO.
         if (grado_instruccion == 'SI' || grado_instruccion == 'SC') {
             let titulo_edu = $("#titulo").val();
-            if(titulo_edu != ''){
+            if (titulo_edu != '') {
                 if(titulo_edu.match(ER_caracteresConEspacios)){
                     $("#titulo").css("background-color", colorb);
                 }else{
@@ -452,6 +503,8 @@ $(function() {
                 pestania1 = false;
                 $("#titulo").css("background-color", colorm);
             }
+        } else {
+            $("#titulo").css("background-color", '');
         }
         // VERIFICAR EL CAMPO DE MISIONES REALZADAS (NO OBLIGATORIA)
         let alguna_mision = $("#alguna_mision").val();
@@ -525,7 +578,14 @@ $(function() {
         }
     }
     function verificarParte3 () {
+        pestania3 = true;
 
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (pestania3) {
+            $('#icon-archivos').hide();
+        } else {
+            $('#icon-archivos').show();
+        }
     }
     //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
     $('.input_fecha').click(function () {
@@ -539,31 +599,7 @@ $(function() {
     });
     //////////////////////// FUNCIONES CAMPOS ////////////////////////
     $('#fecha_n').change(function (){
-        let year    = $(this).val().substr(0,4);
-        let month   = $(this).val().substr(5,2);
-        let day     = $(this).val().substr(8,2);
-        let yearA   = fecha.substr(0,4);
-        let monthA  = fecha.substr(5,2);
-        let dayA    = fecha.substr(8,2);
-            
-        let edad = 0;
-        if (year != '' && year != undefined) {
-            if (year <= yearA) {
-                edad = yearA - year;
-                if (month > monthA) {
-                    if (edad != 0) 
-                        edad--;
-                } else if (month == monthA) {
-                    if (day > dayA)
-                        if (edad != 0) 
-                            edad--;
-                }
-            }
-        }
-        
-        // if (edad > 16 && edad < 19) {
-        //     alert8
-        // }
+        let edad = calcularEdad(fecha, $(this).val());
         $('#edad').val(edad);
     });
     $('.radio_educacion').click(function () {
@@ -665,6 +701,11 @@ $(function() {
             $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
     });
+    function desabilitarEnter (e) {
+        if (e.keyCode == 13) {
+            e.preventDefault();
+        }
+    }
     /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function (){
         $('#form_title').html('Registrar');
@@ -674,10 +715,17 @@ $(function() {
         $('#archivos-guardados').html(mensaje_conte_arch);
         $('#contenedor-input-file').html(mensaje_input_file);
         tipoEnvio = 'Registrar';
-        /////////////////////
         window.eliminarArchivos = [];
-        /////////////////////
-        limpiarFormulario();
+
+        // LIMPIAR EL FORMULARIO
+        document.formulario.reset();
+        $('form .form-control').css('background-color', colorn);
+        $('form .custom-select').css('background-color', colorn);
+        $('form .custom-control-label').removeClass('inputBien inputMal');
+        $('#edad').css('background-color', '');
+        $('.icon-alert').hide();
+        $('.ocultar-iconos').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
     });
     $('#show_table').click(function (){
         $('#info_table').show(400);
@@ -879,7 +927,7 @@ $(function() {
 
         let contenido_archivo = '';
         let numero_archivo = $('.archivo-temporal').length;
-        contenido_archivo += '<div class="col-sm-2 archivo-temporal position-relative">';
+        contenido_archivo += '<div class="col-sm-2 archivo-temporal position-relative" style="cursor: pointer;">';
         contenido_archivo += '<button type="button" class="btn btn-sm btn-danger rounded-circle btn-eliminar-arch position-absolute" style="padding-top: 2px; padding-bottom: 2px; top: -7px; right: -3px;" data-eliminar="0"><i class="fas fa-times"></i></button>';
         
         contenido_archivo += '<input type="hidden" name="id_archivo_temp[]" class="id-archivo-temp" value="0">';
@@ -894,6 +942,28 @@ $(function() {
         contenido_archivo += '</div>';
         $('#archivos-guardados').append(contenido_archivo);
 
+        $($('.previzualizacion-archivo')[numero_archivo]).bind("contextmenu", function(e){ return false; });
+        $($('.archivo-temporal')[numero_archivo]).click(function () {
+            $('#modal-detalles-archivo').modal();
+            $('#detalles-archivo').empty();
+
+            let nombre_archivo = $($('.nombre-archivo-temp')[numero_archivo]).val();
+            let nombre_archivo_arr = nombre_archivo.split('.');
+            let nombre_archivo_num = nombre_archivo_arr.length - 1;
+            let descripcion_archivo = $($('.descrip-archivo-temp')[numero_archivo]).val();
+            
+            let contenido_detalles = '';
+            if (nombre_archivo_arr[nombre_archivo_num] == 'doc' || nombre_archivo_arr[nombre_archivo_num] == 'docx') {
+                contenido_detalles += '';
+            } else if ( nombre_archivo_arr[nombre_archivo_num] == 'pdf') {
+                contenido_detalles += '<embed class="w-100" src="'+url+'images/archivos/'+nombre_archivo+'" type="application/pdf" height="500px"/>';
+            } else {
+                contenido_detalles += '<img class="w-100 p-1 border" src="'+url+'images/archivos/'+nombre_archivo+'">';
+            }
+            contenido_detalles += '<h6 class="text-secondary mt-2 mb-1">Descripción: </h6>';
+            contenido_detalles += '<p class="text-secondary m-0 small">'+descripcion_archivo+'</p>';
+            $('#detalles-archivo').html(contenido_detalles);
+        });
         $($('.btn-eliminar-arch')[numero_archivo]).click(function (e) {
             e.preventDefault();
             $(this).closest('div').find(".archivo-temporal")['prevObject'].remove();
@@ -905,11 +975,209 @@ $(function() {
             }
         });
     }
-    function desabilitarEnter (e) {
-        if (e.keyCode == 13) {
-            e.preventDefault();
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // FUNCIONES PARA MODALES (VENTANAS EMERGENTES).
+    // MODAL REGISTRAR OCUPACION
+    $('#btn-agregar-ocupacion').click(function (e) {
+        e.preventDefault();
+        document.form_registrar_ocupacion.reset();
+        $("#nueva-nombre-ocupacion").css('background-color', colorn);
+        $("#nueva-fomulario-ocupacion").css('background-color', colorn);
+        $('#modal-registrar-ocupacion').modal();
+        //////////////////////////////////////////////////////////
+        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+        $('#nueva-nombre-ocupacion').attr('disabled', false);
+        $('#nueva-fomulario-ocupacion').attr('disabled', false);
+        $('#btn-registrar-ocupacion').attr('disabled', false);
+        $('#btn-registrar-ocupacion span').html('Guardar');
+    });
+    // DESHABILITAR LA TECLA ENTER PARA EVITAR ENVIAR EL FORMULARIO POR ERROR.
+    $('#nueva-nombre-ocupacion').keydown(function (e) {
+        if (e.keyCode == 13) e.preventDefault();
+    });
+    // AL PRESIONAR EL BOTON REGISTRAR TRATAMOS DE ENVIAR LOS DATOS POR AJAX.
+    $('#btn-registrar-ocupacion').click(function (e) {
+        e.preventDefault();
+
+        let formulario_ocupacion = true;
+        // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
+        let nueva_nombre_cupacion = $("#nueva-nombre-ocupacion").val();
+        if (nueva_nombre_cupacion != '') {
+            if(nueva_nombre_cupacion.match(ER_alfaNumericoConEspacios)){
+                $("#nueva-nombre-ocupacion").css("background-color", colorb);
+            }else{
+                $("#nueva-nombre-ocupacion").css("background-color", colorm);
+                formulario_ocupacion = false;
+            }
+        } else {
+            $("#nueva-nombre-ocupacion").css("background-color", colorm);
+            formulario_ocupacion = false;
         }
-    }
+        // VERIFICAR EL CAMPO DEL FORMULARIO ENFOCADOS.
+        let nueva_fomulario_ocupacion = $("#nueva-fomulario-ocupacion").val();
+        if (nueva_fomulario_ocupacion != '') {
+            $("#nueva-fomulario-ocupacion").css("background-color", colorb);
+        } else {
+            $("#nueva-fomulario-ocupacion").css("background-color", colorm);
+            formulario_ocupacion = false;
+        }
+        
+        if (formulario_ocupacion) {
+            let data = $("#form_registrar_ocupacion").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar ocupacion' });
+    
+            // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+            $('#nueva-nombre-ocupacion').attr('disabled', true);
+            $('#nueva-fomulario-ocupacion').attr('disabled', true);
+            $('#btn-registrar-ocupacion').attr('disabled', true);
+            $('#btn-registrar-ocupacion i.fa-save').addClass('fa-spin');
+            $('#btn-registrar-ocupacion span').html('Guardando...');
+            $('#btn-cancelar-ocupacion').attr('disabled', true);
+            $('#btn-cancelar-ocupacion2').attr('disabled', true);
+            $('#modal-registrar-ocupacion').modal({backdrop: 'static', keyboard: false});
+
+            setTimeout(() => {
+                $.ajax({
+                    url : url+'controllers/c_facilitador.php',
+                    type: 'POST',
+                    data: data,
+                    success: function (resultados){
+                        let color_alerta = '';
+                        let icono_alerta = '';
+
+                        if (resultados == 'Registro exitoso') {
+                            $('#btn-buscar-ocupacion').trigger('click');
+                            color_alerta = 'alert-success';
+                            icono_alerta = '<i class="fas fa-check"></i>';
+                            setTimeout(() => { $('#modal-registrar-ocupacion').modal('hide');  }, 3000);
+                        }  else if (resultados == 'Ya está registrado') {
+                            color_alerta = 'alert-warning';
+                            icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                        } else if (resultados == 'Registro fallido') {
+                            color_alerta = 'alert-danger';
+                            icono_alerta = '<i class="fas fa-times"></i>';
+                        }
+
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-cancelar-ocupacion').attr('disabled', false);
+                        $('#btn-cancelar-ocupacion2').attr('disabled', false);
+                        $('#modal-registrar-ocupacion').modal({backdrop: 'static', keyboard: true});
+
+                        if (resultados != 'Registro exitoso') {
+                            $('#nueva-nombre-ocupacion').attr('disabled', false);
+                            $('#nueva-fomulario-ocupacion').attr('disabled', false);
+                            $('#btn-registrar-ocupacion').attr('disabled', false);
+                            $('#btn-registrar-ocupacion span').html('Guardar');
+                        } else {
+                            $('#btn-registrar-ocupacion span').html('Guardado');
+                        }
+
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                        contenedor_mensaje += icono_alerta+' '+resultados;
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje);
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 3000);
+                    },
+                    error: function (msjError) {
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('#nueva-nombre-ocupacion').attr('disabled', false);
+                        $('#nueva-fomulario-ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-ocupacion span').html('Guardar');
+                        $('#btn-cancelar-ocupacion').attr('disabled', false);
+                        $('#btn-cancelar-ocupacion2').attr('disabled', false);
+                        $('#modal-registrar-ocupacion').modal({backdrop: 'static', keyboard: true});
+    
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div class="alert alert-danger mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje);
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 5000);
+    
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+msjError.status+' - '+msjError.statusText);
+                        console.log(msjError.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        }
+    });
+    $('#btn-buscar-ocupacion').click(function (e) {
+        e.preventDefault();
+        $('#ocupacion').attr('disabled', true);
+        $('#btn-agregar-ocupacion').hide();
+        $('#btn-buscar-ocupacion').show();
+        $('#btn-buscar-ocupacion').attr('disabled', true);
+        $('#btn-buscar-ocupacion').addClass('btn-info');
+        $('#btn-buscar-ocupacion').removeClass('btn-danger');
+        $('#btn-buscar-ocupacion i.fa-sync-alt').addClass('fa-spin');
+        
+        setTimeout(() => {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    opcion: 'Traer ocupaciones actualizadas'
+                },
+                success: function (resultados){
+                    $('#ocupacion').empty();
+                    $('#ocupacion').attr('disabled', false);
+                    $('#btn-agregar-ocupacion').show();
+                    $('#btn-buscar-ocupacion').hide();
+                    $('#btn-buscar-ocupacion').attr('disabled', false);
+                    $('#btn-buscar-ocupacion').addClass('btn-info');
+                    $('#btn-buscar-ocupacion').removeClass('btn-danger');
+                    $('#btn-buscar-ocupacion i.fa-sync-alt').removeClass('fa-spin');
+                    if (resultados.ocupacion) {
+                        for (let i in resultados.ocupacion) {
+                            if (resultados.ocupacion[i]['formulario'] == 'F' && $('#ocupacion').html() == '') {
+                                $("#ocupacion").html('<option value="">Elija una opción</option>');
+                            }
+                        }
+
+                        for (let i in resultados.ocupacion) {
+                            if (resultados.ocupacion[i]['formulario'] == 'F') {
+                                $("#ocupacion").append('<option value="' +resultados.ocupacion[i].codigo +'">' +resultados.ocupacion[i].nombre +"</option>");
+                            }
+                        }
+                    }
+                    if ($('#ocupacion').html() == '') {
+                        $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
+                    }
+                },
+                error: function (msjError) {
+                    $('#btn-buscar-ocupacion').attr('disabled', false);
+                    $('#btn-buscar-ocupacion').removeClass('btn-info');
+                    $('#btn-buscar-ocupacion').addClass('btn-danger');
+                    $('#btn-buscar-ocupacion i.fa-sync-alt').removeClass('fa-spin');
+
+                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                    console.log('Error: '+msjError.status+' - '+msjError.statusText);
+                    console.log(msjError.responseText);
+                }, timer: 15000
+            });
+        }, 500);
+    });
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
@@ -917,18 +1185,29 @@ $(function() {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
-    function editarRegistro() {
+    function editarRegistro () {
         let posicion = $(this).attr('data-posicion');
         window.posicion = posicion;
-        /////////////////////
+
+        $('#form_title').html('Modificar');
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
-        $('#form_title').html('Modificar');
-        $('#carga_espera').show();
-        $('#contenedor-archivos').html(mensaje_input_file);
+        $('#carga_espera').show(400);
+        $('#archivos-guardados').html(mensaje_conte_arch);
+        $('#contenedor-input-file').html(mensaje_input_file);
         tipoEnvio = 'Modificar';
-        /////////////////////
-        limpiarFormulario();
+        window.eliminarArchivos = [];
+        
+        // LIMPIAR EL FORMULARIO
+        document.formulario.reset();
+        $('form .form-control').css('background-color', colorn);
+        $('form .custom-select').css('background-color', colorn);
+        $('form .custom-control-label').removeClass('inputBien inputMal');
+        $('#edad').css('background-color', '');
+        $('.icon-alert').hide();
+        $('.ocultar-iconos').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
+        
         /////////////////////
         // LLENADO DEL FORMULARIO CON LOS DATOS REGISTRADOS.
         window.nacionalidad = dataListado.resultados[posicion].nacionalidad;
@@ -937,6 +1216,7 @@ $(function() {
         $('#fecha').val(dataListado.resultados[posicion].fecha);
         $('#nacionalidad').val(dataListado.resultados[posicion].nacionalidad);
         $('#cedula').val(dataListado.resultados[posicion].cedula);
+        $('#cedula').trigger('blur');
         $('#nombre_1').val(dataListado.resultados[posicion].nombre1);
         $('#nombre_2').val(dataListado.resultados[posicion].nombre2);
         $('#apellido_1').val(dataListado.resultados[posicion].apellido1);
@@ -963,9 +1243,31 @@ $(function() {
             window.cargarParroquia = true;
         }
         $('#estado').trigger('change');
+
+        let detalles_archivos = dataListado.resultados[posicion].detalles_archivos;
+        for (let index = 0; index < detalles_archivos.length; index++) {
+            mostrarImagen();
+            let iconoArchivo = '';
+            if      (detalles_archivos[index].entension == 'doc' || detalles_archivos[index].entension == 'docx') { iconoArchivo = url+'images/app/icono-word.png'; }
+            else if (detalles_archivos[index].entension == 'pdf') { iconoArchivo = url+'images/app/icono-pdf.png'; }
+            else    { iconoArchivo = url+'images/archivos/'+detalles_archivos[index].numero_doc+'.'+detalles_archivos[index].entension; }
+
+            $($('.id-archivo-temp')[index]).val(detalles_archivos[index].numero_doc);
+            $($('.nombre-archivo-temp')[index]).val(detalles_archivos[index].numero_doc+'.'+detalles_archivos[index].entension);
+            $($('.descrip-archivo-temp')[index]).val(detalles_archivos[index].descripcion);
+            $($('.previzualizacion-archivo')[index]).attr('src', iconoArchivo);
+            $($('.p-descripcion-archivo')[index]).html(detalles_archivos[index].descripcion);
+            $($('.btn-eliminar-arch')[index]).attr('data-eliminar', detalles_archivos[index].numero_doc+'.'+detalles_archivos[index].entension);
+        }
+
+        setTimeout(() => {
+            verificarParte1();
+            verificarParte2();
+            verificarParte3();
+        }, 500);
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
-    $('#guardar_datos').click(function (e) {
+    $('#guardar-datos').click(function (e) {
         e.preventDefault();
         verificarParte1();
         verificarParte2();
@@ -974,65 +1276,179 @@ $(function() {
             enviarFormulario();
         }
     });
+    // FUNCION PARA HACER LA CONSULTA AJAX.
     function enviarFormulario () {
         var data = $("#formulario").serializeArray();
         data.push({ name: 'opcion', value: tipoEnvio });
         data.push({ name: 'nacionalidad2', value: window.nacionalidad });
         data.push({ name: 'cedula2', value: window.cedula });
+        data.push({ name: 'eliminare_archivos', value: JSON.stringify(window.eliminarArchivos) });
 
-        $.ajax({
-            url : url+'controllers/c_facilitador.php',
-            type: 'POST',
-            data: data,
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                    $('#show_table').trigger('click');
-                    buscar_listado();
-                }
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
+        // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+        $('#show_table').attr('disabled', true);
+        $('#guardar-datos').attr('disabled', true);
+        $('#guardar-datos i.fa-save').addClass('fa-spin');
+        $('#guardar-datos span').html('Guardando...');
+        // LIMPIAMOS LOS CONTENEDORES DE LOS MENSAJES DE EXITO O DE ERROR DE LAS CONSULTAS ANTERIORES.
+        $('#contenedor-mensaje').empty();
+        $('#contenedor-mensaje2').empty();
+
+        setTimeout(() => {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                data: data,
+                success: function (resultados) {
+                    let color_alerta = '';
+                    let icono_alerta = '';
+
+                    if (resultados == 'Registro exitoso' || resultados == 'Modificación exitosa') {
+                        $('#show_table').trigger('click');
+                        buscar_listado();
+                        color_alerta = 'alert-success';
+                        icono_alerta = '<i class="fas fa-check"></i>';
+                    }  else if (resultados == 'Ya está registrado') {
+                        $('#show_table').trigger('click');
+                        buscar_listado();
+                        color_alerta = 'alert-warning';
+                        icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                    } else if (resultados == 'Registro fallido' || resultados == 'Modificación fallida') {
+                        color_alerta = 'alert-danger';
+                        icono_alerta = '<i class="fas fa-times"></i>';
+                    }
+
+                    // MENSAJE SOBRE EL ESTATUS DE LA CONSULTA.
+                    let contenedor_mensaje = '';
+                    contenedor_mensaje += '<div class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                    contenedor_mensaje += icono_alerta+' '+resultados;
+                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                    contenedor_mensaje += '</button>';
+                    contenedor_mensaje += '</div>';
+                    // CARGAMOS EL MENSAJE EN EL CONTENEDOR CORRESPONDIENTE.
+                    if (resultados == 'Registro exitoso' || resultados == 'Modificación exitosa' || resultados == 'Ya está registrado') {
+                        $('#contenedor-mensaje').html(contenedor_mensaje);
+                    } else {
+                        $('#contenedor-mensaje2').html(contenedor_mensaje);
+                    }
+                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                    setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 5000);
+
+                    // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                    $('#show_table').attr('disabled', false);
+                    $('#guardar-datos').attr('disabled', false);
+                    $('#guardar-datos i.fa-save').removeClass('fa-spin');
+                    $('#guardar-datos span').html('Guardar');
+                },
+                error: function (msjError) {
+                    // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                    $('#show_table').attr('disabled', false);
+                    $('#guardar-datos').attr('disabled', false);
+                    $('#guardar-datos i.fa-save').removeClass('fa-spin');
+                    $('#guardar-datos span').html('Guardar');
+
+                    // MENSAJE DE ERROR DE CONEXION.
+                    let contenedor_mensaje = '';
+                    contenedor_mensaje += '<div class="alert alert-danger mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                    contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                    contenedor_mensaje += '</button>';
+                    contenedor_mensaje += '</div>';
+                    $('#contenedor-mensaje2').html(contenedor_mensaje);
+                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                    setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 5000);
+
+                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                    console.log('Error: '+msjError.status+' - '+msjError.statusText);
+                    console.log(msjError.responseText);
+                }, timer: 15000
+            });
+        }, 500);
     }
     // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-    function cambiarEstatus () {
+    function cambiarEstatus (e) {
+        e.preventDefault();
         let posicion = $(this).attr('data-posicion');
         let nacionalidad = dataListado.resultados[posicion].nacionalidad;
         let cedula = dataListado.resultados[posicion].cedula;
+
+        ///////////////////
+        $('.editar-registro').attr('disabled', true);
+        $('.cambiar-estatus').attr('disabled', true);
+        $('#show_form').attr('disabled', true);
+        // LIMPIAMOS LOS CONTENEDORES DE LOS MENSAJES DE EXITO O DE ERROR DE LAS CONSULTAS ANTERIORES.
+        $('#contenedor-mensaje').empty();
+        $('#contenedor-mensaje2').empty();
+
+        // DEFINIMOS EL ESTATUS POR EL QUE SE VA A ACTUALIZAR
         let estatus = '';
-        if (dataListado.resultados[posicion].estatus == 'A')
-            estatus = 'I';
-        else
-            estatus = 'A';
+        if (dataListado.resultados[posicion].estatus == 'A') { estatus = 'I'; }
+        else { estatus = 'A'; }
         
-        $.ajax({
-            url : url+'controllers/c_facilitador.php',
-            type: 'POST',
-            data: {
-                opcion: 'Estatus',
-                nacionalidad: nacionalidad,
-                cedula: cedula,
-                estatus: estatus
-            },
-            success: function (resultados) {
-                alert(resultados);
-                if (resultados == 'Modificacion exitosa')
-                    buscar_listado();
-            },
-            error: function () {
-                console.log('error');
-            }
-        });
-    }
-    // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
-    function limpiarFormulario(){
-        document.formulario.reset();
-        $('.ocultar-iconos').hide();
-        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
-        /////////////////////////////////////////////////////////////////
-        // window.buscarCiudad = false;
+        setTimeout(() => {
+            $.ajax({
+                url : url+'controllers/c_facilitador.php',
+                type: 'POST',
+                data: {
+                    opcion: 'Estatus',
+                    nacionalidad: nacionalidad,
+                    cedula: cedula,
+                    estatus: estatus
+                },
+                success: function (resultados) {
+                    let color_alerta = '';
+                    let icono_alerta = '';
+
+                    if (resultados == 'Modificación exitosa') {
+                        buscar_listado();
+                        color_alerta = 'alert-success';
+                        icono_alerta = '<i class="fas fa-check"></i>';
+                    } else if (resultados == 'Modificación fallida') {
+                        color_alerta = 'alert-danger';
+                        icono_alerta = '<i class="fas fa-times"></i>';
+
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.editar-registro').attr('disabled', false);
+                        $('.cambiar-estatus').attr('disabled', false);
+                        $('#show_form').attr('disabled', false);
+                    }
+
+                    let contenedor_mensaje = '';
+                    contenedor_mensaje += '<div class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                    contenedor_mensaje += icono_alerta+' '+resultados;
+                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                    contenedor_mensaje += '</button>';
+                    contenedor_mensaje += '</div>';
+                    $('#contenedor-mensaje').html(contenedor_mensaje);
+                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                    setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 5000);
+                },
+                error: function (msjError) {
+                    // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                    $('.editar-registro').attr('disabled', false);
+                    $('.cambiar-estatus').attr('disabled', false);
+                    $('#show_form').attr('disabled', false);
+
+                    // MENSAJE DE ERROR DE CONEXION.
+                    let contenedor_mensaje = '';
+                    contenedor_mensaje += '<div class="alert alert-danger mt-2 mb-0 py-2 px-3 alerta-formulario" role="alert">';
+                    contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                    contenedor_mensaje += '</button>';
+                    contenedor_mensaje += '</div>';
+                    $('#contenedor-mensaje').html(contenedor_mensaje);
+                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                    setTimeout(() => { $('.alerta-formulario').fadeOut(500); }, 5000);
+
+                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                    console.log('Error: '+msjError.status+' - '+msjError.statusText);
+                    console.log(msjError.responseText);
+                }, timer: 15000
+            });
+        }, 500);
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -1052,13 +1468,7 @@ $(function() {
                     fecha = data.fecha;
                     if (data.ocupacion) {
                         for (let i in data.ocupacion) {
-                            $("#ocupacion").append(
-                                '<option value="' +
-                                    data.ocupacion[i].codigo +
-                                    '">' +
-                                    data.ocupacion[i].nombre +
-                                    "</option>"
-                            );
+                            $("#ocupacion").append('<option value="' +data.ocupacion[i].codigo +'">' +data.ocupacion[i].nombre +"</option>");
                         }
                         dataOcupacion = data.ocupacion;
                     } else {
@@ -1067,60 +1477,6 @@ $(function() {
                         );
                     }
 
-                    $("#radios_oficios").empty();
-                    if (data.oficio) {
-                        let contenido_oficio = "";
-                        contenido_oficio +=
-                            '<div class="custom-control custom-radio">';
-                        contenido_oficio +=
-                            '<input type="radio" id="oficio_asd_0" name="buscar_oficio" class="custom-control-input" value="" checked>';
-                        contenido_oficio +=
-                            '<label class="custom-control-label" for="oficio_asd_0">Todos</label>';
-                        contenido_oficio += "</div>";
-
-                        $("#radios_oficios").append(contenido_oficio);
-                        for (let i in data.oficio) {
-                            $("#oficio").append(
-                                '<option value="' +
-                                    data.oficio[i].codigo +
-                                    '">' +
-                                    data.oficio[i].nombre +
-                                    "</option>"
-                            );
-
-                            let contenido_oficio = "";
-                            contenido_oficio +=
-                                '<div class="custom-control custom-radio">';
-                            contenido_oficio +=
-                                '<input type="radio" id="oficio_asd_' +
-                                data.oficio[i].codigo +
-                                '" name="buscar_oficio" class="custom-control-input" value="' +
-                                data.oficio[i].codigo +
-                                '">';
-                            contenido_oficio +=
-                                '<label class="custom-control-label" for="oficio_asd_' +
-                                data.oficio[i].codigo +
-                                '">' +
-                                data.oficio[i].nombre +
-                                "</label>";
-                            contenido_oficio += "</div>";
-                            $("#radios_oficios").append(contenido_oficio);
-                        }
-                    } else {
-                        $("#oficio").html(
-                            '<option value="">No hay oficios</option>'
-                        );
-
-                        let contenido_oficio = "";
-                        contenido_oficio +=
-                            '<div class="custom-control custom-radio">';
-                        contenido_oficio +=
-                            '<input type="radio" id="oficio_asd_0" name="buscar_oficio" class="custom-control-input" value="" checked>';
-                        contenido_oficio +=
-                            '<label class="custom-control-label" for="oficio_asd_0">Todos</label>';
-                        contenido_oficio += "</div>";
-                        $("#radios_oficios").append(contenido_oficio);
-                    }
                     if (data.estado) {
                         for (let i in data.estado) {
                             $("#estado").append(

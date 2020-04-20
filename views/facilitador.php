@@ -25,8 +25,8 @@
                 <div class="col-sm-6 col-lg-3 col-xl-3 form-group d-flex align-items-center text-info mb-2">
                     <label for="ordenar_por" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="ordenar_por" class="custom-select custom-select-sm">
-                        <option value="2">Cédula</option>
-                        <option value="4">Nombre</option>
+                        <option value="1">Cédula</option>
+                        <option value="2">Nombre</option>
                     </select>
                 </div>
 
@@ -74,11 +74,7 @@
                     <?php } ?>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 8; else echo 7; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
-                </tr>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
@@ -88,11 +84,14 @@
                 <span id="total_registros">0</span>
             </p>
         </div>
+
         <div class="col-sm-12 col-md-6">
             <nav aria-label="Page navigation">
                 <ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul>
             </nav>
         </div>
+
+        <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
 
@@ -148,9 +147,9 @@
                             <div class="form-group mb-2">
                                 <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula<i class="fas fa-asterisk text-danger position-absolute required"></i>
                                     <i id="spinner-cedula" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
-                                    <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
                                 </label>
-                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm localStorage solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -228,10 +227,9 @@
                             <div class="form-group mb-2">
                                 <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <div class="d-flex">
-                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm">
-                                        <option value="">Elija una opción</option>
-                                    </select>
-                                    <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2"><i class="fas fa-plus"></i></button>
+                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm"></select>
+                                    <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2" style=""><i class="fas fa-plus"></i></button>
+                                    <button type="button" id="btn-buscar-ocupacion" class="btn btn-sm btn-info ml-2" style="display: none;"><i class="fas fa-sync-alt"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -436,12 +434,70 @@
                 </div>
             </div>
 
+            <div id="contenedor-mensaje2"></div>
+
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">
-                <button id="guardar_datos" type="button" class="btn btn-sm btn-info"><i class="fas fa-save"></i> <span>Guardar</span></button>
+                <button id="guardar-datos" type="button" class="btn btn-sm btn-info"><i class="fas fa-save"></i> <span>Guardar</span></button>
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>
+    </div>
+
+    <div id="modal-detalles-archivo" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Vista previa</h5>
+                    <button type="button" id="btn-cancelar-ocupacion2" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div id="detalles-archivo" class="modal-body p-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-registrar-ocupacion" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Registrar ocupación</h5>
+                    <button type="button" id="btn-cancelar-ocupacion2" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_registrar_ocupacion" id="form_registrar_ocupacion" class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="nueva-nombre-ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nueva_nombre_ocupacion" id="nueva-nombre-ocupacion" class="form-control form-control-sm" placeholder="Ocupación (Mecanico, Estudiante,...)" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="nueva-fomulario-ocupacion" class="d-inline-block w-100 position-relative small m-0">Formulario<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="nueva_fomulario_ocupacion" id="nueva-fomulario-ocupacion" class="custom-select custom-select-sm">
+                                    <option value="">Elija el formulario a mostrar</option>
+                                    <option value="A">Aprendiz</option>
+                                    <option value="B">Familia del aprendiz</option>
+                                    <option value="F">Facilitador</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="contenedor-mensaje-ocupacion" class="col-sm-12"></div>
+                    </form>
+                </div>
+
+                <div class="modal-footer justify-content-between py-2">
+                    <button type="button" class="btn btn-sm btn-info" id="btn-registrar-ocupacion"><i class="fas fa-save"></i> <span></span></button>
+                    <button type="button" class="btn btn-sm btn-secondary" id="btn-cancelar-ocupacion" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
+                </div>
+            </div>
+        </div>
     </div>
 <?php } ?>
 

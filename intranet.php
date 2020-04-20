@@ -64,9 +64,9 @@ if (isset($_SESSION['sesion'])) {
     <script src="<?php echo SERVERURL; ?>javascripts/popper/popper.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/bootstrap/bootstrap.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
-    <script src="<?php echo SERVERURL; ?>javascripts/sweetalert/sweetalert.min.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/definir_paginacion.js"></script>
     <script src="<?php echo SERVERURL; ?>javascripts/generales.js"></script>
+    <script src="<?php echo SERVERURL; ?>javascripts/tool.js"></script>
     <script>let permisos = <?php echo json_encode($permisos); ?>;</script>
 </head>
 

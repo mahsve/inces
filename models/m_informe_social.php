@@ -1,31 +1,26 @@
 <?php
 require_once 'conexion.php';
-class model_informeSocial extends conexion
-{
+class model_informeSocial extends conexion {
     private $data_conexion; // VARIABLE QUE CONTENDRA LA CONEXION.
 
     // DEFINIMOS EL CONSTRUCTOR.
-    public function model_informeSocial ()
-    {
+    public function model_informeSocial () {
         $this->conexion(); // SE DEFINE LA CLASE PARA HEREDAR SUS ATRIBUTOS.
     }
 
     // FUNCION PARA ABRIR CONEXION.
-    public function conectar ()
-    {
+    public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
     }
 
     // FUNCION PARA CERRAR CONEXION.
-    public function desconectar ()
-    {
+    public function desconectar () {
         mysqli_close($this->data_conexion);
     }
 
     // FUNCION PARA CONSULTAR LAS OCUPACIONES
-	public function consultarOcupaciones()
-	{
+	public function consultarOcupaciones() {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -37,8 +32,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS OFICIOS.
-	public function consultarOficios()
-	{
+	public function consultarOficios() {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -50,8 +44,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS ESTADOS.
-	public function consultarEstados()
-	{
+	public function consultarEstados() {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -63,8 +56,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS CIUDADES SEGUN EL ESTADO ELEGIDO.
-	public function consultarCiudades($datos)
-	{
+	public function consultarCiudades($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -76,8 +68,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS MUNICIPIOS SEGUN EL ESTADO ELEGIDO.
-	public function consultarMunicipios($datos)
-	{
+	public function consultarMunicipios($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -89,8 +80,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS PARROQUIAS SEGUN EL MUNICIPIO ELEGIDO.
-	public function consultarParroquias($datos)
-	{
+	public function consultarParroquias($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -102,8 +92,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS FACILITADORES ACTIVOS.
-	public function consultarFacilitadores($datos)
-	{
+	public function consultarFacilitadores($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
         FROM t_datos_personales
@@ -123,40 +112,38 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA VERIFICAR PRIMERO SI EXISTE ESTA OCUPACION
-	public function verificarOcupacion($datos)
-	{
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+	public function confirmarExistenciaOcupacionR($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre='".$datos['input_registrar_ocupacion']."'
+            WHERE nombre='".htmlspecialchars($datos["nueva_nombre_ocupacion"])."'
+            AND formulario='".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
         "; // SENTENTCIA
-        if ($consulta = mysqli_query($this->data_conexion, $sentencia))
-        {
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
     // FUNCION PARA REGISTRAR UNA NUEVA OCUPACION.
-    public function registrarOcupacion($datos)
-    {
+    public function registrarOcupacion($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_ocupacion (
-            nombre
+            nombre,
+            formulario
         ) VALUES (
-            '".$datos['input_registrar_ocupacion']."'
+            '".htmlspecialchars($datos["nueva_nombre_ocupacion"])."',
+            '".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
-    public function registrarDatosPersonales($datos)
-    {
+    public function registrarDatosPersonales($datos) {
         $valor_null = 'NULL';
         if ($datos['parroquia'] != '') {
             $valor_null = htmlspecialchars($datos['parroquia']);
@@ -217,8 +204,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA REGISTRAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
-    public function registrarDatosVivienda($datos)
-    {
+    public function registrarDatosVivienda($datos) {
         $resultado = false;
         $sentencia = "INSERT INTO t_datos_hogar (
             nacionalidad,
@@ -272,8 +258,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA REGISTRAR LA FICHA DEL APRENDIZ.
-    public function registrarInformeSocial($datos)
-    {
+    public function registrarInformeSocial($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_informe_social (
             fecha,
@@ -315,8 +300,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA REGISTRAR LOS DATOS DEL LOS FAMILIARES DEL APRENDIZ.
-    public function registrarFamilares($datos)
-    {
+    public function registrarFamilares($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_familia (
             numero_informe,
@@ -352,8 +336,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA REGISTRAR LOS INGRESOS Y EGRESOS DE LA FAMILIA.
-    public function registrarGestionDinero($datos)
-    {
+    public function registrarGestionDinero($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_gestion_dinero (
             numero_informe,
@@ -373,8 +356,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS APRENDICES REGISTRADOS Y MOSTRARLOS EN UNA LISTA.
-    public function consultarInformeSocial($datos)
-    {
+    public function consultarInformeSocial($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT
             t_informe_social.*, t_informe_social.estatus AS estatus_informe,
@@ -437,8 +419,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS DATOS DE LA VIVIENDA DE UN APRENDIZ EN CONCRETO.
-    public function consultarDatosVivienda($datos)
-    {
+    public function consultarDatosVivienda($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_datos_hogar
@@ -454,8 +435,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR A LOS FAMILIARES DEL APRENDIZ CONSULTADO.
-    public function consultarFamiliares($datos)
-    {
+    public function consultarFamiliares($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT
             t_familia.*,
@@ -473,8 +453,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS INGRESOS Y LOS EGRESOS DE LA FAMILIA DEL APRENDIZ.
-    public function consultarDinero($datos)
-    {
+    public function consultarDinero($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM t_gestion_dinero
@@ -489,8 +468,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA MODIFICAR LOS DATOS PERSONALES DEL APRENDIZZ
-    public function modificarDatosPersonales($datos)
-    {
+    public function modificarDatosPersonales($datos) {
         $valor_null = 'NULL';
         if ($datos['parroquia'] != '') {
             $valor_null = htmlspecialchars($datos['parroquia']);
@@ -528,8 +506,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA MODIFICAR LOS DATOS DE LA VIVIENDA DEL APRENDIZ.
-    public function modificarDatosVivienda($datos)
-    {
+    public function modificarDatosVivienda($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_hogar SET 
             punto_referencia='".htmlspecialchars($datos['punto_referencia'])."',
@@ -560,8 +537,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA MODIFICAR LA FICHA DEL APRENDIZ.
-    public function modificarInformeSocial($datos)
-    {
+    public function modificarInformeSocial($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_informe_social SET 
             fecha='".htmlspecialchars($datos['fecha'])."',
@@ -621,8 +597,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA ELIMINAR LOS DATOS DE LOS INGRESOS Y REGISTRAR LOS NUEVOS (ACTUALIZADOS).
-    public function eliminarGestionDinero($id)
-    {
+    public function eliminarGestionDinero($id) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "DELETE FROM t_gestion_dinero WHERE numero_informe='".$id."'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -634,8 +609,7 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
-    public function estatusAprendiz($datos)
-    {
+    public function estatusAprendiz($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_informe_social SET
             estatus='".$datos['estatus']."'
@@ -693,20 +667,17 @@ class model_informeSocial extends conexion
     }
 
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
-    public function nuevaTransaccion()
-    {
+    public function nuevaTransaccion() {
 		mysqli_query($this->data_conexion,"START TRANSACTION");
     }
 
     // FUNCION PARA GUARDAR LOS CAMBIOS DE LA TRANSACCION.
-    public function guardarTransaccion()
-    {
+    public function guardarTransaccion() {
 		mysqli_query($this->data_conexion,"COMMIT");
     }
     
     // FUNCION PARA DESHACER TODA LA TRANSACCION.
-    public function calcelarTransaccion()
-    {
+    public function calcelarTransaccion() {
 		mysqli_query($this->data_conexion,"ROLLBACK");
     }
 }

@@ -19,6 +19,7 @@ class model_ocupacion extends conexion {
         mysqli_close($this->data_conexion);
     }
 
+    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *

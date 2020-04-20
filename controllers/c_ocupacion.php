@@ -62,7 +62,7 @@ if ($_POST['opcion']) {
         case 'Estatus':
             $objeto->conectar();
             if ($objeto->estatusOcupacion($_POST)) {
-                echo 'Modificacion exitosa';
+                echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';
             }

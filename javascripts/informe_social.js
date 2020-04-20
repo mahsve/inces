@@ -208,13 +208,7 @@ $(function () {
                                     //////////////////////////////////
                                     let data = JSON.parse(resultados);
                                     if (data) {
-                                        swal({
-                                            title   : 'Aprendiz ya registrado',
-                                            text    : 'Esta persona ya esta registrada en el sistema',
-                                            icon    : 'error',
-                                            buttons : false,
-                                            timer   : 4000
-                                        });
+                                       
                                         $('#spinner-cedula-confirm').addClass('fa-times text-danger');
                                     } else {
                                         $('#spinner-cedula-confirm').addClass('fa-check text-success');
@@ -222,24 +216,11 @@ $(function () {
                                     }
                                     $('#spinner-cedula-confirm').show(200);
                                 } catch (error) {
-                                    swal({
-                                        title   : 'Error',
-                                        text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
-                                        icon    : 'error',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
+
                                     console.log(resultados);
                                 }
                             },
                             error: function () {
-                                swal({
-                                    title   : 'Error',
-                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                                    icon    : 'error',
-                                    buttons : false,
-                                    timer   : 4000
-                                });
                             }
                         });
                     }
@@ -1715,21 +1696,9 @@ $(function () {
                 success: function (resultados){
                     try {
                         if (resultados == 'Ya registrado') {
-                            swal({
-                                title   : 'No se registro',
-                                text    : 'La ocupación ya esta registrada y para evitar valores repetidos no se realizo el registro.',
-                                icon    : 'info',
-                                buttons : false,
-                                timer   : 4000
-                            });
+                            
                         } else if (resultados == 'Error al registrar') {
-                            swal({
-                                title   : 'Error',
-                                text    : 'Al parecer hubo un error al intentar registrar la ocupación, vuelva a intentarlo',
-                                icon    : 'error',
-                                buttons : false,
-                                timer   : 4000
-                            });
+                            
                         } else {
                             let data = JSON.parse(resultados);
                             let este_valor_o1 = $('#ocupacion').val();
@@ -1761,45 +1730,16 @@ $(function () {
                                     $(this).val(este_valor_o);
                                 });
                             }
-
-                            swal({
-                                title   : 'Exito',
-                                text    : 'La ocupacion se registro con exito',
-                                icon    : 'success',
-                                buttons : false,
-                                timer   : 4000
-                            });
                         }
                         $('#modal-registrar-ocupacion').modal('hide');
                     } catch (error) {
-                        swal({
-                            title   : 'Error',
-                            text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
-                            icon    : 'error',
-                            buttons : false,
-                            timer   : 4000
-                        });
                         console.log(resultados);
                     }
                 },
                 error: function (){
-                    swal({
-                        title   : 'Error',
-                        text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                        icon    : 'error',
-                        buttons : false,
-                        timer   : 4000
-                    });
                 }
             });
         } else {
-            swal({
-                title   : 'Atención',
-                text    : 'Para proceder con el registro el campo no puede estar vacío.',
-                icon    : 'error',
-                buttons : false,
-                timer   : 4000
-            });
         }
     });
     function limpiarModalRegistrarOcupacion () {
@@ -1973,6 +1913,17 @@ $(function () {
                             $('#diagnostico_preliminar').val(dataListado.resultados[posicion].diagnostico_preliminar);
                             $('#conclusiones').val(dataListado.resultados[posicion].conclusiones);
                             document.formulario.enfermos.value = dataListado.resultados[posicion].enfermos;
+
+                            setTimeout(() => {
+                                verificarParte1();
+                            verificarParte2();
+                            verificarParte3();
+                            verificarParte4();
+                            verificarParte5();
+                            verificarParte6();
+                            verificarParte7();
+                            }, 500);
+                            $('#carga_espera').hide(400);
                         } catch (error) {
                             console.log(resultados);
                         }
@@ -2026,34 +1977,16 @@ $(function () {
             data: data,
             success: function (resultados) {
                 if (resultados == 'Registro exitoso' || resultados == 'Modificacion exitosa'){
-                    swal({
-                        title   : resultados,
-                        text    : 'La operación se ejecuto con exito.',
-                        icon    : 'success',
-                        buttons : false,
-                        timer   : 4000
-                    });
+
 
                     $('#show_table').trigger('click');
                     buscar_listado();
                 } else {
-                    swal({
-                        title   : 'Información',
-                        text    : resultados,
-                        icon    : 'info',
-                        buttons : false,
-                        timer   : 4000
-                    });
+
                 }
             },
             error: function () {
-                swal({
-                    title   : 'Error',
-                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                    icon    : 'error',
-                    buttons : false,
-                    timer   : 4000
-                });
+
             }
         });
     }
@@ -2068,132 +2001,57 @@ $(function () {
     }
     function rechazarPostulante (e) {
         e.preventDefault();
-        swal("Atención", '¿Seguro que quieres rechazar a este aprendiz?', 'warning'
-        ,{
-            buttons: {
-                cancel: "Cancelar",
-                catch: {
-                    text: "Rechazar",
-                    value: "ir",
-                },
-                    defeat: false,
-                },
-            })
-            .then((value) => {
-                switch (value) {
-                    case "ir":
-                        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-                        let posicion = $(this).attr('data-posicion');
-                        let numero = dataListado.resultados[posicion].numero;
-                        let estatus = 'R';
-                        ///////////////////////////////////////////////////////
-                        $.ajax({
-                            url : url+'controllers/c_informe_social.php',
-                            type: 'POST',
-                            data: {
-                                opcion: 'Rechazar',
-                                numero: numero,
-                                estatus: estatus
-                            },
-                            success: function (resultados) {
-                                if (resultados == 'Modificacion exitosa'){
-                                    swal({
-                                        title   : resultados,
-                                        text    : 'La operación se ejecuto con exito.',
-                                        icon    : 'success',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
-                                    buscar_listado();
-                                } else {
-                                    swal({
-                                        title   : 'Información',
-                                        text    : resultados,
-                                        icon    : 'info',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
-                                }
-                            },
-                            error: function () {
-                                swal({
-                                    title   : 'Error',
-                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                                    icon    : 'error',
-                                    buttons : false,
-                                    timer   : 4000
-                                });
-                            }
-                        });
-                    break;
+        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+        let estatus = 'R';
+        ///////////////////////////////////////////////////////
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: {
+                opcion: 'Rechazar',
+                numero: numero,
+                estatus: estatus
+            },
+            success: function (resultados) {
+                if (resultados == 'Modificacion exitosa'){
+                    
+                    buscar_listado();
+                } else {
+
                 }
+            },
+            error: function () {
+                
+            }
         });
     }
     function reactivarPostulante (e) {
         e.preventDefault();
-        swal("Atención", '¿Seguro que quieres reactivar a este aprendiz?\n saldra nuevamente en estado de espera hasta que sea aceptado o rechazado nuevamente.', 'warning'
-        ,{
-            buttons: {
-                cancel: "Cancelar",
-                catch: {
-                    text: "Reactivar",
-                    value: "ir",
-                },
-                    defeat: false,
-                },
-            })
-            .then((value) => {
-                switch (value) {
-                    case "ir":
-                        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-                        let posicion = $(this).attr('data-posicion');
-                        let numero = dataListado.resultados[posicion].numero;
-                        let estatus = 'E';
-                        ///////////////////////////////////////////////////////
-                        $.ajax({
-                            url : url+'controllers/c_informe_social.php',
-                            type: 'POST',
-                            data: {
-                                opcion: 'Reactivar',
-                                numero: numero,
-                                estatus: estatus
-                            },
-                            success: function (resultados) {
-                                if (resultados == 'Modificacion exitosa'){
-                                    swal({
-                                        title   : resultados,
-                                        text    : 'La operación se ejecuto con exito.',
-                                        icon    : 'success',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
-                                    buscar_listado();
-                                } else {
-                                    swal({
-                                        title   : 'Información',
-                                        text    : resultados,
-                                        icon    : 'info',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
-                                }
-                            },
-                            error: function () {
-                                swal({
-                                    title   : 'Error',
-                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                                    icon    : 'error',
-                                    buttons : false,
-                                    timer   : 4000
-                                });
-                            }
-                        });
-                    break;
+        // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
+        let posicion = $(this).attr('data-posicion');
+        let numero = dataListado.resultados[posicion].numero;
+        let estatus = 'E';
+        ///////////////////////////////////////////////////////
+        $.ajax({
+            url : url+'controllers/c_informe_social.php',
+            type: 'POST',
+            data: {
+                opcion: 'Reactivar',
+                numero: numero,
+                estatus: estatus
+            },
+            success: function (resultados) {
+                if (resultados == 'Modificacion exitosa'){
+                    buscar_listado();
+                } else {
+                    
                 }
+            },
+            error: function () {
+            }
         });
-
-        e.preventDefault();
-        
     }
     function imprimirInforme (e) {
         e.preventDefault();
@@ -2201,38 +2059,6 @@ $(function () {
         let posicion = $(this).attr('data-posicion');
         let numero = dataListado.resultados[posicion].numero;
         window.open(url+'controllers/reportes/r_informe_social?n='+numero, '_blank');
-
-        // 
-        // 
-
-        // swal({
-        //     title   : 'Generando PDF',
-        //     text    : 'Generando PDF, por favor espera unos segundos hasta que se complete la tarea',
-        //     icon    : 'info',
-        //     buttons : false
-        // });
-        // ///////////////////////////////////////////////////////
-        // $.ajax({
-        //     url : url+'controllers/pdf/r_informe_social.php',
-        //     type: 'POST',
-        //     data: {
-        //         numero: numero
-        //     },
-        //     success: function (resultados){
-        //         swal.close();
-        //         window.open(url+'pdf/'+resultados, '_blank');
-        //         console.log(resultados); // EN CASO DE ERROR
-        //     },
-        //     error: function (){
-        //         swal({
-        //             title   : 'Error',
-        //             text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-        //             icon    : 'error',
-        //             buttons : false,
-        //             timer   : 4000
-        //         });
-        //     }
-        // });
     }
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA GUARDAR LOS DATOS DEL APRENDIZ EN LOCALSTORAGE.

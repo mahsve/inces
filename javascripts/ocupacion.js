@@ -245,8 +245,9 @@ $(function () {
         $('#gestion_form').show(400);
         $('#carga_espera').hide(400);
         $('#form_title').html('Registrar');
-        $('.form-control').css('background', colorn);
-        $('.custom-select').css('background-color', colorn);
+        $('form .form-control').css('background-color', colorn);
+        $('form .custom-select').css('background-color', colorn);
+        
         tipoEnvio       = 'Registrar';
         window.codigo   = '';
         document.formulario.reset();
@@ -268,16 +269,19 @@ $(function () {
         $('#info_table').hide(400);
         $('#gestion_form').show(400);
         $('#form_title').html('Modificar');
-        document.formulario.reset();
+        $('form .form-control').css('background-color', colorn);
+        $('form .custom-select').css('background-color', colorn);
+
         tipoEnvio       = 'Modificar';
+        document.formulario.reset();
         window.codigo   = dataListado.resultados[posicion].codigo;
         $('#nombre').val(dataListado.resultados[posicion].nombre);
         $('#c_formulario').val(dataListado.resultados[posicion].formulario);
-        
+
         verificarParte1();
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
-    $('#guardar_datos').click(function (e) {
+    $('#guardar-datos').click(function (e) {
         e.preventDefault();
         verificarParte1();
 
@@ -289,9 +293,9 @@ $(function () {
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('#show_table').attr('disabled', true);
-            $('#guardar_datos').attr('disabled', true);
-            $('#guardar_datos i.fa-save').addClass('fa-spin');
-            $('#guardar_datos span').html('Guardando...');
+            $('#guardar-datos').attr('disabled', true);
+            $('#guardar-datos i.fa-save').addClass('fa-spin');
+            $('#guardar-datos span').html('Guardando...');
             // LIMPIAMOS LOS CONTENEDORES DE LOS MENSAJES DE EXITO O DE ERROR DE LAS CONSULTAS ANTERIORES.
             $('#contenedor-mensaje').empty();
             $('#contenedor-mensaje2').empty();
@@ -339,16 +343,16 @@ $(function () {
     
                         // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
                         $('#show_table').attr('disabled', false);
-                        $('#guardar_datos').attr('disabled', false);
-                        $('#guardar_datos i.fa-save').removeClass('fa-spin');
-                        $('#guardar_datos span').html('Guardar');
+                        $('#guardar-datos').attr('disabled', false);
+                        $('#guardar-datos i.fa-save').removeClass('fa-spin');
+                        $('#guardar-datos span').html('Guardar');
                     },
                     error: function (msjError) {
                         // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
                         $('#show_table').attr('disabled', false);
-                        $('#guardar_datos').attr('disabled', false);
-                        $('#guardar_datos i.fa-save').removeClass('fa-spin');
-                        $('#guardar_datos span').html('Guardar');
+                        $('#guardar-datos').attr('disabled', false);
+                        $('#guardar-datos i.fa-save').removeClass('fa-spin');
+                        $('#guardar-datos span').html('Guardar');
     
                         // MENSAJE DE ERROR DE CONEXION.
                         let contenedor_mensaje = '';
@@ -372,6 +376,7 @@ $(function () {
     });
     // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
     function cambiarEstatus () {
+        e.preventDefault();
         let posicion = $(this).attr('data-posicion');
         let codigo = dataListado.resultados[posicion].codigo;
 
@@ -379,6 +384,9 @@ $(function () {
         $('.editar-registro').attr('disabled', true);
         $('.cambiar-estatus').attr('disabled', true);
         $('#show_form').attr('disabled', true);
+        // LIMPIAMOS LOS CONTENEDORES DE LOS MENSAJES DE EXITO O DE ERROR DE LAS CONSULTAS ANTERIORES.
+        $('#contenedor-mensaje').empty();
+        $('#contenedor-mensaje2').empty();
 
         // DEFINIMOS EL ESTATUS POR EL QUE SE VA A ACTUALIZAR
         let estatus = '';
@@ -398,7 +406,7 @@ $(function () {
                     let color_alerta = '';
                     let icono_alerta = '';
 
-                    if (resultados == 'Modificacion exitosa') {
+                    if (resultados == 'Modificación exitosa') {
                         buscar_listado();
                         color_alerta = 'alert-success';
                         icono_alerta = '<i class="fas fa-check"></i>';
