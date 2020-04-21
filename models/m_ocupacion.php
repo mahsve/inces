@@ -24,7 +24,7 @@ class model_ocupacion extends conexion {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre='".htmlspecialchars($datos["nombre"])."'
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
             AND formulario='".htmlspecialchars($datos["c_formulario"])."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
@@ -40,7 +40,7 @@ class model_ocupacion extends conexion {
             nombre,
             formulario
         ) VALUES (
-            '".htmlspecialchars($datos["nombre"])."',
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."',
             '".htmlspecialchars($datos["c_formulario"])."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
@@ -86,7 +86,7 @@ class model_ocupacion extends conexion {
 		$sentencia = "SELECT *
             FROM t_ocupacion
             WHERE codigo!='".htmlspecialchars($datos["codigo"])."'
-            AND nombre='".htmlspecialchars($datos["nombre"])."'
+            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
             AND formulario='".htmlspecialchars($datos["c_formulario"])."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
@@ -99,7 +99,7 @@ class model_ocupacion extends conexion {
     public function modificarOcupacion ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_ocupacion SET
-            nombre='".$datos["nombre"]."',
+            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."',
             formulario='".htmlspecialchars($datos["c_formulario"])."'
             WHERE codigo=".$datos['codigo']."
         ";
@@ -112,13 +112,12 @@ class model_ocupacion extends conexion {
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA OCUPACION.
     public function estatusOcupacion ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "UPDATE t_ocupacion SET
-            estatus='".$datos["estatus"]."'
-            WHERE codigo=".$datos["codigo"]."
+        $sentencia = "UPDATE t_ocupacion
+            SET estatus='".htmlspecialchars($datos["estatus"])."'
+            WHERE codigo='".htmlspecialchars($datos["codigo"])."'
         ";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.

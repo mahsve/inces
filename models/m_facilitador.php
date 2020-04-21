@@ -274,7 +274,7 @@ class model_facilitador extends conexion{
             mision_participado='".htmlspecialchars($datos['alguna_mision'])."',
             codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
             codigo_parroquia=$datos[parroquia],
-            direccion='".htmlspecialchars($datos['direccion'])."',
+            direccion='".ucfirst(htmlspecialchars($datos['direccion']))."',
             telefono1='".htmlspecialchars($datos['telefono_1'])."',
             telefono2='".htmlspecialchars($datos['telefono_2'])."',
             correo='".htmlspecialchars($datos['correo'])."'

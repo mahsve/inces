@@ -130,7 +130,6 @@ $(function () {
                                 }
                                 contenido += '</td>';
                             }
-                            ////////////////////////////////////////////////////////
                             contenido += '</tr>';
                             $('#listado_tabla tbody').append(contenido);
                             cont++;
@@ -375,7 +374,7 @@ $(function () {
         }
     });
     // FUNCION PARA CAMBIAR EL ESTATUS DEL REGISTRO (ACTIVAR / INACTIVAR).
-    function cambiarEstatus () {
+    function cambiarEstatus (e) {
         e.preventDefault();
         let posicion = $(this).attr('data-posicion');
         let codigo = dataListado.resultados[posicion].codigo;
