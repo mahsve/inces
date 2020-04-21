@@ -66,19 +66,10 @@ $(function () {
         $("#paginacion").html(contenido_paginacion);
 
         // DESABILITAMOS LOS BOTONES PARA EVITAR ACCIONES MIENTRAS SE EJECUTA LA CONSULTA
-        let cantidad_a_buscar = $('#cantidad_a_buscar').val();
         $('#cantidad_a_buscar').attr('disabled', true);
-        ////////////////////////////////////
-        let ordenar_por = $('#ordenar_por').val();
         $('#ordenar_por').attr('disabled', true);
-        ////////////////////////////////////
-        let campo_ordenar = $('#campo_ordenar').val();
         $('#campo_ordenar').attr('disabled', true);
-        ////////////////////////////////////
-        let buscar_estatus = $('#buscar_estatus').val();
         $('#buscar_estatus').attr('disabled', true);
-        ////////////////////////////////////
-        let campo_busqueda = $('#campo_busqueda').val();
         $('#campo_busqueda').attr('disabled', true);
 
         // DESABILITAMOS LA OPCION DE AGREGAR NUEVOS DATOS HASTA QUE NO TERMINE LA CONSULTA.
@@ -90,12 +81,12 @@ $(function () {
                 dataType: 'JSON',
                 data: {
                     opcion  : 'Consultar',
-                    numero  : parseInt(numeroDeLaPagina-1) * parseInt(cantidad_a_buscar),
-                    cantidad: parseInt(cantidad_a_buscar),
-                    ordenar : parseInt(ordenar_por),
-                    tipo_ord: parseInt(campo_ordenar),
-                    campo   : campo_busqueda,
-                    estatus : buscar_estatus
+                    numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
+                    cantidad: parseInt($('#cantidad_a_buscar').val()),
+                    ordenar : parseInt($('#ordenar_por').val()),
+                    tipo_ord: parseInt($('#campo_ordenar').val()),
+                    campo   : $('#campo_busqueda').val(),
+                    estatus : $('#buscar_estatus').val()
                 },
                 success: function (resultados){
                     $('#listado_tabla tbody').empty();

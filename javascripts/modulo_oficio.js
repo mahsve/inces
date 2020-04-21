@@ -2,6 +2,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
+    let ER_codigoFormulario = /^([0-9a-zA-Z-])+$/;
     let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let pestania1;
@@ -47,7 +48,7 @@ $(function () {
         let filas = 0;
         if (permisos.modificar == 1 || permisos.act_desc == 1) { filas = 4; }
         else { filas = 3; }
-
+            
         let contenido_tabla = '';
         contenido_tabla += '<tr>';
         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
@@ -65,42 +66,50 @@ $(function () {
         $("#paginacion").html(contenido_paginacion);
 
         // DESABILITAMOS LOS BOTONES PARA EVITAR ACCIONES MIENTRAS SE EJECUTA LA CONSULTA
+        let cantidad_a_buscar = $('#cantidad_a_buscar').val();
         $('#cantidad_a_buscar').attr('disabled', true);
+        ////////////////////////////////////
+        let ordenar_por = $('#ordenar_por').val();
         $('#ordenar_por').attr('disabled', true);
+        ////////////////////////////////////
+        let campo_ordenar = $('#campo_ordenar').val();
         $('#campo_ordenar').attr('disabled', true);
+        ////////////////////////////////////
+        let buscar_estatus = $('#buscar_estatus').val();
         $('#buscar_estatus').attr('disabled', true);
+        ////////////////////////////////////
+        let campo_busqueda = $('#campo_busqueda').val();
         $('#campo_busqueda').attr('disabled', true);
 
         // DESABILITAMOS LA OPCION DE AGREGAR NUEVOS DATOS HASTA QUE NO TERMINE LA CONSULTA.
         $('#show_form').attr('disabled', true);
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_actividad_economica.php',
+                url : url+'controllers/c_oficio.php',
                 type: 'POST',
                 dataType: 'JSON',
                 data: {
                     opcion  : 'Consultar',
-                    numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
-                    cantidad: parseInt($('#cantidad_a_buscar').val()),
-                    ordenar : parseInt($('#ordenar_por').val()),
-                    tipo_ord: parseInt($('#campo_ordenar').val()),
-                    campo   : $('#campo_busqueda').val(),
-                    estatus : $('#buscar_estatus').val()
+                    numero  : parseInt(numeroDeLaPagina-1) * parseInt(cantidad_a_buscar),
+                    cantidad: parseInt(cantidad_a_buscar),
+                    ordenar : parseInt(ordenar_por),
+                    tipo_ord: parseInt(campo_ordenar),
+                    campo   : campo_busqueda,
+                    estatus : buscar_estatus
                 },
                 success: function (resultados){
                     $('#listado_tabla tbody').empty();
 
                     dataListado = resultados;
                     if (dataListado.resultados) {
-                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
                         for (var i in dataListado.resultados) {
                             let estatus_td = '';
                             if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span style="font-weight: 500;">Activo</span></span>'; }
                             else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span style="font-weight: 500;">Inactivo</span></span>'; }
-
+                            
                             let contenido = '';
                             contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
+                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
                             contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
                             contenido += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
@@ -117,7 +126,6 @@ $(function () {
                             }
                             contenido += '</tr>';
                             $('#listado_tabla tbody').append(contenido);
-                            cont++;
                         }
                         $('.editar-registro').click(editarRegistro);
                         $('.cambiar-estatus').click(cambiarEstatus);
@@ -125,12 +133,12 @@ $(function () {
                         contenido_tabla = '';
                         contenido_tabla += '<tr>';
                         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay ocupaciones registradas.</span>';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay oficios registrados.</span>';
                         contenido_tabla += '</td>';
                         contenido_tabla += '</tr>';
                         $('#listado_tabla tbody').html(contenido_tabla);
                     }
-
+                    
                     // SE HABILITA LA FUNCION PARA QUE PUEDA REALIZAR BUSQUEDA AL TERMINAR LA ANTERIOR.
                     window.actualizar_busqueda = false;
                     // MOSTRAR EL TOTAL DE REGISTROS ENCONTRADOS.
@@ -189,12 +197,25 @@ $(function () {
         buscar_listado();
     }
     /////////////////////////////////////////////////////////////////////
-
+    
 
     /////////////////////////////////////////////////////////////////////
     ////////////////////////// VALIDACIONES /////////////////////////////
     function verificarParte1 () {
         pestania1 = true;
+        // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
+        let codigo = $("#codigo").val();
+        if (codigo != '') {
+            if(codigo.match(ER_codigoFormulario)){
+                $("#codigo").css("background-color", colorb);
+            }else{
+                $("#codigo").css("background-color", colorm);
+                pestania1 = false;
+            }
+        } else {
+            $("#codigo").css("background-color", colorm);
+            pestania1 = false;
+        }
         // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
         let nombre = $("#nombre").val();
         if (nombre != '') {
@@ -223,7 +244,7 @@ $(function () {
         $('#form_title').html('Registrar');
         $('form .form-control').css('background-color', colorn);
         $('form .custom-select').css('background-color', colorn);
-        
+
         tipoEnvio       = 'Registrar';
         window.codigo   = '';
         document.formulario.reset();
@@ -233,7 +254,7 @@ $(function () {
         $('#gestion_form').hide(400);
     });
     /////////////////////////////////////////////////////////////////////
-    
+    /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -247,10 +268,11 @@ $(function () {
         $('#form_title').html('Modificar');
         $('form .form-control').css('background-color', colorn);
         $('form .custom-select').css('background-color', colorn);
-        
+
         tipoEnvio       = 'Modificar';
         document.formulario.reset();
         window.codigo   = dataListado.resultados[posicion].codigo;
+        $('#codigo').val(dataListado.resultados[posicion].codigo);
         $('#nombre').val(dataListado.resultados[posicion].nombre);
 
         verificarParte1();
@@ -264,7 +286,7 @@ $(function () {
         if (pestania1) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'codigo', value: window.codigo });
+            data.push({ name: 'codigo2', value: window.codigo });
             
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('#show_table').attr('disabled', true);
@@ -277,7 +299,7 @@ $(function () {
 
             setTimeout(() => {
                 $.ajax({
-                    url : url+'controllers/c_actividad_economica.php',
+                    url : url+'controllers/c_oficio.php',
                     type: 'POST',
                     data: data,
                     success: function (resultados) {
@@ -363,14 +385,14 @@ $(function () {
         $('#contenedor-mensaje').empty();
         $('#contenedor-mensaje2').empty();
 
-        // DEFINIMOS EL ESTATUS POR EL QUE SE VA A ACTUALIZAR
-        let estatus = '';
-        if (dataListado.resultados[posicion].estatus == 'A') { estatus = 'I'; }
-        else { estatus = 'A'; }
+       // DEFINIMOS EL ESTATUS POR EL QUE SE VA A ACTUALIZAR
+       let estatus = '';
+       if (dataListado.resultados[posicion].estatus == 'A') { estatus = 'I'; }
+       else { estatus = 'A'; }
         
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_actividad_economica.php',
+                url : url+'controllers/c_oficio.php',
                 type: 'POST',
                 data: {
                     opcion: 'Estatus',

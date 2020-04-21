@@ -3,7 +3,7 @@
         <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
         <?php if ($permisos['registrar'] == 1){ ?>
-            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip" disabled="true"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
         <?php } ?>
     </div>
 
@@ -53,7 +53,7 @@
         <div class="col-sm-12 col-xl-3 mb-2">
             <div class="form-group d-flex align-items-center text-info position-relative mb-0">
                 <label for="campo_busqueda" class="position-absolute pr-2 m-0" style="right: 2px;"><i class="fas fa-search"></i></label>
-                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right:30px;" placeholder="Buscar por nombre" autocomplete="off"/>
+                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right: 30px;" placeholder="Buscar por nombre" autocomplete="off"/>
             </div>
         </div>
     </div>
@@ -70,25 +70,24 @@
                     <?php } ?>
                 </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td colspan="<?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) echo 4; else echo 3; ?>" class="text-center text-secondary border-bottom p-2"><i class="fas fa-ban mr-3"></i>Espere un momento</td>
-                </tr>
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <p class="font-weight-bold text-secondary" style="font-size: 13px;">Total registros
+        <div class="col-sm-12 col-md-6 align-self-center">
+            <p class="font-weight-bold text-secondary m-0" style="font-size: 13px;">Total registros
                 <span id="total_registros">0</span>
             </p>
         </div>
+
         <div class="col-sm-12 col-md-6">
             <nav aria-label="Page navigation">
                 <ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul>
             </nav>
         </div>
+        
+        <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
 
@@ -111,7 +110,7 @@
 
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">
-                <button id="guardar_datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
+                <button id="guardar-datos" type="button" class="btn btn-sm btn-info px-4"><i class="fas fa-save"></i><span class="ml-1">Guardar</span></button>
             </div>
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>

@@ -69,19 +69,10 @@ $(function() {
         $("#paginacion").html(contenido_paginacion);
 
         // DESABILITAMOS LOS BOTONES PARA EVITAR ACCIONES MIENTRAS SE EJECUTA LA CONSULTA
-        let cantidad_a_buscar = $('#cantidad_a_buscar').val();
         $('#cantidad_a_buscar').attr('disabled', true);
-        ////////////////////////////////////
-        let ordenar_por = $('#ordenar_por').val();
         $('#ordenar_por').attr('disabled', true);
-        ////////////////////////////////////
-        let campo_ordenar = $('#campo_ordenar').val();
         $('#campo_ordenar').attr('disabled', true);
-        ////////////////////////////////////
-        let buscar_estatus = $('#buscar_estatus').val();
         $('#buscar_estatus').attr('disabled', true);
-        ////////////////////////////////////
-        let campo_busqueda = $('#campo_busqueda').val();
         $('#campo_busqueda').attr('disabled', true);
 
         // DESABILITAMOS LA OPCION DE AGREGAR NUEVOS DATOS HASTA QUE NO TERMINE LA CONSULTA.
@@ -93,12 +84,12 @@ $(function() {
                 dataType: 'JSON',
                 data: {
                     opcion  : 'Consultar',
-                    numero  : parseInt(numeroDeLaPagina-1) * parseInt(cantidad_a_buscar),
-                    cantidad: parseInt(cantidad_a_buscar),
-                    ordenar : parseInt(ordenar_por),
-                    tipo_ord: parseInt(campo_ordenar),
-                    campo   : campo_busqueda,
-                    estatus : buscar_estatus
+                    numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
+                    cantidad: parseInt($('#cantidad_a_buscar').val()),
+                    ordenar : parseInt($('#ordenar_por').val()),
+                    tipo_ord: parseInt($('#campo_ordenar').val()),
+                    campo   : $('#campo_busqueda').val(),
+                    estatus : $('#buscar_estatus').val()
                 },
                 success: function (resultados){
                     $('#listado_tabla tbody').empty();
@@ -239,59 +230,42 @@ $(function() {
         $('#spinner-cedula-confirm').hide();
         $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
 
+        // SE VERIFICA QUE NO ESTE VACIA LA NACIONALIDAD
         if($('#nacionalidad').val() != '') {
+            // SE VERIFICA QUE NO ESTE VACIA LA CEDULA
             if ($('#cedula').val() != '') {
+                // SE VERIFICA SI HA CAMBIADO PARA HACER LA CONSULTA
                 if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
+                    // VERIFICAMOS QUE SEA MAYO DE 7 NUMEROS PARA PODER VERIFICAR
                     if ($('#cedula').val().length > 7) {
-                        $.ajax({
-                            url : url+'controllers/c_empresa.php',
-                            type: 'POST',
-                            data: {
-                                opcion: 'Verificar cedula',
-                                nacionalidad: $('#nacionalidad').val(),
-                                cedula: $('#cedula').val()
-                            },
-                            success: function (resultados) {
-                                try {
+                        setTimeout(() => {
+                            $.ajax({
+                                url : url+'controllers/c_empresa.php',
+                                type: 'POST',
+                                dataType: 'JSON',
+                                data: {
+                                    opcion: 'Verificar cedula',
+                                    nacionalidad: $('#nacionalidad').val(),
+                                    cedula: $('#cedula').val()
+                                },
+                                success: function (resultados) {
                                     $('#spinner-cedula').hide();
-                                    //////////////////////////////////
-                                    let data = JSON.parse(resultados);
-                                    if (data) {
-                                        swal({
-                                            title   : 'Aprendiz ya registrado',
-                                            text    : 'Esta persona ya esta registrada en el sistema',
-                                            icon    : 'error',
-                                            buttons : false,
-                                            timer   : 4000
-                                        });
+                                    // VERIFICAMOS SI YA ESTA REGISTRADA ESTA PERSONA.
+                                    if (resultados) {
                                         $('#spinner-cedula-confirm').addClass('fa-times text-danger');
                                     } else {
                                         $('#spinner-cedula-confirm').addClass('fa-check text-success');
                                         validarCedula = true;
                                     }
                                     $('#spinner-cedula-confirm').show(200);
-                                } catch (error) {
-                                    swal({
-                                        title   : 'Error',
-                                        text    : 'Hubo un error al procesar los datos, revise la consola para mas información.',
-                                        icon    : 'error',
-                                        buttons : false,
-                                        timer   : 4000
-                                    });
-                                    console.log(resultados);
+                                },
+                                error: function () {
+                                    
                                 }
-                            },
-                            error: function () {
-                                swal({
-                                    title   : 'Error',
-                                    text    : 'Hubo un error al conectar con el servidor y traer los datos.\nRevise su conexion de internet.',
-                                    icon    : 'error',
-                                    buttons : false,
-                                    timer   : 4000
-                                });
-                            }
-                        });
+                            });
+                        }, 500);
                     }
+                // DECLARAMOS QUE ESTA BIEN DEFIFINA LOS CAMPOS DE IDENTIFICACION.
                 } else {
                     validarCedula = true;
                 }
