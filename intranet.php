@@ -139,7 +139,7 @@ if (isset($_SESSION['sesion'])) {
             <div class="row">
                 <!-- CONTENEDOR FORMULARIOS Y DASHBOARD -->
                 <div class="col-sm-12">
-                    <div class="bg-white rounded p-3">
+                    <div class="bg-white rounded p-3 shadow-sm">
                         <?php include_once $vista;?>
                     </div>
                 </div>
