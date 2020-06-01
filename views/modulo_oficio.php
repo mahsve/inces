@@ -64,6 +64,7 @@
                 <tr class="text-white">
                     <th class="bg-info rounded-left font-weight-normal px-1 py-2" width="100">Código</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Nombre del modulo</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> px-1 py-2" width="85">Estatus</th>
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
                         <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 76; else echo 40; ?>"></th>
@@ -99,15 +100,25 @@
         </div>
 
         <form name="formulario" id="formulario" class="formulario">
+            <input type="hidden" name="codigo" id="codigo" />
+
             <div class="form-row">
                 <div class="col-sm-12 offset-md-3 col-md-6">
                     <div class="form-group has-warning mb-2">
-                        <label for="codigo" class="small m-0">Código <span class="text-danger">*</span></label>
-                        <input type="text" name="codigo" id="codigo" class="form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
+                        <label for="codigoModuloOficio" class="small m-0">Código <span class="text-danger">*</span></label>
+                        <input type="text" name="codigoModuloOficio" id="codigoModuloOficio" class="form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
                     </div>
                     <div class="form-group has-warning mb-2">
                         <label for="nombre" class="small m-0">Nombre <span class="text-danger">*</span></label>
                         <input type="text" name="nombre" id="nombre" class="form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>
+                    </div>
+
+                     <div class="form-group mb-2">
+                        <label for="oficio" class="d-inline-block w-100 position-relative small m-0">Oficio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <select name="oficio" id="oficio" class="custom-select custom-select-sm">
+                            <option value="">Elija una opcion</option>
+                         
+                        </select>
                     </div>
                 </div>
             </div>

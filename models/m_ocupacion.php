@@ -12,6 +12,7 @@ class model_ocupacion extends conexion {
     public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
+        mysqli_query($this->data_conexion, "SET NAMES 'utf8'");
     }
 
     // FUNCION PARA CERRAR CONEXION.
@@ -24,7 +25,7 @@ class model_ocupacion extends conexion {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
             AND formulario='".htmlspecialchars($datos["c_formulario"])."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
@@ -40,8 +41,8 @@ class model_ocupacion extends conexion {
             nombre,
             formulario
         ) VALUES (
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."',
-            '".htmlspecialchars($datos["c_formulario"])."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."',
+            '".htmlspecialchars($datos['c_formulario'])."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -55,16 +56,16 @@ class model_ocupacion extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["estatus"])."%' 
-            ORDER BY ".$datos['ordenar_por']."
-            LIMIT ".htmlspecialchars($datos["numero"]).", ".htmlspecialchars($datos["cantidad"])."
+            WHERE nombre LIKE '%".htmlspecialchars($datos["campo_busqueda"])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos["campo_estatus"])."%' 
+            ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
+            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos["campo_cantidad"])."
         "; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+        $consulta = mysqli_query($this->data_conexion, $sentencia);
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
-		return $resultado; // RETORNAMOS LOS DATOS.
+		return $resultado;
     }
 
     // FUNCION PARA CONSULTAR EL NUMERO DE OCUPACIONES REGISTRADAS EN TOTAL.
@@ -72,22 +73,22 @@ class model_ocupacion extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["estatus"])."%'
+            WHERE nombre LIKE '%".htmlspecialchars($datos["campo_busqueda"])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos["campo_estatus"])."%' 
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
         }
-		return $resultado; // RETORNAMOS LOS DATOS.
+		return $resultado;
     }
 
     public function confirmarExistenciaM ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE codigo!='".htmlspecialchars($datos["codigo"])."'
-            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
-            AND formulario='".htmlspecialchars($datos["c_formulario"])."'
+            WHERE codigo!='".htmlspecialchars($datos['codigo'])."'
+            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+            AND formulario='".htmlspecialchars($datos['c_formulario'])."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -99,8 +100,8 @@ class model_ocupacion extends conexion {
     public function modificarOcupacion ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_ocupacion SET
-            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."',
-            formulario='".htmlspecialchars($datos["c_formulario"])."'
+            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."',
+            formulario='".htmlspecialchars($datos['c_formulario'])."'
             WHERE codigo=".$datos['codigo']."
         ";
         if (mysqli_query($this->data_conexion,$sentencia)) {
@@ -113,8 +114,8 @@ class model_ocupacion extends conexion {
     public function estatusOcupacion ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_ocupacion
-            SET estatus='".htmlspecialchars($datos["estatus"])."'
-            WHERE codigo='".htmlspecialchars($datos["codigo"])."'
+            SET estatus='".htmlspecialchars($datos['estatus'])."'
+            WHERE codigo='".htmlspecialchars($datos['codigo'])."'
         ";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {

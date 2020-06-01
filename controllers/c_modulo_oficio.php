@@ -6,83 +6,86 @@ if ($_POST['opcion'])
     $objeto = new model_modulo_oficio;
     
     switch ($_POST['opcion']) {
-        case 'Registrar';
-            $datos = [
+
+         case 'Traer datos':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['oficios'] = $objeto->consultarOficios();
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+        case 'Registrar':       
+          $datos = [
+                'codigo'    => htmlspecialchars($_POST['codigo']),
+                'codigoModuloOficio'    => htmlspecialchars($_POST['codigoModuloOficio']),
                 'oficio'    => htmlspecialchars($_POST['oficio']),
                 'nombre'    => htmlspecialchars($_POST['nombre'])
             ];
-
             $objeto->conectar();
-            $resultado = $objeto->registrarModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha registrado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe, hubo un error al registrar.';
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistencia($_POST) == 0) {
+                // SE PROCEDE A REGISTRAR
+                if ($objeto->registrarModulo($datos)) {
+                    echo 'Registro exitoso';
+
+                } else {
+                    echo 'Registro fallido';
+                }
+            } else {
+                echo 'Ya está registrado';
             }
             $objeto->desconectar();
-            header('Location: ../intranet/gestion_modulo_oficio');
-            break;
+        break;
+
+        case 'Consultar':
+            $resultados = [];
+            $objeto->conectar();
+            /////////////////// ESTABLECER ORDER BY ////////////////////
+            $_POST['ordenar_tipo'] = 'ASC';
+            if ($_POST['tipo_ord'] == 1)
+                $_POST['ordenar_tipo'] = 'ASC';
+            else if ($_POST['tipo_ord'] == 2)
+                $_POST['ordenar_tipo'] = 'DESC';
+            ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
+            $_POST['ordenar_por'] = 't_modulo.codigoModuloOficio '.$_POST['ordenar_tipo'];
+            if ($_POST['ordenar'] == 1)
+                $_POST['ordenar_por'] = 't_modulo.codigoModuloOficio '.$_POST['ordenar_tipo'];
+            else if ($_POST['ordenar'] == 2)
+                $_POST['ordenar_por'] = 't_modulo.nombre '.$_POST['ordenar_tipo'];
+            ///////////////////// HACER CONSULTAS //////////////////////
+            $resultados['resultados'] = $objeto->consultarModulos($_POST);
+            $resultados['total']    = $objeto->consultarTotalPorModulo($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
+          
+
 
         case 'Modificar';
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'oficio'    => htmlspecialchars($_POST['oficio']),
-                'nombre'    => htmlspecialchars($_POST['nombre'])
-            ];
-
-            $objeto->conectar();
-            $resultado = $objeto->modificarModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Se ha modificado con exito.';
-            }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'info';
-                $_SESSION['msj']['text'] = '<i class="fas fa-info mr-2"></i>Sin modificaciones.';
+           $objeto->conectar();
+            $objeto->nuevaTransaccion();
+            if ($objeto->modificarModulo($_POST)){
+                    $objeto->guardarTransaccion();
+               
+            } else {
+                echo 'Modificación fallida: Datos personales';
+                $objeto->calcelarTransaccion();
             }
             $objeto->desconectar();
-            header('Location: ../intranet/modulo_oficio');
+      
             break;
 
-        case 'Estatus':
-            if ($_POST['estatus'] == 'A')
-                $estatus = 'I';
-            else
-                $estatus = 'A';
-
-            $datos = [
-                'codigo'    => htmlspecialchars($_POST['codigo']),
-                'estatus'   => htmlspecialchars($estatus)
-            ];
-
+         case 'Estatus':
             $objeto->conectar();
-            $resultado = $objeto->estatusModulo($datos);
-            if ($resultado)
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'success';
-                $_SESSION['msj']['text'] = '<i class="fas fa-check mr-2"></i>Estatus actualizado.';
+            if ($objeto->estatusModulo($_POST)) {
+                echo 'Modificación exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
-            else
-            {
-                // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-                $_SESSION['msj']['type'] = 'danger';
-                $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Error al modificar el estatus.';
-            }
-
             $objeto->desconectar();
-            break;
+        break;
     }
 }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.

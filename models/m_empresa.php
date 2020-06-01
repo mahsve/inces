@@ -107,16 +107,16 @@ class model_empresa extends conexion
             correo,
             tipo_persona
         ) VALUES (
-            $datos[nacionalidad],
-            $datos[cedula],
-            $datos[nombre_1],
-            $datos[nombre_2],
-            $datos[apellido_1],
-            $datos[apellido_2],
-            $datos[sexo],
-            $datos[ciudad_c],
-            $datos[telefono],
-            $datos[correo],
+            '".$datos['nacionalidad']."',
+            '".$datos['cedula']."',
+            '".$datos['nombre_1']."',
+            '".$datos['nombre_2']."',
+            '".$datos['apellido_1']."',
+            '".$datos['apellido_2']."',
+            '".$datos['sexo']."',
+            '".$datos['ciudad_c']."',
+            '".$datos['telefono']."',
+            '".$datos['correo']."',
             'C'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
