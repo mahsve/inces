@@ -39,8 +39,7 @@ $(function () {
     // FUNCION PARA LLAMAR LO DATOS DE LA BASE DE DATOS Y MOSTRARLOS EN LA TABLA.
     buscar_listado();
     function buscar_listado () {
-        let filas = 4;
-        if (permisos.modificar == 1 || permisos.act_desc == 1) { filas = 5; }
+        let filas = $('#listado_tabla thead th').length;
 
         // MOSTRAMOS MENSAJE DE "CARGANDO" EN LA TABLA
         let contenido_tabla = '';
@@ -221,7 +220,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
-    function editarRegistro() {
+    function editarRegistro () {
         let posicion = $(this).attr('data-posicion');
 
         $('#info_table').hide(400);  // ESCONDE TABLA DE RESULTADOS.

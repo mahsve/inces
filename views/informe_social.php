@@ -1,4 +1,4 @@
-<div id="info_table" style="">
+<div id="info_table">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
         <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 

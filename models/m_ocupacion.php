@@ -56,10 +56,10 @@ class model_ocupacion extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo_busqueda"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["campo_estatus"])."%' 
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
             ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
-            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos["campo_cantidad"])."
+            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion, $sentencia);
         while ($columna = mysqli_fetch_assoc($consulta)) {
@@ -73,8 +73,8 @@ class model_ocupacion extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo_busqueda"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["campo_estatus"])."%' 
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
