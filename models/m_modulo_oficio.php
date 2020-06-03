@@ -21,7 +21,7 @@ class model_modulo_oficio extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LOS OFICIOS REGISTRADOS Y MOSTRARLOS EN EL SELECT PARA REGISTRAR NUEVOS MODULOS.
-	function consultarOficios () {
+	public function consultarOficios () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -31,6 +31,7 @@ class model_modulo_oficio extends conexion {
 		return $resultado;
     }
 
+    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
@@ -44,7 +45,7 @@ class model_modulo_oficio extends conexion {
     }
     
     // FUNCION PARA REGISTRAR UN NUEVO MODULO DE UN OFICIO.
-    function registrarModulo ($datos) {
+    public function registrarModulo ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_modulo (
             codigo,
@@ -63,7 +64,7 @@ class model_modulo_oficio extends conexion {
     }
 
     // FUNCION PARA CONSULTAR TODOS LOS MODULOS DE LOS OFICIOS REGISTRADOS.
-	function consultarModulos ($datos) {
+	public function consultarModulos ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT t_modulo.*, t_oficio.nombre AS oficio
             FROM t_modulo
@@ -97,7 +98,7 @@ class model_modulo_oficio extends conexion {
     }
 
     // FUNCION PARA MODIFICAR UN MODULO DE UN OFICIO.
-    function modificarModulo($datos) {
+    public function modificarModulo($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_modulo SET
             codigo='".strtoupper(htmlspecialchars($datos['codigo']))."',

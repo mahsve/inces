@@ -1,14 +1,11 @@
 <?php 
 session_start();
-if ($_POST['opcion'])
-{
+if ($_POST['opcion']) {
     require_once('../models/m_asignatura.php');
     $objeto = new model_asignatura;
-    
-    switch ($_POST['opcion']) {
 
-         case 'Traer datos':
-            ///////////////////// HACER CONSULTAS //////////////////////
+    switch ($_POST['opcion']) {
+        case 'Traer datos':
             $data = [];
             $objeto->conectar();
             $data['oficios'] = $objeto->consultarOficios();
@@ -41,39 +38,21 @@ if ($_POST['opcion'])
             $objeto->desconectar();
         break;
 
-         case 'Modificar':
-            $objeto->conectar();
-            // SE CONFIRMA QUE NO ESTE REGISTRADO
-            if ($objeto->confirmarExistenciaM($_POST) == 0) {
-                // SE PROCEDE A MODIFICAR
-                if ($objeto->modificarAsignatura($_POST)) {
-                    echo 'Modificación exitosa';
-                } else {
-                    echo 'Modificación fallida';
-                }
-            } else {
-                echo 'Ya está registrado';
-            }
-            $objeto->desconectar();
-        break;
-  
-        
-
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
+            ////////////////////////////////////////////////////////////
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $_POST['ordenar_tipo'] = 'ASC';
-            if ($_POST['tipo_ord'] == 1)
-                $_POST['ordenar_tipo'] = 'ASC';
-            else if ($_POST['tipo_ord'] == 2)
-                $_POST['ordenar_tipo'] = 'DESC';
+            $campo_m_ordenar = 'ASC';
+            if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
+            else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
-            if ($_POST['ordenar'] == 1)
-                $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
-            else if ($_POST['ordenar'] == 2)
-                $_POST['ordenar_por'] = 'nombre '.$_POST['ordenar_tipo'];
+            $campo_ordenar = 'nombre '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'formulario '.$campo_m_ordenar; }
+            $_POST['campo_ordenar'] = $campo_ordenar;
+            ////////////////////////////////////////////////////////////
+
             ///////////////////// HACER CONSULTAS //////////////////////
             $resultados['resultados']   = $objeto->consultarAsignaturas($_POST);
             $resultados['total']        = $objeto->consultarAsignaturasTotal($_POST);
@@ -81,7 +60,16 @@ if ($_POST['opcion'])
             echo json_encode($resultados);
         break;
 
-
+        case 'Modificar':
+            $objeto->conectar();
+            // SE PROCEDE A MODIFICAR
+            if ($objeto->modificarAsignatura($_POST)) {
+                echo 'Modificación exitosa';
+            } else {
+                echo 'Modificación fallida';
+            }
+            $objeto->desconectar();
+        break;
      
         case 'Estatus':
             $objeto->conectar();
@@ -93,12 +81,10 @@ if ($_POST['opcion'])
             $objeto->desconectar();
         break;
     }
-}
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
+} else {
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
-	header('Location: ../iniciar');
+	header('Location: ../intranet/dashboard');
 }

@@ -192,6 +192,7 @@ $(function () {
             $("#codigo").css("background-color", colorm);
             tarjeta_1 = false;
         }
+        
         // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
         let nombre = $("#nombre").val();
         if (nombre != '') {
