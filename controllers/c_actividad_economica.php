@@ -24,18 +24,17 @@ if ($_POST['opcion']) {
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
+            ////////////////////////////////////////////////////////////
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $_POST['ordenar_tipo'] = 'ASC';
-            if ($_POST['tipo_ord'] == 1)
-                $_POST['ordenar_tipo'] = 'ASC';
-            else if ($_POST['tipo_ord'] == 2)
-                $_POST['ordenar_tipo'] = 'DESC';
+            $campo_m_ordenar = 'ASC';
+            if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
+            else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
-            if ($_POST['ordenar'] == 1)
-                $_POST['ordenar_por'] = 'codigo '.$_POST['ordenar_tipo'];
-            else if ($_POST['ordenar'] == 2)
-                $_POST['ordenar_por'] = 'nombre '.$_POST['ordenar_tipo'];
+            $campo_ordenar = 'nombre '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
+            $_POST['campo_ordenar'] = $campo_ordenar;
+            ////////////////////////////////////////////////////////////
+
             ///////////////////// HACER CONSULTAS //////////////////////
             $resultados['resultados']   = $objeto->consultarActividadesEconomicas($_POST);
             $resultados['total']        = $objeto->consultarActividadesEconomicasTotal($_POST);

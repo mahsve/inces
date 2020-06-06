@@ -12,6 +12,7 @@ class model_actividad_economica extends conexion {
     public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
+        mysqli_query($this->data_conexion, "SET NAMES 'utf8'");
     }
 
     // FUNCION PARA CERRAR CONEXION.
@@ -24,7 +25,7 @@ class model_actividad_economica extends conexion {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
-            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -38,9 +39,9 @@ class model_actividad_economica extends conexion {
         $sentencia = "INSERT INTO t_actividad_economica (
             nombre
         ) VALUES (
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
         )";
-        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
@@ -52,16 +53,16 @@ class model_actividad_economica extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["estatus"])."%' 
-            ORDER BY ".$datos['ordenar_por']."
-            LIMIT ".htmlspecialchars($datos["numero"]).", ".htmlspecialchars($datos["cantidad"])."
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
+            ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
+            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+        $consulta = mysqli_query($this->data_conexion, $sentencia);
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
-		return $resultado; // RETORNAMOS LOS DATOS.
+		return $resultado;
     }
 
     // FUNCION PARA CONSULTAR EL NUMERO DE ACTIVIDADES ECONOMICAS REGISTRADAS EN TOTAL.
@@ -69,21 +70,21 @@ class model_actividad_economica extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
-            WHERE nombre LIKE '%".htmlspecialchars($datos["campo"])."%'
-            AND estatus LIKE '%".htmlspecialchars($datos["estatus"])."%'
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
         }
-		return $resultado; // RETORNAMOS LOS DATOS.
+		return $resultado;
     }
 
     public function confirmarExistenciaM ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
-            WHERE codigo!='".htmlspecialchars($datos["codigo"])."'
-            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
+            WHERE codigo!='".htmlspecialchars($datos['codigo'])."'
+            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -94,9 +95,9 @@ class model_actividad_economica extends conexion {
     // FUNCION PARA MODIFICAR LOS DATOS DE UNA ACTIVIDAD ECONOMICA EXISTENTE.
     public function modificarActividadEconomica($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "UPDATE t_actividad_economica
-            SET nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"]), `UTF-8`))."'
-            WHERE codigo='".htmlspecialchars($datos["codigo"])."'
+        $sentencia = "UPDATE t_actividad_economica SET
+            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+            WHERE codigo=".$datos['codigo']."
         ";
         if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
@@ -104,12 +105,12 @@ class model_actividad_economica extends conexion {
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
-    // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
-    public function estatusActividadEconomica($datos) {
+    // FUNCION PARA CAMBIAR EL ESTATUS DE UNA OCUPACION.
+    public function estatusActividadEconomica ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_actividad_economica
-            SET estatus='".htmlspecialchars($datos["estatus"])."'
-            WHERE codigo='".htmlspecialchars($datos["codigo"])."'
+            SET estatus='".htmlspecialchars($datos['estatus'])."'
+            WHERE codigo='".htmlspecialchars($datos['codigo'])."'
         ";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
