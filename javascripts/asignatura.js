@@ -115,7 +115,7 @@ $(function () {
                         let contenido_tabla = '';
                         contenido_tabla += '<tr>';
                         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay ocupaciones registradas.</span>';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay asignaturas registradas.</span>';
                         contenido_tabla += '</td>';
                         contenido_tabla += '</tr>';
                         $('#listado_tabla tbody').html(contenido_tabla);
@@ -239,8 +239,6 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Registrar';
         window.codigo   = '';
-
-        window.buscarModulo = false;
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
@@ -520,6 +518,8 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////
+    // CARGAR DATOS DEL FORMULARIO
     function llamarDatos () {
         let filas = $('#listado_tabla thead th').length;
 
@@ -588,4 +588,5 @@ $(function () {
         });
     }
     llamarDatos();
+    /////////////////////////////////////////////////////////////////////
 });

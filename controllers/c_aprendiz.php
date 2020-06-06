@@ -11,9 +11,9 @@ if ($_POST['opcion']) {
         case 'Traer datos':
             $resultados = [];
             $objeto->conectar();
-            $resultados['fecha'] = $date;
-            $resultados['ocupacion'] = $objeto->consultarOcupaciones();
-            $resultados['estado'] = $objeto->consultarEstados();
+            $resultados['fecha']        = $date;
+            $resultados['ocupacion']    = $objeto->consultarOcupaciones();
+            $resultados['estado']       = $objeto->consultarEstados();
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -35,10 +35,10 @@ if ($_POST['opcion']) {
             echo json_encode($resultados);
         break;
 
-        case 'Traer aprendiz por ficha':
+        case 'Traer participante':
             $resultados = [];
             $objeto->conectar();
-            $resultados = $objeto->consultarAprendizPorFicha($_POST);
+            $resultados['participantes'] = $objeto->consultarParticipante($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -46,7 +46,7 @@ if ($_POST['opcion']) {
         case 'Traer empresa':
             $resultados = [];
             $objeto->conectar();
-            $resultados = $objeto->consultarEmpresas($_POST);
+            $resultados['empresas'] = $objeto->consultarEmpresas($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -91,23 +91,22 @@ if ($_POST['opcion']) {
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
+            ////////////////////////////////////////////////////////////
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $_POST['ordenar_tipo'] = 'ASC';
-            if ($_POST['tipo_ord'] == 1)
-                $_POST['ordenar_tipo'] = 'ASC';
-            else if ($_POST['tipo_ord'] == 2)
-                $_POST['ordenar_tipo'] = 'DESC';
+            $campo_m_ordenar = 'ASC';
+            if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
+            else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $_POST['ordenar_por'] = 't_ficha_aprendiz.fecha '.$_POST['ordenar_tipo'];
-            if ($_POST['ordenar'] == 1)
-                $_POST['ordenar_por'] = 't_ficha_aprendiz.fecha '.$_POST['ordenar_tipo'];
-            else if ($_POST['ordenar'] == 2)
-                $_POST['ordenar_por'] = 't_datos_personales.cedula '.$_POST['ordenar_tipo'];
-            else if ($_POST['ordenar'] == 3)
-                $_POST['ordenar_por'] = 'concat (t_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido1) '.$_POST['ordenar_tipo'];
+            $campo_ordenar = 't_ficha_aprendiz.fecha '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 't_ficha_aprendiz.fecha '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 't_datos_personales.cedula '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 3) { $campo_ordenar = 'concat (t_datos_personales.nombre1, t_datos_personales.nombre2, t_datos_personales.apellido1, t_datos_personales.apellido1) '.$campo_m_ordenar; }
+            $_POST['campo_ordenar'] = $campo_ordenar;
+            ////////////////////////////////////////////////////////////
+
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados'] = $objeto->consultarPlanilla($_POST);
-            $resultados['total']    = $objeto->consultarPlanillaTotal($_POST);
+            $resultados['resultados']   = $objeto->consultarPlanilla($_POST);
+            $resultados['total']        = $objeto->consultarPlanillaTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -139,27 +138,17 @@ if ($_POST['opcion']) {
         break;
 
         case 'Estatus':
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-
             $objeto->conectar();
-            if ($objeto->estatusOficio($data)) {
-                echo 'Modificacion exitosa';
+            if ($objeto->estatusOcupacion($_POST)) {
+                echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';
             }
             $objeto->desconectar();
         break;
     }
-}
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
+} else {
 	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
 	$_SESSION['msj']['type'] = 'danger';
 	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';

@@ -1,187 +1,183 @@
 $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
-    let ER_caracteresConEspacios = /^([a-zA-Z,.\x7f-\xff](\s[a-zA-Z,.\x7f-\xff])*)+$/;
-    let ER_alfaNumericoConEspacios=/^([a-zA-Z0-9,.\x7f-\xff](\s[a-zA-Z0-9,.\x7f-\xff])*)+$/;
-    let ER_alfaNumericoCompleto=/^([a-zA-Z0-9,.#"\x7f-\xff](\s[a-zA-Z0-9,.#"\x7f-\xff])*)+$/;
-    let ER_NumericoSinEspacios=/^([0-9])+$/;
-    let ER_NumericoConComa=/^([0-9.])+$/;
-    let ER_email = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
+    let ER_codigoFormulario = /^([0-9a-zA-Z-])+$/;
+    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
+    // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
+    let tarjeta_1;
+    // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
+    let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
+    let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
+    let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
     /////////////////////////////////////////////////////////////////////
-    let pestania1, pestania2, pestania3, pestania4;
+
     /////////////////////////////////////////////////////////////////////
-    let colorb = "#d4ffdc";
-    let colorm = "#ffc6c6";
-    let colorn = "#ffffff";
+    /////////////////////////////////////////////////////////////////////
+    // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
+    let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
+    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL DE UN CAMPO CUANDO SEA CLIQUEADO.
+    let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
+    let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
+    /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // DATOS DE LA TABLA Y PAGINACION 
     let numeroDeLaPagina    = 1;
-    $('#cantidad_a_buscar').change(restablecerN);
-    $('#ordenar_por').change(restablecerN);
+    $('#campo_cantidad').change(restablecerN);
     $('#campo_ordenar').change(restablecerN);
-    $('#campo_busqueda').keydown(function (e) {
-        if (e.keyCode == 13) {
-            numeroDeLaPagina = 1;
-            buscar_listado();
-            window.actualizar_busqueda = false;
-        } else
-            window.actualizar_busqueda = true;
-    });
-    $('#campo_busqueda').blur(function () {
-        if (window.actualizar_busqueda)
-            buscar_listado();
-    });
-    $('#buscar_estatus').change(restablecerN);
+    $('#campo_manera_ordenar').change(restablecerN);
+    $('#campo_busqueda').keydown(function (e) { if (e.keyCode == 13) { restablecerN(); } else { window.actualizar_busqueda = true; } });
+    $('#campo_busqueda').blur(function () { if (window.actualizar_busqueda) { buscar_listado(); } });
+    $('#campo_estatus').change(restablecerN);
     /////////////////////////////////////////////////////////////////////
-    let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
-    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR UNA FECHA TEMPORAL EN FAMILIAR.
-    let dataOcupacion   = false;// VARIABLE PARA GUARDAR LAS OCUPACIONES Y AGREGARLAS A LA TABLA FAMILIA.
-    let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFIACION).
-    let dataListado     = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS CONSULTADOS.
-    let dataListadoApre = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS DEL APRENDIZ A INSCRIBIR
-    let dataListadoEmp  = false;   // VARIABLE PARA GUARDAR LOS RESULTADOS
+    // FUNCION PARA RESTABLECER LA PAGINACION A 1 SI CAMBIA ALGUNOS DE LOS PARAMETROS.
+    function restablecerN () { numeroDeLaPagina = 1; buscar_listado(); }
     /////////////////////////////////////////////////////////////////////
-    function restablecerN () {
-        numeroDeLaPagina = 1;
-        buscar_listado();
-    }
-    function buscar_listado(){
-        $('#listado_tabla tbody').html('<tr><td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</td></tr>');
-        $("#paginacion").html('<li class="page-item"><a class="page-link text-info"><i class="fas fa-spinner fa-spin mr-3"></i>Cargando</a></li>');
-        $.ajax({
-            url : url+'controllers/c_aprendiz.php',
-            type: 'POST',
-            data: {
-                opcion  : 'Consultar',
-                numero  : parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()),
-                cantidad: parseInt($('#cantidad_a_buscar').val()),
-                ordenar : parseInt($('#ordenar_por').val()),
-                tipo_ord: parseInt($('#campo_ordenar').val()),
-                campo   : $('#campo_busqueda').val(),
-                estatus : $('#buscar_estatus').val()
-            }, success: function (resultados){
-                try {
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
+    // FUNCION PARA LLAMAR LO DATOS DE LA BASE DE DATOS Y MOSTRARLOS EN LA TABLA.
+    function buscar_listado () {
+        let filas = $('#listado_tabla thead th').length;
+
+        // MOSTRAMOS MENSAJE DE "CARGANDO" EN LA TABLA
+        let contenido_tabla = '';
+        contenido_tabla += '<tr>';
+        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+        contenido_tabla += '<i class="fas fa-spinner fa-spin"></i> <span style="font-weight: 500;">Cargando...</span>';
+        contenido_tabla += '</td>';
+        contenido_tabla += '</tr>';
+        $('#listado_tabla tbody').html(contenido_tabla);
+
+        // MOSTRAMOS ICONO DE "CARGANDO" EN LA PAGINACIÓN.
+        let contenido_paginacion = '';
+        contenido_paginacion += '<li class="page-item">';
+        contenido_paginacion += '<a class="page-link text-info"><i class="fas fa-spinner fa-spin"></i></a>';
+        contenido_paginacion += '</li>';
+        $("#paginacion").html(contenido_paginacion);
+
+        // DESABILITAMOS TODO LO QUE PUEDA GENERAR NUEVAS CONSULTAS MIENTRAS SE ESTA REALIZANDO ALGUNA INTERNAMENTE.
+        $('.campos_de_busqueda').attr('disabled', true);
+        $('.botones_formulario').attr('disabled', true);
+
+        setTimeout(() => {
+            $.ajax({
+                url : url+'controllers/c_aprendiz.php',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    opcion          : 'Consultar',
+                    campo_numero    : parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()),
+                    campo_cantidad  : parseInt($('#campo_cantidad').val()),
+                    campo_ordenar   : parseInt($('#campo_ordenar').val()),
+                    campo_m_ordenar : parseInt($('#campo_manera_ordenar').val()),
+                    campo_estatus   : $('#campo_estatus').val(),
+                    campo_busqueda  : $('#campo_busqueda').val(),
+                },
+                success: function (resultados){
+                    dataListado = resultados;
+
                     $('#listado_tabla tbody').empty();
-                    dataListado = JSON.parse(resultados);
                     if (dataListado.resultados) {
-                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
+                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
-                            /////////////// FECHA REGISTRO ///////////////
-                            let yearR   = dataListado.resultados[i].fecha.substr(0,4);
-                            let monthR  = dataListado.resultados[i].fecha.substr(5,2);
-                            let dayR    = dataListado.resultados[i].fecha.substr(8,2);
-                            let nombre_completo = dataListado.resultados[i].nombre1;
-                            /////////////// NOMBRES ///////////////
-                            if (dataListado.resultados[i].nombre2 != null)
-                                nombre_completo += ' '+dataListado.resultados[i].nombre2.substr(0,1)+'.';
-                            nombre_completo += ' '+dataListado.resultados[i].apellido1;
-                            if (dataListado.resultados[i].apellido2 != null)
-                                nombre_completo += ' '+dataListado.resultados[i].apellido2.substr(0,1)+'.';
-                            /////////////// FECHA DE NACIMIENTO ///////////////
-                            let day     = dataListado.resultados[i].fecha_n.substr(8, 2);
-                            let month   = dataListado.resultados[i].fecha_n.substr(5, 2);
-                            let year    = dataListado.resultados[i].fecha_n.substr(0, 4);
-                            let dayA    = fecha.substr(0,2);
-                            let monthA  = fecha.substr(3,2);
-                            let yearA   = fecha.substr(6,4);
-                            /////////////// EDAD ///////////////
-                            let edad = 0;
-                            if (year != '' && year != undefined) {
-                                if (year <= yearA) {
-                                    edad = yearA - year;
-                                    if (month > monthA) {
-                                        if (edad != 0) 
-                                            edad--;
-                                    } else if (month == monthA) {
-                                        if (day > dayA)
-                                            if (edad != 0) 
-                                                edad--;
-                                    }
+                            let estatus_td = '';
+                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span>Inactivo</span></span>'; }
+
+                            let contenido_tabla = '';
+                            contenido_tabla += '<tr class="border-bottom text-secondary">';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
+                            contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
+                            ////////////////////////////////////////////////////////
+                            if (permisos.modificar == 1 || permisos.act_desc == 1) {
+                                contenido_tabla += '<td class="py-1 px-1">';
+                                if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
+                                if (permisos.act_desc == 1) {
+                                    if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
+                                    else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
                                 }
+                                contenido_tabla += '</td>';
                             }
-                            /////////////// TIPO ESTATUS ///////////////
-                            // 'I' => 'INSCRIPTO'
-                            // 'C' => 'CURSANDO'
-                            // 'R' => 'RETIRADO'
-                            /////////////// ESTATUS ///////////////
-                            let estatus = '';
-                            if (dataListado.resultados[i].estatus_informe == 'I') {
-                                estatus = '<span class="badge badge-info"><i class="fas fa-user-plus mr-1"></i>Inscripto</span>';
-                            } else if (dataListado.resultados[i].estatus_informe == 'C') {
-                                estatus = '<span class="badge badge-success"><i class="fas fa-running mr-1"></i>Cursando</span>';
-                            } else if (dataListado.resultados[i].estatus_informe == 'G') {
-                                estatus = '<span class="badge badge-secondary"><i class="fas fa-user-check mr-1"></i>Culmidado</span>';
-                            } else if (dataListado.resultados[i].estatus_informe == 'R') {
-                                estatus = '<span class="badge badge-danger"><i class="fas fa-user-times mr-1"></i>Retirado</span>';
-                            }
-                            /////////////// TIPO REGISTRO ///////////////
-                            let tipo_ficha = '';
-                            if (dataListado.resultados[i].tipo_inscripcion == 'I')
-                                tipo_ficha = 'Inscripción';
-                            else
-                                tipo_ficha = 'Re-inscripción';
-                            /////////////// TIPO REGISTRO ///////////////
-                            let contenido = '';
-                            contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dayR+'-'+monthR+'-'+yearR+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
-                            contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+edad+'</td>';
-                            contenido += '<td class="py-2 px-1">'+tipo_ficha+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
-                            contenido += '<td class="py-1 px-1">';
-                            if (permisos.modificar == 1){
-                                contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                            }
-                            contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
-                            contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-                            if (permisos.act_desc == 1) {
-                                if (dataListado.resultados[i].estatus_informe == 'I') {
-                                    
-                                } else if (dataListado.resultados[i].estatus_informe == 'R') {
-                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 reactivar_postulante" data-posicion="'+i+'"><i class="fas fa-redo text-center" style="width:20px;"></i><span class="ml-2">Re-ingresar</span></a></li>';
-                                }
-                            }
-                            contenido += '<li class="dropdown-item p-0"><a href="'+url+'controllers/pdf/r_ficha_inscripcion?numero='+dataListado.resultados[i].numero+'" target="_blank" class="d-inline-block w-100 p-1"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
-                            contenido += '</div></div></td></tr>';
-                            $('#listado_tabla tbody').append(contenido);
+                            ////////////////////////////////////////////////////////
+                            contenido_tabla += '</tr>';
+                            $('#listado_tabla tbody').append(contenido_tabla);
                             cont++;
                         }
-                        $('.editar_registro').click(editarRegistro);
-                        $('.cambiar_estatus').click(cambiarEstatus);
+                        $('.editar-registro').click(editarRegistro);
+                        $('.cambiar-estatus').click(cambiarEstatus);
                     } else {
-                        $('#listado_tabla tbody').append('<tr><td colspan="9" class="text-center text-secondary border-bottom p-2"><i class="fas fa-file-alt mr-3"></i>No hay aprendices registrados</td></tr>');
+                        // MOSTRAMOS MENSAJE "SIN RESULTADOS" EN LA TABLA
+                        let contenido_tabla = '';
+                        contenido_tabla += '<tr>';
+                        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay aprendices registrados.</span>';
+                        contenido_tabla += '</td>';
+                        contenido_tabla += '</tr>';
+                        $('#listado_tabla tbody').html(contenido_tabla);
                     }
 
+                    // SE HABILITA LA FUNCION PARA QUE PUEDA REALIZAR BUSQUEDA AL TERMINAR LA ANTERIOR.
+                    window.actualizar_busqueda = false;
+                    // MOSTRAR EL TOTAL DE REGISTROS ENCONTRADOS.
                     $('#total_registros').html(dataListado.total);
-                    establecer_tabla(numeroDeLaPagina, parseInt($('#cantidad_a_buscar').val()), dataListado.total);
+                    // HABILITAR LA PAGINACION PARA MOSTRAR MAS DATOS.
+                    establecer_tabla(numeroDeLaPagina, parseInt($('#campo_cantidad').val()), dataListado.total);
+                    // LE AGREGAMOS FUNCIONALIDAD A LOS BOTONES PARA CAMBIAR LA PAGINACION.
                     $('.mover').click(cambiarPagina);
-                } catch (error) {
-                    console.log(resultados);
-                }
-                window.actualizar_busqueda = false;
-            }, error: function (){
-                console.log('error');
-            }, timer: 15000
-        });
+
+                    // DESABILITAMOS TODO LO QUE PUEDA GENERAR NUEVAS CONSULTAS MIENTRAS SE ESTA REALIZANDO ALGUNA INTERNAMENTE.
+                    $('.campos_de_busqueda').attr('disabled', false);
+                    $('.botones_formulario').attr('disabled', false);
+                },
+                error: function (errorConsulta) {
+                    // MOSTRAMOS MENSAJE DE "ERROR" EN LA TABLA
+                    contenido_tabla = '';
+                    contenido_tabla += '<tr>';
+                    contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom text-danger p-2">';
+                    contenido_tabla += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                    contenido_tabla += '<button type="button" id="btn-recargar-tabla" class="btn btn-sm btn-info ml-2"><i class="fas fa-sync-alt"></i></button>';
+                    contenido_tabla += '</td>';
+                    contenido_tabla += '</tr>';
+                    $('#listado_tabla tbody').html(contenido_tabla);
+                    $('#btn-recargar-tabla').click(buscar_listado);
+
+                    // MOSTRAMOS ICONO DE "ERROR" EN LA PAGINACIÓN.
+                    contenido_paginacion = '';
+                    contenido_paginacion += '<li class="page-item">';
+                    contenido_paginacion += '<a class="page-link text-danger"><i class="fas fa-ethernet"></i></a>';
+                    contenido_paginacion += '</li>';
+                    $('#paginacion').html(contenido_paginacion);
+
+                    // SE HABILITA LA FUNCION PARA QUE PUEDA REALIZAR BUSQUEDA AL TERMINAR LA ANTERIOR.
+                    window.actualizar_busqueda = false;
+                    // MOSTRAR EL TOTAL DE REGISTROS ENCONTRADOS.
+                    $('#total_registros').html(0);
+
+                    // DESABILITAMOS TODO LO QUE PUEDA GENERAR NUEVAS CONSULTAS MIENTRAS SE ESTA REALIZANDO ALGUNA INTERNAMENTE.
+                    $('.campos_de_busqueda').attr('disabled', false);
+                    $('.botones_formulario').attr('disabled', false);
+                    
+                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                    console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                    console.log(errorConsulta.responseText);
+                }, timer: 15000
+            });
+        }, 500);
     }
-    function cambiarPagina(e) {
+    // FUNCION PARA CAMBIAR LA PAGINACION.
+    function cambiarPagina (e) {
         e.preventDefault();
-        let numero = $(this).attr('data-pagina');
-        numeroDeLaPagina = parseInt(numero);
+        numeroDeLaPagina = parseInt($(this).attr('data-pagina'));
         buscar_listado();
     }
     /////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////
-
 
     /////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////
-    ////////////////////////// VALIDACIONES //////////////////////////
+    ////////////////////////// VALIDACIONES /////////////////////////////
     let validarCedula = false;
     $('#nacionalidad').change(function () {
         $('#cedula').trigger('blur');
@@ -252,14 +248,14 @@ $(function () {
         }
     });
     function verificarParte1 () {
-        pestania1 = true;
+        tarjeta_1 = true;
         // VERIFICAR EL CAMPO DE NACIONALIDAD
         let tipo_ficha = $("#tipo_ficha").val();
         if(tipo_ficha != ''){
             $("#tipo_ficha").css("background-color", colorb);
         } else {
             $("#tipo_ficha").css("background-color", colorm);
-            pestania1 = false;
+            tarjeta_1 = false;
         }
         // VERIFICAR EL CORREO ELECTRONICO
         let correlativo = $("#correlativo").val();
@@ -268,11 +264,11 @@ $(function () {
                 $("#correlativo").css("background-color", colorb);
             }else{
                 $("#correlativo").css("background-color", colorm);
-                pestania1 = false;
+                tarjeta_1 = false;
             }
         }else{
             $("#correlativo").css("background-color", colorm);
-            pestania1 = false;
+            tarjeta_1 = false;
         }
         // VERIFICAR EL CORREO ELECTRONICO
         let numero_orden = $("#numero_orden").val();
@@ -281,28 +277,28 @@ $(function () {
                 $("#numero_orden").css("background-color", colorb);
             }else{
                 $("#numero_orden").css("background-color", colorm);
-                pestania1 = false;
+                tarjeta_1 = false;
             }
         }else{
             $("#numero_orden").css("background-color", colorm);
-            pestania1 = false;
+            tarjeta_1 = false;
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania1) {
+        if (tarjeta_1) {
             $('#icon-ficha').hide();
         } else {
             $('#icon-ficha').show();
         }
     }
     function verificarParte2 () {
-        pestania2 = true;
+        tarjeta_2 = true;
         // VERIFICAR EL CAMPO DE NACIONALIDAD
         let nacionalidad = $("#nacionalidad").val();
         if(nacionalidad != ''){
             $("#nacionalidad").css("background-color", colorb);
         } else {
             $("#nacionalidad").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DE CEDULA
         let cedula = $("#cedula").val();
@@ -318,15 +314,15 @@ $(function () {
                     }
                 } else {
                     $("#cedula").css("background-color", colorm);
-                    pestania2 = false;
+                    tarjeta_2 = false;
                 }
             }else{
                 $("#cedula").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#cedula").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
         let nombre_1 = $("#nombre_1").val();
@@ -335,11 +331,11 @@ $(function () {
                 $("#nombre_1").css("background-color", colorb);
             }else{
                 $("#nombre_1").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#nombre_1").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
         let nombre_2 = $("#nombre_2").val();
@@ -348,7 +344,7 @@ $(function () {
                 $("#nombre_2").css("background-color", colorb);
             }else{
                 $("#nombre_2").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         } else {
             $("#nombre_2").css("background-color", colorn);
@@ -360,11 +356,11 @@ $(function () {
                 $("#apellido_1").css("background-color", colorb);
             }else{
                 $("#apellido_1").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#apellido_1").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
         let apellido_2 = $("#apellido_2").val();
@@ -373,7 +369,7 @@ $(function () {
                 $("#apellido_2").css("background-color", colorb);
             }else{
                 $("#apellido_2").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         } else {
             $("#apellido_2").css("background-color", colorn);
@@ -384,7 +380,7 @@ $(function () {
             $("#sexo").css("background-color", colorb);
         } else {
             $("#sexo").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
         let fecha_n = $("#fecha_n").val();
@@ -394,11 +390,11 @@ $(function () {
                 $("#fecha_n").css("background-color", colorb);
             } else {
                 $("#fecha_n").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         } else {
             $("#fecha_n").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DE LUGAR DE NACIMIENTO
         let lugar_n = $("#lugar_n").val();
@@ -407,7 +403,7 @@ $(function () {
                 $("#lugar_n").css("background-color", colorb);
             }else{
                 $("#lugar_n").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         } else {
             $("#lugar_n").css("background-color", colorn);
@@ -418,14 +414,14 @@ $(function () {
             $("#ocupacion").css("background-color", colorb);
         } else {
             $("#ocupacion").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DE ESTADO CIVIL
         let estado_civil = document.formulario.estado_civil.value;
         $(".radio_estado_c_label").removeClass('inputMal');
         if(estado_civil == ''){
             $(".radio_estado_c_label").addClass('inputMal');
-            pestania2 = false;
+            tarjeta_2 = false;
         } else {
             $(".radio_estado_c_label").addClass('inputBien');
         }
@@ -434,7 +430,7 @@ $(function () {
         $(".radio_educacion_label").removeClass('inputMal');
         if(grado_instruccion == ''){
             $(".radio_educacion_label").addClass('inputMal');
-            pestania2 = false;
+            tarjeta_2 = false;
         } else {
             $(".radio_educacion_label").addClass('inputBien');
         }
@@ -446,10 +442,10 @@ $(function () {
                     $("#titulo").css("background-color", colorb);
                 }else{
                     $("#titulo").css("background-color", colorm);
-                    pestania2 = false;
+                    tarjeta_2 = false;
                 }
             } else {
-                pestania2 = false;
+                tarjeta_2 = false;
                 $("#titulo").css("background-color", colorm);
             }
         }
@@ -460,7 +456,7 @@ $(function () {
                 $("#alguna_mision").css("background-color", colorb);
             }else{
                 $("#alguna_mision").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         } else {
             $("#alguna_mision").css("background-color", colorn);
@@ -473,15 +469,15 @@ $(function () {
                     $("#telefono_1").css("background-color", colorb);
                 } else {
                     $("#telefono_1").css("background-color", colorm);
-                    pestania2 = false;
+                    tarjeta_2 = false;
                 }
             }else{
                 $("#telefono_1").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#telefono_1").css("background-color", colorm);
-            pestania2 = false;
+            tarjeta_2 = false;
         }
         // VERIFICAR EL TELEFONO CELULAR
         let telefono_2 = $("#telefono_2").val();
@@ -491,11 +487,11 @@ $(function () {
                     $("#telefono_2").css("background-color", colorb);
                 } else {
                     $("#telefono_2").css("background-color", colorm);
-                    pestania2 = false;
+                    tarjeta_2 = false;
                 }
             }else{
                 $("#telefono_2").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#telefono_2").css("background-color", colorn);
@@ -507,27 +503,27 @@ $(function () {
                 $("#correo").css("background-color", colorb);
             }else{
                 $("#correo").css("background-color", colorm);
-                pestania2 = false;
+                tarjeta_2 = false;
             }
         }else{
             $("#correo").css("background-color", colorn);
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania2) {
+        if (tarjeta_2) {
             $('#icon-ciudadano').hide();
         } else {
             $('#icon-ciudadano').show();
         }
     }
     function verificarParte3 () {
-        pestania3 = true;
+        tarjeta_3 = true;
         // VERIFICAR EL CAMPO DE ESTADO
         let estado = $("#estado").val();
         if(estado != ''){
             $("#estado").css("background-color", colorb);
         } else {
             $("#estado").css("background-color", colorm);
-            pestania3 = false;
+            tarjeta_3 = false;
         }
         // VERIFICAR EL CAMPO DE CIUDAD
         let ciudad = $("#ciudad").val();
@@ -535,7 +531,7 @@ $(function () {
             $("#ciudad").css("background-color", colorb);
         } else {
             $("#ciudad").css("background-color", colorm);
-            pestania3 = false;
+            tarjeta_3 = false;
         }
         // VERIFICAR EL CAMPO DE MUNICIPIO
         let municipio = $("#municipio").val();
@@ -558,82 +554,46 @@ $(function () {
                 $("#direccion").css("background-color", colorb);
             }else{
                 $("#direccion").css("background-color", colorm);
-                pestania3 = false;
+                tarjeta_3 = false;
             }
         }else{
             $("#direccion").css("background-color", colorm);
-            pestania3 = false;
+            tarjeta_3 = false;
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania3) {
+        if (tarjeta_3) {
             $('#icon-ubicacion').hide();
         } else {
             $('#icon-ubicacion').show();
         }
     }
     function verificarParte4 () {
-        pestania4 = true;
+        tarjeta_4 = true;
         // VERIFICAR EL CAMPO DE 
         let rif = $("#rif").val();
         if(rif != ''){
             $(".data_empresa").css("background-color", '');
         }else{
             $(".data_empresa").css("background-color", colorm);
-            pestania4 = false;
+            tarjeta_4 = false;
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (pestania4) {
+        if (tarjeta_4) {
             $('#icon-empresa').hide();
         } else {
             $('#icon-empresa').show();
         }
     }
-    //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
-    $('.input_fecha').click(function () {
-        fechaTemporal = $(this).val();
-    });
-    $('.input_fecha').blur(function () {
-        $(this).val(fechaTemporal);
-    });
-    $('.input_fecha').change(function () {
-        fechaTemporal = $(this).val();
-    });
-    //////////////////////// FUNCIONES CAMPOS ////////////////////////
-    $('#fecha_n').change(function (){
-        let day     = $(this).val().substr(0,2);
-        let month   = $(this).val().substr(3,2);
-        let year    = $(this).val().substr(6,4);
-        let dayA    = fecha.substr(0,2);
-        let monthA  = fecha.substr(3,2);
-        let yearA   = fecha.substr(6,4);
-            
-        let edad = 0;
-        if (year != '' && year != undefined) {
-            if (year <= yearA) {
-                edad = yearA - year;
-                if (month > monthA) {
-                    if (edad != 0) 
-                        edad--;
-                } else if (month == monthA) {
-                    if (day > dayA)
-                        if (edad != 0) 
-                            edad--;
-                }
-            }
-        }
-        
-        $('#edad').val(edad);
-    });
-    $('.radio_educacion').click(function () {
-        if ($(this).val() == 'SI' || $(this).val() == 'SC')
-            $('#titulo').attr('readonly', false);
-        else {
-            $('#titulo').attr('readonly', true);
-            $('#titulo').val('');
-        }
-    });
+    /////////////////////////////////////////////////////////////////////
+    ///////////////////// FUNCIONES MANTENER FECHA //////////////////////
+    $('.input_fecha').datepicker({ language: 'es' });
+    $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
+    $('.input_fecha').blur(function () { $(this).val(fechaTemporal); });
+    $('.input_fecha').change(function () { fechaTemporal = $(this).val(); });
+    $('#fecha_n').change(function () { $('#edad').val(calcularEdad(fecha, $('#fecha_n').val())); });
+    /////////////////////////////////////////////////////////////////////
     $('#estado').change(function () {
-        if ($(this).val() != '') {
+        if ($('#estado').val() != '') {
             $.ajax({
                 url : url+'controllers/c_informe_social.php',
                 type: 'POST',
@@ -704,7 +664,6 @@ $(function () {
                 }
             });
         } else {
-            window.actualizar = false;
             $('#ciudad').html('<option value="">Elija un estado</option>');
             $('#municipio').html('<option value="">Elija un estado</option>');
         }
@@ -759,18 +718,35 @@ $(function () {
         }
     });
     /////////////////////////////////////////////////////////////////////
-    $('#show_form').click(function (){
-        $('#form_title').html('Registrar');
-        $('#info_table').hide(400);
-        $('#gestion_form').show(400);
-        $('#carga_espera').hide(400);
-        tipoEnvio = 'Registrar';
-        /////////////////////
-        limpiarFormulario();
+    // CLASES EXTRAS Y LIMITACIONES
+    $('.radio_educacion').click(function () {
+        if ($(this).val() == 'SI' || $(this).val() == 'SC')
+            $('#titulo').attr('readonly', false);
+        else {
+            $('#titulo').attr('readonly', true);
+            $('#titulo').val('');
+        }
     });
-    $('#show_table').click(function (){
-        $('#info_table').show(400);
-        $('#gestion_form').hide(400);
+    $('#show_form').click(function () {
+        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
+        $('#gestion_form').show(400); // MUESTRA FORMULARIO
+        $('#form_title').html('Registrar');
+        $('.campos_formularios').css('background-color', colorn);
+        
+        document.formulario.reset();
+        tipoEnvio       = 'Registrar';
+        window.codigo   = '';
+
+        // MODAL BUSCAR ASPIRANTE.
+        document.form_buscar_participante.reset();
+        $('#btn-hide-modal-participante').hide();
+        $('#resultados-buscar-participante').empty();
+        $('#resultados-buscar-participante').hide();
+        $('#modal-buscar-participante').modal({backdrop: 'static', keyboard: false});
+    });
+    $('#show_table').click(function () {
+        $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
+        $('#gestion_form').hide(400); // ESCONDE FORMULARIO
     });
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -779,82 +755,230 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES PARA MODALES (VENTANAS EMERGENTES).
+    /////////////////////////////////////////////////////////////////////
+    // MODAL BUSCAR PARTICIPANTE
+    $('#btn-buscar-participante').click(function () {
+        document.form_buscar_participante.reset();
+        $('#btn-hide-modal-participante').show();
+        $('#resultados-buscar-participante').empty();
+        $('#resultados-buscar-participante').hide();
+        $('#modal-buscar-participante').modal();
+    });
+    $('#input-buscar-participante').keydown(function (e) { if (e.keyCode == 13) e.preventDefault(); });
+    $('#input-buscar-participante').keyup(function () {
+        window.buscarParticipante = true;
+        if (window.buscarParticipante) {
+            $('#resultados-buscar-participante').empty();
+            $('#resultados-buscar-participante').hide();
+
+            if ($('#input-buscar-participante').val() != '') {
+                $('#resultados-buscar-participante').show();
+                $('#resultados-buscar-participante').html('<span class="d-inline-block w-100 text-center py-1 px-2"><i class="fas fa-spinner fa-spin"></i> Cargando...</span>');
+            
+                setTimeout(function () {
+                    $.ajax({
+                        url : url+'controllers/c_aprendiz.php',
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            campo_busqueda  : $('#input-buscar-participante').val(),
+                            opcion          : 'Traer participante',
+                        },
+                        success: function (resultados) {
+                            window.dataParticipante = resultados.participantes;
+                            window.tipoAgregarParti = 1;
+
+                            $('#resultados-buscar-participante').empty();
+                            if (window.dataParticipante) {
+                                for (let i in window.dataParticipante) {
+                                    let contenido_div = '';
+                                    contenido_div += '<p class="d-inline-block w-100 m-0 py-1 px-2 agregar-participante" data-posicion="'+i+'">'
+                                    contenido_div += '<i class="fas fa-user"></i> ';
+                                    contenido_div += window.dataParticipante[i].nacionalidad+'-'+window.dataParticipante[i].cedula;
+                                    
+                                    contenido_div += ' '+window.dataParticipante[i].nombre1;
+                                    if (window.dataParticipante[i].nombre2 != '' && window.dataParticipante[i].nombre2 != null) { contenido_div += ' '+window.dataParticipante[i].nombre2; }
+                                    
+                                    contenido_div += ' '+window.dataParticipante[i].apellido1;
+                                    if (window.dataParticipante[i].apellido2 != '' && window.dataParticipante[i].apellido2 != null) { contenido_div += ' '+window.dataParticipante[i].apellido2; }
+                                    
+                                    contenido_div += '</p>';
+                                    $('#resultados-buscar-participante').append(contenido_div);
+                                }
+                                $('.agregar-participante').click(agregarParticipante);
+                            } else {
+                                $('#resultados-buscar-participante').html('<span class="d-inline-block w-100 text-center py-1 px-2"><i class="fas fa-times"></i> Sin resultados</span>');
+                            }
+                        },
+                        error: function (errorConsulta) {
+                            // MOSTRAMOS MENSAJE DE "ERROR" EN EL CONTENEDOR.
+                            let contenido_div = '';
+                            contenido_div += '<span class="d-inline-block w-100 text-center text-danger py-1 px-2">';
+                            contenido_div += '<i class="fas fa-ethernet"></i> [Error] No se pudo realizar la conexión.';
+                            contenido_div += '<button type="button" id="btn-recargar-contenedor" class="btn btn-sm btn-info ml-2"><i class="fas fa-sync-alt"></i></button>';
+                            contenido_div += '</span>';
+                            $('#resultados-buscar-participante').html(contenido_div);
+                            $('#btn-recargar-contenedor').click(function () { $('#input-buscar-participante').trigger('keyup'); });
+                            
+                            // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                            console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                            console.log(errorConsulta.responseText);
+                        }, timer: 15000
+                    });
+                }, 500);
+            }
+        }
+    });
+    function consultarParticipante () {
+        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
+        $('#gestion_form').show(400); // MUESTRA FORMULARIO
+        $('#form_title').html('Registrar');
+        $('.campos_formularios').css('background-color', colorn);
+        
+        document.formulario.reset();
+        tipoEnvio       = 'Registrar';
+        window.codigo   = '';
+
+        $.ajax({
+            url : url+'controllers/c_aprendiz.php',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+                opcion      : 'Traer participante',
+                campo_numero: localStorage.getItem('numero_ficha')
+            },
+            success: function (resultados) {
+                window.dataParticipante = resultados.participantes;
+                window.tipoAgregarParti = 2;
+                localStorage.removeItem('numero_ficha');
+                agregarParticipante();
+            },
+            error: function (errorConsulta) {
+                // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                console.log(errorConsulta.responseText);
+            }, timer: 15000
+        });
+    }
+    function agregarParticipante () {
+        let posicion;
+        if      (window.tipoAgregarParti == 1) { posicion = $(this).attr('data-posicion'); }
+        else if (window.tipoAgregarParti == 2) { posicion = 0; }
+        
+        // GUARDAMOS EL ID DE LA FICHA Y LA CEDULA DEL APRENDIZ.
+        window.informe_social   = 1;
+        window.nacionalidad     = window.dataParticipante[posicion].nacionalidad;
+        window.cedula           = window.dataParticipante[posicion].cedula;
+        
+        $('#nacionalidad').val(window.dataParticipante[posicion].nacionalidad);
+        $('#cedula').val(window.dataParticipante[posicion].cedula);
+        $('#cedula').trigger('blur');
+        $('#nombre_1').val(window.dataParticipante[posicion].nombre1);
+        $('#nombre_2').val(window.dataParticipante[posicion].nombre2);
+        $('#apellido_1').val(window.dataParticipante[posicion].apellido1);
+        $('#apellido_2').val(window.dataParticipante[posicion].apellido2);
+        $('#sexo').val(window.dataParticipante[posicion].sexo);
+        fecha_nu = window.dataParticipante[posicion].fecha_n;
+        $('#fecha_n').val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
+        $('#fecha_n').trigger('change');
+        $('#lugar_n').val(window.dataParticipante[posicion].lugar_n);
+        $('#ocupacion').val(window.dataParticipante[posicion].codigo_ocupacion);
+        document.formulario.estado_civil.value = window.dataParticipante[posicion].estado_civil;
+        document.formulario.grado_instruccion.value = window.dataParticipante[posicion].nivel_instruccion;
+        if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC') { $('#titulo').attr('readonly', false); }
+        $('#titulo').val(window.dataParticipante[posicion].titulo_acade);
+        $('#alguna_mision').val(window.dataParticipante[posicion].mision_participado);
+        $('#telefono_1').val(window.dataParticipante[posicion].telefono1);
+        $('#telefono_2').val(window.dataParticipante[posicion].telefono2);
+        $('#correo').val(window.dataParticipante[posicion].correo);
+        // SEGUNDA PARTE.
+        $('#estado').val(window.dataParticipante[posicion].codigo_estado);
+        window.buscarCiudadFicha = true;
+        $('#estado').trigger('change');
+        $('#direccion').val(window.dataParticipante[posicion].direccion);
+
+        $('#modal-buscar-participante').modal('hide');
+        delete window.dataParticipante;
+    }
+    /////////////////////////////////////////////////////////////////////
     // MODAL BUSCAR EMPRESA
     $('#btn-buscar-empresa').click(function () {
-        limpiarModalBuscarEmpresa();
+        document.form_buscar_empresa.reset();
+        $('#resultados-buscar-empresa').empty();
+        $('#resultados-buscar-empresa').hide();
         $('#modal-buscar-empresa').modal();
     });
     $('#input-buscar-empresa').keydown(function (e) { if (e.keyCode == 13) e.preventDefault(); });
-    $('#input-buscar-empresa').blur(function () {
-        if (window.buscarBlur == true) {
-            buscarEmpresa();
-        }
-    });
-    $('#input-buscar-empresa').keydown(function (e) {
-        window.buscarBlur = true;
-        if (e.keyCode == 13) {
-            buscarEmpresa();
-            window.buscarBlur = false;
-        }
-    });
-    function buscarEmpresa () {
-        $('#resultados-buscar-empresa').empty();
-        $('#resultados-buscar-empresa').hide();
+    $('#input-buscar-empresa').keyup(function  () {
+        window.buscarParticipante = true;
+        if (window.buscarEmpresa) {
+            $('#resultados-buscar-empresa').empty();
+            $('#resultados-buscar-empresa').hide();
 
-        let valorBuscar = $('#input-buscar-empresa').val();
-        if (valorBuscar != '') {
-            $('#resultados-buscar-empresa').show();
-            $('#resultados-buscar-empresa').html('<span class="d-inline-block text-center w-100 py-1 px-2"><i class="fas fa-spinner fa-spin mr-2"></i>Cargando...</span>');
-        
-            $.ajax({
-                url : url+'controllers/c_aprendiz.php',
-                type: 'POST',
-                data: {
-                    opcion: 'Traer empresa',
-                    buscar: valorBuscar
-                },
-                success: function (resultados){
-                    try {
-                        $('#resultados-buscar-empresa').empty();
-                        dataListadoEmp = JSON.parse(resultados);
-                        if (dataListadoEmp) {
-                            for (let d_f in dataListadoEmp) {
-                                $('#resultados-buscar-empresa').append('<p class="d-inline-block w-100 m-0 py-1 px-2 click-buscar-empresa" data-posicion="'+d_f+'"><i class="fas fa-industry mr-2"></i>'+dataListadoEmp[d_f].rif+' '+dataListadoEmp[d_f].razon_social+'</p>');
+            if ($('#input-buscar-empresa').val() != '') {
+                $('#resultados-buscar-empresa').show();
+                $('#resultados-buscar-empresa').html('<span class="d-inline-block w-100 text-center py-1 px-2"><i class="fas fa-spinner fa-spin"></i> Cargando...</span>');
+            
+                setTimeout(function () {
+                    $.ajax({
+                        url : url+'controllers/c_aprendiz.php',
+                        type: 'POST',
+                        dataType: 'JSON',
+                        data: {
+                            opcion: 'Traer empresa',
+                            buscar: $('#input-buscar-empresa').val()
+                        },
+                        success: function (resultados) {
+                            window.dataEmpresa = resultados.empresas;
+
+                            $('#resultados-buscar-empresa').empty();
+                            if (window.dataEmpresa) {
+                                for (let i in window.dataEmpresa) {
+                                    let contenido_div = '';
+                                    contenido_div += '<p class="d-inline-block w-100 m-0 py-1 px-2 agregar-empresa" data-posicion="'+i+'">'
+                                    contenido_div += '<i class="fas fa-user"></i> ';
+                                    contenido_div += window.dataEmpresa[i].rif;
+                                    contenido_div += '</p>';
+                                    $('#resultados-buscar-empresa').append(contenido_div);
+                                }
+                                $('.agregar-empresa').click(agregarEmpresa);
+                            } else {
+                                $('#resultados-buscar-empresa').html('<span class="d-inline-block w-100 text-center py-1 px-2"><i class="fas fa-times"></i> Sin resultados</span>');
                             }
-                        } else {
-                            $('#resultados-buscar-empresa').html('<span class="d-inline-block text-center w-100 py-1 px-2"><i class="fas fa-user-times mr-2"></i>Sin resultados</span>');
-                        }
-                        $('.click-buscar-empresa').click(agregarEmpresa);
-                    } catch (error) {
-                        console.log(resultados);
-                        console.log(error);
-                    }
-                },
-                error: function (error){
-                    console.log(error);
-                }
-            });
+                        },
+                        error: function (errorConsulta) {
+                            // MOSTRAMOS MENSAJE DE "ERROR" EN EL CONTENEDOR.
+                            let contenido_div = '';
+                            contenido_div += '<span class="d-inline-block w-100 text-center text-danger py-1 px-2">';
+                            contenido_div += '<i class="fas fa-ethernet"></i> [Error] No se pudo realizar la conexión.';
+                            contenido_div += '<button type="button" id="btn-recargar-contenedor" class="btn btn-sm btn-info ml-2"><i class="fas fa-sync-alt"></i></button>';
+                            contenido_div += '</span>';
+                            $('#resultados-buscar-participante').html(contenido_div);
+                            $('#btn-recargar-contenedor').click(function () { $('#input-buscar-empresa').trigger('keyup'); });
+                            
+                            // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                            console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                            console.log(errorConsulta.responseText);
+                        }, timer: 15000
+                    });
+                }, 500);
+            }
         }
-    }
+    });
     function agregarEmpresa () {
         let posicion = $(this).attr('data-posicion');
-        $('#rif').val(dataListadoEmp[posicion].rif);
-        $('#nil').val(dataListadoEmp[posicion].nil);
-        $('#razon_social').val(dataListadoEmp[posicion].razon_social);
-        $('#actividad_economica').val(dataListadoEmp[posicion].actividad_economica);
-        $('#codigo_aportante').val(dataListadoEmp[posicion].codigo_aportante);
-        $('#telefono1_e').val(dataListadoEmp[posicion].telefono1);
-        $('#telefono2_e').val(dataListadoEmp[posicion].telefono2);
-        $('#estado_e').val(dataListadoEmp[posicion].estado);
-        $('#ciudad_e').val(dataListadoEmp[posicion].ciudad);
-        $('#direccion_e').val(dataListadoEmp[posicion].direccion);
+        $('#rif').val(window.dataEmpresa[posicion].rif);
+        $('#nil').val(window.dataEmpresa[posicion].nil);
+        $('#razon_social').val(window.dataEmpresa[posicion].razon_social);
+        $('#actividad_economica').val(window.dataEmpresa[posicion].actividad_economica);
+        $('#codigo_aportante').val(window.dataEmpresa[posicion].codigo_aportante);
+        $('#telefono1_e').val(window.dataEmpresa[posicion].telefono1);
+        $('#telefono2_e').val(window.dataEmpresa[posicion].telefono2);
+        $('#estado_e').val(window.dataEmpresa[posicion].estado);
+        $('#ciudad_e').val(window.dataEmpresa[posicion].ciudad);
+        $('#direccion_e').val(window.dataEmpresa[posicion].direccion);
         /////////////////////////////////////////////////////////////////
         $('#modal-buscar-empresa').modal('hide');
-    }
-    function limpiarModalBuscarEmpresa () {
-        $('#resultados-buscar-empresa').empty();
-        $('#resultados-buscar-empresa').hide();
-        document.form_buscar_empresa.reset();
     }
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
@@ -962,64 +1086,6 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
-    // SI DESDE INFORME SOCIAL SE ACEPTO UN POSTULANTE PROCEDE A BUSCAR LOS DATOS PARA REGISTRAR, LLENAR EL FORM Y REGISTRAR.
-    function consultarDatosAprendiz () {
-        let numero_informe_Social = localStorage.getItem('numero_ficha');
-        $('#show_form').trigger('click');
-        $('#carga_espera').show();
-
-        $.ajax({
-            url : url+'controllers/c_aprendiz.php',
-            type: 'POST',
-            data: {
-                opcion: 'Traer aprendiz por ficha',
-                numero: numero_informe_Social
-            },
-            success: function (resultados){
-                try {
-                    localStorage.removeItem('numero_ficha');
-                    //////////////////////////////////////////////////////
-                    window.informe_social = numero_informe_Social;
-                    dataListadoEmp = JSON.parse(resultados);
-                    window.nacionalidad = dataListadoEmp.nacionalidad;
-                    window.cedula = dataListadoEmp.cedula;
-                    $('#nacionalidad').val(dataListadoEmp.nacionalidad);
-                    $('#cedula').val(dataListadoEmp.cedula);
-                    $('#cedula').trigger('blur');
-                    $('#nombre_1').val(dataListadoEmp.nombre1);
-                    $('#nombre_2').val(dataListadoEmp.nombre2);
-                    $('#apellido_1').val(dataListadoEmp.apellido1);
-                    $('#apellido_2').val(dataListadoEmp.apellido2);
-                    $('#sexo').val(dataListadoEmp.sexo);
-                    fecha_nu = dataListadoEmp.fecha_n;
-                    $('#fecha_n').val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
-                    $('#fecha_n').trigger('change');
-                    $('#lugar_n').val(dataListadoEmp.lugar_n);
-                    $('#ocupacion').val(dataListadoEmp.codigo_ocupacion);
-                    //////////////////////////////////////////////////////////
-                    document.formulario.estado_civil.value = dataListadoEmp.estado_civil;
-                    document.formulario.grado_instruccion.value = dataListadoEmp.nivel_instruccion;
-                    if (document.formulario.grado_instruccion.value == 'SI' || document.formulario.grado_instruccion.value == 'SC')
-                        $('#titulo').attr('readonly', false);
-                    $('#titulo').val(dataListadoEmp.titulo_acade);
-                    $('#alguna_mision').val(dataListadoEmp.mision_participado);
-                    $('#telefono_1').val(dataListadoEmp.telefono1);
-                    $('#telefono_2').val(dataListadoEmp.telefono2);
-                    $('#correo').val(dataListadoEmp.correo);
-                    // SEGUNDA PARTE.
-                    $('#estado').val(dataListadoEmp.codigo_estado);
-                    window.buscarCiudadFicha = true;
-                    $('#estado').trigger('change');
-                    $('#direccion').val(dataListadoEmp.direccion);
-                } catch (error) {
-                    console.log(resultados);
-                }
-            },
-            error: function (){
-                console.log('error');
-            }
-        });
-    }
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarRegistro() {
         let posicion = $(this).attr('data-posicion');
@@ -1031,8 +1097,6 @@ $(function () {
         $('#form_title').html('Modificar');
         $('#carga_espera').show();
         tipoEnvio = 'Modificar';
-        /////////////////////
-        limpiarFormulario();
         /////////////////////
         // LLENADO DEL FORMULARIO CON LOS DATOS REGISTRADOS.
         $.ajax({
@@ -1111,7 +1175,7 @@ $(function () {
         verificarParte2();
         verificarParte3();
         verificarParte4();
-        if (pestania1 && pestania2 && pestania3 && pestania4) {
+        if (tarjeta_1 && tarjeta_2 && tarjeta_3 && tarjeta_4) {
             enviarFormulario();
         }
     });
@@ -1191,58 +1255,93 @@ $(function () {
             }
         });
     }
-    // FUNCION PARA LIMPIAR EL FORMULARIO DE LOS DATOS ANTERIORES.
-    function limpiarFormulario(){
-        document.formulario.reset();
-        $('#fecha').val(fecha);
-    }
-    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////
+    // CARGAR DATOS DEL FORMULARIO
+    function llamarDatos () {
+        let filas = $('#listado_tabla thead th').length;
 
-    /////////////////////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////////////////////
-    // AUTOLLAMADOS.
-    function llamarDatos()
-    {
+        // MOSTRAMOS MENSAJE DE "CARGANDO" EN LA TABLA
+        let contenido_tabla = '';
+        contenido_tabla += '<tr>';
+        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+        contenido_tabla += '<i class="fas fa-spinner fa-spin"></i> <span style="font-weight: 500;">Cargando...</span>';
+        contenido_tabla += '</td>';
+        contenido_tabla += '</tr>';
+        $('#listado_tabla tbody').html(contenido_tabla);
+
+        // MOSTRAMOS ICONO DE "CARGANDO" EN LA PAGINACIÓN.
+        let contenido_paginacion = '';
+        contenido_paginacion += '<li class="page-item">';
+        contenido_paginacion += '<a class="page-link text-info"><i class="fas fa-spinner fa-spin"></i></a>';
+        contenido_paginacion += '</li>';
+        $("#paginacion").html(contenido_paginacion);
+
+        // DESABILITAMOS TODO LO QUE PUEDA GENERAR NUEVAS CONSULTAS MIENTRAS SE ESTA REALIZANDO ALGUNA INTERNAMENTE.
+        $('.campos_de_busqueda').attr('disabled', true);
+        $('.botones_formulario').attr('disabled', true);
+
         $.ajax({
-            url : url+'controllers/c_aprendiz.php',
-            type: 'POST',
-            data: { opcion: 'Traer datos' },
-            success: function (resultados){
-                try {
-                    let data = JSON.parse(resultados);
-                    fecha = data.fecha;
-                    fecha2= data.fecha;
-                    if (data.ocupacion) {
-                        for (let i in data.ocupacion) {
-                            $('#ocupacion').append('<option value="'+data.ocupacion[i].codigo+'">'+data.ocupacion[i].nombre+'</option>');
-                        }
-                        dataOcupacion = data.ocupacion;
-                    } else {
-                        $('#ocupacion').html('<option value="">No hay ocupaciones</option>');
-                    }
+            url: url + "controllers/c_aprendiz.php",
+            type: "POST",
+            dataType: 'JSON',
+            data: { opcion: "Traer datos" },
+            success: function (resultados) {
+                // ESTABLECEMOS CUAL ES LA FECHA ACTUAL.
+                fecha = resultados.fecha;
 
-                    if (data.estado) {
-                        for (let i in data.estado) {
-                            $('#estado').append('<option value="'+data.estado[i].codigo+'">'+data.estado[i].nombre+'</option>');
-                        }
-                    } else {
-                        $('#estado').html('<option value="">No hay estados</option>');
+                // CARGAMOS LAS OCUPACIONES
+                let dataOcupacion = resultados.ocupacion;
+                if (dataOcupacion) {
+                    for (let i in dataOcupacion) {
+                        $("#ocupacion").append('<option value="'+dataOcupacion[i].codigo +'">'+dataOcupacion[i].nombre+"</option>");
                     }
-                    buscar_listado();
-
-                    if (localStorage.getItem('numero_ficha'))
-                        consultarDatosAprendiz();
-                } catch (error) {
-                    console.log(resultados);
+                } else {
+                    $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
                 }
+
+                // CARGAMOS LOS ESTADOS.
+                let dataEstado = resultados.estado;
+                if (dataEstado) {
+                    for (let i in dataEstado) {
+                        $("#estado").append('<option value="'+dataEstado[i].codigo +'">'+dataEstado[i].nombre+"</option>");
+                    }
+                } else {
+                    $("#estado").html('<option value="">No hay estados</option>');
+                }
+                buscar_listado();
+
+                if (localStorage.getItem('numero_ficha')) { consultarParticipante(); } 
             },
-            error: function (){
-                console.log('error');
-            }
+            error: function (errorConsulta) {
+                // MOSTRAMOS MENSAJE DE "ERROR" EN LA TABLA
+                contenido_tabla = '';
+                contenido_tabla += '<tr>';
+                contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom text-danger p-2">';
+                contenido_tabla += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                contenido_tabla += '<button type="button" id="btn-recargar-tabla" class="btn btn-sm btn-info ml-2"><i class="fas fa-sync-alt"></i></button>';
+                contenido_tabla += '</td>';
+                contenido_tabla += '</tr>';
+                $('#listado_tabla tbody').html(contenido_tabla);
+                $('#btn-recargar-tabla').click(llamarDatos);
+
+                // MOSTRAMOS ICONO DE "ERROR" EN LA PAGINACIÓN.
+                contenido_paginacion = '';
+                contenido_paginacion += '<li class="page-item">';
+                contenido_paginacion += '<a class="page-link text-danger"><i class="fas fa-ethernet"></i></a>';
+                contenido_paginacion += '</li>';
+                $('#paginacion').html(contenido_paginacion);
+
+                // MOSTRAR EL TOTAL DE REGISTROS ENCONTRADOS.
+                $('#total_registros').html(0);
+
+                // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                console.log(errorConsulta.responseText);
+            }, timer: 15000
         });
     }
     llamarDatos();
-    $('.input_fecha').datepicker({ language: 'es' });
+    /////////////////////////////////////////////////////////////////////
 });

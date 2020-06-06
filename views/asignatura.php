@@ -26,7 +26,6 @@
                     <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="1">Nombre</option>
-                        <option value="2">Formulario</option>
                     </select>
                 </div>
 
