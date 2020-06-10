@@ -2,10 +2,11 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let ER_codigoFormulario = /^([0-9a-zA-Z-])+$/;
+    let ER_soloNumeros              = /^([0-9])+$/;
+    let validar_caracteresSimples   =/^([a-zá-úä-üA-ZÁ-úÄ-Üa. ])+$/;
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
-    let tarjeta_1;
+    let tarjeta_1, tarjeta_2;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
@@ -294,7 +295,7 @@ $(function () {
         tarjeta_2 = true;
         // VERIFICAR EL CAMPO DE NACIONALIDAD
         let nacionalidad = $("#nacionalidad").val();
-        if(nacionalidad != ''){
+        if (nacionalidad != '') {
             $("#nacionalidad").css("background-color", colorb);
         } else {
             $("#nacionalidad").css("background-color", colorm);
@@ -302,9 +303,9 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DE CEDULA
         let cedula = $("#cedula").val();
-        if(cedula != ''){
-            if(cedula.match(ER_NumericoSinEspacios)){
-                if (cedula.length > 7) {
+        if (cedula != '') {
+            if (cedula.match(ER_soloNumeros)) {
+                if (cedula.length >= 7) {
                     if (validarCedula) {
                         $("#cedula").css("background-color", colorb);
                     } else {
@@ -326,8 +327,8 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DEL PRIMER NOMBRE
         let nombre_1 = $("#nombre_1").val();
-        if(nombre_1 != ''){
-            if(nombre_1.match(ER_caracteresConEspacios)){
+        if (nombre_1 != '') {
+            if(nombre_1.match(validar_caracteresSimples)){
                 $("#nombre_1").css("background-color", colorb);
             }else{
                 $("#nombre_1").css("background-color", colorm);
@@ -339,8 +340,8 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO NOMBRE
         let nombre_2 = $("#nombre_2").val();
-        if(nombre_2 != ''){
-            if(nombre_2.match(ER_caracteresConEspacios)){
+        if (nombre_2 != '') {
+            if(nombre_2.match(validar_caracteresSimples)){
                 $("#nombre_2").css("background-color", colorb);
             }else{
                 $("#nombre_2").css("background-color", colorm);
@@ -351,8 +352,8 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DEL PRIMER APELLIDO
         let apellido_1 = $("#apellido_1").val();
-        if(apellido_1 != ''){
-            if(apellido_1.match(ER_caracteresConEspacios)){
+        if (apellido_1 != '') {
+            if(apellido_1.match(validar_caracteresSimples)){
                 $("#apellido_1").css("background-color", colorb);
             }else{
                 $("#apellido_1").css("background-color", colorm);
@@ -364,8 +365,8 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DEL SEGUNDO APELLIDO
         let apellido_2 = $("#apellido_2").val();
-        if(apellido_2 != ''){
-            if(apellido_2.match(ER_caracteresConEspacios)){
+        if (apellido_2 != '') {
+            if(apellido_2.match(validar_caracteresSimples)){
                 $("#apellido_2").css("background-color", colorb);
             }else{
                 $("#apellido_2").css("background-color", colorm);
@@ -376,7 +377,7 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DE SEXO
         let sexo = $("#sexo").val();
-        if(sexo != ''){
+        if (sexo != '') {
             $("#sexo").css("background-color", colorb);
         } else {
             $("#sexo").css("background-color", colorm);
@@ -384,9 +385,9 @@ $(function () {
         }
         // VERIFICAR EL CAMPO DE FECHA DE NACIMIENTO
         let fecha_n = $("#fecha_n").val();
-        if(fecha_n != ''){
+        if (fecha_n != '') {
             let edad_cal = parseInt($('#edad').val());
-            if (edad_cal >= 17 && edad_cal <= 19) {
+            if (edad_cal >= 14 && edad_cal <= 19) {
                 $("#fecha_n").css("background-color", colorb);
             } else {
                 $("#fecha_n").css("background-color", colorm);
@@ -399,7 +400,7 @@ $(function () {
         // VERIFICAR EL CAMPO DE LUGAR DE NACIMIENTO
         let lugar_n = $("#lugar_n").val();
         if(lugar_n != ''){
-            if(lugar_n.match(ER_alfaNumericoCompleto)){
+            if(lugar_n.match(validar_caracteresEspeciales)){
                 $("#lugar_n").css("background-color", colorb);
             }else{
                 $("#lugar_n").css("background-color", colorm);
@@ -438,7 +439,7 @@ $(function () {
         if (grado_instruccion == 'SI' || grado_instruccion == 'SC') {
             let titulo_edu = $("#titulo").val();
             if(titulo_edu != ''){
-                if(titulo_edu.match(ER_caracteresConEspacios)){
+                if(titulo_edu.match(validar_caracteresEspeciales)){
                     $("#titulo").css("background-color", colorb);
                 }else{
                     $("#titulo").css("background-color", colorm);
@@ -452,7 +453,7 @@ $(function () {
         // VERIFICAR EL CAMPO DE MISIONES REALZADAS (NO OBLIGATORIA)
         let alguna_mision = $("#alguna_mision").val();
         if(alguna_mision != ''){
-            if(alguna_mision.match(ER_alfaNumericoConEspacios)){
+            if(alguna_mision.match(validar_caracteresEspeciales)){
                 $("#alguna_mision").css("background-color", colorb);
             }else{
                 $("#alguna_mision").css("background-color", colorm);
@@ -460,53 +461,6 @@ $(function () {
             }
         } else {
             $("#alguna_mision").css("background-color", colorn);
-        }
-        // VERIFICAR EL TELEFONO DE CASA
-        let telefono_1 = $("#telefono_1").val();
-        if(telefono_1 != ''){
-            if(telefono_1.match(ER_NumericoSinEspacios)){
-                if (telefono_1.length == 7 || telefono_1.length >= 10) {
-                    $("#telefono_1").css("background-color", colorb);
-                } else {
-                    $("#telefono_1").css("background-color", colorm);
-                    tarjeta_2 = false;
-                }
-            }else{
-                $("#telefono_1").css("background-color", colorm);
-                tarjeta_2 = false;
-            }
-        }else{
-            $("#telefono_1").css("background-color", colorm);
-            tarjeta_2 = false;
-        }
-        // VERIFICAR EL TELEFONO CELULAR
-        let telefono_2 = $("#telefono_2").val();
-        if(telefono_2 != ''){
-            if(telefono_2.match(ER_NumericoSinEspacios)){
-                if (telefono_2.length >= 10) {
-                    $("#telefono_2").css("background-color", colorb);
-                } else {
-                    $("#telefono_2").css("background-color", colorm);
-                    tarjeta_2 = false;
-                }
-            }else{
-                $("#telefono_2").css("background-color", colorm);
-                tarjeta_2 = false;
-            }
-        }else{
-            $("#telefono_2").css("background-color", colorn);
-        }
-        // VERIFICAR EL CORREO ELECTRONICO
-        let correo = $("#correo").val();
-        if(correo != ''){
-            if(correo.match(ER_email)){
-                $("#correo").css("background-color", colorb);
-            }else{
-                $("#correo").css("background-color", colorm);
-                tarjeta_2 = false;
-            }
-        }else{
-            $("#correo").css("background-color", colorn);
         }
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
         if (tarjeta_2) {

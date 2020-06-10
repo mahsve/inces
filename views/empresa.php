@@ -61,7 +61,7 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">RIF</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="110">RIF</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">NIL</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Razón social</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="200">Act. económica</th>
@@ -389,6 +389,28 @@
                 <button id="guardar-datos" type="button" class="botones_formulario btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
             </div>
         </form>
+    </div>
+
+    <div id="modal-aceptar-contacto" class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Persona ya registrada</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <h1>Persona ya encontrada</h1>
+                </div>
+
+                <div class="modal-footer justify-content-between py-2">
+                    <button type="button" class="btn btn-sm btn-info" id="btn-agregar-persona"><i class="fas fa-plus"></i><span class="ml-2">Aceptar</span></button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i><span class="ml-2">Cerrar</span></button>
+                </div>
+            </div>
+        </div>
     </div>
 <?php } ?>
 

@@ -2021,7 +2021,7 @@ INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`
 (4, 4, 'Empresas', 'empresa', 1, 'fas fa-industry'),
 (5, 4, 'Actividad económica', 'actividad_economica', 2, 'fas fa-wallet'),
 (6, 8, 'Ocupación', 'ocupacion', 2, 'fas fa-briefcase'),
-(7, 8, 'Oficio aprendiz', 'oficio', 3, 'fas fa-briefcase'),
+(7, 8, 'Oficio aprendiz', 'oficio', 3, 'fas fa-graduation-cap'),
 (9, 8, 'Asignatura', 'asignatura', 5, 'fas fa-book'),
 (10, 5, 'Rol de usuario', 'rol', 2, 'fas fa-user-tag'),
 (11, 5, 'Módulo sistema', 'modulo_sistema', 3, 'fas fa-sitemap'),

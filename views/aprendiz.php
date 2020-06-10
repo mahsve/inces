@@ -344,23 +344,23 @@
                                             <span class="d-inline-block w-100 position-relative small mb-2">Estado civil <i class="fas fa-asterisk text-danger position-absolute required"></i></span>
 
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_1" name="estado_civil" class="custom-control-input-radio" value="S">
+                                                <input type="radio" id="estado_civil_1" name="estado_civil" class="custom-control-input localStorage-radio" value="S">
                                                 <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_1">Soltero</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_2" name="estado_civil" class="custom-control-input-radio" value="C">
+                                                <input type="radio" id="estado_civil_2" name="estado_civil" class="custom-control-input localStorage-radio" value="C">
                                                 <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_2">Casado</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_3" name="estado_civil" class="custom-control-input-radio" value="X">
+                                                <input type="radio" id="estado_civil_3" name="estado_civil" class="custom-control-input localStorage-radio" value="X">
                                                 <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_3">Concubino</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_4" name="estado_civil" class="custom-control-input-radio" value="D">
+                                                <input type="radio" id="estado_civil_4" name="estado_civil" class="custom-control-input localStorage-radio" value="D">
                                                 <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_4">Divorciado</label>
                                             </div>
                                             <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_5" name="estado_civil" class="custom-control-input-radio" value="V">
+                                                <input type="radio" id="estado_civil_5" name="estado_civil" class="custom-control-input localStorage-radio" value="V">
                                                 <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_5">Viudo</label>
                                             </div>
                                         </td>
@@ -371,41 +371,41 @@
                                             
                                             <div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_1" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="BI">
+                                                    <input type="radio" id="grado_instruccion_1" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="BI">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_1">Educ. básica incompleta</label>
                                                 </div>
 
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_2" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="BC">
+                                                    <input type="radio" id="grado_instruccion_2" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="BC">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_2">Educ. básica completa</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_3" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="MI">
+                                                    <input type="radio" id="grado_instruccion_3" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="MI">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_3">Educ. media diversificada incompleta</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_4" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="MC">
+                                                    <input type="radio" id="grado_instruccion_4" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="MC">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_4">Educ. media diversificada completa</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_5" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="SI">
+                                                    <input type="radio" id="grado_instruccion_5" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="SI">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_5">Educ. superior incompleta</label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_6" name="grado_instruccion" class="custom-control-input-radio radio_educacion" value="SC">
+                                                    <input type="radio" id="grado_instruccion_6" name="grado_instruccion" class="custom-control-input localStorage-radio radio_educacion" value="SC">
                                                     <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_6">Educ. superior completa</label>
                                                 </div>
 
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off" readonly="true"/>
+                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm localStorage" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off" readonly="true"/>
                                                     </div>
                                                 </div>
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique</label>
                                                     <div class="col-sm-8">
-                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm" placeholder="(Opcional)" maxlength="150" autocomplete="off"/>
+                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm localStorage" placeholder="(Opcional)" maxlength="150" autocomplete="off"/>
                                                     </div>
                                                 </div>
                                             </div>
