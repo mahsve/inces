@@ -1,7 +1,6 @@
 <?php 
 session_start();
-if ($_POST['opcion'])
-{
+if ($_POST['opcion']) {
     require_once('../models/m_empresa.php');
     $objeto = new model_empresa;
     
@@ -25,37 +24,28 @@ if ($_POST['opcion'])
         break;
 
         case 'Verificar RIF':
-            ////////////////////// LIMPIAR DATOS ///////////////////////
-            $rifLimpio = htmlspecialchars($_POST['rif']);
-            ///////////////////// HACER CONSULTAS //////////////////////
             $objeto->conectar();
-            $data = $objeto->verificarRIF($rifLimpio);
+            $data = $objeto->verificarRIF($_POST);
             $objeto->desconectar();
             echo json_encode($data);
         break;
 
         case 'Verificar cedula':
-            ////////////////////// LIMPIAR DATOS ///////////////////////
-            $cedulaLimpia['nacionalidad'] = "'".htmlspecialchars($_POST['nacionalidad'])."'";
-            $cedulaLimpia['cedula'] = "'".htmlspecialchars($_POST['cedula'])."'";
-            ///////////////////// HACER CONSULTAS //////////////////////
             $objeto->conectar();
-            $data = $objeto->verificarCedula($cedulaLimpia);
+            $data = $objeto->verificarCedula($_POST);
             $objeto->desconectar();
             echo json_encode($data);
         break;
 
-        case 'Registrar':
-            ///////////////////// HACER CONSULTAS //////////////////////
+        case 'Registrar': 
             $objeto->conectar();
             $objeto->nuevaTransaccion();
-            if ($_POST['registrar_cont'] == 'si') {
-                $respuestaRegistro = $objeto->registrarPersonaContacto($_POST);
-            } else {
-                $respuestaRegistro = true;
-            }
-            ////////////////////////////////////////////////////////////
-            if ($respuestaRegistro){
+
+            $respuestaRegistro = false;
+            if      ($_POST['registrar_cont'] == 'si') { $respuestaRegistro = $objeto->registrarPersonaContacto($_POST); }
+            else if ($_POST['registrar_cont'] == 'no') { $respuestaRegistro = true; }
+
+            if ($respuestaRegistro) {
                 if ($objeto->registrarEmpresa($_POST)) {
                     echo 'Registro exitoso';
                     $objeto->guardarTransaccion();
@@ -73,18 +63,19 @@ if ($_POST['opcion'])
         case 'Consultar':
             $resultados = [];
             $objeto->conectar();
+            ////////////////////////////////////////////////////////////
             /////////////////// ESTABLECER ORDER BY ////////////////////
-            $_POST['ordenar_tipo'] = 'ASC';
-            if ($_POST['tipo_ord'] == 1)
-                $_POST['ordenar_tipo'] = 'ASC';
-            else if ($_POST['tipo_ord'] == 2)
-                $_POST['ordenar_tipo'] = 'DESC';
+            $campo_m_ordenar = 'ASC';
+            if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
+            else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $_POST['ordenar_por'] = 'rif '.$_POST['ordenar_tipo'];
-            if ($_POST['ordenar'] == 1)
-                $_POST['ordenar_por'] = 'rif '.$_POST['ordenar_tipo'];
-            else if ($_POST['ordenar'] == 2)
-                $_POST['ordenar_por'] = 'nil '.$_POST['ordenar_tipo'];
+            $campo_ordenar = 't_empresa.rif '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 't_empresa.rif '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 't_empresa.razon_social '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 3) { $campo_ordenar = 't_actividad_economica.nombre '.$campo_m_ordenar; }
+            $_POST['campo_ordenar'] = $campo_ordenar;
+            ////////////////////////////////////////////////////////////
+
             ///////////////////// HACER CONSULTAS //////////////////////
             $resultados['resultados']   = $objeto->consultarEmpresas($_POST);
             $resultados['total']        = $objeto->consultarEmpresasTotal($_POST);
@@ -97,7 +88,7 @@ if ($_POST['opcion'])
             $objeto->nuevaTransaccion();
             if ($objeto->modificarPersonaContacto($_POST)){
                 if ($objeto->modificarEmpresa($_POST)) {
-                    echo 'Modificacion exitosa';
+                    echo 'Modificación exitosa';
                     $objeto->guardarTransaccion();
                 } else {
                     echo 'Modificación fallida: Datos de la empresa';
@@ -111,18 +102,9 @@ if ($_POST['opcion'])
         break;
 
         case 'Estatus':
-            ////////////////////// LIMPIAR DATOS ///////////////////////
-            $data = [];
-            foreach ($_POST as $indice => $valor) {
-                if ($valor != '')
-                    $data[$indice] = "'".htmlspecialchars($valor)."'";
-                else
-                    $data[$indice] = 'NULL';
-            }
-            ///////////////////// HACER CONSULTAS //////////////////////
             $objeto->conectar();
-            if ($objeto->estatusEmpresa($data)) {
-                echo 'Modificacion exitosa';
+            if ($objeto->estatusEmpresa($_POST)) {
+                echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';
             }

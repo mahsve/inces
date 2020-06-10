@@ -1364,7 +1364,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA AGREGAR NUEVA FILAS EN LA TABLA DE FAMILIARSE DEL APRENDIZ.
-    $('#agregar_familiar').click(function (){
+    $('#agregar_familiar').click(function () {
         if (window.tabla) {
             window.tabla = false;
             $('#tabla_datos_familiares tbody').empty();
@@ -1436,7 +1436,7 @@ $(function () {
         }
     });
     // FUNCION PARA GUARDAR LOS DATOS DE LOS FAMILIARES EN EL LOCALSTORAGE
-    function localStorageFamiliares() {
+    function localStorageFamiliares () {
         if(window.editar !== true) {
             let nameInput = $(this).attr('name').replace('[]','');
             let position = $(this).closest('tr').attr('data-posicion');
@@ -1453,7 +1453,7 @@ $(function () {
         }
     }
     // FUNCION PARA CALCULAR LA EDAD CUANDO SE INTRODUZCA LA FECHA DE NACIMIENTO DE LOS FAMILIARES.
-    function calcularEdadF(){
+    function calcularEdadF () {
         let idEdad  = '#edad_familiar' + $(this).closest('tr').attr('data-posicion');
         
         let day     = $(this).val().substr(0,2);
@@ -1501,7 +1501,7 @@ $(function () {
         $(idParentezco).val(valorParentezco);
     }
     // ACTIVAR EL CAMPO DE INGRESOS EN LA TABLA FAMILIAR SI EL MIEMBRO ESTA TRABAJANDO.
-    function habilitarIngresos(){
+    function habilitarIngresos () {
         let posicion = $(this).closest('tr').attr('data-posicion');
         let idIngresos = '#ingresos_familiar' + posicion;
         $(idIngresos).attr('readonly',true);
@@ -1520,7 +1520,7 @@ $(function () {
         }
     }
     // FUNCION PARA ELIMINAR FILAS QUE YA NO SON NECESARIAS.
-    function eliminarFila(){
+    function eliminarFila () {
         let position = $(this).closest('tr').attr('data-posicion');
         ////////////////////
         if(window.editar !== true)

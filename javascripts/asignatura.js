@@ -3,13 +3,14 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
     let validar_codigoFormulario = /^([0-9a-zA-Z-])+$/;
-    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
+    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa0-9.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
     let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
+    let listaModulos = ['', 'Módulo 1', 'Módulo 2', 'Módulo 3', 'Módulo 4'];
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -17,8 +18,6 @@ $(function () {
     // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
-    let dataOficios     = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS DE LOS OFICIOS.
-    let dataModulos     = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS DE LOS MODULOS DE LOS OFICIOS.
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -91,7 +90,7 @@ $(function () {
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].modulo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].oficio+' - '+listaModulos[dataListado.resultados[i].codigo_modulo]+'</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
@@ -179,7 +178,7 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     ////////////////////////// VALIDACIONES /////////////////////////////
-    function verificarParte1() {
+    function verificarParte1 () {
         tarjeta_1 = true;
         // VERIFICAR EL CAMPO DEL CODIGO DEL MODULO.
         let codigo = $("#codigo").val();
@@ -247,70 +246,6 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
-    // FUNCIONES EXTRAS DE LOS CAMPOS.
-    $("#oficio").change(buscarModulos);
-    $('#loader-modulos-reload').click(buscarModulos);
-    function buscarModulos () {
-        if ($('#oficio').val() != "") {
-            $('#loader-modulos').show();
-            $('#loader-modulos-reload').hide();
-
-            setTimeout(() => {
-                $.ajax({
-                    url: url + "controllers/c_asignatura.php",
-                    type: "POST",
-                    dataType: 'JSON',
-                    data: { opcion: "Traer modulo", oficio: $("#oficio").val() },
-                    success: function (resultados) {
-                        $('#loader-modulos').hide();
-
-                        dataModulos = resultados.modulos;
-                        if (dataModulos) {
-                            $("#modulo").html('<option value="">Elija una opción</option>');
-                            for (let i in dataModulos) {
-                                $("#modulo").append('<option value="'+dataModulos[i].codigo +'">'+dataModulos[i].nombre+"</option>");
-                            }
-                        } else {
-                            $("#modulo").html('<option value="">No hay oficios</option>');
-                        }
-
-                        if (window.codigo_modulo != undefined) {
-                            $("#modulo").val(window.codigo_modulo);
-                            delete window.codigo_modulo;
-                            verificarParte1();
-                        }
-                    },
-                    error: function (errorConsulta) {
-                        $('#loader-modulos').hide();
-                        $('#loader-modulos-reload').show();
-
-                        // MENSAJE DE ERROR DE CONEXION.
-                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
-                        let contenedor_mensaje = '';
-                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
-                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
-                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
-                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
-                        contenedor_mensaje += '</button>';
-                        contenedor_mensaje += '</div>';
-                        $('#contenedor-mensaje2').html(contenedor_mensaje);
-
-                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
-                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
-                        
-                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
-                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
-                        console.log(errorConsulta.responseText);
-                    }, timer: 15000
-                });
-            }, 500);
-        } else {
-            $('#modulo').html('<option value="">Elija un oficio</option>');
-        }
-    }
-    /////////////////////////////////////////////////////////////////////
-    
-    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarRegistro () {
@@ -328,7 +263,9 @@ $(function () {
         $('#codigo').val(dataListado.resultados[posicion].codigo);
         $('#nombre').val(dataListado.resultados[posicion].nombre);
         $('#oficio').val(dataListado.resultados[posicion].codigo_oficio);
-        $("#oficio").trigger('change');
+        $('#modulo').val(dataListado.resultados[posicion].codigo_modulo);
+
+        verificarParte1();
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar-datos').click(function (e) {
@@ -549,7 +486,7 @@ $(function () {
             dataType: 'JSON',
             data: { opcion: "Traer datos" },
             success: function (resultados) {
-                dataOficios = resultados.oficios;
+                let dataOficios = resultados.oficios;
                 if (dataOficios) {
                     for (let i in dataOficios) {
                         $("#oficio").append('<option value="'+dataOficios[i].codigo +'">'+dataOficios[i].nombre+"</option>");

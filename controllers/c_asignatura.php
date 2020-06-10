@@ -13,14 +13,6 @@ if ($_POST['opcion']) {
             echo json_encode($data);
         break;
 
-        case 'Traer modulo':
-            $data = [];
-            $objeto->conectar();
-            $data['modulos'] = $objeto->consultarModulos($_POST);
-            $objeto->desconectar();
-            echo json_encode($data);
-        break;
-
         case 'Registrar':
             $objeto->conectar();
             // SE CONFIRMA QUE NO ESTE REGISTRADO
@@ -47,9 +39,11 @@ if ($_POST['opcion']) {
             if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
             else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $campo_ordenar = 'nombre '.$campo_m_ordenar;
-            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'formulario '.$campo_m_ordenar; }
+            $campo_ordenar = 't_asignatura.codigo '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 't_asignatura.codigo '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 't_asignatura.nombre '.$campo_m_ordenar; }
+            else if ($_POST['campo_ordenar'] == 3) { $campo_ordenar = 't_oficio.nombre, t_asignatura.codigo_modulo '.$campo_m_ordenar; }
+            
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 

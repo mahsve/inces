@@ -101,7 +101,7 @@
                 <div class="col-sm-12 offset-md-3 col-md-6">
                     <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la ocupación" autocomplete="off"/>
+                        <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la actividad económica" autocomplete="off"/>
                     </div>
 
                     <div id="contenedor-mensaje2"></div>

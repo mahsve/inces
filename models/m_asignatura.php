@@ -31,17 +31,6 @@ class model_asignatura extends conexion {
         return $resultado;
     }
 
-    // FUNCION PARA CONSULTAR LOS MODULOS
-    public function consultarModulos ($datos) {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT * FROM t_modulo WHERE codigo_oficio='".htmlspecialchars($datos['oficio'])."'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) {
-            $resultado[] = $columna;
-        }
-        return $resultado;
-    }
-
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -61,10 +50,12 @@ class model_asignatura extends conexion {
         $sentencia = "INSERT INTO t_asignatura (
           codigo,
           nombre,
+          codigo_oficio,
           codigo_modulo
         ) VALUES (
             '".strtoupper(htmlspecialchars($datos['codigo']))."',
             '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."',
+            '".htmlspecialchars($datos['oficio'])."',
             '".htmlspecialchars($datos['modulo'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -77,10 +68,9 @@ class model_asignatura extends conexion {
     // FUNCION PARA CONSULTAR TODOS LOS ASIGNATURAS REGISTRADOS
     public function consultarAsignaturas ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT t_asignatura.*, t_modulo.nombre AS modulo, t_oficio.nombre AS oficio, t_modulo.codigo_oficio
+        $sentencia = "SELECT t_asignatura.*, t_oficio.nombre AS oficio
             FROM t_asignatura
-            INNER JOIN t_modulo ON t_asignatura.codigo_modulo = t_modulo.codigo
-            INNER JOIN t_oficio ON t_modulo.codigo_oficio = t_oficio.codigo
+            INNER JOIN t_oficio ON t_asignatura.codigo_oficio = t_oficio.codigo
             WHERE ( t_asignatura.nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR 
                     t_asignatura.codigo LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%')
             AND t_asignatura.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
@@ -115,6 +105,7 @@ class model_asignatura extends conexion {
         $sentencia = "UPDATE t_asignatura SET 
             codigo='".strtoupper(htmlspecialchars($datos['codigo']))."',
             nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."',
+            codigo_oficio='".htmlspecialchars($datos['oficio'])."',
             codigo_modulo='".htmlspecialchars($datos['modulo'])."'
             WHERE codigo='".htmlspecialchars($datos["codigo2"])."'
         "; // SENTENTCIA
