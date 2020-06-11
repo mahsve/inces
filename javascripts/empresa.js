@@ -645,45 +645,9 @@ $(function () {
                                 success: function (resultados) {
                                     $('#spinner-cedula').hide();
 
-                                    let dataConfirmar = resultados;
-                                    if (dataConfirmar) {
-                                        swal({
-                                            title: "Ya se encuetra registrada",
-                                            text: "Esta persona ya está registrada,\n¿Quiere agregarla como contacto de está empresa?",
-                                            icon: "info",
-                                            buttons: true,
-                                            dangerMode: true,
-                                        })
-                                        .then((willDelete) => {
-                                            if (willDelete) {
-                                                validarCedula = true;
-                                                window.registrar_cont = 'no';
-                                                $('#spinner-cedula-confirm').addClass('fa-check text-success');
-    
-                                                window.nacionalidad = dataConfirmar.nacionalidad;
-                                                window.cedula = dataConfirmar.cedula;
-                                                $('#nacionalidad').val(dataConfirmar.nacionalidad);
-                                                $('#cedula').val(dataConfirmar.cedula);
-                                                $('#nombre_1').val(dataConfirmar.nombre1);
-                                                $('#nombre_2').val(dataConfirmar.nombre2);
-                                                $('#apellido_1').val(dataConfirmar.apellido1);
-                                                $('#apellido_2').val(dataConfirmar.apellido2);
-                                                $('#sexo').val(dataConfirmar.sexo);
-                                                $('#estado_c').val(dataConfirmar.codigo_estado);
-                                                window.valor_ciudad_c = dataConfirmar.codigo_ciudad;
-                                                $('#estado_c').trigger('change');
-                                                $('#telefono_1_c').val(dataConfirmar.telefono1);
-                                                $('#telefono_2_c').val(dataConfirmar.telefono2);
-                                                $('#correo_c').val(dataConfirmar.correo);
-                                                $('#direccion_c').val(dataConfirmar.direccion);
-    
-                                                window.busquedad2 = true;
-                                            } else {
-                                                validarCedula = false;
-                                                window.registrar_cont = 'no';
-                                                $('#spinner-cedula-confirm').addClass('fa-times text-danger');
-                                            }
-                                        });
+                                    window.dataConfirmar = resultados;
+                                    if (window.dataConfirmar) {
+                                        $('#modal-aceptar-contacto').modal({backdrop: 'static', keyboard: false})
                                     } else {
                                         validarCedula = true;
                                         window.registrar_cont = 'si';
@@ -742,6 +706,35 @@ $(function () {
                 }
             }
         }
+    });
+    $('#btn-agregar-persona').click(function () {
+        validarCedula = true;
+        window.registrar_cont = 'no';
+        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+
+        window.nacionalidad = window.dataConfirmar.nacionalidad;
+        window.cedula = window.dataConfirmar.cedula;
+        $('#nacionalidad').val(window.dataConfirmar.nacionalidad);
+        $('#cedula').val(window.dataConfirmar.cedula);
+        $('#nombre_1').val(window.dataConfirmar.nombre1);
+        $('#nombre_2').val(window.dataConfirmar.nombre2);
+        $('#apellido_1').val(window.dataConfirmar.apellido1);
+        $('#apellido_2').val(window.dataConfirmar.apellido2);
+        $('#sexo').val(window.dataConfirmar.sexo);
+        $('#estado_c').val(window.dataConfirmar.codigo_estado);
+        window.valor_ciudad_c = window.dataConfirmar.codigo_ciudad;
+        $('#estado_c').trigger('change');
+        $('#telefono_1_c').val(window.dataConfirmar.telefono1);
+        $('#telefono_2_c').val(window.dataConfirmar.telefono2);
+        $('#correo_c').val(window.dataConfirmar.correo);
+        $('#direccion_c').val(window.dataConfirmar.direccion);
+
+        window.busquedad2 = true;
+    });
+    $('#btn-rechazar-persona').click(function () {
+        validarCedula = false;
+        window.registrar_cont = 'no';
+        $('#spinner-cedula-confirm').addClass('fa-times text-danger');
     });
     /////////////////////////////////////////////////////////////////////
 

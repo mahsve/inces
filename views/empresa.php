@@ -396,18 +396,15 @@
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h5 class="modal-title text-secondary">Persona ya registrada</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
                 </div>
 
                 <div class="modal-body py-2">
-                    <h1>Persona ya encontrada</h1>
+                    <h4 class="m-0 text-secondary text-center">Esta persona ya se encuentra registra, ¿Desea agregarla como contacto?</h4>
                 </div>
 
                 <div class="modal-footer justify-content-between py-2">
-                    <button type="button" class="btn btn-sm btn-info" id="btn-agregar-persona"><i class="fas fa-plus"></i><span class="ml-2">Aceptar</span></button>
-                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i><span class="ml-2">Cerrar</span></button>
+                    <button type="button" class="btn btn-sm btn-info" id="btn-agregar-persona" data-dismiss="modal"><i class="fas fa-check"></i><span class="ml-2">Aceptar</span></button>
+                    <button type="button" class="btn btn-sm btn-secondary"id="btn-rechazar-persona" data-dismiss="modal"><i class="fas fa-times"></i><span class="ml-2">Cerrar</span></button>
                 </div>
             </div>
         </div>

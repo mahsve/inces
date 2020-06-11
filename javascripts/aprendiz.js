@@ -9,7 +9,7 @@ $(function () {
     let validar_caracteresEspeciales2=/^([a-zá-úä-üA-ZÁ-úÄ-Ü0-9.,--# ])+$/;
     let validar_correoElectronico   =/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
-    let tarjeta_1, tarjeta_2;
+    let tarjeta_1, tarjeta_2, tarjeta_3, tarjeta_4, tarjeta_5;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
@@ -195,7 +195,7 @@ $(function () {
         // VERIFICAR EL CORREO ELECTRONICO
         let correlativo = $("#correlativo").val();
         if(correlativo != ''){
-            if(correlativo.match(ER_NumericoSinEspacios)){
+            if(correlativo.match(validar_soloNumeros)){
                 $("#correlativo").css("background-color", colorb);
             }else{
                 $("#correlativo").css("background-color", colorm);
@@ -208,7 +208,7 @@ $(function () {
         // VERIFICAR EL CORREO ELECTRONICO
         let numero_orden = $("#numero_orden").val();
         if(numero_orden != ''){
-            if(numero_orden.match(ER_NumericoSinEspacios)){
+            if(numero_orden.match(validar_soloNumeros)){
                 $("#numero_orden").css("background-color", colorb);
             }else{
                 $("#numero_orden").css("background-color", colorm);
@@ -510,6 +510,28 @@ $(function () {
             $('#icon-empresa').show();
         }
     }
+    function verificarParte5 () {
+        tarjeta_5 = true;
+
+        // VERIFICAMOS QUE HAYAS ASIGNATURAS CARGADAS.
+        if ($('.campo_asignatura').length > 0) {
+            // REALIZAMOS UN CONTADOR PARA VERIFICAR CUANTAS ESTAN MARCADAS.
+            let total_checked = 0;
+            // RECORREMOS CADA UNOS DE LOS CHECKBOX.
+            $('.campo_asignatura').each(function () { if ($(this).prop('checked')) { total_checked++ } });
+            // SI NO HAY NINGUNO SELECCIONADO NO PERMITE GUARDAR.
+            if (total_checked == 0) { tarjeta_5 = false;}
+        } else {
+            tarjeta_5 = false;
+        }
+
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (tarjeta_5) {
+            $('#icon-asignatura').hide();
+        } else {
+            $('#icon-asignatura').show();
+        }
+    }
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
     $('#show_form').click(function () {
@@ -533,11 +555,11 @@ $(function () {
         $('#fecha').val(fecha);
 
         // MODAL BUSCAR ASPIRANTE.
+        window.deshacerBusqueda = true;
         document.form_buscar_participante.reset();
-        $('#btn-hide-modal-participante').hide();
         $('#resultados-buscar-participante').empty();
         $('#resultados-buscar-participante').hide();
-        $('#modal-buscar-participante').modal({backdrop: 'static', keyboard: false});
+        $('#modal-buscar-participante').modal();
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
@@ -680,6 +702,7 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     ///////////////////// FUNCIONES MANTENER FECHA //////////////////////
+    $("#modal-buscar-participante").on("hidden.bs.modal", function () { if (window.deshacerBusqueda) { $('#show_table').trigger('click'); } });
     $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
     $('.input_fecha').datepicker({ language: 'es' });
     $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
@@ -817,6 +840,7 @@ $(function () {
                             delete window.valor_parroquia;
 
                             $('#carga_espera').hide(400);
+                            buscarAsignaturas();
                             verificarParte3();
                         }
                     },
@@ -849,6 +873,123 @@ $(function () {
             $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
     }
+    $('#loader-asignaturas-reload').click(function () { buscarAsignaturas(); });
+    function buscarAsignaturas () {
+        if ($('#oficio').val() != "" && $('#modulo').val() != '') {
+            $('#loader-asignaturas').show();
+            $('#loader-asignaturas-reload').hide();
+
+            setTimeout(() => {
+                $.ajax({
+                    url: url + "controllers/c_aprendiz.php",
+                    type: "POST",
+                    dataType: 'JSON',
+                    data: {
+                        opcion: "Traer asignaturas",
+                        oficio: window.oficio_aprendiz
+                    },
+                    success: function (resultados) {
+                        $('#loader-asignaturas').hide();
+
+                        // CARGAMOS LAS CIUDADES DEL ESTADO SELECCIONADO
+                        let dataAsignaturas = resultados.asignaturas;
+                        if (dataAsignaturas) {
+                            $('#contenedor_asignaturas').empty();
+
+                            for (let i in dataAsignaturas) {
+                                let contenido_asig = '';
+                                contenido_asig += '<div class="d-flex align-items-center rounded w-100 p-1 mb-1 text-secondary font-weight-bold contenedor_select_asignatura">';
+                                    contenido_asig += '<div style="width: 25px;" class="custom-control custom-checkbox mr-sm-2">';
+                                        contenido_asig += '<input type="hidden" name="id_campo_asignatura[]" id="id-'+dataAsignaturas[i].codigo+'" class="custom-control-input id_campo_asignatura" value="0">';
+                                        contenido_asig += '<input type="checkbox" name="campo_asignatura[]" id="'+dataAsignaturas[i].codigo+'" class="custom-control-input campo_asignatura" value="'+dataAsignaturas[i].codigo+'" data-id="'+dataAsignaturas[i].codigo+'">';
+                                        contenido_asig += '<label class="custom-control-label" for="'+dataAsignaturas[i].codigo+'" data-id="'+dataAsignaturas[i].codigo+'"></label>';
+                                    contenido_asig += '</div>';
+                                    
+                                    contenido_asig += '<div style="width: calc(100% - 25px);" class="d-flex align-items-center seleccionar_asignatura" data-id="'+dataAsignaturas[i].codigo+'">';
+                                        contenido_asig += '<span style="width: 120px;">'+dataAsignaturas[i].codigo+'</span>';
+                                        contenido_asig += '<span style="width: calc(100% - 120px);">'+dataAsignaturas[i].nombre+'</span>';
+                                    contenido_asig += '</div>';
+                                contenido_asig += '</div>';
+                                $('#contenedor_asignaturas').append(contenido_asig);
+                            }
+
+                            // CUANDO DESMARQUE ALGUNA ASIGNATURA, TOMARA EL ID DE REGISTRO Y LO GUARDARA EN UN ARREGLO PARA SU POSTERIOR ELIMINACION
+                            $('.campo_asignatura').click(function () {
+                                let data_id = $(this).attr('data-id');
+                                if ($('#id-'+data_id).val() != 0) {
+                                    var i = window.eliminarAsignaturas.indexOf($('#id-'+data_id).val());
+                                    if      (i !== -1) { window.eliminarAsignaturas.splice(i, 1); }
+                                    else if (i === -1) { window.eliminarAsignaturas.push($('#id-'+data_id).val()); }
+                                }
+                            });
+
+                            $('.seleccionar_asignatura').click(function () {
+                                let data_id = $(this).attr('data-id');
+                                if      ($('#'+data_id).prop('checked')) { $('#'+data_id).prop('checked', false); }
+                                else    { $('#'+data_id).prop('checked', true); }
+
+                                // CUANDO DESMARQUE ALGUNA ASIGNATURA, TOMARA EL ID DE REGISTRO Y LO GUARDARA EN UN ARREGLO PARA SU POSTERIOR ELIMINACION
+                                if ($('#id-'+data_id).val() != 0) {
+                                    var i = window.eliminarAsignaturas.indexOf($('#id-'+data_id).val());
+                                    if      (i !== -1) { window.eliminarAsignaturas.splice(i, 1); }
+                                    else if (i === -1) { window.eliminarAsignaturas.push($('#id-'+data_id).val()); }
+                                }
+                            });
+                        } else {
+                            let contenido_asig = '';
+                            contenido_asig += '<div class="d-flex justify-content-center align-items-center h-100">';
+                            contenido_asig += '<h5 class="font-weight-normal text-secondary text-center text-uppercase"><i class="fas fa-file-alt"></i> No hay asignaturas registradas</h5>';
+                            contenido_asig += '</div>';
+                            $('#contenedor_asignaturas').html(contenido_asig);
+                        }
+
+                        // CIUDAD, SI EXISTE UN VALOR GUARDADO SE AGREGA AL CAMPO Y SE ELIMINA LA VARIABLE
+                        if (window.asignaturas != undefined) {
+                            for (let i in window.asignaturas) {
+                                $('#id-'+window.asignaturas[i].codigo_asignatura).val(window.asignaturas[i].codigo);
+                                $('#'+window.asignaturas[i].codigo_asignatura).prop('checked', true);
+                            }
+                            delete window.asignaturas;
+                            verificarParte1();
+                        }
+                    },
+                    error: function (errorConsulta) {
+                        // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
+                        $('#loader-asignaturas').hide();
+                        $('#loader-asignaturas-reload').show();
+                        $('#contenedor_asignaturas').empty();
+
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje2').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                        
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        } else {
+            $('#loader-asignaturas').hide();
+            $('#loader-asignaturas-reload').hide();
+
+            let contenido_asig = '';
+            contenido_asig += '<div class="d-flex justify-content-center align-items-center h-100">';
+            contenido_asig += '<h5 class="font-weight-normal text-secondary text-center text-uppercase"><i class="fas fa-hand-pointer"></i> Seleccione un oficio y un módulo</h5>';
+            contenido_asig += '</div>';
+            $('#contenedor_asignaturas').html(contenido_asig);
+        }
+    }
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
     $('.radio_educacion').click(function () {
@@ -864,7 +1005,6 @@ $(function () {
     // MODAL BUSCAR PARTICIPANTE
     $('#btn-buscar-participante').click(function () {
         document.form_buscar_participante.reset();
-        $('#btn-hide-modal-participante').show();
         $('#resultados-buscar-participante').empty();
         $('#resultados-buscar-participante').hide();
         $('#modal-buscar-participante').modal();
@@ -942,6 +1082,7 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Registrar';
         window.codigo   = '';
+        $('#fecha').val(fecha);
 
         setTimeout(() => {
             $.ajax({
@@ -988,8 +1129,16 @@ $(function () {
 
         if (window.dataParticipante[posicion].ficha_anterior != null) {
             $('#tipo_ficha').val('R');
-
+            $('#rif_a').val();
+            $('#nil_a').val();
+            $('#razon_social_a').val();
+            $('#actividad_economica_a').val();
+            $('#telefono_1_ea').val();
+            $('#estado_ea').val();
+            $('#ciudad_ea').val();
+            $('#direccion_ea').val();
         } else { $('#tipo_ficha').val('I'); }
+        $("#tipo_ficha").css("background-color", colorb);
 
         // DATOS PERSONALES
         $('#nacionalidad').val(window.dataParticipante[posicion].nacionalidad);
@@ -1005,6 +1154,7 @@ $(function () {
         $('#fecha_n').trigger('change');
         $('#lugar_n').val(window.dataParticipante[posicion].lugar_n);
         $('#ocupacion').val(window.dataParticipante[posicion].codigo_ocupacion);
+        window.oficio_aprendiz = window.dataParticipante[posicion].codigo_oficio;
 
         // ESTATUS DE LA PERSONA
         document.formulario.estado_civil.value = window.dataParticipante[posicion].estado_civil;
@@ -1029,6 +1179,7 @@ $(function () {
         $('#estado').trigger('change');
         $('#direccion').val(window.dataParticipante[posicion].direccion);
 
+        window.deshacerBusqueda = false;
         $('#modal-buscar-participante').modal('hide');
         delete window.dataParticipante;
 
@@ -1306,8 +1457,9 @@ $(function () {
         verificarParte2();
         verificarParte3();
         verificarParte4();
+        verificarParte5();
 
-        if (tarjeta_1 && tarjeta_2 && tarjeta_3 && tarjeta_4) {
+        if (tarjeta_1 && tarjeta_2 && tarjeta_3 && tarjeta_4 && tarjeta_4) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
 

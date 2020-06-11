@@ -214,7 +214,7 @@
                         <div class="col-sm-12 col-lg-6">
                             <div class="form-group mb-2">
                                 <label for="actividad_economica_a" class="d-inline-block w-100 position-relative small m-0">Actividad económica</label>
-                                <input type="text" name="actividad_economica_a" id="actividad_economica_a" class="campos_formularios2 form-control form-control-sm" placeholder="Actividad economica de la empresa" autocomplete="off" readonly="true"/>
+                                <input type="text" name="actividad_economica_a" id="actividad_economica_a" class="campos_formularios3 form-control form-control-sm" placeholder="Actividad economica de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
@@ -222,7 +222,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1_ea" class="d-inline-block w-100 position-relative small m-0">Teléfono 1</label>
-                                <input type="text" name="telefono_1_ea" id="telefono_1_ea" class="campos_formularios2 form-control form-control-sm solo-numeros" placeholder="Teléfono de la empresa" autocomplete="off" readonly="true"/>
+                                <input type="text" name="telefono_1_ea" id="telefono_1_ea" class="campos_formularios3 form-control form-control-sm solo-numeros" placeholder="Teléfono de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
@@ -663,7 +663,17 @@
                 </div>
 
                 <div id="pills-datos-asignatura" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-asignatura-tab">
-                    asignaturas
+                    <div class="form-row">
+                        <div class="col-sm-12 offset-md-2 col-md-8 mb-2">
+                            <h6 class="font-weight-normal text-secondary text-center text-uppercase position-relative">Asignaturas
+                                <i id="loader-asignaturas" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; top: 4px; right: 5px;"></i>
+                                <i id="loader-asignaturas-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; top: 4px; right: 5px; cursor: pointer;"></i>  
+                            </h6>
+                            <i class="d-inline-block w-100 text-center text-secondary">Selecciones las asignaturas correspondientes</i>
+
+                            <div id="contenedor_asignaturas" class="border rounded bg-white overflow-auto p-3"  style="height: calc(100% - 60px); min-height: 300px;"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
@@ -688,7 +698,7 @@
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h5 class="modal-title text-secondary">Buscar participante</h5>
-                    <button id="btn-hide-modal-participante" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

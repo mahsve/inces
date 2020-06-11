@@ -75,6 +75,21 @@ class model_aprendiz extends conexion {
 		}
 		return $resultado;
     }
+
+    // FUNCION PARA CONSULTAR LOS OFICIOS ESPECIFICOS
+    public function consultarAsignaturas ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT *
+            FROM t_asignatura
+            WHERE codigo_oficio='".$datos['oficio']."'
+            AND codigo_modulo=1
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+            $resultado[] = $columna;
+        }
+        return $resultado;
+    }
     /////////////// FIN INFORMACION FORMULARIO ///////////////
     //////////////////////////////////////////////////////////
     

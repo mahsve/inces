@@ -35,6 +35,14 @@ if ($_POST['opcion']) {
             echo json_encode($resultados);
         break;
 
+        case 'Traer asignaturas':
+            $resultados = [];
+            $objeto->conectar();
+            $resultados['asignaturas'] = $objeto->consultarAsignaturas($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+
         case 'Traer participante':
             $resultados = [];
             $objeto->conectar();
