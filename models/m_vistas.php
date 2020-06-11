@@ -1,31 +1,27 @@
 <?php
 require_once 'conexion.php';
-class modelo_vistas extends conexion
-{
+class modelo_vistas extends conexion {
     private $data_conexion; // VARIABLE QUE CONTENDRA LA CONEXION.
 
     // DEFINIMOS EL CONSTRUCTOR.
-    public function modelo_vistas ()
-    {
+    public function modelo_vistas () {
         $this->conexion(); // SE DEFINE LA CLASE PARA HEREDAR SUS ATRIBUTOS.
     }
 
     // FUNCION PARA ABRIR CONEXION.
-    public function conectar ()
-    {
+    public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
+        mysqli_query($this->data_conexion, "SET NAMES 'utf8'");
     }
 
     // FUNCION PARA CERRAR CONEXION.
-    public function desconectar ()
-    {
+    public function desconectar () {
         mysqli_close($this->data_conexion);
     }
 
     // FUNCION PARA CONSULTAR TODOS LOS MODULOS Y MOSTRARLOS EN EL SELECT DEL FORMULARIO.
-    public function consultarModulos()
-    {
+    public function consultarModulos() {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_modulo_sistema ORDER BY posicion ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -37,8 +33,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA CONSULTAR EL TOTAL DE LAS VISTAS REGISTRADAS POR MODULOS.
-	public function consultarTotalVistasPorModulo($datos)
-	{
+	public function consultarTotalVistasPorModulo($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM t_vista
@@ -52,8 +47,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA REGISTRAR UNA NUEVA VISTA.
-    public function registrarVista($datos)
-    {
+    public function registrarVista($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_vista (
             codigo_modulo, 
@@ -77,8 +71,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA CONSULTAR LAS VISTAS DEL SISTEMA REGISTRADOS.
-	public function consultarVistas($datos)
-	{
+	public function consultarVistas($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT t_vista.*, t_modulo_sistema.nombre AS modulo
             FROM t_vista
@@ -97,8 +90,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA CONSULTAR TODOS LAS VISTAS DEL SISTEMA REGISTRADOS EN TOTAL.
-	public function consultarVistasTotal($datos)
-	{
+	public function consultarVistasTotal($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT t_vista.*, t_modulo_sistema.nombre AS modulo
             FROM t_vista
@@ -114,8 +106,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS MODULOS DEL SISTEMA PARA LUEGO ASIGNARLE UNA NUEVA POSICION.
-	public function consultarVistasModulosTodos()
-	{
+	public function consultarVistasModulosTodos() {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT * FROM t_vista ORDER BY codigo_modulo, posicion ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
@@ -127,8 +118,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA CONSULTAR LOS MODULOS DEL SISTEMA PARA LUEGO ASIGNARLE UNA NUEVA POSICION.
-	public function consultarVistasModulosTodos2($datos)
-	{
+	public function consultarVistasModulosTodos2($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT * FROM t_vista WHERE codigo_modulo=".$datos['modulo']." ORDER BY posicion ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
@@ -140,8 +130,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA MODIFICAR UNA VISTA.
-    public function modificarVista($datos)
-    {
+    public function modificarVista($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_vista SET 
             codigo_modulo=".$datos['modulo'].", 
@@ -158,8 +147,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA MODIFICAR EL ORDEN DE LOS MODULOS DEL SISTEMA.
-    public function modificarOrdenVista($datos)
-    {
+    public function modificarOrdenVista($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_vista SET
             posicion =".$datos['posicion']."
@@ -173,8 +161,7 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA ELIMINAR UNA VISTA.
-    public function eliminarVista($datos)
-    {
+    public function eliminarVista($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "DELETE FROM t_vista WHERE codigo=".$datos['codigo']." ";
         mysqli_query($this->data_conexion, $sentencia); // EJECUTAMOS LA OPERACION.
@@ -186,20 +173,17 @@ class modelo_vistas extends conexion
     }
 
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
-    public function nuevaTransaccion()
-    {
+    public function nuevaTransaccion() {
 		mysqli_query($this->data_conexion,"START TRANSACTION");
     }
 
     // FUNCION PARA GUARDAR LOS CAMBIOS DE LA TRANSACCION.
-    public function guardarTransaccion()
-    {
+    public function guardarTransaccion() {
 		mysqli_query($this->data_conexion,"COMMIT");
     }
     
     // FUNCION PARA DESHACER TODA LA TRANSACCION.
-    public function calcelarTransaccion()
-    {
+    public function calcelarTransaccion() {
 		mysqli_query($this->data_conexion,"ROLLBACK");
     }
 }

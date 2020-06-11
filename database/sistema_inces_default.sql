@@ -2021,7 +2021,7 @@ INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`
 (4, 4, 'Empresas', 'empresa', 1, 'fas fa-industry'),
 (5, 4, 'Actividad económica', 'actividad_economica', 2, 'fas fa-wallet'),
 (6, 8, 'Ocupación', 'ocupacion', 2, 'fas fa-briefcase'),
-(7, 8, 'Oficio aprendiz', 'oficio', 3, 'fas fa-graduation-cap'),
+(7, 8, 'Oficio aprendiz', 'oficio', 4, 'fas fa-graduation-cap'),
 (9, 8, 'Asignatura', 'asignatura', 5, 'fas fa-book'),
 (10, 5, 'Rol de usuario', 'rol', 2, 'fas fa-user-tag'),
 (11, 5, 'Módulo sistema', 'modulo_sistema', 3, 'fas fa-sitemap'),
@@ -2031,7 +2031,7 @@ INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`
 (15, 6, 'Seguridad', 'seguridad', 2, 'fas fa-user-shield'),
 (16, 7, 'Asistencias', 'asistencias', 1, 'fas fa-clipboard-list'),
 (17, 7, 'Notas', 'notas', 2, 'fas fa-address-book'),
-(18, 5, 'Base de datos', 'respaldo_db', 1, 'fas fa-database');
+(19, 8, 'Módulo curso', 'modulo_curso', 3, 'fas fa-chalkboard');
 
 INSERT INTO `td_rol_modulo` (`codigo_rol`, `codigo_modulo`) VALUES
 (1, 1),
@@ -2047,6 +2047,7 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 2, 1, 1, 1, 1),
 (1, 3, 1, 1, 1, 1),
 (1, 6, 1, 1, 1, 1),
+(1, 19, 1, 1, 1, 1),
 (1, 7, 1, 1, 1, 1),
 (1, 9, 1, 1, 1, 1),
 (1, 16, 1, 1, 1, 1),
@@ -2057,7 +2058,6 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 11, 1, 1, 1, 1),
 (1, 12, 1, 1, 1, 1),
 (1, 13, 1, 1, 1, 1),
-(1, 18, 1, 1, 1, 1),
 (1, 14, 1, 1, 1, 1),
 (1, 15, 1, 1, 1, 1);
 

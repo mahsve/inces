@@ -119,7 +119,7 @@
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">INFORMACIÓN DE LA EMPRESA</h3>    
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">INFORMACIÓN DE LA EMPRESA</h3>
                         </div>
 
                         <!-- RIF -->
@@ -173,7 +173,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1" class="d-inline-block w-100 position-relative small m-0">Teléfono 1<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="telefono_1" id="telefono_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
+                                <input type="text" name="telefono_1" id="telefono_1" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -181,7 +181,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1" class="d-inline-block w-100 position-relative small m-0">Teléfono 2</label>
-                                <input type="text" name="telefono_2" id="telefono_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
+                                <input type="text" name="telefono_2" id="telefono_2" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -317,15 +317,15 @@
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1_c" class="d-inline-block w-100 position-relative small m-0">Tlf. de habitación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="telefono_1_c" id="telefono_1_c" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
+                                <input type="text" name="telefono_1_c" id="telefono_1_c" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
                         
                         <!-- TELEFONO CELULAR -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="telefono_2_c" class="d-inline-block w-100 position-relative small m-0">Tlf. celular</label>
-                                <input type="text" name="telefono_2_c" id="telefono_2_c" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
+                                <label for="telefono_2_c" class="d-inline-block w-100 position-relative small m-0">Tlf. célular</label>
+                                <input type="text" name="telefono_2_c" id="telefono_2_c" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 

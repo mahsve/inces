@@ -12,6 +12,7 @@ class model_informeSocial extends conexion {
     public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
+        mysqli_query($this->data_conexion, "SET NAMES 'utf8'");
     }
 
     // FUNCION PARA CERRAR CONEXION.
@@ -20,7 +21,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LAS OCUPACIONES
-	public function consultarOcupaciones() {
+	public function consultarOcupaciones () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -32,7 +33,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LOS OFICIOS.
-	public function consultarOficios() {
+	public function consultarOficios () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -44,7 +45,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LOS ESTADOS.
-	public function consultarEstados() {
+	public function consultarEstados () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -56,7 +57,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LAS CIUDADES SEGUN EL ESTADO ELEGIDO.
-	public function consultarCiudades($datos) {
+	public function consultarCiudades ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -68,7 +69,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LOS MUNICIPIOS SEGUN EL ESTADO ELEGIDO.
-	public function consultarMunicipios($datos) {
+	public function consultarMunicipios ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -80,7 +81,7 @@ class model_informeSocial extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LAS PARROQUIAS SEGUN EL MUNICIPIO ELEGIDO.
-	public function consultarParroquias($datos) {
+	public function consultarParroquias ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -144,10 +145,11 @@ class model_informeSocial extends conexion {
 
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos) {
-        $valor_null = 'NULL';
-        if ($datos['parroquia'] != '') {
-            $valor_null = htmlspecialchars($datos['parroquia']);
-        }
+        $valor_municipio = 'NULL';
+        if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
+
+        $valor_parroquia = 'NULL';
+        if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
 
         $resultado = false;
         $sentencia = "INSERT INTO t_datos_personales (
@@ -166,6 +168,7 @@ class model_informeSocial extends conexion {
             titulo_acade,
             mision_participado,
             codigo_ciudad,
+            codigo_municipio,
             codigo_parroquia,
             direccion,
             telefono1,
@@ -188,7 +191,8 @@ class model_informeSocial extends conexion {
             '".htmlspecialchars($datos['titulo'])."',
             '".htmlspecialchars($datos['alguna_mision'])."',
             '".htmlspecialchars($datos['ciudad'])."',
-            $valor_null,
+            $valor_municipio,
+            $valor_parroquia,
             '".htmlspecialchars($datos['direccion'])."',
             '".htmlspecialchars($datos['telefono_1'])."',
             '".htmlspecialchars($datos['telefono_2'])."',
@@ -469,10 +473,11 @@ class model_informeSocial extends conexion {
 
     // FUNCION PARA MODIFICAR LOS DATOS PERSONALES DEL APRENDIZZ
     public function modificarDatosPersonales($datos) {
-        $valor_null = 'NULL';
-        if ($datos['parroquia'] != '') {
-            $valor_null = htmlspecialchars($datos['parroquia']);
-        }
+        $valor_municipio = 'NULL';
+        if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
+
+        $valor_parroquia = 'NULL';
+        if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
 
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
@@ -491,7 +496,8 @@ class model_informeSocial extends conexion {
             titulo_acade='".htmlspecialchars($datos['titulo'])."',
             mision_participado='".htmlspecialchars($datos['alguna_mision'])."',
             codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
-            codigo_parroquia=$valor_null,
+            codigo_municipio=$valor_municipio,
+            codigo_parroquia=$valor_parroquia,
             direccion='".htmlspecialchars($datos['direccion'])."',
             telefono1='".htmlspecialchars($datos['telefono_1'])."',
             telefono2='".htmlspecialchars($datos['telefono_2'])."',

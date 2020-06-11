@@ -137,6 +137,11 @@
                         <i class="fas fa-industry"></i><span class="mx-1">Empresa</span><i id="icon-empresa" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-datos-asignatura-tab" data-toggle="pill" href="#pills-datos-asignatura" role="tab" aria-controls="pills-datos-asignatura" aria-selected="false">
+                        <i class="fas fa-book"></i><span class="mx-1">Asignaturas</span><i id="icon-asignatura" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    </a>
+                </li>
             </ul>
 
             <div class="tab-content border rounded position-relative">
@@ -154,8 +159,8 @@
                                 <label for="tipo_ficha" class="small m-0">Tipo registro <span class="text-danger">*</span></label>
                                 <select name="tipo_ficha" id="tipo_ficha" class="custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
-                                    <option value="M">Inscripción</option>
-                                    <option value="F">Re-inscripción</option>
+                                    <option value="I">Inscripción</option>
+                                    <option value="R">Re-inscripción</option>
                                 </select>
                             </div>
                         </div>
@@ -175,43 +180,78 @@
                                 <input type="text" name="numero_orden" id="numero_orden" class="form-control form-control-sm" placeholder="Número de orden" autocomplete="off"/>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="datos_empresa_anterior" class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12 mt-4">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">EMPRESA ANTERIOR</h3>    
+                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">EMPRESA ANTERIOR</h4>    
                         </div>
 
-                        <!-- RAZON SOCIAL ANTERIOR -->
-                        <div class="col-sm-12 col-lg-6 col-xl-5">
+                        <!-- RIF -->
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="empresa_anterior" class="small m-0">Razon social de la empresa anterior</label>
-                                <input type="text" name="empresa_anterior" id="empresa_anterior" class="form-control form-control-sm" placeholder="Automatico" readonly/>
+                                <label for="rif_a" class="d-inline-block w-100 position-relative small m-0">RIF</label>
+                                <input type="text" name="rif_a" id="rif_a" class="campos_formularios3 form-control form-control-sm" placeholder="RIF de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
-                        <!-- ESTADO DE LA EMPRESA ANTERIOR -->
+                        <!-- NIL -->
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="nil_a" class="d-inline-block w-100 position-relative small m-0">NIL</label>
+                                <input type="text" name="nil_a" id="nil_a" class="campos_formularios3 form-control form-control-sm" placeholder="NIL de la empresa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- RAZON SOCIAL -->
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="razon_social_a" class="d-inline-block w-100 position-relative small m-0">Razón social</label>
+                                <input type="text" name="razon_social_a" id="razon_social_a" class="campos_formularios3 form-control form-control-sm" placeholder="Razón social de la empresa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- ACTIVIDAD ECONOMICA -->
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="actividad_economica_a" class="d-inline-block w-100 position-relative small m-0">Actividad económica</label>
+                                <input type="text" name="actividad_economica_a" id="actividad_economica_a" class="campos_formularios2 form-control form-control-sm" placeholder="Actividad economica de la empresa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- TELEFONO 1 -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="estado_anterior" class="small m-0">Estado</label>
-                                <input type="text" name="estado_anterior" id="estado_anterior" class="form-control form-control-sm" readonly/>
+                                <label for="telefono_1_ea" class="d-inline-block w-100 position-relative small m-0">Teléfono 1</label>
+                                <input type="text" name="telefono_1_ea" id="telefono_1_ea" class="campos_formularios2 form-control form-control-sm solo-numeros" placeholder="Teléfono de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
-                        <!-- CIUDAD DE LA EMPRESA ANTERIOR -->
-                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                        <!-- TITULO -->
+                        <div class="col-sm-12 mt-3">
+                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">Ubicación de la empresa</h4>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="ciudad_anterior" class="small m-0">Ciudad</label>
-                                <input type="text" name="ciudad_anterior" id="ciudad_anterior" class="form-control form-control-sm" readonly/>
+                                <label for="estado_ea" class="d-inline-block w-100 position-relative small m-0">Estado</label>
+                                <input type="text" name="estado_ea" id="estado_ea" class="campos_formularios3 form-control form-control-sm" placeholder="Estado de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
-                        <!-- DIRECCION DE LA EMPRESA ANTERIOR -->
+                        <!-- CIUDAD -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="ciudad_ea" class="d-inline-block w-100 position-relative small m-0">Ciudad</label>
+                                <input type="text" name="ciudad_ea" id="ciudad_ea" class="campos_formularios3 form-control form-control-sm" placeholder="Ciudad de la empresa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- DIRECCION -->
                         <div class="col-sm-12">
                             <div class="form-group mb-2">
-                                <label for="direccion_anterior" class="small m-0">Dirección</label>
-                                <textarea  name="direccion_anterior" id="direccion_anterior" class="form-control form-control-sm" readonly></textarea>
+                                <label for="direccion_ea" class="d-inline-block w-100 position-relative small m-0">Dirección</label>
+                                <textarea name="direccion_ea" id="direccion_ea" class="campos_formularios3 form-control form-control-sm" placeholder="Dirección de la empresa" style="height: 100px;" readonly="true"></textarea>
                             </div>
                         </div>
                     </div>
@@ -227,8 +267,8 @@
                         <!-- NACIONALIDAD -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm">
+                                <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="nacionalidad" id="nacionalidad" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -239,19 +279,21 @@
                         <!-- CEDULA -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula <i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                <label class="d-inline-block w-100 position-relative small m-0">Cédula
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
                                     <i id="spinner-cedula" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
                                     <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-cedula-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la cédula" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- NOMBRE 1 -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
+                                <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nombre_1" id="nombre_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -259,15 +301,15 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="d-inline-block w-100 position-relative small m-0">Segundo nombre</label>
-                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- APELLIDO 1 -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
+                                <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="apellido_1" id="apellido_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -275,15 +317,15 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="d-inline-block w-100 position-relative small m-0">Segundo Apellido</label>
-                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- SEXO -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="sexo" class="d-inline-block w-100 position-relative small m-0">Sexo <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="sexo" id="sexo" class="custom-select custom-select-sm">
+                                <label for="sexo" class="d-inline-block w-100 position-relative small m-0">Sexo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="sexo" id="sexo" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Femenino</option>
@@ -294,8 +336,8 @@
                         <!-- FECHA DE NACIMIENTO -->
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group position-relative mb-2">
-                                <label for="fecha_n" class="d-inline-block w-100 position-relative small m-0">Fecha de nacimiento <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm input_fecha" style="background-color: white;" data-date-format="dd-mm-yyyy" placeholder="aaaa-mm-dd" autocomplete="off" readonly="true"/>
+                                <label for="fecha_n" class="d-inline-block w-100 position-relative small m-0">Fecha de nacimiento<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="fecha_n" id="fecha_n" class="campos_formularios form-control form-control-sm input_fecha" style="background-color: white;" data-date-format="dd-mm-yyyy" placeholder="aaaa-mm-dd" autocomplete="off" readonly="true"/>
                                 <label for="fecha_n" class="text-info position-absolute m-0" style="bottom: 4px; right: 8px;"><i class="fas fa-calendar-day"></i></label>
                             </div>
                         </div>
@@ -304,7 +346,7 @@
                         <div class="col-sm-2 col-lg-1 col-xl-1">
                             <div class="form-group mb-2">
                                 <label for="edad" class="d-inline-block w-100 position-relative small m-0">Edad</label>
-                                <input type="text" name="edad" id="edad" class="form-control form-control-sm text-center" value="0" readonly="true"/>
+                                <input type="text" name="edad" id="edad" class="form-control form-control-sm text-center"  value="0" readonly="true"/>
                             </div>
                         </div>
 
@@ -312,16 +354,17 @@
                         <div class="col-sm-10 col-lg-4 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="lugar_n" class="d-inline-block w-100 position-relative small m-0">Lugar de nacimiento</label>
-                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm" placeholder="Ingrese el lugar de nacimiento (Opcional)" maxlength="100" autocomplete="off"/>
+                                <input type="text" name="lugar_n" id="lugar_n" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el lugar de nacimiento (Opcional)" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- OCUPACION -->
                         <div class="col-sm-12 col-lg-6 col-xl-5">
                             <div class="form-group mb-2">
-                                <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                
                                 <div class="d-flex">
-                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm">
+                                    <select name="ocupacion" id="ocupacion" class="campos_formularios custom-select custom-select-sm">
                                         <option value="">Elija una opción</option>
                                     </select>
                                     <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2"><i class="fas fa-plus"></i></button>
@@ -423,16 +466,16 @@
                         <!-- TELEFONO DE HABITACION -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="telefono_1" class="d-inline-block w-100 position-relative small m-0">Tlf. de habitación <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
+                                <label for="telefono_1" class="d-inline-block w-100 position-relative small m-0">Tlf. de habitación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="telefono_1" id="telefono_1" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
                         
                         <!-- TELEFONO CELULAR -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="telefono_2" class="d-inline-block w-100 position-relative small m-0">Tlf. celular </label>
-                                <input type="text" name="telefono_2" id="telefono_2" class="form-control form-control-sm solo-numeros" placeholder="Ingrese el telefono (Opcional)" maxlength="11" autocomplete="off"/>
+                                <label for="telefono_2" class="d-inline-block w-100 position-relative small m-0">Tlf. célular</label>
+                                <input type="text" name="telefono_2" id="telefono_2" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -440,7 +483,7 @@
                         <div class="col-sm-6 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="correo" class="d-inline-block w-100 position-relative small m-0">Correo</label>
-                                <input type="email" name="correo" id="correo" class="form-control form-control-sm" placeholder="Ingrese el correo (Opcional)" maxlength="80" autocomplete="off"/>
+                                <input type="email" name="correo" id="correo" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el correo (Opcional)" maxlength="80" autocomplete="off"/>
                             </div>
                         </div>
                     </div>
@@ -456,9 +499,13 @@
                         <!-- ESTADO -->
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="estado" class="d-inline-block w-100 position-relative small m-0">Estado <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="estado" id="estado" class="custom-select custom-select-sm">
-                                    <option value="">Elija una opción</option>
+                                <label class="d-inline-block w-100 position-relative small m-0">Estado
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                    <i id="loader-ciudad" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-ciudad-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
+                                </label>
+                                <select name="estado" id="estado" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija una opcion</option>
                                 </select>
                             </div>
                         </div>
@@ -466,8 +513,8 @@
                         <!-- CIUDAD -->
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="ciudad" class="d-inline-block w-100 position-relative small m-0">Ciudad <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="ciudad" id="ciudad" class="custom-select custom-select-sm">
+                                <label for="ciudad" class="d-inline-block w-100 position-relative small m-0">Ciudad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="ciudad" id="ciudad" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija un estado</option>
                                 </select>
                             </div>
@@ -476,8 +523,12 @@
                         <!-- MUNICIPIO -->
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="municipio" class="d-inline-block w-100 position-relative small m-0">Municipio</label>
-                                <select name="municipio" id="municipio" class="custom-select custom-select-sm">
+                                <label class="d-inline-block w-100 position-relative small m-0">Municipio
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                    <i id="loader-parroquia" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-parroquia-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
+                                </label>
+                                <select name="municipio" id="municipio" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija un estado</option>
                                 </select>
                             </div>
@@ -486,9 +537,9 @@
                         <!-- PARROQUIA -->
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="parroquia" class="d-inline-block w-100 position-relative small m-0">Parroquia</label>
-                                <select name="parroquia" id="parroquia" class="custom-select custom-select-sm">
-                                    <option value="">Elija un municipio</option>
+                                <label for="parroquia" class="d-inline-block w-100 position-relative small m-0">Parroquia<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="parroquia" id="parroquia" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija un estado</option>
                                 </select>
                             </div>
                         </div>
@@ -496,8 +547,8 @@
                         <!-- DIRECCION -->
                         <div class="col-sm-12">
                             <div class="form-group mb-2">
-                                <label for="direccion" class="d-inline-block w-100 position-relative small m-0">Dirección <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <textarea name="direccion" id="direccion" class="form-control form-control-sm" placeholder="Ingrese la dirección del hogar" autocomplete="off" maxlength="200" style="height: 100px;"></textarea>
+                                <label for="direccion" class="d-inline-block w-100 position-relative small m-0">Dirección<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <textarea name="direccion" id="direccion" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la dirección de la empresa" maxlength="200" style="height: 100px;"></textarea>
                             </div>
                         </div>
                     </div>
@@ -511,89 +562,108 @@
                             <button type="button" id="btn-buscar-empresa" class="btn btn-sm btn-info position-absolute ml-2" style="top: 0px; right: 5px;"><i class="fas fa-search"></i><span class="ml-2">Buscar empresa</span></button>
                         </div>
 
+                        <!-- TITULO -->
+                        <div class="col-sm-12 mt-3">
+                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">INFORMACIÓN DE LA EMPRESA</h4>
+                        </div>
+
                         <!-- RIF -->
-                        <div class="col-sm-6 col-md-3 col-xl-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="rif" class="d-inline-block w-100 position-relative small m-0">RIF <span class="text-danger">*</span>
-                                    <i id="spinner-rif" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
-                                    <i id="spinner-rif-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
-                                </label>
-                                <input type="text" name="rif" id="rif" class="form-control form-control-sm data_empresa" placeholder="J-123456789" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label class="d-inline-block w-100 position-relative small m-0">RIF<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="rif" id="rif" class="campos_formularios2 form-control form-control-sm" placeholder="RIF de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- NIL -->
-                        <div class="col-sm-6 col-md-3 col-xl-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="nil" class="small m-0">NIL <span class="text-danger">*</span></label>
-                                <input type="text" name="nil" id="nil" class="form-control form-control-sm data_empresa" placeholder="123456-7" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="nil" class="d-inline-block w-100 position-relative small m-0">NIL<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nil" id="nil" class="campos_formularios2 form-control form-control-sm" placeholder="NIL de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- RAZON SOCIAL -->
-                        <div class="col-sm-8 col-md-6 col-xl-5">
-                            <div class="form-group has-warning mb-2">
-                                <label for="razon_social" class="small m-0">Razón social <span class="text-danger">*</span></label>
-                                <input type="text" name="razon_social" id="razon_social" class="form-control form-control-sm data_empresa" placeholder="Grupo González S.A." autocomplete="off" readonly="true"/>
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="razon_social" class="d-inline-block w-100 position-relative small m-0">Razón social<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="razon_social" id="razon_social" class="campos_formularios2 form-control form-control-sm" placeholder="Razón social de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- ACTIVIDAD ECONOMICA -->
-                        <div class="col-sm-4 col-md-6 col-xl-3">
-                            <div class="form-group has-warning mb-2">
-                                <label for="actividad_economica" class="small m-0">Actividad económica <span class="text-danger">*</span></label>
-                                <input type="text" name="actividad_economica" id="actividad_economica" class="form-control form-control-sm data_empresa" placeholder="Exportaciones" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="actividad_economica" class="d-inline-block w-100 position-relative small m-0">Actividad económica<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="actividad_economica" id="actividad_economica" class="campos_formularios2 form-control form-control-sm" placeholder="Actividad economica de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- CODIGO APORTANTE -->
-                        <div class="col-sm-6 col-md-3 col-xl-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="codigo_aportante" class="small m-0">Código aportante <span class="text-danger">*</span></label>
-                                <input type="text" name="codigo_aportante" id="codigo_aportante" class="form-control form-control-sm data_empresa" placeholder="12346578" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="codigo_aportante" class="d-inline-block w-100 position-relative small m-0">Código aportante<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="codigo_aportante" id="codigo_aportante" class="campos_formularios2 form-control form-control-sm" placeholder="Código aportante" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- TELEFONO 1 -->
-                        <div class="col-sm-6 col-md-3 col-xl-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="telefono1_e" class="small m-0">Teléfono 1 <span class="text-danger">*</span></label>
-                                <input type="text" name="telefono1_e" id="telefono1_e" class="form-control form-control-sm data_empresa" placeholder="02551234567" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="telefono_1_e" class="d-inline-block w-100 position-relative small m-0">Teléfono 1<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="telefono_1_e" id="telefono_1_e" class="campos_formularios2 form-control form-control-sm solo-numeros" placeholder="Teléfono de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- TELEFONO 2 -->
-                        <div class="col-sm-6 col-md-3 col-xl-2">
-                            <div class="form-group has-warning mb-2">
-                                <label for="telefono2_e" class="small m-0">Teléfono 2</label>
-                                <input type="text" name="telefono2_e" id="telefono2_e" class="form-control form-control-sm data_empresa" placeholder="02551234567" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                            <div class="form-group mb-2">
+                                <label for="telefono_2_e" class="d-inline-block w-100 position-relative small m-0">Teléfono 2</label>
+                                <input type="text" name="telefono_2_e" id="telefono_2_e" class="campos_formularios2 form-control form-control-sm solo-numeros" placeholder="Segundo teléfono de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
+                        <!-- CORREO -->
+                        <div class="col-sm-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="correo_e" class="d-inline-block w-100 position-relative small m-0">Correo</label>
+                                <input type="email" name="correo_e" id="correo_e" class="campos_formularios2 form-control form-control-sm" placeholder="Correo de la empresa" autocomplete="off" readonly="true"/>
+                            </div>
+                        </div>
+
+                        <!-- TITULO -->
+                        <div class="col-sm-12 mt-3">
+                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">Ubicación de la empresa</h4>
+                        </div>
+
                         <!-- ESTADO -->
-                        <div class="col-sm-6 col-md-4 col-xl-3">
-                            <div class="form-group has-warning mb-2">
-                                <label for="estado_e" class="small m-0">Estado <span class="text-danger">*</span></label>
-                                <input type="text" name="estado_e" id="estado_e" class="form-control form-control-sm data_empresa" placeholder="Portuguesa" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="estado_e" class="d-inline-block w-100 position-relative small m-0">Estado<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="estado_e" id="estado_e" class="campos_formularios2 form-control form-control-sm" placeholder="Estado de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- CIUDAD -->
-                        <div class="col-sm-6 col-md-5 col-xl-3">
-                            <div class="form-group has-warning mb-2">
-                                <label for="ciudad_e" class="small m-0">Ciudad <span class="text-danger">*</span></label>
-                                <input type="text" name="ciudad_e" id="ciudad_e" class="form-control form-control-sm data_empresa" placeholder="Araure" autocomplete="off" readonly="true"/>
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="ciudad_e" class="d-inline-block w-100 position-relative small m-0">Ciudad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="ciudad_e" id="ciudad_e" class="campos_formularios2 form-control form-control-sm" placeholder="Ciudad de la empresa" autocomplete="off" readonly="true"/>
                             </div>
                         </div>
 
                         <!-- DIRECCION -->
                         <div class="col-sm-12">
-                            <div class="form-group has-warning mb-2">
-                                <label for="direccion_e" class="small m-0">Dirección <span class="text-danger">*</span></label>
-                                <textarea name="direccion_e" id="direccion_e" class="form-control form-control-sm data_empresa" placeholder="Av. Los Agricultores, Edificio Profinca, Acarigua, Edo. Portuguesa." autocomplete="off" readonly="true"></textarea>
+                            <div class="form-group mb-2">
+                                <label for="direccion_e" class="d-inline-block w-100 position-relative small m-0">Dirección<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <textarea name="direccion_e" id="direccion_e" class="campos_formularios2 form-control form-control-sm" placeholder="Dirección de la empresa" style="height: 100px;" readonly="true"></textarea>
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div id="pills-datos-asignatura" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-datos-asignatura-tab">
+                    asignaturas
                 </div>
 
                 <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
@@ -602,6 +672,8 @@
                     </div>
                 </div>
             </div>
+
+            <div id="contenedor-mensaje2"></div>
 
             <!-- BOTON GUARDAR DATOS -->
             <div class="pt-2 text-center">

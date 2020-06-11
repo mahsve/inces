@@ -205,6 +205,15 @@ form .required {
 img.previzualizacion-archivo {
     pointer-events: none;
 }
+/* ===============  ESTILOS SELECCIONAR ASIGNATURAS ============== */
+.contenedor_select_asignatura {
+    background: #17a2b820;
+    cursor: pointer;
+}
+.contenedor_select_asignatura:hover {
+    background: #17a2b840;
+    cursor: pointer;
+}
 /* ===============  ESTILOS CUADRO ESPERA ============== */
 #carga_espera {
     opacity: .95;

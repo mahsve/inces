@@ -99,11 +99,15 @@ class model_aprendiz extends conexion {
             t_informe_social.*, t_informe_social.estatus AS estatus_informe,
             t_datos_personales.*,
             t_ciudad.codigo_estado,
-            t_parroquia.codigo_municipio
+            t_ficha_aprendiz.numero AS ficha_anterior,
+            t_ficha_aprendiz.empresa_actual
             FROM t_informe_social
             INNER JOIN t_datos_personales ON t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
             INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_municipio ON t_datos_personales.codigo_municipio = t_municipio.codigo
             LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
+            LEFT JOIN t_ficha_aprendiz ON t_informe_social.numero = t_ficha_aprendiz.numero_informe
+
             ".$where."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.

@@ -45,12 +45,9 @@ $dayA    = substr($fechaSola, 8, 2);
 if ($year <= $yearA) {
     $edad = $yearA - $year;
     if ($month > $monthA) {
-        if ($edad != 0) 
-            $edad--;
+        if ($edad != 0) { $edad--; }
     } else if ($month == $monthA) {
-        if ($day > $dayA)
-            if ($edad != 0) 
-                $edad--;
+        if ($day > $dayA) { if ($edad != 0) { $edad--; } }
     }
 }
 

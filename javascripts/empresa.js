@@ -5,7 +5,7 @@ $(function () {
     let validar_rifEmpresa          = new RegExp("^([VEJPG]{1})([-])([0-9]{9})$");
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Ü.,-- ])+$/;
     let validar_caracteresEspeciales1=/^([a-zá-úä-üA-ZÁ-úÄ-Ü. ])+$/;
-    let validar_caracteresEspeciales2=/^([a-zá-úä-üA-ZÁ-úÄ-Ü.,--# ])+$/;
+    let validar_caracteresEspeciales2=/^([a-zá-úä-üA-ZÁ-úÄ-Ü0-9.,--# ])+$/;
     let validar_soloNumeros         =/^([0-9])+$/;
     let validar_correoElectronico   =/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
@@ -747,6 +747,7 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES EXTRAS DE LOS CAMPOS.
+    $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
     $('#estado').change(buscarCiudades);
     $('#loader-ciudad-reload').click(function () { $('#estado').trigger('change'); });
     $('#estado_c').change(buscarCiudades);
