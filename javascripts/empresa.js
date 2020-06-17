@@ -2,7 +2,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let validar_rifEmpresa          = new RegExp("^([VEJPG]{1})([-])([0-9]{9})$");
+    let validar_rifEmpresa          = new RegExp("^([VEJPG]{1})([-])([0-9]{8,9})$");
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Ü.,-- ])+$/;
     let validar_caracteresEspeciales1=/^([a-zá-úä-üA-ZÁ-úÄ-Ü. ])+$/;
     let validar_caracteresEspeciales2=/^([a-zá-úä-üA-ZÁ-úÄ-Ü0-9.,--# ])+$/;
@@ -10,6 +10,7 @@ $(function () {
     let validar_correoElectronico   =/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1, tarjeta_2;
+    let vd_actividad_economica, vd_cargo_contacto, vd_cargo_contacto_v, vd_cargo_contacto2;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
@@ -20,7 +21,9 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
-    let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
+    let dataListado     = [];   // VARIABLE PARA GUARDAR LOS RESULTADOS CONSULTADOS.
+    let dataCargos      = [];   // VARIABLE PARA GUARDAR LOS CARGOS CONSULTADOS.
+    let mensaje_contato = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top; cursor: default;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar personas de contacto</h6>';
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -326,13 +329,196 @@ $(function () {
     }
     function verificarParte2 () {
         tarjeta_2 = true;
+        
+
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (tarjeta_2) {
+            $('#icon-contacto').hide();
+        } else {
+            $('#icon-contacto').show();
+        }
+    }
+    /////////////////////////////////////////////////////////////////////
+    // CLASES EXTRAS Y LIMITACIONES
+    $('#nombre_actividad_economica').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
+    $('#show_form').click(function () {
+        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
+        $('#gestion_form').show(400); // MUESTRA FORMULARIO
+        $('#form_title').html('Registrar');
+        $('.campos_formularios').css('background-color', colorn);
+        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
+        $('.ocultar-iconos').hide();
+        $('.btn-recargar').hide();
+        $('.icon-alert').hide();
+        $('#contenedor-personas-contacto').html(mensaje_contato);
+        
+        $('#ciudad').html('<option value="">Elija un estado</option>');
+        $('#ciudad_c').html('<option value="">Elija un estado</option>');
+
+        document.formulario.reset();
+        tipoEnvio       = 'Registrar';
+        window.rif      = '';
+    });
+    $('#show_table').click(function () {
+        $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
+        $('#gestion_form').hide(400); // ESCONDE FORMULARIO
+        $('#pills-datos-empresa-tab').tab('show');
+    });
+    /////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////
+    // AGREGAR INFORMACION AL FORMULARIO DINAMICAMENTE.
+    // REGISTRAR NUEVAS ACTIVIDADES ECONOMICAS
+    $('#btn-actividad-economica').click(function (e) {
+        e.preventDefault();
+        document.form_registrar_actividad_e.reset();
+        $(".campos_formularios_actividad_economica").css('background-color', '');
+        $('.botones_formulario_actividad_economica').attr('disabled', false);
+        $('#btn-registrar-actividad-economica i.fa-save').removeClass('fa-spin');
+        $('#btn-registrar-actividad-economica span').html('Guardar');
+        $('#contenedor-mensaje-actividad-economica').empty();
+        $('#modal-actividad-economica').modal();
+    });
+    function validar_actividad_economica () {
+        vd_actividad_economica = true;
+        let nueva_nombre_cupacion = $("#nombre_actividad_economica").val();
+        if (nueva_nombre_cupacion != '') {
+            if (nueva_nombre_cupacion.match(validar_caracteresEspeciales)) {
+                $("#nombre_actividad_economica").css("background-color", colorb);
+            } else {
+                $("#nombre_actividad_economica").css("background-color", colorm);
+                vd_actividad_economica = false;
+            }
+        } else {
+            $("#nombre_actividad_economica").css("background-color", colorm);
+            vd_actividad_economica = false;
+        }
+    }
+    $('#btn-registrar-actividad-economica').click(function (e) {
+        e.preventDefault();
+        validar_actividad_economica();
+
+        if (vd_actividad_economica) {
+            let data = $("#form_registrar_actividad_e").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar actividad economica' });
+
+            // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+            $('.botones_formulario_actividad_economica').attr('disabled', true);
+            $('#btn-registrar-actividad-economica i.fa-save').addClass('fa-spin');
+            $('#btn-registrar-actividad-economica span').html('Guardando...');
+            $('#contenedor-mensaje-actividad-economica').empty();
+
+            setTimeout(() => {
+                $.ajax({
+                    url : url+'controllers/c_empresa.php',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resultados) {
+                        let color_alerta = '';
+                        let icono_alerta = '';
+
+                        if (resultados == 'Ya está registrado') {
+                            // MENSAJE AL USUARIO SI YA ESTA REGISTRADO.
+                            color_alerta = 'alert-warning';
+                            icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                        } else if (resultados == 'Registro fallido') {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-danger';
+                            icono_alerta = '<i class="fas fa-times"></i>';
+                        } else {
+                            $("#actividad_economica").html('<option value="">Elija una opción</option>');
+                            // CARGAMOS LAS ACTIVIDADES ECONOMICAS SI TODO CARGO CORRECTAMENTE.
+                            let dataActividad = resultados.actividades;
+                            if (dataActividad) {
+                                for (let i in dataActividad) {
+                                    $("#actividad_economica").append('<option value="'+dataActividad[i].codigo +'">'+dataActividad[i].nombre+"</option>");
+                                }
+                            } else {
+                                $("#actividad_economica").html('<option value="">No hay actividades económicas</option>');
+                            }
+                            
+                            // CERRAMOS LA VENTANA.
+                            $('#modal-actividad-economica').modal('hide');
+                        }
+
+                        // CARGAMOS EL MENSAJE EN EL CONTENEDOR CORRESPONDIENTE.
+                        if (resultados == 'Ya está registrado' || 'Registro fallido') {
+                            // MENSAJE SOBRE EL ESTATUS DE LA CONSULTA.
+                            let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                            let contenedor_mensaje = '';
+                            contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3" role="alert">';
+                            contenedor_mensaje += icono_alerta+' '+resultados;
+                            contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                            contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                            contenedor_mensaje += '</button>';
+                            contenedor_mensaje += '</div>';
+                            $('#contenedor-mensaje-actividad-economica').html(contenedor_mensaje);
+
+                            // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                            setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                        }
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_actividad_economica').attr('disabled', false);
+                        $('#btn-registrar-actividad-economica i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-actividad-economica span').html('Guardar');
+                    },
+                    error: function (errorConsulta) {
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-actividad-economica').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_actividad_economica').attr('disabled', false);
+                        $('#btn-registrar-actividad-economica i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-actividad-economica span').html('Guardar');
+
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        }
+    });
+    // AGREGAR NUEVOS CONTACTOS.
+    $('#btn-persona-contacto').click(function (e) {
+        e.preventDefault();
+        window.agregarContacto      = true;
+        window.agregarDatosContacto = true;
+        vd_cargo_contacto_v         = false;
+        window.id_dinamico          = '';
+        window.nacionalidad         = '';
+        window.cedula               = '';
+
+        document.form_agregar_contacto.reset();
+        $(".campos_formularios_persona_contacto").css('background-color', '');
+        $('.botones_formulario_persona_contacto').attr('disabled', false);
+        $('#cedula').trigger('blur');
+        $('#contenedor-mensaje-contacto').empty();
+        $('#modal-registrar-contacto').modal();
+        $('#carga_espera_2').hide();
+    });
+    function validar_persona_contacto () {
+        vd_cargo_contacto = true;
         // VERIFICAR EL CAMPO DE NACIONALIDAD DEL CONTACTO
         let nacionalidad = $("#nacionalidad").val();
         if (nacionalidad != "") {
             $("#nacionalidad").css("background-color", colorb);
         } else {
             $("#nacionalidad").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DE CEDULA DEL CONTACTO
         let cedula = $("#cedula").val();
@@ -342,15 +528,15 @@ $(function () {
                     $("#cedula").css("background-color", colorb);
                 } else {
                     $("#cedula").css("background-color", colorm);
-                    tarjeta_2 = false;
+                    vd_cargo_contacto = false;
                 }
             } else {
                 $("#cedula").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#cedula").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DEL NOMBRE 1 DEL CONTACTO
         let nombre_1 = $("#nombre_1").val();
@@ -359,11 +545,11 @@ $(function () {
                 $("#nombre_1").css("background-color", colorb);
             } else {
                 $("#nombre_1").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#nombre_1").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DEL NOMBRE 2 DEL CONTACTO
         let nombre_2 = $("#nombre_2").val();
@@ -372,11 +558,10 @@ $(function () {
                 $("#nombre_2").css("background-color", colorb);
             } else {
                 $("#nombre_2").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#nombre_2").css("background-color", colorm);
-            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DEL APELLIDO 1 DEL CONTACTO
         let apellido_1 = $("#apellido_1").val();
@@ -385,11 +570,11 @@ $(function () {
                 $("#apellido_1").css("background-color", colorb);
             } else {
                 $("#apellido_1").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#apellido_1").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DEL APELLIDO 2 DEL CONTACTO
         let apellido_2 = $("#apellido_2").val();
@@ -398,19 +583,18 @@ $(function () {
                 $("#apellido_2").css("background-color", colorb);
             } else {
                 $("#apellido_2").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#apellido_2").css("background-color", colorm);
-            tarjeta_2 = false;
         }
         // VERIFICAR EL CAMPO DE SEXO
-        let sexo = $("#sexo").val();
-        if (sexo != "") {
-            $("#sexo").css("background-color", colorb);
+        let cargo_contacto = $("#cargo_contacto").val();
+        if (cargo_contacto != "") {
+            $("#cargo_contacto").css("background-color", colorb);
         } else {
-            $("#sexo").css("background-color", colorm);
-            tarjeta_2 = false;
+            $("#cargo_contacto").css("background-color", colorm);
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DE TELEFONO DEL CONTACTO (TELEFONO 1)
         let telefono_1_c = $("#telefono_1_c").val();
@@ -419,11 +603,11 @@ $(function () {
                 $("#telefono_1_c").css("background-color", colorb);
             } else {
                 $("#telefono_1_c").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#telefono_1_c").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DE TELEFONO DEL CONTACTO (TELEFONO 2, OPCIONAL)
         let telefono_2_c = $("#telefono_2_c").val();
@@ -432,7 +616,7 @@ $(function () {
                 $("#telefono_2_c").css("background-color", colorb);
             } else {
                 $("#telefono_2_c").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#telefono_2_c").css("background-color", colorn);
@@ -444,7 +628,7 @@ $(function () {
                 $("#correo_c").css("background-color", colorb);
             } else {
                 $("#correo_c").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#correo_c").css("background-color", colorn);
@@ -455,7 +639,7 @@ $(function () {
             $("#estado_c").css("background-color", colorb);
         } else {
             $("#estado_c").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DE LA CIUDAD DEL CONTACTO
         let ciudad_c = $("#ciudad_c").val();
@@ -463,7 +647,7 @@ $(function () {
             $("#ciudad_c").css("background-color", colorb);
         } else {
             $("#ciudad_c").css("background-color", colorm);
-            tarjeta_2 = false;
+            vd_cargo_contacto = false;
         }
         // VERIFICAR EL CAMPO DE DIRECCION DEL CONTACTO (OPCIONAL)
         let direccion_c = $("#direccion_c").val();
@@ -472,44 +656,238 @@ $(function () {
                 $("#direccion_c").css("background-color", colorb);
             } else {
                 $("#direccion_c").css("background-color", colorm);
-                tarjeta_2 = false;
+                vd_cargo_contacto = false;
             }
         } else {
             $("#direccion_c").css("background-color", colorn);
         }
+    }
+    $('#btn-agregar-contacto').click(function (e) {
+        e.preventDefault();
+        validar_persona_contacto();
 
-        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (tarjeta_2) {
-            $('#icon-contacto').hide();
+        if (vd_cargo_contacto || vd_cargo_contacto_v) {
+            if ($('#contenedor-personas-contacto').html() == mensaje_contato) { $('#contenedor-personas-contacto').empty(); }
+
+            // FUNCION PARA AGREGAR UNA NUEVA PERSONA DE CONTACTO.
+            if (window.agregarContacto) {
+                window.id_dinamico = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                let contenido_contacto = '';
+                contenido_contacto += '<div id="contacto-'+window.id_dinamico+'" class="border rounded my-2 p-3">';
+                    contenido_contacto += '<div class="form-row">';
+                        contenido_contacto += '<div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">';
+                            contenido_contacto += '<h4 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h4>';
+                            
+                            contenido_contacto += '<div>';
+                                contenido_contacto += '<button type="button" class="btn btn-sm btn-info editar-contacto mr-1" data-id-contacto="'+window.id_dinamico+'"><i class="fas fa-pencil-alt"></i></button>';
+                                contenido_contacto += '<button type="button" class="btn btn-sm btn-danger eliminar-contacto" data-id-contacto="'+window.id_dinamico+'"><i class="fas fa-times px-1" style="font-size: 12px;"></i></button>';
+                            contenido_contacto += '</div>';
+                        contenido_contacto += '</div>';
+
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center">';
+                            contenido_contacto += '<span class="w-50 small mr-1"><b>Cédula:</b></span>';
+                            contenido_contacto += '<input type="text" name="nacionalidad_contacto[]" class="form-control-plaintext p-0 nacionalidad_contacto" style="outline: none; width: 10px;" readonly>';
+                            contenido_contacto += '<span>-</span>';
+                            contenido_contacto += '<input type="text" name="cedula_contacto[]" class="form-control-plaintext p-0 cedula_contacto" style="outline: none; width: calc(50% - 15px);" data-id-contacto="'+window.id_dinamico+'" readonly>';
+                        contenido_contacto += '</div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Primer nombre:</b></span><input type="text" name="nombre1_contacto[]" class="form-control-plaintext w-50 p-0 nombre1_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Segundo nombre:</b></span><input type="text" name="nombre2_contacto[]" class="form-control-plaintext w-50 p-0 nombre2_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Primer apellido:</b></span><input type="text" name="apellido1_contacto[]" class="form-control-plaintext w-50 p-0 apellido1_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Segundo apellido:</b></span><input type="text" name="apellido2_contacto[]" class="form-control-plaintext w-50 p-0 apellido2_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<input type="hidden" name="cargo_contacto[]" class="cargo_contacto">';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Cargo:</b></span><input type="text" name="n_cargo_contacto[]" class="form-control-plaintext w-50 p-0 n_cargo_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Tlf. de habitación:</b></span><input type="text" name="telefono1_contacto[]" class="form-control-plaintext w-50 p-0 telefono1_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Tlf. célular:</b></span><input type="text" name="telefono2_contacto[]" class="form-control-plaintext w-50 p-0 telefono2_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<div class="col-lg-6 d-flex align-items-center"><span class="w-25 small mr-1"><b>Correo:</b></span><input type="text" name="correo_contacto[]" class="form-control-plaintext w-50 p-0 correo_contacto" style="outline: none;" readonly></div>';
+                        contenido_contacto += '<input type="hidden" name="estado_contacto[]" class="estado_contacto">';
+                        contenido_contacto += '<input type="hidden" name="ciudad_contacto[]" class="ciudad_contacto">';
+                        contenido_contacto += '<input type="hidden" name="direccion_contacto[]" class="direccion_contacto">';
+                    contenido_contacto += '</div>';
+                contenido_contacto += '</div>';
+                $('#contenedor-personas-contacto').append(contenido_contacto);
+
+                // FUNCION PARA EDITAR UNA PERSONA DE CONTACTO.
+                $('#contacto-'+window.id_dinamico+' .editar-contacto').click(function (e) {
+                    e.preventDefault();
+                    window.agregarContacto      = false;
+                    window.agregarDatosContacto = true;
+                    vd_cargo_contacto_v         = false;
+                    window.id_dinamico          = $(this).attr('data-id-contacto');
+                    window.nacionalidad         = $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val();
+                    window.cedula               = $('#contacto-'+window.id_dinamico+' .cedula_contacto').val();
+
+                    document.form_agregar_contacto.reset();
+                    $(".campos_formularios_persona_contacto").css('background-color', '');
+                    $('.botones_formulario_persona_contacto').attr('disabled', false);
+                    $('#cedula').trigger('blur');
+                    $('#contenedor-mensaje-contacto').empty();
+                    $('#modal-registrar-contacto').modal();
+                    $('#carga_espera_2').show();
+
+                    $('#nacionalidad').val($('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val());
+                    $('#cedula').val($('#contacto-'+window.id_dinamico+' .cedula_contacto').val());
+                    $('#cedula').trigger('blur');
+                    $('#nombre_1').val($('#contacto-'+window.id_dinamico+' .nombre1_contacto').val());
+                    $('#nombre_2').val($('#contacto-'+window.id_dinamico+' .nombre2_contacto').val());
+                    $('#apellido_1').val($('#contacto-'+window.id_dinamico+' .apellido1_contacto').val());
+                    $('#apellido_2').val($('#contacto-'+window.id_dinamico+' .apellido2_contacto').val());
+                    $('#cargo_contacto').val($('#contacto-'+window.id_dinamico+' .cargo_contacto').val());
+                    $('#telefono_1_c').val($('#contacto-'+window.id_dinamico+' .telefono1_contacto').val());
+                    $('#telefono_2_c').val($('#contacto-'+window.id_dinamico+' .telefono2_contacto').val());
+                    $('#correo_c').val($('#contacto-'+window.id_dinamico+' .correo_contacto').val());
+                    $('#estado_c').val($('#contacto-'+window.id_dinamico+' .estado_contacto').val());
+                    window.valor_ciudad_c   = $('#contacto-'+window.id_dinamico+' .ciudad_contacto').val();
+                    $('#estado_c').trigger('change');
+                    $('#direccion_c').val($('#contacto-'+window.id_dinamico+' .direccion_contacto').val());
+                });
+            }
+
+            // AGREGAMOS LOS DATOS DEL FORMULARIO A LAS TARJETAS DE CONTACTO
+            if (window.agregarDatosContacto) {
+                let nombre_cargo_content = '';
+                for (let i in dataCargos) { if ($('#cargo_contacto').val() == dataCargos[i].codigo) { nombre_cargo_content = dataCargos[i].nombre; } }
+    
+                $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val($('#nacionalidad').val());
+                $('#contacto-'+window.id_dinamico+' .cedula_contacto').val($('#cedula').val());
+                $('#contacto-'+window.id_dinamico+' .nombre1_contacto').val($('#nombre_1').val());
+                $('#contacto-'+window.id_dinamico+' .nombre2_contacto').val($('#nombre_2').val());
+                $('#contacto-'+window.id_dinamico+' .apellido1_contacto').val($('#apellido_1').val());
+                $('#contacto-'+window.id_dinamico+' .apellido2_contacto').val($('#apellido_2').val());
+                $('#contacto-'+window.id_dinamico+' .cargo_contacto').val($('#cargo_contacto').val());
+                $('#contacto-'+window.id_dinamico+' .n_cargo_contacto').val(nombre_cargo_content);
+                $('#contacto-'+window.id_dinamico+' .telefono1_contacto').val($('#telefono_1_c').val());
+                $('#contacto-'+window.id_dinamico+' .telefono2_contacto').val($('#telefono_2_c').val());
+                $('#contacto-'+window.id_dinamico+' .correo_contacto').val($('#correo_c').val());
+                $('#contacto-'+window.id_dinamico+' .estado_contacto').val($('#estado_c').val());
+                $('#contacto-'+window.id_dinamico+' .ciudad_contacto').val($('#ciudad_c').val());
+                $('#contacto-'+window.id_dinamico+' .direccion_contacto').val($('#direccion_c').val());
+                $('#modal-registrar-contacto').modal('hide');
+            }
+        }
+    });
+    // REGISTRAR NUEVAS ACTIVIDADES ECONOMICAS
+    $('#btn-cargo').click(function (e) {
+        e.preventDefault();
+        document.form_registrar_cargo.reset();
+        $(".campos_formularios_cargo").css('background-color', '');
+        $('.botones_formulario_cargo').attr('disabled', false);
+        $('#btn-registrar-cargo i.fa-save').removeClass('fa-spin');
+        $('#btn-registrar-cargo span').html('Guardar');
+        $('#contenedor-mensaje-cargo').empty();
+        $('#modal-cargo').modal();
+    });
+    function validar_cargo_contacto () {
+        vd_cargo_contacto2 = true;
+        let nombre_cargo = $("#nombre_cargo").val();
+        if (nombre_cargo != '') {
+            if (nombre_cargo.match(validar_caracteresEspeciales)) {
+                $("#nombre_cargo").css("background-color", colorb);
+            } else {
+                $("#nombre_cargo").css("background-color", colorm);
+                vd_cargo_contacto2 = false;
+            }
         } else {
-            $('#icon-contacto').show();
+            $("#nombre_cargo").css("background-color", colorm);
+            vd_cargo_contacto2 = false;
         }
     }
-    /////////////////////////////////////////////////////////////////////
-    // CLASES EXTRAS Y LIMITACIONES
-    $('#show_form').click(function () {
-        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
-        $('#gestion_form').show(400); // MUESTRA FORMULARIO
-        $('#form_title').html('Registrar');
-        $('.campos_formularios').css('background-color', colorn);
-        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
-        $('.ocultar-iconos').hide();
-        $('.btn-recargar').hide();
-        $('.icon-alert').hide();
-        
-        $('#ciudad').html('<option value="">Elija un estado</option>');
-        $('#ciudad_c').html('<option value="">Elija un estado</option>');
+    $('#btn-registrar-cargo').click(function (e) {
+        e.preventDefault();
+        validar_cargo_contacto();
 
-        document.formulario.reset();
-        tipoEnvio       = 'Registrar';
-        window.rif      = '';
-        window.nacionalidad = '';
-        window.cedula   = '';
-    });
-    $('#show_table').click(function () {
-        $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
-        $('#gestion_form').hide(400); // ESCONDE FORMULARIO
-        $('#pills-datos-empresa-tab').tab('show');
+        if (vd_cargo_contacto2) {
+            let data = $("#form_registrar_cargo").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar cargo' });
+
+            // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+            $('.botones_formulario_cargo').attr('disabled', true);
+            $('#btn-registrar-cargo i.fa-save').addClass('fa-spin');
+            $('#btn-registrar-cargo span').html('Guardando...');
+            $('#contenedor-mensaje-cargo').empty();
+
+            setTimeout(() => {
+                $.ajax({
+                    url : url+'controllers/c_empresa.php',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resultados) {
+                        let color_alerta = '';
+                        let icono_alerta = '';
+
+                        if (resultados == 'Ya está registrado') {
+                            // MENSAJE AL USUARIO SI YA ESTA REGISTRADO.
+                            color_alerta = 'alert-warning';
+                            icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                        } else if (resultados == 'Registro fallido') {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-danger';
+                            icono_alerta = '<i class="fas fa-times"></i>';
+                        } else {
+                            $("#cargo_contacto").html('<option value="">Elija una opción</option>');
+                            // CARGAMOS LOS CARGOS SI TODO CARGO CORRECTAMENTE.
+                            dataCargos = resultados.cargos;
+                            if (dataCargos) {
+                                for (let i in dataCargos) {
+                                    $("#cargo_contacto").append('<option value="'+dataCargos[i].codigo +'">'+dataCargos[i].nombre+"</option>");
+                                }
+                            } else {
+                                $("#cargo_contacto").html('<option value="">No hay cargos</option>');
+                            }
+                            
+                            // CERRAMOS LA VENTANA.
+                            $('#modal-cargo').modal('hide');
+                        }
+
+                        // CARGAMOS EL MENSAJE EN EL CONTENEDOR CORRESPONDIENTE.
+                        if (resultados == 'Ya está registrado' || 'Registro fallido') {
+                            // MENSAJE SOBRE EL ESTATUS DE LA CONSULTA.
+                            let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                            let contenedor_mensaje = '';
+                            contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3" role="alert">';
+                            contenedor_mensaje += icono_alerta+' '+resultados;
+                            contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                            contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                            contenedor_mensaje += '</button>';
+                            contenedor_mensaje += '</div>';
+                            $('#contenedor-mensaje-cargo').html(contenedor_mensaje);
+
+                            // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                            setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                        }
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_cargo').attr('disabled', false);
+                        $('#btn-registrar-cargo i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-cargo span').html('Guardar');
+                    },
+                    error: function (errorConsulta) {
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-cargo').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_cargo').attr('disabled', false);
+                        $('#btn-registrar-cargo i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-cargo span').html('Guardar');
+
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        }
     });
     /////////////////////////////////////////////////////////////////////
 
@@ -527,8 +905,7 @@ $(function () {
         $('#spinner-rif-confirm').removeClass('fa-check text-success fa-times text-danger');
 
         if ($('#rif').val() != '') {
-            let parametrosRIF = new RegExp("^([VEJPG]{1})([-])([0-9]{9})$");
-            if (parametrosRIF.test($("#rif").val())) {
+            if (validar_rifEmpresa.test($("#rif").val())) {
                 if (window.rif != $('#rif').val()) {
                     $('#spinner-rif').show();
 
@@ -624,66 +1001,94 @@ $(function () {
         $('#spinner-cedula').hide();
         $('#loader-cedula-reload').hide();
         $('#spinner-cedula-confirm').hide();
-        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger');
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger fa-exclamation-triangle text-warning');
 
         if($('#nacionalidad').val() != '') {
             if ($('#cedula').val() != '') {
                 if ($('#cedula').val().match(validar_soloNumeros) && $('#cedula').val().length >= 7) {
-                    if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
-                        $('#spinner-cedula').show();
-                        
-                        setTimeout(() => {
-                            $.ajax({
-                                url : url+'controllers/c_empresa.php',
-                                type: 'POST',
-                                dataType: 'JSON',
-                                data: {
-                                    opcion      : 'Verificar cedula',
-                                    nacionalidad: $('#nacionalidad').val(),
-                                    cedula      : $('#cedula').val()
-                                },
-                                success: function (resultados) {
-                                    $('#spinner-cedula').hide();
+                    let nacion_rep = false;
+                    let cedula_rep = false;
+                    let idcont_rep = '';
 
-                                    window.dataConfirmar = resultados;
-                                    if (window.dataConfirmar) {
-                                        $('#modal-aceptar-contacto').modal({backdrop: 'static', keyboard: false})
-                                    } else {
-                                        validarCedula = true;
-                                        window.registrar_cont = 'si';
-                                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
-                                    }
-                                    $('#spinner-cedula-confirm').show(200);
-                                },
-                                error: function (errorConsulta) {
-                                    // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
-                                    $('#spinner-cedula').hide();
-                                    $('#loader-cedula-reload').show();
-            
-                                    // MENSAJE DE ERROR DE CONEXION.
-                                    let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
-                                    let contenedor_mensaje = '';
-                                    contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
-                                    contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
-                                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
-                                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
-                                    contenedor_mensaje += '</button>';
-                                    contenedor_mensaje += '</div>';
-                                    $('#contenedor-mensaje2').html(contenedor_mensaje);
-            
-                                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
-                                    setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
-                                    
-                                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
-                                    console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
-                                    console.log(errorConsulta.responseText);
-                                }, timer: 15000
-                            });
-                        }, 500);
-                    } else {
-                        validarCedula = true;
-                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                    $('.nacionalidad_contacto').each(function () { if ($(this).val() == $('#nacionalidad').val()) { nacion_rep = true; } });
+                    $('.cedula_contacto').each(function () { if ($(this).val() == $('#cedula').val()) { cedula_rep = true; idcont_rep = $(this).attr('data-id-contacto'); } });
+                    
+                    // SI ENCUENTRA LA MISMA CEDULA PERO CON OTRO ID (OTRO CONTACTO YA AGREGADO), MANDA ERROR.
+                    if (nacion_rep && cedula_rep && idcont_rep != window.id_dinamico) {
+                        // MOSTRAMOS ICONO DE ERROR
                         $('#spinner-cedula-confirm').show();
+                        $('#spinner-cedula-confirm').addClass('fa-exclamation-triangle text-warning');
+
+                        // MENSAJE DE ERROR, RIF INCORRECTO.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-warning mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-exclamation-triangle"></i> <span style="font-weight: 500;">Ya agregaste a esta persona como contacto de la empresa</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-contacto').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                    } else {
+                        if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
+                            $('#spinner-cedula').show();
+                            
+                            setTimeout(() => {
+                                $.ajax({
+                                    url : url+'controllers/c_empresa.php',
+                                    type: 'POST',
+                                    dataType: 'JSON',
+                                    data: {
+                                        opcion      : 'Verificar cedula',
+                                        nacionalidad: $('#nacionalidad').val(),
+                                        cedula      : $('#cedula').val()
+                                    },
+                                    success: function (resultados) {
+                                        $('#spinner-cedula').hide();
+
+                                        window.dataConfirmar = resultados;
+                                        if (window.dataConfirmar) {
+                                            $('#modal-aceptar-contacto').modal({backdrop: 'static', keyboard: false})
+                                        } else {
+                                            validarCedula = true;
+                                            window.registrar_cont = 'si';
+                                            $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                        }
+                                        $('#spinner-cedula-confirm').show(200);
+                                    },
+                                    error: function (errorConsulta) {
+                                        // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
+                                        $('#spinner-cedula').hide();
+                                        $('#loader-cedula-reload').show();
+                
+                                        // MENSAJE DE ERROR DE CONEXION.
+                                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                                        let contenedor_mensaje = '';
+                                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                                        contenedor_mensaje += '</button>';
+                                        contenedor_mensaje += '</div>';
+                                        $('#contenedor-mensaje2').html(contenedor_mensaje);
+                
+                                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                                        
+                                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                                        console.log(errorConsulta.responseText);
+                                    }, timer: 15000
+                                });
+                            }, 500);
+                        } else {
+                            validarCedula = true;
+                            $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                            $('#spinner-cedula-confirm').show();
+                        }
                     }
                 } else {
                     // MOSTRAMOS ICONO DE ERROR
@@ -699,7 +1104,7 @@ $(function () {
                     contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
                     contenedor_mensaje += '</button>';
                     contenedor_mensaje += '</div>';
-                    $('#contenedor-mensaje2').html(contenedor_mensaje);
+                    $('#contenedor-mensaje-contacto').html(contenedor_mensaje);
 
                     // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
                     setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
@@ -709,7 +1114,6 @@ $(function () {
     });
     $('#btn-agregar-persona').click(function () {
         validarCedula = true;
-        window.registrar_cont = 'no';
         $('#spinner-cedula-confirm').addClass('fa-check text-success');
 
         window.nacionalidad = window.dataConfirmar.nacionalidad;
@@ -728,12 +1132,9 @@ $(function () {
         $('#telefono_2_c').val(window.dataConfirmar.telefono2);
         $('#correo_c').val(window.dataConfirmar.correo);
         $('#direccion_c').val(window.dataConfirmar.direccion);
-
-        window.busquedad2 = true;
     });
     $('#btn-rechazar-persona').click(function () {
         validarCedula = false;
-        window.registrar_cont = 'no';
         $('#spinner-cedula-confirm').addClass('fa-times text-danger');
     });
     /////////////////////////////////////////////////////////////////////
@@ -777,12 +1178,12 @@ $(function () {
                         }
 
                         // CIUDAD CONTACTO, SI EXISTE UN VALOR GUARDADO SE AGREGA AL CAMPO Y SE ELIMINA LA VARIABLE
-                        if (window.valor_ciudad_c != undefined && window.busquedad2) {
+                        if (window.valor_ciudad_c != undefined) {
                             $("#ciudad_c").val(window.valor_ciudad_c);
                             delete window.valor_ciudad_c;
-                            verificarParte2();
+                            validar_persona_contacto();
 
-                            $('#carga_espera').hide(400);
+                            $('#carga_espera_2').hide(400);
                         }
 
                         // CIUDAD EMPRESA, SI EXISTE UN VALOR GUARDADO SE AGREGA AL CAMPO Y SE ELIMINA LA VARIABLE
@@ -791,10 +1192,7 @@ $(function () {
                             delete window.valor_ciudad;
                             verificarParte1();
 
-                            if (window.valor_ciudad_c != undefined) {
-                                window.busquedad2 = true;
-                                $('#estado_c').trigger('change');
-                            }
+                            $('#carga_espera').hide(400);
                         }
                     },
                     error: function (errorConsulta) {
@@ -842,6 +1240,7 @@ $(function () {
         $('.ocultar-iconos').hide();
         $('.btn-recargar').hide();
         $('.icon-alert').hide();
+        $('#contenedor-personas-contacto').html(mensaje_contato);
         $('#carga_espera').show();
         
         $('#ciudad').html('<option value="">Elija un estado</option>');
@@ -850,6 +1249,10 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.rif      = dataListado.resultados[posicion].rif;
+        window.agregarContacto      = true;
+        window.agregarDatosContacto = false;
+        vd_cargo_contacto_v         = true;
+
         $('#rif').val(dataListado.resultados[posicion].rif);
         $('#rif').trigger('blur');
         $('#nil').val(dataListado.resultados[posicion].nil);
@@ -864,24 +1267,28 @@ $(function () {
         $('#estado').trigger('change');
         $('#direccion').val(dataListado.resultados[posicion].direccion);
 
-        /////////////////////////////////////////////////////////////////////
-        window.nacionalidad = dataListado.resultados[posicion].datos_personales.nacionalidad;
-        window.cedula       = dataListado.resultados[posicion].datos_personales.cedula;
-        $('#nacionalidad').val(dataListado.resultados[posicion].datos_personales.nacionalidad);
-        $('#cedula').val(dataListado.resultados[posicion].datos_personales.cedula);
-        $('#cedula').trigger('blur');
-        $('#nombre_1').val(dataListado.resultados[posicion].datos_personales.nombre1);
-        $('#nombre_2').val(dataListado.resultados[posicion].datos_personales.nombre2);
-        $('#apellido_1').val(dataListado.resultados[posicion].datos_personales.apellido1);
-        $('#apellido_2').val(dataListado.resultados[posicion].datos_personales.apellido2);
-        $('#sexo').val(dataListado.resultados[posicion].datos_personales.sexo);
-        $('#telefono_1_c').val(dataListado.resultados[posicion].datos_personales.telefono1);
-        $('#telefono_2_c').val(dataListado.resultados[posicion].datos_personales.telefono2);
-        $('#correo_c').val(dataListado.resultados[posicion].datos_personales.correo);
-        $('#estado_c').val(dataListado.resultados[posicion].datos_personales.codigo_estado);
-        window.valor_ciudad_c   = dataListado.resultados[posicion].datos_personales.codigo_ciudad;
-        window.busquedad2       = false;
-        $('#direccion_c').val(dataListado.resultados[posicion].direccion);
+        let arreglo_contactos = dataListado.resultados[posicion].contactos;
+        for (let i = 0; i < arreglo_contactos.length; i++) {
+            $('#btn-agregar-contacto').trigger('click');
+
+            let nombre_cargo_content = '';
+            for (let h in dataCargos) { if (arreglo_contactos[i].codigo_cargo == dataCargos[h].codigo) { nombre_cargo_content = dataCargos[h].nombre; } }
+
+            $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val(arreglo_contactos[i].nacionalidad);
+            $('#contacto-'+window.id_dinamico+' .cedula_contacto').val(arreglo_contactos[i].cedula);
+            $('#contacto-'+window.id_dinamico+' .nombre1_contacto').val(arreglo_contactos[i].nombre1);
+            $('#contacto-'+window.id_dinamico+' .nombre2_contacto').val(arreglo_contactos[i].nombre2);
+            $('#contacto-'+window.id_dinamico+' .apellido1_contacto').val(arreglo_contactos[i].apellido1);
+            $('#contacto-'+window.id_dinamico+' .apellido2_contacto').val(arreglo_contactos[i].apellido2);
+            $('#contacto-'+window.id_dinamico+' .cargo_contacto').val(arreglo_contactos[i].codigo_cargo);
+            $('#contacto-'+window.id_dinamico+' .n_cargo_contacto').val(nombre_cargo_content);
+            $('#contacto-'+window.id_dinamico+' .telefono1_contacto').val(arreglo_contactos[i].telefono1);
+            $('#contacto-'+window.id_dinamico+' .telefono2_contacto').val(arreglo_contactos[i].telefono2);
+            $('#contacto-'+window.id_dinamico+' .correo_contacto').val(arreglo_contactos[i].correo);
+            $('#contacto-'+window.id_dinamico+' .estado_contacto').val(arreglo_contactos[i].codigo_estado);
+            $('#contacto-'+window.id_dinamico+' .ciudad_contacto').val(arreglo_contactos[i].codigo_ciudad);
+            $('#contacto-'+window.id_dinamico+' .direccion_contacto').val(arreglo_contactos[i].direccion);
+        }
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar-datos').click(function (e) {
@@ -890,13 +1297,10 @@ $(function () {
         verificarParte2();
 
         // SE VERIFICA QUE TODOS LOS CAMPOS ESTEN DEFINIDOS CORRECTAMENTE.
-        if (validarRif && validarCedula && tarjeta_1 && tarjeta_2) {
-            var data = $("#formulario").serializeArray();
+        if (validarRif && validarCedula && tarjeta_1) {
+            let data = $("#formulario").serializeArray();
             data.push({ name: 'opcion',         value: tipoEnvio });
             data.push({ name: 'rif2',           value: window.rif });
-            data.push({ name: 'nacionalidad2',  value: window.nacionalidad });
-            data.push({ name: 'cedula2',        value: window.cedula });
-            data.push({ name: 'registrar_cont', value: window.registrar_cont });
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('.botones_formulario').attr('disabled', true);
@@ -913,6 +1317,8 @@ $(function () {
                     type: 'POST',
                     data: data,
                     success: function (resultados) {
+                        console.log(resultados);
+
                         let color_alerta = '';
                         let icono_alerta = '';
 
@@ -1113,7 +1519,17 @@ $(function () {
                         $("#actividad_economica").append('<option value="'+dataActividad[i].codigo +'">'+dataActividad[i].nombre+"</option>");
                     }
                 } else {
-                    $("#actividad_economica").html('<option value="">No hay ocupaciones</option>');
+                    $("#actividad_economica").html('<option value="">No hay actividades económica</option>');
+                }
+
+                // CARGAMOS LAS ACTIVIDADES ECONOMICAS.
+                dataCargos = resultados.cargos;
+                if (dataCargos) {
+                    for (let i in dataCargos) {
+                        $("#cargo_contacto").append('<option value="'+dataCargos[i].codigo +'">'+dataCargos[i].nombre+"</option>");
+                    }
+                } else {
+                    $("#cargo_contacto").html('<option value="">No hay cargos</option>');
                 }
 
                 // CARGAMOS LOS ESTADOS.

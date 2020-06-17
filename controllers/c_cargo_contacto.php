@@ -1,18 +1,17 @@
 <?php 
 session_start();
 if ($_POST['opcion']) {
-    require_once('../models/m_asignatura.php');
-    $objeto = new model_asignatura;
-
+    require_once('../models/m_cargo_contacto.php');
+    $objeto = new model_cargo_contacto;
+    
     switch ($_POST['opcion']) {
         case 'Registrar':
             $objeto->conectar();
             // SE CONFIRMA QUE NO ESTE REGISTRADO
             if ($objeto->confirmarExistenciaR($_POST) == 0) {
                 // SE PROCEDE A REGISTRAR
-                if ($objeto->registrarAsignatura($_POST)) {
+                if ($objeto->registrarCargoContacto($_POST)) {
                     echo 'Registro exitoso';
-
                 } else {
                     echo 'Registro fallido';
                 }
@@ -33,32 +32,35 @@ if ($_POST['opcion']) {
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
             $campo_ordenar = 'nombre '.$campo_m_ordenar;
             if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'codigo_modulo '.$campo_m_ordenar; }
-            
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarAsignaturas($_POST);
-            $resultados['total']        = $objeto->consultarAsignaturasTotal($_POST);
+            $resultados['resultados']   = $objeto->consultarCargosContacto($_POST);
+            $resultados['total']        = $objeto->consultarCargosContactoTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
-
+        
         case 'Modificar':
             $objeto->conectar();
-            // SE PROCEDE A MODIFICAR
-            if ($objeto->modificarAsignatura($_POST)) {
-                echo 'Modificación exitosa';
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaM($_POST) == 0) {
+                // SE PROCEDE A MODIFICAR
+                if ($objeto->modificarCargoContacto($_POST)) {
+                    echo 'Modificación exitosa';
+                } else {
+                    echo 'Modificación fallida';
+                }
             } else {
-                echo 'Modificación fallida';
+                echo 'Ya está registrado';
             }
             $objeto->desconectar();
         break;
-     
+
         case 'Estatus':
             $objeto->conectar();
-            if ($objeto->estatusAsignatura($_POST)) {
+            if ($objeto->estatusCargoContacto($_POST)) {
                 echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';

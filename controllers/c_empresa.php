@@ -9,8 +9,9 @@ if ($_POST['opcion']) {
             ///////////////////// HACER CONSULTAS //////////////////////
             $data = [];
             $objeto->conectar();
-            $data['actividades'] = $objeto->consultarActividades();
-            $data['estados'] = $objeto->consultarEstados();
+            $data['actividades']= $objeto->consultarActividades();
+            $data['cargos']     = $objeto->consultarCargos();
+            $data['estados']    = $objeto->consultarEstados();
             $objeto->desconectar();
             echo json_encode($data);
         break;
@@ -37,24 +38,96 @@ if ($_POST['opcion']) {
             echo json_encode($data);
         break;
 
+        case 'Registrar actividad economica':
+            $data = [];
+            $objeto->conectar();
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaR_AE($_POST) == 0) {
+                // SE PROCEDE A REGISTRAR
+                if ($objeto->registrarActividadEconomica($_POST)) {
+                    $data['actividades'] = $objeto->consultarActividades();
+                    echo json_encode($data);
+                } else {
+                    echo json_encode('Registro fallido');
+                }
+            } else {
+                echo json_encode('Ya está registrado');
+            }
+            $objeto->desconectar();
+        break;
+
+        case 'Registrar cargo':
+            $data = [];
+            $objeto->conectar();
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaR_CC($_POST) == 0) {
+                // SE PROCEDE A REGISTRAR
+                if ($objeto->registrarCargoContacto($_POST)) {
+                    $data['cargos'] = $objeto->consultarCargos();
+                    echo json_encode($data);
+                } else {
+                    echo json_encode('Registro fallido');
+                }
+            } else {
+                echo json_encode('Ya está registrado');
+            }
+            $objeto->desconectar();
+        break;
+
         case 'Registrar': 
             $objeto->conectar();
             $objeto->nuevaTransaccion();
 
-            $respuestaRegistro = false;
-            if      ($_POST['registrar_cont'] == 'si') { $respuestaRegistro = $objeto->registrarPersonaContacto($_POST); }
-            else if ($_POST['registrar_cont'] == 'no') { $respuestaRegistro = true; }
+            if ($objeto->registrarEmpresa($_POST)) {
+                $cant_errores = 0;
+                for ($var = 0; $var < count($_POST['nacionalidad_contacto']); $var++) {
+                    $dato_contacto  = [
+                        'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
+                        'cedula_contacto'       => $_POST['cedula_contacto'][$var],
+                        'nombre1_contacto'      => $_POST['nombre1_contacto'][$var],
+                        'nombre2_contacto'      => $_POST['nombre2_contacto'][$var],
+                        'apellido1_contacto'    => $_POST['apellido1_contacto'][$var],
+                        'apellido2_contacto'    => $_POST['apellido2_contacto'][$var],
+                        'ciudad_contacto'       => $_POST['ciudad_contacto'][$var],
+                        'direccion_contacto'    => $_POST['direccion_contacto'][$var],
+                        'telefono1_contacto'    => $_POST['telefono1_contacto'][$var],
+                        'telefono2_contacto'    => $_POST['telefono2_contacto'][$var],
+                        'correo_contacto'       => $_POST['correo_contacto'][$var],
+                    ];
 
-            if ($respuestaRegistro) {
-                if ($objeto->registrarEmpresa($_POST)) {
+                    // CREAMOS UNA VARIABLE PARA VERFICAR SI YA EXISTE Y OMITIR EL REGISTRO O EN TODO CASO
+                    // VERIFICAR QUE SE HAYA REGISTRADO CORRECTAMENTE.
+                    $estatus_contacto = false;
+                    if ($objeto->consultarPersonaContacto($dato_contacto) == 0) {
+                        $estatus_contacto = $objeto->registrarPersonaContacto($dato_contacto);
+                    } else {
+                        $estatus_contacto = true;
+                    }
+
+                    if ($estatus_contacto) {
+                        $datos_conec    = [
+                            'rif_empresa'           => $_POST['rif'],
+                            'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
+                            'cedula_contacto'       => $_POST['cedula_contacto'][$var],
+                            'cargo_contacto'        => $_POST['cargo_contacto'][$var],
+                        ];
+
+                        // SI RETORNA FALSE (Falso), HUBO ERROR AL REGISTRAR.
+                        if (!$objeto->registrarRelacionEmpresaContacto($datos_conec)) { $cant_errores++; }
+                    } else {
+                        $cant_errores++;
+                    }
+                }
+
+                if ($cant_errores == 0) {
                     echo 'Registro exitoso';
                     $objeto->guardarTransaccion();
                 } else {
-                    echo 'Registro fallido: Datos de la empresa';
+                    echo 'Registro fallido: Contactos de la empresa';
                     $objeto->calcelarTransaccion();
                 }
             } else {
-                echo 'Registro fallido: Datos personales';
+                echo 'Registro fallido: Datos de la empresa';
                 $objeto->calcelarTransaccion();
             }
             $objeto->desconectar();

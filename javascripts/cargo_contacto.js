@@ -2,15 +2,13 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let validar_codigoFormulario = /^([0-9a-zA-Z-])+$/;
-    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa0-9.,-- ])+$/;
+    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
     let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
-    let listaModulos = ['', 'Módulo 1', 'Módulo 2', 'Módulo 3', 'Módulo 4'];
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -38,6 +36,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA LLAMAR LO DATOS DE LA BASE DE DATOS Y MOSTRARLOS EN LA TABLA.
+    buscar_listado();
     function buscar_listado () {
         let filas = $('#listado_tabla thead th').length;
 
@@ -63,7 +62,7 @@ $(function () {
 
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_asignatura.php',
+                url : url+'controllers/c_cargo_contacto.php',
                 type: 'POST',
                 dataType: 'JSON',
                 data: {
@@ -88,9 +87,8 @@ $(function () {
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="text-right py-2 px-1">'+cont+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+listaModulos[dataListado.resultados[i].codigo_modulo]+'</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
@@ -114,7 +112,7 @@ $(function () {
                         let contenido_tabla = '';
                         contenido_tabla += '<tr>';
                         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay asignaturas registradas.</span>';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay cargos registrados.</span>';
                         contenido_tabla += '</td>';
                         contenido_tabla += '</tr>';
                         $('#listado_tabla tbody').html(contenido_tabla);
@@ -168,7 +166,6 @@ $(function () {
             });
         }, 500);
     }
-    buscar_listado();
     // FUNCION PARA CAMBIAR LA PAGINACION.
     function cambiarPagina (e) {
         e.preventDefault();
@@ -180,28 +177,15 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     ////////////////////////// VALIDACIONES /////////////////////////////
     function verificarParte1 () {
-        tarjeta_1 = true;
-        // VERIFICAR EL CAMPO DEL NOMBRE DEL MODULO.
-        let nombre = $("#nombre").val();
-        if (nombre != "") {
-            if (nombre.match(validar_caracteresEspeciales)) {
-                $("#nombre").css("background-color", colorb);
-            } else {
-                $("#nombre").css("background-color", colorm);
-                tarjeta_1 = false;
-            }
-        } else {
-            $("#nombre").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
+        tarjeta_1 = true; // CAMBIA A FALSO SI ALGUNO DE LOS CAMPOS ESTA MAL DEFINIDO.
 
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
-        let modulo = $("#modulo").val();
-        if (modulo != "") {
-            $("#modulo").css("background-color", colorb);
+        // VALIDAR NOMBRE DE LA OCUPACION
+        let nombre = $("#nombre").val();
+        if (nombre != '') {
+            if (nombre.match(validar_caracteresEspeciales)) { $("#nombre").css("background-color", colorb); }
+            else { $("#nombre").css("background-color", colorm); tarjeta_1 = false; }
         } else {
-            $("#modulo").css("background-color", colorm);
-            tarjeta_1 = false;
+            $("#nombre").css("background-color", colorm); tarjeta_1 = false;
         }
     }
     /////////////////////////////////////////////////////////////////////
@@ -222,7 +206,7 @@ $(function () {
         $('#gestion_form').hide(400); // ESCONDE FORMULARIO
     });
     /////////////////////////////////////////////////////////////////////
-
+    
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
@@ -237,9 +221,7 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.codigo   = dataListado.resultados[posicion].codigo;
-        window.codigo_modulo = dataListado.resultados[posicion].codigo_modulo;
         $('#nombre').val(dataListado.resultados[posicion].nombre);
-        $('#modulo').val(dataListado.resultados[posicion].codigo_modulo);
 
         verificarParte1();
     }
@@ -265,7 +247,7 @@ $(function () {
             
             setTimeout(() => {
                 $.ajax({
-                    url : url+'controllers/c_asignatura.php',
+                    url : url+'controllers/c_cargo_contacto.php',
                     type: 'POST',
                     data: data,
                     success: function (resultados) {
@@ -363,7 +345,7 @@ $(function () {
         
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_asignatura.php',
+                url : url+'controllers/c_cargo_contacto.php',
                 type: 'POST',
                 data: {
                     opcion: 'Estatus',

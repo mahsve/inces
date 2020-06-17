@@ -66,7 +66,7 @@
                     <th class="bg-info font-weight-normal px-1 py-2" width="170">T. personal</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="120">Rol</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Estatus</th>
-                    <th class="bg-info rounded-right p-0 py-1" width="76"></th>
+                    <th class="bg-info rounded-right p-0 py-1" width="80"></th>
                 </tr>
             </thead>
             <tbody>

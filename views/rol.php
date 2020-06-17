@@ -54,7 +54,7 @@
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del rol</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="72">Módulos</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="52">Vistas</th>
-                    <th class="bg-info rounded-right p-0 py-1" width="76"></th>
+                    <th class="bg-info rounded-right p-0 py-1" width="80"></th>
                 </tr>
             </thead>
             <tbody>

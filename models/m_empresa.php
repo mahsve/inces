@@ -24,8 +24,19 @@ class model_empresa extends conexion {
     // FUNCION PARA CONSULTAR LAS ACTIVIDADES ECONOMICAS.
     public function consultarActividades () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT * FROM t_actividad_economica WHERE estatus='A'"; // SENTENTCIA
+		$sentencia = "SELECT * FROM t_actividad_economica WHERE estatus='A' ORDER BY nombre ASC"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
+		}
+		return $resultado;
+    }
+
+    // FUNCION PARA CONSULTAR LOS CARGOS
+	public function consultarCargos () {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "SELECT * FROM t_cargo WHERE estatus='A' ORDER BY nombre ASC"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion, $sentencia);
         while ($columna = mysqli_fetch_assoc($consulta)) {
 			$resultado[] = $columna;
 		}
@@ -59,7 +70,7 @@ class model_empresa extends conexion {
 
     /////////////////// VERIFICAR REGISTROS ///////////////////
     // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
-	public function verificarRIF($datos) {
+	public function verificarRIF ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_empresa WHERE rif='".htmlspecialchars($datos['rif'])."'"; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
@@ -69,7 +80,7 @@ class model_empresa extends conexion {
     }
 
     // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
-	public function verificarCedula($datos) {
+	public function verificarCedula ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_datos_personales
@@ -86,47 +97,67 @@ class model_empresa extends conexion {
     ///////////////// FIN VERIFICAR REGISTROS /////////////////
     //////////////////////////////////////////////////////////
 
-    // FUNCION PARA REGISTRAR LA PERSONA DE CONTACTO DE LA EMPRESA
-    public function registrarPersonaContacto($datos) {
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA REGISTROS RAPIDOS DE FORMULARIO.
+    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO (ACTIVIDAD ECONOMICA).
+    public function confirmarExistenciaR_AE ($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_actividad_economica
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_actividad_economica'])))."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR UNA NUEVA ACTIVIDAD ECONOMICA.
+    public function registrarActividadEconomica ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_datos_personales (
-            nacionalidad,
-            cedula,
-            nombre1,
-            nombre2,
-            apellido1,
-            apellido2,
-            sexo,
-            codigo_ciudad,
-            direccion,
-            telefono1,
-            telefono2,
-            correo,
-            tipo_persona
+        $sentencia = "INSERT INTO t_actividad_economica (
+            nombre
         ) VALUES (
-            '".htmlspecialchars($datos['nacionalidad'])."',
-            '".htmlspecialchars($datos['cedula'])."',
-            '".ucwords(mb_strtolower(htmlspecialchars($datos['nombre_1'])))."',
-            '".ucwords(mb_strtolower(htmlspecialchars($datos['nombre_2'])))."',
-            '".ucwords(mb_strtolower(htmlspecialchars($datos['apellido_1'])))."',
-            '".ucwords(mb_strtolower(htmlspecialchars($datos['apellido_2'])))."',
-            '".htmlspecialchars($datos['sexo'])."',
-            '".htmlspecialchars($datos['ciudad_c'])."',
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion_c'])))."',
-            '".htmlspecialchars($datos['telefono_1_c'])."',
-            '".htmlspecialchars($datos['telefono_2_c'])."',
-            '".mb_strtolower(htmlspecialchars($datos['correo_c']))."',
-            'C'
-        )"; // SENTENTCIA
-        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_actividad_economica'])))."'
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
-		return $resultado;
+		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO.
+    public function confirmarExistenciaR_CC ($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_cargo
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_cargo'])))."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA REGISTRAR UNA NUEVA CARGO DE LA PERSONA DE CONTACTO.
+    public function registrarCargoContacto ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_cargo (
+            nombre
+        ) VALUES (
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_cargo'])))."'
+        )";
+        mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+    //////////////////////////////////////////////////////////
+
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
-    public function registrarEmpresa($datos) {
+    public function registrarEmpresa ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_empresa (
             rif,
@@ -138,9 +169,7 @@ class model_empresa extends conexion {
             telefono2,
             correo,
             codigo_ciudad,
-            direccion,
-            nacionalidad_contacto,
-            persona_contacto
+            direccion
         ) VALUES (
             '".htmlspecialchars($datos['rif'])."',
             '".htmlspecialchars($datos['nil'])."',
@@ -151,9 +180,7 @@ class model_empresa extends conexion {
             '".htmlspecialchars($datos['telefono_2'])."',
             '".mb_strtolower(htmlspecialchars($datos['correo']))."',
             '".htmlspecialchars($datos['ciudad'])."',
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."',
-            '".htmlspecialchars($datos['nacionalidad'])."',
-            '".htmlspecialchars($datos['cedula'])."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -162,8 +189,79 @@ class model_empresa extends conexion {
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
+	public function consultarPersonaContacto ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_datos_personales
+            WHERE nacionalidad='".htmlspecialchars($datos['nacionalidad_contacto'])."'
+            AND cedula='".htmlspecialchars($datos['cedula_contacto'])."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado;
+    }
+
+    // FUNCION PARA REGISTRAR LA PERSONA DE CONTACTO DE LA EMPRESA
+    public function registrarPersonaContacto ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_datos_personales (
+            nacionalidad,
+            cedula,
+            nombre1,
+            nombre2,
+            apellido1,
+            apellido2,
+            codigo_ciudad,
+            direccion,
+            telefono1,
+            telefono2,
+            correo,
+            tipo_persona
+        ) VALUES (
+            '".htmlspecialchars($datos['nacionalidad_contacto'])."',
+            '".htmlspecialchars($datos['cedula_contacto'])."',
+            '".ucwords(mb_strtolower(htmlspecialchars($datos['nombre1_contacto'])))."',
+            '".ucwords(mb_strtolower(htmlspecialchars($datos['nombre2_contacto'])))."',
+            '".ucwords(mb_strtolower(htmlspecialchars($datos['apellido1_contacto'])))."',
+            '".ucwords(mb_strtolower(htmlspecialchars($datos['apellido2_contacto'])))."',
+            '".htmlspecialchars($datos['ciudad_contacto'])."',
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion_contacto'])))."',
+            '".htmlspecialchars($datos['telefono1_contacto'])."',
+            '".htmlspecialchars($datos['telefono2_contacto'])."',
+            '".mb_strtolower(htmlspecialchars($datos['correo_contacto']))."',
+            'C'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+		return $resultado;
+    }
+
+    public function registrarRelacionEmpresaContacto ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO td_contacto (
+            rif,
+            nacionalidad,
+            cedula,
+            codigo_cargo
+        ) VALUES (
+            '".htmlspecialchars($datos['rif_empresa'])."',
+            '".htmlspecialchars($datos['nacionalidad_contacto'])."',
+            '".htmlspecialchars($datos['cedula_contacto'])."',
+            '".htmlspecialchars($datos['cargo_contacto'])."'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+		return $resultado;
+    }
+
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS REGISTRADOS
-	public function consultarEmpresas($datos) {
+	public function consultarEmpresas ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT t_empresa.*, t_actividad_economica.nombre AS actividad_economica, t_ciudad.codigo_estado
             FROM t_empresa
@@ -178,16 +276,15 @@ class model_empresa extends conexion {
         ";
         $consulta = mysqli_query($this->data_conexion,$sentencia);
         while ($columna = mysqli_fetch_assoc($consulta)) {
-            $sentencia2 = "SELECT *
-                FROM t_datos_personales
+            $sentencia2 = "SELECT td_contacto.*, t_datos_personales.*, t_ciudad.codigo_estado
+                FROM td_contacto
+                INNER JOIN t_datos_personales ON td_contacto.nacionalidad = t_datos_personales.nacionalidad AND td_contacto.cedula = t_datos_personales.cedula
                 INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
-                WHERE nacionalidad='".$columna['nacionalidad_contacto']."'
-                AND cedula='".$columna['persona_contacto']."'
+                WHERE rif='".$columna['rif']."'
             ";
             $consulta2 = mysqli_query($this->data_conexion,$sentencia2);
-            while ($columna2 = mysqli_fetch_assoc($consulta2))
-            {
-                $columna['datos_personales'] = $columna2;
+            while ($columna2 = mysqli_fetch_assoc($consulta2)) {
+                $columna['contactos'][] = $columna2;
             }
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
 		}
@@ -195,7 +292,7 @@ class model_empresa extends conexion {
     }
 
     // FUNCION PARA CONSULTAR EL NUMERO DE OFICIOS REGISTRADOS EN TOTAL
-	public function consultarEmpresasTotal($datos) {
+	public function consultarEmpresasTotal ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_empresa
@@ -211,7 +308,7 @@ class model_empresa extends conexion {
     }
 
     // FUNCION PARA REGISTRAR LA PERSONA DE CONTACTO DE LA EMPRESA
-    public function modificarPersonaContacto($datos) {
+    public function modificarPersonaContacto ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_datos_personales SET
             nacionalidad='".htmlspecialchars($datos['nacionalidad'])."',
@@ -235,7 +332,7 @@ class model_empresa extends conexion {
     }
 
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
-    public function modificarEmpresa($datos) {
+    public function modificarEmpresa ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_empresa SET 
             rif='".htmlspecialchars($datos['rif'])."',

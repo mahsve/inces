@@ -12,5 +12,6 @@ $(function () {
 
     // INICIALIZAMOS ALGUNAS FUNCIONES DE LOS FRAMEWORK Y LIBRERIAS.
     $('.dropdown-toggle').dropdown();
+    $('.descripcion-tooltip').tooltip();
     $("[data-toggle='popover']").popover();
 });

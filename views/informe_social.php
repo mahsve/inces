@@ -100,7 +100,7 @@
                     <th class="bg-info font-weight-normal px-1 py-2" width="150">Oficio</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="85">Turno</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="92">Estatus</th>
-                    <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1) echo 76; else echo 40; ?>"></th>
+                    <th class="bg-info rounded-right p-0 py-1" width="<?php if ($permisos['modificar'] == 1) echo 80; else echo 40; ?>"></th>
                 </tr>
             </thead>
             <tbody>

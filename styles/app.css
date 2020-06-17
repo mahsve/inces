@@ -93,7 +93,7 @@ header > div {
     font-weight: 400;
     transition: all ease .1s;
 }
-#menu-list li a.active, #carga_espera {
+#menu-list li a.active, #carga_espera, #carga_espera_2 {
     background: rgba(23,184,173,1);
     background: -moz-linear-gradient(45deg, rgba(23,184,173,1) 0%, rgba(23,163,184,1) 100%);
     background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(23,184,173,1)), color-stop(100%, rgba(23,163,184,1)));
@@ -215,7 +215,9 @@ img.previzualizacion-archivo {
     cursor: pointer;
 }
 /* ===============  ESTILOS CUADRO ESPERA ============== */
-#carga_espera {
+#carga_espera, #carga_espera_2 {
+    top: 0px;
+    left: 0px;
     opacity: .95;
 }
 /* --- BOTONES GIRAR ICONO --- */

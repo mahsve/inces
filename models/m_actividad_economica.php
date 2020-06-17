@@ -20,7 +20,7 @@ class model_actividad_economica extends conexion {
         mysqli_close($this->data_conexion);
     }
 
-    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
+    // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO.
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
@@ -34,7 +34,7 @@ class model_actividad_economica extends conexion {
     }
 
     // FUNCION PARA REGISTRAR UNA NUEVA ACTIVIDAD ECONOMICA.
-    public function registrarActividadEconomica($datos) {
+    public function registrarActividadEconomica ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_actividad_economica (
             nombre
@@ -49,7 +49,7 @@ class model_actividad_economica extends conexion {
     }
 
     // FUNCION PARA CONSULTAR TODAS LAS ACTIVIDADES ECONOMICAS REGISTRADAS.
-	public function consultarActividadesEconomicas($datos) {
+	public function consultarActividadesEconomicas ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
@@ -66,7 +66,7 @@ class model_actividad_economica extends conexion {
     }
 
     // FUNCION PARA CONSULTAR EL NUMERO DE ACTIVIDADES ECONOMICAS REGISTRADAS EN TOTAL.
-	public function consultarActividadesEconomicasTotal($datos) {
+	public function consultarActividadesEconomicasTotal ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_actividad_economica
@@ -93,7 +93,7 @@ class model_actividad_economica extends conexion {
     }
 
     // FUNCION PARA MODIFICAR LOS DATOS DE UNA ACTIVIDAD ECONOMICA EXISTENTE.
-    public function modificarActividadEconomica($datos) {
+    public function modificarActividadEconomica ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_actividad_economica SET
             nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'

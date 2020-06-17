@@ -64,12 +64,12 @@
                     <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="110">RIF</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">NIL</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Razón social</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="200">Act. económica</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="250">Act. económica</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="100">Teléfono</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
-                    <th class="bg-info font-weight-normal px-1 py-2 rounded-right" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 76; else echo 40; ?>"></th>
+                    <th class="bg-info font-weight-normal px-1 py-2 rounded-right" width="<?php if ($permisos['modificar'] == 1 AND $permisos['act_desc'] == 1) echo 80; else echo 40; ?>"></th>
                     <?php } ?>
                 </tr>
             </thead>
@@ -123,7 +123,7 @@
                         </div>
 
                         <!-- RIF -->
-                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="col-sm-6 col-lg-3">
                             <div class="form-group mb-2">
                                 <label class="d-inline-block w-100 position-relative small m-0">RIF
                                     <i class="fas fa-asterisk text-danger position-absolute required"></i>
@@ -136,7 +136,7 @@
                         </div>
 
                         <!-- NIL -->
-                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <div class="col-sm-6 col-lg-3">
                             <div class="form-group mb-2">
                                 <label for="nil" class="d-inline-block w-100 position-relative small m-0">NIL<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <input type="text" name="nil" id="nil" class="campos_formularios form-control form-control-sm" placeholder="12345" autocomplete="off"/>
@@ -151,21 +151,56 @@
                             </div>
                         </div>
 
-                        <!-- ACTIVIDAD ECONOMICA -->
-                        <div class="col-sm-12 col-lg-6">
+                        <!-- DIRECCION -->
+                        <div class="col-sm-12">
                             <div class="form-group mb-2">
-                                <label for="actividad_economica" class="d-inline-block w-100 position-relative small m-0">Actividad económica<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="actividad_economica" id="actividad_economica" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija una opcion</option>
+                                <label for="direccion" class="d-inline-block w-100 position-relative small m-0">Dirección fiscal<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <textarea name="direccion" id="direccion" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la dirección de la empresa" maxlength="200" style="height: 100px;"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- ESTADO -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label class="d-inline-block w-100 position-relative small m-0">Estado
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                    <i id="loader-ciudad" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-ciudad-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
+                                </label>
+                                <select name="estado" id="estado" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija una opción</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CIUDAD -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="ciudad" class="d-inline-block w-100 position-relative small m-0">Ciudad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="ciudad" id="ciudad" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija un estado</option>
                                 </select>
                             </div>
                         </div>
 
                         <!-- CODIGO APORTANTE -->
-                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                        <div class="col-sm-12 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="codigo_aportante" class="d-inline-block w-100 position-relative small m-0">Código aportante<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <input type="text" name="codigo_aportante" id="codigo_aportante" class="campos_formularios form-control form-control-sm" placeholder="1180123585" maxlength="10" autocomplete="off"/>
+                            </div>
+                        </div>
+
+                        <!-- ACTIVIDAD ECONOMICA -->
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group mb-2">
+                                <label for="actividad_economica" class="d-inline-block w-100 position-relative small m-0">Actividad económica<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <div class="d-flex">
+                                    <select name="actividad_economica" id="actividad_economica" class="campos_formularios custom-select custom-select-sm">
+                                        <option value="">Elija una opción</option>
+                                    </select>
+                                    <button type="button" id="btn-actividad-economica" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="top" title="Registrar actividad económica"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
 
@@ -192,43 +227,6 @@
                                 <input type="email" name="correo" id="correo" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el correo (Opcional)" maxlength="80" autocomplete="off"/>
                             </div>
                         </div>
-
-                        <!-- TITULO -->
-                        <div class="col-sm-12 mt-3">
-                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">Ubicación de la empresa</h4>
-                        </div>
-
-                        <!-- ESTADO -->
-                        <div class="col-sm-6 col-lg-6 col-xl-4">
-                            <div class="form-group mb-2">
-                                <label class="d-inline-block w-100 position-relative small m-0">Estado
-                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
-                                    <i id="loader-ciudad" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
-                                    <i id="loader-ciudad-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
-                                </label>
-                                <select name="estado" id="estado" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija una opcion</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- CIUDAD -->
-                        <div class="col-sm-6 col-lg-6 col-xl-4">
-                            <div class="form-group mb-2">
-                                <label for="ciudad" class="d-inline-block w-100 position-relative small m-0">Ciudad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="ciudad" id="ciudad" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija un estado</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- DIRECCION -->
-                        <div class="col-sm-12">
-                            <div class="form-group mb-2">
-                                <label for="direccion" class="d-inline-block w-100 position-relative small m-0">Dirección<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <textarea name="direccion" id="direccion" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la dirección de la empresa" maxlength="200" style="height: 100px;"></textarea>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -236,14 +234,88 @@
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h3>    
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Contactos de la empresa</h3>    
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <p class="text-secondary mb-0 small">Agregue a los contactos dentro de la empresa, mínimo 1 persona.</p>
+                                <button id="btn-persona-contacto" type="button" class="btn btn-sm btn-info descripcion-tooltip" data-toggle="tooltip" data-placement="left" title="Agregar persona de contacto"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 overflow-auto">
+                            <div id="contenedor-personas-contacto" class="border overflow-auto px-3 py-2 mb-2" style="max-height: 350px; min-width: 900px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="display: none;">
+                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                        <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="contenedor-mensaje2"></div>
+
+            <div class="pt-2 text-center">
+                <button id="guardar-datos" type="button" class="botones_formulario btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
+            </div>
+        </form>
+    </div>
+
+    <div id="modal-actividad-economica" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Registrar actividad económica</h5>
+                    <button type="button" class="close botones_formulario_actividad_economica" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_registrar_actividad_e" id="form_registrar_actividad_e" class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="nombre_actividad_economica" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nombre_actividad_economica" id="nombre_actividad_economica" class="campos_formularios_actividad_economica form-control form-control-sm" placeholder="Ingrese la actividad económica" autocomplete="off"/>
+                            </div>
+
+                            <div id="contenedor-mensaje-actividad-economica"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer justify-content-between py-2">
+                    <button type="button" class="btn btn-sm btn-info botones_formulario_actividad_economica" id="btn-registrar-actividad-economica"><i class="fas fa-save"></i> <span></span></button>
+                    <button type="button" class="btn btn-sm btn-secondary botones_formulario_actividad_economica" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-registrar-contacto" class="modal fade" tabindex="-1" role="dialog">
+        <div class="position-fixed w-100 h-100" data-dismiss="modal" style="background: rgba(0,0,0,0.5);"></div>
+
+        <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Registrar contacto</h5>
+                    <button type="button" class="close botones_formulario_persona_contacto" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_agregar_contacto" id="form_agregar_contacto" class="form-row position-relative">
+                        <!-- TITULO -->
+                        <div class="col-sm-12">
+                            <h5 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h5>
                         </div>
 
                         <!-- NACIONALIDAD -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="nacionalidad" id="nacionalidad" class="campos_formularios custom-select custom-select-sm">
+                                <select name="nacionalidad" id="nacionalidad" class="campos_formularios_persona_contacto custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -260,7 +332,7 @@
                                     <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
                                     <i id="loader-cedula-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <input type="text" name="cedula" id="cedula" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la cédula" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -268,7 +340,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="nombre_1" id="nombre_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="nombre_1" id="nombre_1" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -276,7 +348,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="d-inline-block w-100 position-relative small m-0">Segundo nombre</label>
-                                <input type="text" name="nombre_2" id="nombre_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -284,7 +356,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="apellido_1" id="apellido_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="apellido_1" id="apellido_1" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -292,32 +364,33 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="d-inline-block w-100 position-relative small m-0">Segundo Apellido</label>
-                                <input type="text" name="apellido_2" id="apellido_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
-                        <!-- SEXO -->
-                        <div class="col-sm-6 col-lg-4 col-xl-3">
+                        <!-- CARGO DEL CONTACTO EN LA EMPRESA -->
+                        <div class="col-sm-12 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
-                                <label for="sexo" class="d-inline-block w-100 position-relative small m-0">Sexo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="sexo" id="sexo" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija una opción</option>
-                                    <option value="M">Masculino</option>
-                                    <option value="F">Femenino</option>
-                                </select>
+                                <label for="cargo_contacto" class="d-inline-block w-100 position-relative small m-0">Cargo en la empresa<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <div class="d-flex">
+                                    <select name="cargo_contacto" id="cargo_contacto" class="campos_formularios_persona_contacto custom-select custom-select-sm">
+                                        <option value="">Elija una opción</option>
+                                    </select>
+                                    <button type="button" id="btn-cargo" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="top" title="Registrar cargo"><i class="fas fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
 
                         <!-- TITULO -->
                         <div class="col-sm-12 mt-3">
-                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">Datos de contacto</h4>    
+                            <h5 class="font-weight-normal text-secondary text-center text-uppercase">Datos de contacto</h5>
                         </div>
 
                         <!-- TELEFONO DE HABITACION -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1_c" class="d-inline-block w-100 position-relative small m-0">Tlf. de habitación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="telefono_1_c" id="telefono_1_c" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
+                                <input type="text" name="telefono_1_c" id="telefono_1_c" class="campos_formularios_persona_contacto form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
                         
@@ -325,7 +398,7 @@
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_2_c" class="d-inline-block w-100 position-relative small m-0">Tlf. célular</label>
-                                <input type="text" name="telefono_2_c" id="telefono_2_c" class="campos_formularios form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
+                                <input type="text" name="telefono_2_c" id="telefono_2_c" class="campos_formularios_persona_contacto form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -333,13 +406,13 @@
                         <div class="col-sm-6 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="correo_c" class="d-inline-block w-100 position-relative small m-0">Correo</label>
-                                <input type="email" name="correo_c" id="correo_c" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el correo (Opcional)" maxlength="80" autocomplete="off"/>
+                                <input type="email" name="correo_c" id="correo_c" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese el correo (Opcional)" maxlength="80" autocomplete="off"/>
                             </div>
                         </div>
 
                         <!-- TITULO -->
                         <div class="col-sm-12 mt-3">
-                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">DIRECCIÓN DEL CONTACTO</h4>
+                            <h5 class="font-weight-normal text-secondary text-center text-uppercase">DIRECCIÓN DEL CONTACTO</h5>
                         </div>
 
                         <!-- ESTADO -->
@@ -350,8 +423,8 @@
                                     <i id="loader-ciudad_c" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
                                     <i id="loader-ciudad_c-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <select name="estado_c" id="estado_c" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija una opcion</option>
+                                <select name="estado_c" id="estado_c" class="campos_formularios_persona_contacto custom-select custom-select-sm">
+                                    <option value="">Elija una opción</option>
                                 </select>
                             </div>
                         </div>
@@ -360,7 +433,7 @@
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="ciudad_c" class="d-inline-block w-100 position-relative small m-0">Ciudad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="ciudad_c" id="ciudad_c" class="campos_formularios custom-select custom-select-sm">
+                                <select name="ciudad_c" id="ciudad_c" class="campos_formularios_persona_contacto custom-select custom-select-sm">
                                     <option value="">Elija un estado</option>
                                 </select>
                             </div>
@@ -370,28 +443,63 @@
                         <div class="col-sm-12">
                             <div class="form-group mb-2">
                                 <label for="direccion_c" class="d-inline-block w-100 position-relative small m-0">Dirección</label>
-                                <textarea name="direccion_c" id="direccion_c" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la dirección del contacto (Opcional)" maxlength="200" style="height: 100px;"></textarea>
+                                <textarea name="direccion_c" id="direccion_c" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese la dirección del contacto (Opcional)" maxlength="200" style="height: 100px; resize: none;"></textarea>
                             </div>
                         </div>
-                    </div>
+
+                        <!-- MENSAJES DE ERROR -->
+                        <div class="col-sm-12">
+                            <div id="contenedor-mensaje-contacto"></div>
+                        </div>
+
+                        <div id="carga_espera_2" class="position-absolute rounded w-100 h-100" style="display: none;">
+                            <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                                <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
-                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
-                        <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>
-                    </div>
+                <div class="modal-footer justify-content-between py-2">
+                    <button type="button" class="btn btn-sm btn-info botones_formulario_persona_contacto" id="btn-agregar-contacto"><i class="fas fa-user-plus"></i> <span>Agregar</span></button>
+                    <button type="button" class="btn btn-sm btn-secondary botones_formulario_persona_contacto" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
                 </div>
             </div>
-
-            <div id="contenedor-mensaje2"></div>
-
-            <div class="pt-2 text-center">
-                <button id="guardar-datos" type="button" class="botones_formulario btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
-            </div>
-        </form>
+        </div>
     </div>
 
-    <div id="modal-aceptar-contacto" class="modal" tabindex="-1" role="dialog">
+    <div id="modal-cargo" class="modal fade" tabindex="-1" role="dialog">
+        <div class="position-fixed w-100 h-100"  data-dismiss="modal" style="background: rgba(0,0,0,0.5);"></div>
+
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Registrar cargo</h5>
+                    <button type="button" class="close botones_formulario_cargo" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <form name="form_registrar_cargo" id="form_registrar_cargo" class="form-row">
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="nombre_cargo" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nombre_cargo" id="nombre_cargo" class="campos_formularios_cargo form-control form-control-sm" placeholder="Ingrese el cargo" autocomplete="off"/>
+                            </div>
+
+                            <div id="contenedor-mensaje-cargo"></div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer justify-content-between py-2">
+                    <button type="button" class="btn btn-sm btn-info botones_formulario_cargo" id="btn-registrar-cargo"><i class="fas fa-save"></i> <span></span></button>
+                    <button type="button" class="btn btn-sm btn-secondary botones_formulario_cargo" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-aceptar-contacto" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header py-2">

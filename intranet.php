@@ -3,30 +3,22 @@ include_once 'config/config.php';               // INCLUIMOS EL ARCHIVO DE CONFI
 date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
 ////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
 session_start();
 if (isset($_SESSION['sesion'])) {
     require_once 'models/m_sesion.php';
     $sesion = new model_sesion();
     $sesion->conectar();
-    $data = [
-        'codigo_rol'    => $_SESSION['usuario']['codigo_rol']
-    ];
+    $data = [ 'codigo_rol'    => $_SESSION['usuario']['codigo_rol'] ];
     ///////////////////////////////////////////////////////////////////////////
     $files = glob('images/temp/*');
-    foreach($files as $file){
-        if(is_file($file)) { unlink($file); }
-    }
+    foreach($files as $file){ if(is_file($file)) { unlink($file); } }
     ///////////////////////////////////////////////////////////////////////////
     if (isset($_GET['data'])) {
         $dataGET = explode('/',$_GET['data']);
         $vista = $dataGET[0];
         if (is_file('views/'.$vista.'.php')) {
-            ////////////////////////////////////////////////////////////////////
             $data['text_vista'] = htmlspecialchars($vista);
-            ////////////////////////////////////////////////////////////////////
             $permisos = $sesion->consultarPermisos($data);
-            ////////////////////////////////////////////////////////////////////
             if ($permisos) {
                 $titulo = $permisos['nombre'];
                 $vista = 'views/'.$vista.'.php';
@@ -140,7 +132,7 @@ if (isset($_SESSION['sesion'])) {
                 <!-- CONTENEDOR FORMULARIOS Y DASHBOARD -->
                 <div class="col-sm-12">
                     <div class="bg-white rounded p-3 shadow-sm">
-                        <?php include_once $vista;?>
+                        <?php include_once $vista; ?>
                     </div>
                 </div>
                 <!-- FIN CONTENEDOR FORMULARIOS Y DASHBOARD -->
