@@ -26,7 +26,6 @@
                     <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="1">Nombre</option>
-                        <option value="2">Módulo</option>
                     </select>
                 </div>
 
@@ -62,7 +61,6 @@
                 <tr class="text-white">
                     <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Asignatura</th>
-                    <th class="bg-info font-weight-normal px-1 py-2">Módulo</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
@@ -103,17 +101,6 @@
                     <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la asignatura" autocomplete="off"/>
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <label for="modulo" class="d-inline-block w-100 position-relative small m-0">Módulo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="modulo" id="modulo" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una opción</option>
-                            <option value="1">Módulo 1</option>
-                            <option value="2">Módulo 2</option>
-                            <option value="3">Módulo 3</option>
-                            <option value="4">Módulo 4</option>
-                        </select>
                     </div>
 
                     <div id="contenedor-mensaje2"></div>

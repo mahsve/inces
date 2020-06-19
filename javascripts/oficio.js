@@ -2,7 +2,6 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let ER_codigoFormulario = /^([0-9a-zA-Z-])+$/;
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
@@ -88,8 +87,10 @@ $(function () {
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-right">'+dataListado.resultados[i].codigo+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].asignaturas+' Asg.</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].horas+' Hrs.</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
@@ -180,20 +181,6 @@ $(function () {
     function verificarParte1 () {
         tarjeta_1 = true;
         // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
-        let codigo = $("#codigo").val();
-        if (codigo != '') {
-            if(codigo.match(ER_codigoFormulario)){
-                $("#codigo").css("background-color", colorb);
-            }else{
-                $("#codigo").css("background-color", colorm);
-                tarjeta_1 = false;
-            }
-        } else {
-            $("#codigo").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-        
-        // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
         let nombre = $("#nombre").val();
         if (nombre != '') {
             if(nombre.match(validar_caracteresEspeciales)){
@@ -210,6 +197,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
     $('#nombre').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
+    $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
     $('#show_form').click(function () {
         $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
@@ -240,7 +228,6 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.codigo   = dataListado.resultados[posicion].codigo;
-        $('#codigo').val(dataListado.resultados[posicion].codigo);
         $('#nombre').val(dataListado.resultados[posicion].nombre);
 
         verificarParte1();
@@ -254,7 +241,7 @@ $(function () {
         if (tarjeta_1) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'codigo2', value: window.codigo });
+            data.push({ name: 'codigo', value: window.codigo });
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('.botones_formulario').attr('disabled', true);
@@ -286,7 +273,7 @@ $(function () {
                             
                             color_alerta = 'alert-warning';
                             icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
-                        } else if (resultados == 'Registro fallido' || resultados == 'Modificación fallida') {
+                        } else if (resultados.indexOf('Registro fallido') == -1  || resultados.indexOf('Modificación fallida') == -1) {
                             color_alerta = 'alert-danger';
                             icono_alerta = '<i class="fas fa-times"></i>';
                         }

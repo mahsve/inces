@@ -7,16 +7,39 @@ if ($_POST['opcion']) {
     switch ($_POST['opcion']) {
         case 'Registrar':
             $objeto->conectar();
+            $objeto->nuevaTransaccion();
+
             // SE CONFIRMA QUE NO ESTE REGISTRADO
             if ($objeto->confirmarExistenciaR($_POST) == 0) {
                 // SE PROCEDE A REGISTRAR
-                if ($objeto->registrarOficio($_POST)) {
-                    echo 'Registro exitoso';
+                if ($n_oficio = $objeto->registrarOficio($_POST)) {
+                    // CONSULTAMOS LOS MODULO QUE SE REPITEN EN TODO LOS OFICIOS
+                    $errores = 0;
+                    $modulosG = $objeto->consultarModulosGenerales();
+                    for ($var = 0; $var < count($modulosG); $var++) {
+                        $datosModulos = [
+                            'codigo_oficio' => $n_oficio,
+                            'codigo_modulo' => $modulosG[$var]['codigo']
+                        ];
+
+                        // REGISTRAMOS Y VEREFICAMOS QUE NO HAYA ERRORES.
+                        if (!$objeto->registrarModuloTodosLosOficios($datosModulos)) { $errores++; }
+                    }
+
+                    if ($errores == 0) {
+                        echo 'Registro exitoso';
+                        $objeto->guardarTransaccion();
+                    } else {
+                        echo 'Registro fallido: Módulos generales';
+                        $objeto->calcelarTransaccion();
+                    }
                 } else {
-                    echo 'Registro fallido';
+                    echo 'Registro fallido: Oficios';
+                    $objeto->calcelarTransaccion();
                 }
             } else {
                 echo 'Ya está registrado';
+                $objeto->calcelarTransaccion();
             }
             $objeto->desconectar();
         break;
@@ -30,9 +53,8 @@ if ($_POST['opcion']) {
             if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
             else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $campo_ordenar = 'codigo '.$campo_m_ordenar;
-            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'codigo '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
+            $campo_ordenar = 'nombre '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 
@@ -45,11 +67,16 @@ if ($_POST['opcion']) {
 
         case 'Modificar':
             $objeto->conectar();
-            // SE PROCEDE A MODIFICAR
-            if ($objeto->modificarOficio($_POST)) {
-                echo 'Modificación exitosa';
+            // SE CONFIRMA QUE NO ESTE REGISTRADO
+            if ($objeto->confirmarExistenciaM($_POST) == 0) {
+                // SE PROCEDE A MODIFICAR
+                if ($objeto->modificarOficio($_POST)) {
+                    echo 'Modificación exitosa';
+                } else {
+                    echo 'Modificación fallida';
+                }
             } else {
-                echo 'Modificación fallida';
+                echo 'Ya está registrado';
             }
             $objeto->desconectar();
         break;

@@ -2,7 +2,6 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let validar_codigoFormulario = /^([0-9a-zA-Z-])+$/;
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa0-9.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
@@ -10,7 +9,6 @@ $(function () {
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
     let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
-    let listaModulos = ['', 'Módulo 1', 'Módulo 2', 'Módulo 3', 'Módulo 4'];
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -38,6 +36,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCION PARA LLAMAR LO DATOS DE LA BASE DE DATOS Y MOSTRARLOS EN LA TABLA.
+    buscar_listado();
     function buscar_listado () {
         let filas = $('#listado_tabla thead th').length;
 
@@ -88,9 +87,8 @@ $(function () {
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-right">'+cont+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+listaModulos[dataListado.resultados[i].codigo_modulo]+'</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
@@ -168,7 +166,6 @@ $(function () {
             });
         }, 500);
     }
-    buscar_listado();
     // FUNCION PARA CAMBIAR LA PAGINACION.
     function cambiarPagina (e) {
         e.preventDefault();
@@ -181,7 +178,7 @@ $(function () {
     ////////////////////////// VALIDACIONES /////////////////////////////
     function verificarParte1 () {
         tarjeta_1 = true;
-        // VERIFICAR EL CAMPO DEL NOMBRE DEL MODULO.
+        // VERIFICAR EL CAMPO DEL NOMBRE DE LA ASIGNATURA.
         let nombre = $("#nombre").val();
         if (nombre != "") {
             if (nombre.match(validar_caracteresEspeciales)) {
@@ -192,15 +189,6 @@ $(function () {
             }
         } else {
             $("#nombre").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
-        let modulo = $("#modulo").val();
-        if (modulo != "") {
-            $("#modulo").css("background-color", colorb);
-        } else {
-            $("#modulo").css("background-color", colorm);
             tarjeta_1 = false;
         }
     }
@@ -237,9 +225,7 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.codigo   = dataListado.resultados[posicion].codigo;
-        window.codigo_modulo = dataListado.resultados[posicion].codigo_modulo;
         $('#nombre').val(dataListado.resultados[posicion].nombre);
-        $('#modulo').val(dataListado.resultados[posicion].codigo_modulo);
 
         verificarParte1();
     }

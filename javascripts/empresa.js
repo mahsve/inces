@@ -329,7 +329,10 @@ $(function () {
     }
     function verificarParte2 () {
         tarjeta_2 = true;
-        
+        if ($('#contenedor-personas-contacto').html() == mensaje_contato) {
+            $('#contenedor-personas-contacto').css('background-color', colorm);
+            tarjeta_2 = false;
+        }
 
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
         if (tarjeta_2) {
@@ -346,10 +349,10 @@ $(function () {
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
         $('#form_title').html('Registrar');
         $('.campos_formularios').css('background-color', colorn);
-        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');
-        $('.ocultar-iconos').hide();
-        $('.btn-recargar').hide();
-        $('.icon-alert').hide();
+        $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');  // CHECK DE VALIDACION DE CEDULA Y RIF (ICONO)
+        $('.ocultar-iconos').hide();  // ICONO DE CARGA DE CEDULA Y RIF (ICONO)
+        $('.btn-recargar').hide(); // BOTON RECARGAR DE LAS CONSULTAS INDEPENDIENTES (CARGO, ACTIVIDAD ECONOMICA).
+        $('.icon-alert').hide(); // ICONOS EN LAS PESTAÑAS DE LOS FORMULARIOS.
         $('#contenedor-personas-contacto').html(mensaje_contato);
         
         $('#ciudad').html('<option value="">Elija un estado</option>');

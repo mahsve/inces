@@ -132,9 +132,7 @@
             <!-- FIN BOTON GUARDAR DATOS -->
         </form>
     </div>
-<?php } ?>
 
-<?php if ($permisos['modificar']){ ?>
     <div class="modal fade" id="modar_cambiar_orden" tabindex="-1" role="dialog" aria-labelledby="modar_cambiar_orden" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable" role="document">
             <div class="modal-content">

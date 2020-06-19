@@ -449,9 +449,7 @@
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h5 class="modal-title text-secondary">Vista previa</h5>
-                    <button type="button" id="btn-cancelar-ocupacion2" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" id="btn-cancelar-ocupacion2" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <div id="detalles-archivo" class="modal-body p-3"></div>

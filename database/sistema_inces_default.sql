@@ -2017,12 +2017,12 @@ INSERT INTO `t_modulo_sistema` (`codigo`, `nombre`, `posicion`, `icono`) VALUES
 INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`, `icono`) VALUES
 (1, 1, 'Informe social', 'informe_social', 1, 'fas fa-file-word'),
 (2, 1, 'Aprendiz', 'aprendiz', 2, 'fas fa-user-graduate'),
-(3, 8, 'Facilitadores', 'facilitador', 5, 'fas fa-chalkboard-teacher'),
+(3, 8, 'Facilitadores', 'facilitador', 6, 'fas fa-chalkboard-teacher'),
 (4, 4, 'Empresas', 'empresa', 1, 'fas fa-industry'),
 (5, 4, 'Actividad económica', 'actividad_economica', 2, 'fas fa-wallet'),
-(6, 8, 'Ocupación', 'ocupacion', 6, 'fas fa-briefcase'),
+(6, 8, 'Ocupación', 'ocupacion', 7, 'fas fa-briefcase'),
 (7, 8, 'Oficio aprendiz', 'oficio', 3, 'fas fa-graduation-cap'),
-(9, 8, 'Asignatura', 'asignatura', 4, 'fas fa-book'),
+(9, 8, 'Asignatura', 'asignatura', 5, 'fas fa-book'),
 (10, 5, 'Rol de usuario', 'rol', 2, 'fas fa-user-tag'),
 (11, 5, 'Módulo sistema', 'modulo_sistema', 3, 'fas fa-sitemap'),
 (12, 5, 'Vista del sistema', 'vista_sistema', 4, 'far fa-window-maximize'),
@@ -2034,7 +2034,8 @@ INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`
 (18, 5, 'Base de datos', 'respaldo_db', 1, 'fas fa-database'),
 (19, 8, 'Módulos en curso', 'modulo_curso', 1, 'fas fa-chalkboard'),
 (20, 8, 'Asignaturas en curso', 'asignatura_curso', 2, 'fas fa-book-reader'),
-(21, 4, 'Cargo contacto', 'cargo_contacto', 3, 'fas fa-id-card-alt');
+(21, 4, 'Cargo contacto', 'cargo_contacto', 3, 'fas fa-id-card-alt'),
+(22, 8, 'Módulo / Unidad', 'modulo', 4, 'fas fa-sitemap');
 
 INSERT INTO `td_rol_modulo` (`codigo_rol`, `codigo_modulo`) VALUES
 (1, 1),
@@ -2050,6 +2051,7 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 19, 1, 1, 1, 1),
 (1, 20, 1, 1, 1, 1),
 (1, 7, 1, 1, 1, 1),
+(1, 22, 1, 1, 1, 1),
 (1, 9, 1, 1, 1, 1),
 (1, 3, 1, 1, 1, 1),
 (1, 6, 1, 1, 1, 1),

@@ -25,7 +25,6 @@
                 <div class="form-group col-sm-6 col-lg-3 col-xl-3 d-flex align-items-center text-info mb-2">
                     <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
-                        <option value="1">Código</option>
                         <option value="2">Nombre</option>
                     </select>
                 </div>
@@ -60,8 +59,10 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">Código</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="93">Asignaturas</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="80">Horas</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
@@ -99,11 +100,6 @@
         <form name="formulario" id="formulario" class="formulario">
             <div class="form-row">
                 <div class="col-sm-12 offset-md-3 col-md-6">
-                    <div class="form-group mb-2">
-                        <label for="codigo" class="d-inline-block w-100 position-relative small m-0">Código<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="codigo" id="codigo" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
-                    </div>
-
                     <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>

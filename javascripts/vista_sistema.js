@@ -25,7 +25,7 @@ $(function () {
         numeroDeLaPagina = 1;
         buscar_listado();
     }
-    function buscar_listado(){
+    function buscar_listado () {
         let filas = 0;
         if (permisos.modificar == 1 || permisos.act_desc == 1)
             filas = 6;

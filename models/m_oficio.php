@@ -25,7 +25,7 @@ class model_oficio extends conexion{
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_oficio
-            WHERE codigo='".strtoupper(htmlspecialchars($datos['codigo']))."'
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -37,33 +37,98 @@ class model_oficio extends conexion{
     public function registrarOficio ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_oficio (
-            codigo,
             nombre
         ) VALUES (
-            '".strtoupper(htmlspecialchars($datos['codigo']))."',
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
-            $resultado = true;
+            $resultado = mysqli_insert_id($this->data_conexion);
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // CONSULTAMOS TODOS LOS MODULOS QUE SEAN COMPARTIDOS EN TODOS LOS OFICIOS PARA AGREGARLO AL NUEVO OFICIO REGISTRADO
+    public function consultarModulosGenerales () {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_modulo
+            WHERE repetir_modulo='S'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion, $sentencia);
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
+		}
+		return $resultado;
+    }
+
+    // FUNCION PARA REGISTRARLE EL MODULO A TODOS LOS OFICIOS.
+    public function registrarModuloTodosLosOficios ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_oficio_modulo (
+            codigo_oficio,
+            codigo_modulo
+        ) VALUES (
+            '".htmlspecialchars($datos["codigo_oficio"])."',
+            '".htmlspecialchars($datos["codigo_modulo"])."'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
     }
 
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS REGISTRADOS
 	public function consultarOficios ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
+        $sentencia = "SELECT
+            t_oficio.*,
+            (
+                SELECT SUM(horas)
+                FROM t_modulo
+                INNER JOIN t_modulo_asig ON t_modulo.codigo = t_modulo_asig.codigo_modulo
+                WHERE t_modulo.codigo_oficio = t_oficio.codigo
+                AND t_modulo.codigo = t_modulo_asig.codigo_modulo
+            ) AS horas,
+            (
+                SELECT COUNT(*)
+                FROM t_modulo
+                INNER JOIN t_modulo_asig ON t_modulo.codigo = t_modulo_asig.codigo_modulo
+                WHERE t_modulo.codigo_oficio = t_oficio.codigo
+                AND t_modulo.codigo = t_modulo_asig.codigo_modulo
+            ) AS asignaturas
             FROM t_oficio
-            WHERE (
-                nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
-                codigo LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%')
+
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
             AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
             ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
             LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos["campo_cantidad"])."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia);
         while ($columna = mysqli_fetch_assoc($consulta)) {
+            $sentencia = "SELECT
+                (
+                    SELECT SUM(horas)
+                    FROM t_modulo_asig
+                    WHERE t_modulo.codigo = t_modulo_asig.codigo_modulo
+                ) AS horas,
+                (
+                    SELECT COUNT(*)
+                    FROM t_modulo_asig
+                    WHERE t_modulo.codigo = t_modulo_asig.codigo_modulo
+                ) AS asignaturas
+                FROM t_oficio_modulo
+                
+                INNER JOIN t_modulo ON t_oficio_modulo.codigo_modulo = t_modulo.codigo
+                WHERE t_oficio_modulo.codigo_oficio='".$columna['codigo']."'
+            "; // SENTENTCIA
+            $consulta2 = mysqli_query($this->data_conexion,$sentencia);
+            if ($columna2 = mysqli_fetch_assoc($consulta2)) {
+                $columna['horas'] += $columna2['horas'];
+                $columna['asignaturas'] += $columna2['asignaturas'];
+            }
+
 			$resultado[] = $columna;
 		}
 		return $resultado;
@@ -74,9 +139,7 @@ class model_oficio extends conexion{
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_oficio
-            WHERE (
-                nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
-                codigo LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%')
+            WHERE nombre LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
             AND estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
@@ -85,13 +148,26 @@ class model_oficio extends conexion{
 		return $resultado;
     }
 
+    // FUNCION PARA VERIFICAR QUE NO EXISTA OTRO.
+    public function confirmarExistenciaM ($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_ocupacion
+            WHERE codigo!='".htmlspecialchars($datos['codigo'])."'
+            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA MODIFICAR UN OFICIO EXISTENTE.
     public function modificarOficio ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_oficio SET
-            codigo='".strtoupper(htmlspecialchars($datos['codigo']))."',
             nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
-            WHERE codigo='".htmlspecialchars($datos['codigo2'])."'
+            WHERE codigo='".htmlspecialchars($datos['codigo'])."'
         ";
         if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
@@ -111,5 +187,20 @@ class model_oficio extends conexion{
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
+    public function nuevaTransaccion () {
+		mysqli_query($this->data_conexion,"START TRANSACTION");
+    }
+
+    // FUNCION PARA GUARDAR LOS CAMBIOS DE LA TRANSACCION.
+    public function guardarTransaccion () {
+		mysqli_query($this->data_conexion,"COMMIT");
+    }
+    
+    // FUNCION PARA DESHACER TODA LA TRANSACCION.
+    public function calcelarTransaccion () {
+		mysqli_query($this->data_conexion,"ROLLBACK");
     }
 }

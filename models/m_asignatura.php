@@ -37,11 +37,9 @@ class model_asignatura extends conexion {
     public function registrarAsignatura ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_asignatura (
-            nombre,
-            codigo_modulo
+            nombre
         ) VALUES (
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."',
-            '".htmlspecialchars($datos['modulo'])."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -80,13 +78,25 @@ class model_asignatura extends conexion {
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
+
+    public function confirmarExistenciaM ($datos) {
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT *
+            FROM t_asignatura
+            WHERE codigo!='".htmlspecialchars($datos['codigo'])."'
+            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+        "; // SENTENTCIA
+        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+			$resultado = mysqli_num_rows($consulta);
+        }
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
     
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
     public function modificarAsignatura($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_asignatura SET 
-            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."',
-            codigo_modulo='".htmlspecialchars($datos['modulo'])."'
+            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."'
             WHERE codigo='".htmlspecialchars($datos["codigo"])."'
         "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia)) {
