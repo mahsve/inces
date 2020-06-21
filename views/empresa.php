@@ -131,7 +131,7 @@
                                     <i id="spinner-rif-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
                                     <i id="loader-rif-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <input type="text" name="rif" id="rif" class="campos_formularios form-control form-control-sm" placeholder="J-12345678-9" maxlength="12" autocomplete="off"/>
+                                <input type="text" name="rif" id="rif" class="campos_formularios form-control form-control-sm" placeholder="J-12345678-9" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -139,7 +139,7 @@
                         <div class="col-sm-6 col-lg-3">
                             <div class="form-group mb-2">
                                 <label for="nil" class="d-inline-block w-100 position-relative small m-0">NIL<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="nil" id="nil" class="campos_formularios form-control form-control-sm" placeholder="12345" autocomplete="off"/>
+                                <input type="text" name="nil" id="nil" class="campos_formularios form-control form-control-sm" placeholder="12345" maxlength="10" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -245,7 +245,7 @@
                         </div>
 
                         <div class="col-sm-12 overflow-auto">
-                            <div id="contenedor-personas-contacto" class="border overflow-auto px-3 py-2 mb-2" style="max-height: 350px; min-width: 900px;"></div>
+                            <div id="contenedor-personas-contacto" class="border overflow-auto px-3 py-2 mb-2" style="max-height: 400px; min-width: 900px;"></div>
                         </div>
                     </div>
                 </div>
@@ -295,8 +295,6 @@
     </div>
 
     <div id="modal-registrar-contacto" class="modal fade" tabindex="-1" role="dialog">
-        <div class="position-fixed w-100 h-100" data-dismiss="modal" style="background: rgba(0,0,0,0.5);"></div>
-
         <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header py-2">
@@ -320,6 +318,7 @@
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
                                 </select>
+                                <input type="hidden" name="nacionalidad2" id="nacionalidad2" class="nacionalidad2">
                             </div>
                         </div>
 
@@ -333,6 +332,7 @@
                                     <i id="loader-cedula-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
                                 <input type="text" name="cedula" id="cedula" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                                <input type="hidden" name="cedula2" id="cedula2" class="cedula2"/>
                             </div>
                         </div>
 
@@ -469,7 +469,7 @@
     </div>
 
     <div id="modal-cargo" class="modal fade" tabindex="-1" role="dialog">
-        <div class="position-fixed w-100 h-100"  data-dismiss="modal" style="background: rgba(0,0,0,0.5);"></div>
+        <div class="position-fixed w-100 h-100" data-dismiss="modal" style="background: rgba(0,0,0,0.5);"></div>
 
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -500,6 +500,8 @@
     </div>
 
     <div id="modal-aceptar-contacto" class="modal fade" tabindex="-1" role="dialog">
+        <div class="position-fixed w-100 h-100" style="background: rgba(0,0,0,0.5);"></div>
+
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header py-2">

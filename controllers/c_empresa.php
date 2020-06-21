@@ -78,12 +78,18 @@ if ($_POST['opcion']) {
             $objeto->conectar();
             $objeto->nuevaTransaccion();
 
+            // SE PROCEDE A REGISTRAR LA EMPRESA Y VERIFICAR QUE NO HAYA ERRORES.
             if ($objeto->registrarEmpresa($_POST)) {
-                $cant_errores = 0;
-                for ($var = 0; $var < count($_POST['nacionalidad_contacto']); $var++) {
+                // PROCEDEMOS A REGISTRAR A LOS CONTACTOS DE LA EMPRESA
+                $cant_errores = 0; $cant_errores2 = 0;
+                for ($var = 0; $var < count($_POST['codigo_registro']); $var++) {
+                    // ARREGLO CON TODOS LOS DATOS DEL CONTACTO.
                     $dato_contacto  = [
                         'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
+                        'nacionalidad_contacto2'=> $_POST['nacionalidad_contacto2'][$var],
                         'cedula_contacto'       => $_POST['cedula_contacto'][$var],
+                        'cedula_contacto2'      => $_POST['cedula_contacto2'][$var],
+
                         'nombre1_contacto'      => $_POST['nombre1_contacto'][$var],
                         'nombre2_contacto'      => $_POST['nombre2_contacto'][$var],
                         'apellido1_contacto'    => $_POST['apellido1_contacto'][$var],
@@ -98,33 +104,38 @@ if ($_POST['opcion']) {
                     // CREAMOS UNA VARIABLE PARA VERFICAR SI YA EXISTE Y OMITIR EL REGISTRO O EN TODO CASO
                     // VERIFICAR QUE SE HAYA REGISTRADO CORRECTAMENTE.
                     $estatus_contacto = false;
-                    if ($objeto->consultarPersonaContacto($dato_contacto) == 0) {
+                    if ($_POST['nacionalidad_contacto2'][$var] == 0 AND $_POST['cedula_contacto2'][$var] == 0) {
                         $estatus_contacto = $objeto->registrarPersonaContacto($dato_contacto);
                     } else {
-                        $estatus_contacto = true;
+                        $estatus_contacto = $objeto->modificarPersonaContacto($dato_contacto);
                     }
 
+                    // VERIFICAMOS QUE SE HAYA REGISTRADO O MODIFICADO CON EXISTO SEGUN EL CASO.
                     if ($estatus_contacto) {
                         $datos_conec    = [
                             'rif_empresa'           => $_POST['rif'],
+                            'numero_contacto'       => $_POST['codigo_registro'][$var],
                             'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
                             'cedula_contacto'       => $_POST['cedula_contacto'][$var],
                             'cargo_contacto'        => $_POST['cargo_contacto'][$var],
                         ];
 
                         // SI RETORNA FALSE (Falso), HUBO ERROR AL REGISTRAR.
-                        if (!$objeto->registrarRelacionEmpresaContacto($datos_conec)) { $cant_errores++; }
+                        if (!$objeto->registrarRelacionEmpresaContacto($datos_conec)) { $cant_errores2++; }
                     } else {
                         $cant_errores++;
                     }
                 }
 
-                if ($cant_errores == 0) {
+                // VERIFICAMOS QUE NO HAYAN ERRORES Y GUARDAMOS LOS CAMBIOS.
+                if ($cant_errores == 0 AND $cant_errores2 == 0) {
                     echo 'Registro exitoso';
                     $objeto->guardarTransaccion();
                 } else {
-                    echo 'Registro fallido: Contactos de la empresa';
                     $objeto->calcelarTransaccion();
+                    if      ($cant_errores > 0 AND $cant_errores2 == 0) { echo 'Registro fallido: Registrar/Modificar contactos'; }
+                    else if ($cant_errores2 > 0 AND $cant_errores == 0) { echo 'Registro fallido: Registrar relación contacto-empresa'; }
+                    else    { echo 'Registro fallido: Registrar contacto y relación'; }
                 }
             } else {
                 echo 'Registro fallido: Datos de la empresa';
@@ -159,18 +170,103 @@ if ($_POST['opcion']) {
         case 'Modificar':
             $objeto->conectar();
             $objeto->nuevaTransaccion();
-            if ($objeto->modificarPersonaContacto($_POST)){
-                if ($objeto->modificarEmpresa($_POST)) {
-                    echo 'Modificación exitosa';
-                    $objeto->guardarTransaccion();
+
+            // MODIFICAMOS LOS DATOS DE LA EMPRESA Y VERIFICAMOS QUE NO HAYA ERRORES.
+            if ($objeto->modificarEmpresa($_POST)) {
+                // RECORREMOS LAS PERSONAS DE CONTACTO AGREGADOS A LA EMPRESA
+                $cant_errores = 0; $cant_errores2 = 0;
+                for ($var = 0; $var < count($_POST['codigo_registro']); $var++) {
+                    $dato_contacto  = [
+                        'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
+                        'nacionalidad_contacto2'=> $_POST['nacionalidad_contacto2'][$var],
+                        'cedula_contacto'       => $_POST['cedula_contacto'][$var],
+                        'cedula_contacto2'      => $_POST['cedula_contacto2'][$var],
+
+                        'nombre1_contacto'      => $_POST['nombre1_contacto'][$var],
+                        'nombre2_contacto'      => $_POST['nombre2_contacto'][$var],
+                        'apellido1_contacto'    => $_POST['apellido1_contacto'][$var],
+                        'apellido2_contacto'    => $_POST['apellido2_contacto'][$var],
+                        'ciudad_contacto'       => $_POST['ciudad_contacto'][$var],
+                        'direccion_contacto'    => $_POST['direccion_contacto'][$var],
+                        'telefono1_contacto'    => $_POST['telefono1_contacto'][$var],
+                        'telefono2_contacto'    => $_POST['telefono2_contacto'][$var],
+                        'correo_contacto'       => $_POST['correo_contacto'][$var],
+                    ];
+
+                    // CREAMOS UNA VARIABLE PARA VERFICAR SI YA EXISTE Y OMITIR EL REGISTRO O EN TODO CASO
+                    // VERIFICAR QUE SE HAYA REGISTRADO CORRECTAMENTE.
+                    $estatus_contacto = false;
+                    if ($_POST['nacionalidad_contacto2'][$var] == 0 AND $_POST['cedula_contacto2'][$var] == 0) {
+                        $estatus_contacto = $objeto->registrarPersonaContacto($dato_contacto);
+                    } else {
+                        $estatus_contacto = $objeto->modificarPersonaContacto($dato_contacto);
+                    }
+
+                    // VERIFICAMOS QUE SE HAYA REGISTRADO O MODIFICADO CON EXISTO SEGUN EL CASO.
+                    if ($estatus_contacto) {
+                        $datos_conec    = [
+                            'rif_empresa'           => $_POST['rif'],
+                            'numero_contacto'       => $_POST['codigo_registro'][$var],
+                            'nacionalidad_contacto' => $_POST['nacionalidad_contacto'][$var],
+                            'cedula_contacto'       => $_POST['cedula_contacto'][$var],
+                            'cargo_contacto'        => $_POST['cargo_contacto'][$var],
+                        ];
+
+                        // SE PROCEDE A REGISTRAR LA RELACION SI NO HAY NUMERO DE REGISTRO
+                        if ($_POST['codigo_registro'][$var] == 0) {
+                            // SI RETORNA FALSE (Falso), HUBO ERROR AL REGISTRAR.
+                            if (!$objeto->registrarRelacionEmpresaContacto($datos_conec)) { $cant_errores2++; }
+                        } else {
+                            // SI RETORNA FALSE (Falso), HUBO ERROR AL MODIFICAR.
+                            if (!$objeto->modificarRelacionEmpresaContacto($datos_conec)) { $cant_errores2++; }
+                        }
+                    } else {
+                        $cant_errores++;
+                    }
+                }
+
+                if ($cant_errores == 0 AND $cant_errores2 == 0) {
+                    // ELIMINAR ASIGNATURAS SELECCIONADAS POR EL USUARIO
+                    $errores_eliminar   = 0; $errores_eliminar2   = 0;
+                    $eliminar_contactos = json_decode($_POST['eliminar_contactos']);
+                    for ($var = 0; $var < count($eliminar_contactos); $var++) {
+                        // CONSULTAMOS SUS DATOS PERSONALES Y SI ES SOLAMENTE UN CONTACTO DE LA EMPRESA.
+                        $datos_contacto = $objeto->consultarContactoEmpresa($eliminar_contactos[$var]);
+                        if (!$objeto->eliminarRelacionEmpresaContacto($eliminar_contactos[$var])) { $errores_eliminar++; }
+                        
+                        // SI SOLO ES UN CONTACTO DE LA EMPRESA Y NO CUMPLE OTRA FUNCION DENTRO DEL SISTEMAS SE PROCEDE A ELIMINAR
+                        if ($datos_contacto['tipo_persona'] == 'C' AND $datos_contacto['relaciones'] == 1) {
+                            $datosContacto = [
+                                'nacionalidad'  => $datos_contacto['nacionalidad'],
+                                'cedula'        => $datos_contacto['cedula']
+                            ];
+
+                            // VERIFICAMOS QUE SE HAYA ELIMINADO CORRECTAMENTE
+                            if (!$objeto->eliminarDatosContacto($datosContacto)) { $errores_eliminar2++; }
+                        }
+                    }
+
+                    // VERIFICAMOS QUE SE HAYAN ELIMINADOS LOS DATOS CORRESPONDIENTES SIN ERRORES.
+                    if ($errores_eliminar == 0 AND $errores_eliminar2 == 0) {
+                        echo 'Modificación exitosa';
+                        $objeto->guardarTransaccion();
+                    } else {
+                        $objeto->calcelarTransaccion();
+                        if      ($errores_eliminar > 0 AND $errores_eliminar2 == 0) { echo 'Modificación fallida: Eliminar contactos de la empresa'; }
+                        else if ($errores_eliminar2 > 0 AND $errores_eliminar == 0) { echo 'Modificación fallida: Eliminar contactos del sistema'; }
+                        else { echo 'Modificación fallida: Eliminar contactos del sistema y de la empresa'; }
+                    }
                 } else {
-                    echo 'Modificación fallida: Datos de la empresa';
                     $objeto->calcelarTransaccion();
+                    if      ($cant_errores > 0 AND $cant_errores2 == 0) { echo 'Modificación fallida: Registrar/Modificar contactos'; }
+                    else if ($cant_errores2 > 0 AND $cant_errores == 0) { echo 'Modificación fallida: Registrar/Modificar relación contacto-empresa'; }
+                    else    { echo 'Modificación fallida: Registrar contacto y relación'; }
                 }
             } else {
-                echo 'Modificación fallida: Datos personales';
+                echo 'Modificación fallida: Datos de la empresa';
                 $objeto->calcelarTransaccion();
             }
+
             $objeto->desconectar();
         break;
 

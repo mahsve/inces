@@ -332,6 +332,8 @@ $(function () {
         if ($('#contenedor-personas-contacto').html() == mensaje_contato) {
             $('#contenedor-personas-contacto').css('background-color', colorm);
             tarjeta_2 = false;
+        } else {
+            $('#contenedor-personas-contacto').css('background-color', '');
         }
 
         // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
@@ -354,6 +356,7 @@ $(function () {
         $('.btn-recargar').hide(); // BOTON RECARGAR DE LAS CONSULTAS INDEPENDIENTES (CARGO, ACTIVIDAD ECONOMICA).
         $('.icon-alert').hide(); // ICONOS EN LAS PESTAÑAS DE LOS FORMULARIOS.
         $('#contenedor-personas-contacto').html(mensaje_contato);
+        $('#contenedor-personas-contacto').css('background-color', '');
         
         $('#ciudad').html('<option value="">Elija un estado</option>');
         $('#ciudad_c').html('<option value="">Elija un estado</option>');
@@ -361,6 +364,7 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Registrar';
         window.rif      = '';
+        window.eliminar_contactos = [];
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
@@ -504,8 +508,11 @@ $(function () {
         window.id_dinamico          = '';
         window.nacionalidad         = '';
         window.cedula               = '';
+        window.validarCargo         = true;
 
         document.form_agregar_contacto.reset();
+        $('#nacionalidad2').val(0);
+        $('#cedula2').val(0);
         $(".campos_formularios_persona_contacto").css('background-color', '');
         $('.botones_formulario_persona_contacto').attr('disabled', false);
         $('#cedula').trigger('blur');
@@ -591,13 +598,15 @@ $(function () {
         } else {
             $("#apellido_2").css("background-color", colorm);
         }
-        // VERIFICAR EL CAMPO DE SEXO
-        let cargo_contacto = $("#cargo_contacto").val();
-        if (cargo_contacto != "") {
-            $("#cargo_contacto").css("background-color", colorb);
-        } else {
-            $("#cargo_contacto").css("background-color", colorm);
-            vd_cargo_contacto = false;
+        // VERIFICAR EL CAMPO DE CARGO
+        if (window.validarCargo) {
+            let cargo_contacto = $("#cargo_contacto").val();
+            if (cargo_contacto != "") {
+                $("#cargo_contacto").css("background-color", colorb);
+            } else {
+                $("#cargo_contacto").css("background-color", colorm);
+                vd_cargo_contacto = false;
+            }
         }
         // VERIFICAR EL CAMPO DE TELEFONO DEL CONTACTO (TELEFONO 1)
         let telefono_1_c = $("#telefono_1_c").val();
@@ -681,18 +690,27 @@ $(function () {
                         contenido_contacto += '<div class="col-lg-12 d-flex justify-content-between align-items-center mb-2">';
                             contenido_contacto += '<h4 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h4>';
                             
+                            // BOTONES PARA EDITAR Y ELIMINAR EL CONTACTO DE LA EMPRESA.
                             contenido_contacto += '<div>';
                                 contenido_contacto += '<button type="button" class="btn btn-sm btn-info editar-contacto mr-1" data-id-contacto="'+window.id_dinamico+'"><i class="fas fa-pencil-alt"></i></button>';
                                 contenido_contacto += '<button type="button" class="btn btn-sm btn-danger eliminar-contacto" data-id-contacto="'+window.id_dinamico+'"><i class="fas fa-times px-1" style="font-size: 12px;"></i></button>';
                             contenido_contacto += '</div>';
                         contenido_contacto += '</div>';
 
+                        // ID DEL REGISTRO DEL CONTACTO EN LA EMPRESA
+                        contenido_contacto += '<input type="hidden" name="codigo_registro[]" class="codigo_registro" value="0">';
+                        contenido_contacto += '<input type="hidden" name="nacionalidad_contacto2[]" class="nacionalidad_contacto2" value="0">';
+                        contenido_contacto += '<input type="hidden" name="cedula_contacto2[]" class="cedula_contacto2" value="0">';
+
+                        // DATOS CEDULA DEL CONTACTO A MOSTRAR.
                         contenido_contacto += '<div class="col-lg-4 d-flex align-items-center">';
                             contenido_contacto += '<span class="w-50 small mr-1"><b>Cédula:</b></span>';
                             contenido_contacto += '<input type="text" name="nacionalidad_contacto[]" class="form-control-plaintext p-0 nacionalidad_contacto" style="outline: none; width: 10px;" readonly>';
                             contenido_contacto += '<span>-</span>';
                             contenido_contacto += '<input type="text" name="cedula_contacto[]" class="form-control-plaintext p-0 cedula_contacto" style="outline: none; width: calc(50% - 15px);" data-id-contacto="'+window.id_dinamico+'" readonly>';
                         contenido_contacto += '</div>';
+
+                        // INFORMACION PERSONAL DEL CONTACTO DE LA EMPRESA.
                         contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Primer nombre:</b></span><input type="text" name="nombre1_contacto[]" class="form-control-plaintext w-50 p-0 nombre1_contacto" style="outline: none;" readonly></div>';
                         contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Segundo nombre:</b></span><input type="text" name="nombre2_contacto[]" class="form-control-plaintext w-50 p-0 nombre2_contacto" style="outline: none;" readonly></div>';
                         contenido_contacto += '<div class="col-lg-4 d-flex align-items-center"><span class="w-50 small mr-1"><b>Primer apellido:</b></span><input type="text" name="apellido1_contacto[]" class="form-control-plaintext w-50 p-0 apellido1_contacto" style="outline: none;" readonly></div>';
@@ -718,6 +736,7 @@ $(function () {
                     window.id_dinamico          = $(this).attr('data-id-contacto');
                     window.nacionalidad         = $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val();
                     window.cedula               = $('#contacto-'+window.id_dinamico+' .cedula_contacto').val();
+                    window.validarCargo         = true;
 
                     document.form_agregar_contacto.reset();
                     $(".campos_formularios_persona_contacto").css('background-color', '');
@@ -728,7 +747,10 @@ $(function () {
                     $('#carga_espera_2').show();
 
                     $('#nacionalidad').val($('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val());
+                    $('#nacionalidad2').val($('#contacto-'+window.id_dinamico+' .nacionalidad_contacto2').val());
                     $('#cedula').val($('#contacto-'+window.id_dinamico+' .cedula_contacto').val());
+                    $('#cedula2').val($('#contacto-'+window.id_dinamico+' .cedula_contacto2').val());
+
                     $('#cedula').trigger('blur');
                     $('#nombre_1').val($('#contacto-'+window.id_dinamico+' .nombre1_contacto').val());
                     $('#nombre_2').val($('#contacto-'+window.id_dinamico+' .nombre2_contacto').val());
@@ -743,6 +765,19 @@ $(function () {
                     $('#estado_c').trigger('change');
                     $('#direccion_c').val($('#contacto-'+window.id_dinamico+' .direccion_contacto').val());
                 });
+
+                $('#contacto-'+window.id_dinamico+' .eliminar-contacto').click(function (e) {
+                    e.preventDefault();
+                    let id_registro_contc = $(this).attr('data-id-contacto');
+
+                    // SI TIENE ALGUN CODIGO DE REGISTRO SE PROCEDE A GUARDAR EN UN ARREGLO PARA ELIMINARLO DEFINITIVO DE LA BD.
+                    if ($('#contacto-'+id_registro_contc+' .codigo_registro').val() != 0) { window.eliminar_contactos.push($('#contacto-'+id_registro_contc+' .codigo_registro').val()); }
+                    // SE REMUEVE EL COMPONENTE CON LOS DATOS DE LA ASIGNATURA DE LA VISTA.
+                    $('#contacto-'+id_registro_contc).remove();
+
+                    // SI EL CONTENEDOR QUEDA EN BLANDO VUELVA A MOSTRAR EL MENSAJE POR DEFECTO.
+                    if ($('#contenedor-personas-contacto').html() == '') { $('#contenedor-personas-contacto').html(mensaje_contato); }
+                });
             }
 
             // AGREGAMOS LOS DATOS DEL FORMULARIO A LAS TARJETAS DE CONTACTO
@@ -751,7 +786,10 @@ $(function () {
                 for (let i in dataCargos) { if ($('#cargo_contacto').val() == dataCargos[i].codigo) { nombre_cargo_content = dataCargos[i].nombre; } }
     
                 $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val($('#nacionalidad').val());
+                $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto2').val($('#nacionalidad2').val());
                 $('#contacto-'+window.id_dinamico+' .cedula_contacto').val($('#cedula').val());
+                $('#contacto-'+window.id_dinamico+' .cedula_contacto2').val($('#cedula2').val());
+
                 $('#contacto-'+window.id_dinamico+' .nombre1_contacto').val($('#nombre_1').val());
                 $('#contacto-'+window.id_dinamico+' .nombre2_contacto').val($('#nombre_2').val());
                 $('#contacto-'+window.id_dinamico+' .apellido1_contacto').val($('#apellido_1').val());
@@ -1057,7 +1095,6 @@ $(function () {
                                             $('#modal-aceptar-contacto').modal({backdrop: 'static', keyboard: false})
                                         } else {
                                             validarCedula = true;
-                                            window.registrar_cont = 'si';
                                             $('#spinner-cedula-confirm').addClass('fa-check text-success');
                                         }
                                         $('#spinner-cedula-confirm').show(200);
@@ -1116,13 +1153,16 @@ $(function () {
         }
     });
     $('#btn-agregar-persona').click(function () {
-        validarCedula = true;
         $('#spinner-cedula-confirm').addClass('fa-check text-success');
+        validarCedula = true;
 
+        window.validarCargo = false;
         window.nacionalidad = window.dataConfirmar.nacionalidad;
         window.cedula = window.dataConfirmar.cedula;
         $('#nacionalidad').val(window.dataConfirmar.nacionalidad);
+        $('#nacionalidad2').val(window.dataConfirmar.nacionalidad);
         $('#cedula').val(window.dataConfirmar.cedula);
+        $('#cedula2').val(window.dataConfirmar.cedula);
         $('#nombre_1').val(window.dataConfirmar.nombre1);
         $('#nombre_2').val(window.dataConfirmar.nombre2);
         $('#apellido_1').val(window.dataConfirmar.apellido1);
@@ -1137,14 +1177,16 @@ $(function () {
         $('#direccion_c').val(window.dataConfirmar.direccion);
     });
     $('#btn-rechazar-persona').click(function () {
-        validarCedula = false;
         $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+        validarCedula = false;
     });
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES EXTRAS DE LOS CAMPOS.
     $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
+    $('#pills-datos-contacto-tab').click(function () { setTimeout(() => { $('#contenedor-personas-contacto').scrollTop(0); }, 280); });
+
     $('#estado').change(buscarCiudades);
     $('#loader-ciudad-reload').click(function () { $('#estado').trigger('change'); });
     $('#estado_c').change(buscarCiudades);
@@ -1185,6 +1227,7 @@ $(function () {
                             $("#ciudad_c").val(window.valor_ciudad_c);
                             delete window.valor_ciudad_c;
                             validar_persona_contacto();
+                            window.validarCargo = true;
 
                             $('#carga_espera_2').hide(400);
                         }
@@ -1255,6 +1298,7 @@ $(function () {
         window.agregarContacto      = true;
         window.agregarDatosContacto = false;
         vd_cargo_contacto_v         = true;
+        window.eliminar_contactos = [];
 
         $('#rif').val(dataListado.resultados[posicion].rif);
         $('#rif').trigger('blur');
@@ -1277,8 +1321,12 @@ $(function () {
             let nombre_cargo_content = '';
             for (let h in dataCargos) { if (arreglo_contactos[i].codigo_cargo == dataCargos[h].codigo) { nombre_cargo_content = dataCargos[h].nombre; } }
 
+            $('#contacto-'+window.id_dinamico+' .codigo_registro').val(arreglo_contactos[i].numero);
             $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto').val(arreglo_contactos[i].nacionalidad);
+            $('#contacto-'+window.id_dinamico+' .nacionalidad_contacto2').val(arreglo_contactos[i].nacionalidad);
             $('#contacto-'+window.id_dinamico+' .cedula_contacto').val(arreglo_contactos[i].cedula);
+            $('#contacto-'+window.id_dinamico+' .cedula_contacto2').val(arreglo_contactos[i].cedula);
+
             $('#contacto-'+window.id_dinamico+' .nombre1_contacto').val(arreglo_contactos[i].nombre1);
             $('#contacto-'+window.id_dinamico+' .nombre2_contacto').val(arreglo_contactos[i].nombre2);
             $('#contacto-'+window.id_dinamico+' .apellido1_contacto').val(arreglo_contactos[i].apellido1);
@@ -1292,6 +1340,7 @@ $(function () {
             $('#contacto-'+window.id_dinamico+' .ciudad_contacto').val(arreglo_contactos[i].codigo_ciudad);
             $('#contacto-'+window.id_dinamico+' .direccion_contacto').val(arreglo_contactos[i].direccion);
         }
+        verificarParte2();
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar-datos').click(function (e) {
@@ -1300,10 +1349,11 @@ $(function () {
         verificarParte2();
 
         // SE VERIFICA QUE TODOS LOS CAMPOS ESTEN DEFINIDOS CORRECTAMENTE.
-        if (validarRif && validarCedula && tarjeta_1) {
+        if (validarRif && tarjeta_1 && tarjeta_2) {
             let data = $("#formulario").serializeArray();
             data.push({ name: 'opcion',         value: tipoEnvio });
             data.push({ name: 'rif2',           value: window.rif });
+            data.push({ name: 'eliminar_contactos', value: JSON.stringify(window.eliminar_contactos) });
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('.botones_formulario').attr('disabled', true);
