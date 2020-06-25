@@ -1,22 +1,17 @@
 $(function ()
 {
 	$('#usuario').click(ocultarMensaje); // SI HAY UN MENSAJE DE ERROR Y SE LE DA CLICK AL CAMPO, EL MENSAJE SE ESCONDE.
-	$("#confirmar_usuario").click(function() // CUANDO LE DE CLICK AL BOTON BUSCAR USUARIO.
-	{
-		if ($("#usuario").val() != "") // SE VERIFICA QUE EL CAMPO NO ESTE VACIO.
-		{
+	$("#confirmar_usuario").click(function() {
+		if ($("#usuario").val() != "") {
 			// REALIZAMOS LA CONSULTA ATRAVES DE AJAX
 			$.ajax({
 				url: "controllers/c_restablecer.php",
 				type: "POST",
-				data:
-				{
+				data: {
 					opcion	: 'Confirmar usuario',
 					usuario : $("#usuario").val()
 				},
-				// SI LA CONSULTA FUE EXISTOSA PROCEDE A MOSTRAR LOS DATOS.
-				success: function (respuesta)
-				{
+				success: function (respuesta) {
 					// SI NO EXISTE EL USUARIO SE MUESTRA UN MENSAJE DE ERROR.
 					if (respuesta == 'No existe')
 					{
@@ -47,9 +42,7 @@ $(function ()
 						}
 					}
 				},
-				// SI HUBO UN ERROR, MOSTRAMOS UN MENSAJE DE ERROR.
-				error: function ()
-				{
+				error: function () {
 					swal({
 						title	: 'Error de conexión',
 						text	: 'No se pudo hacer la consulta, revise su conexión he intente nuevamente.',
@@ -69,8 +62,7 @@ $(function ()
 	});
 
 	$('#respuesta').click(ocultarMensaje); // SI HAY UN MENSAJE DE ERROR Y SE LE DA CLICK AL CAMPO, EL MENSAJE SE ESCONDE.
-	$("#comprobar_pregunta").click(function()
-	{
+	$("#comprobar_pregunta").click(function() {
 		if ($("#respuesta").val() != "") // SE VERIFICA QUE EL CAMPO NO ESTE VACIO.
 		{
 			// REALIZAMOS LA CONSULTA ATRAVES DE AJAX

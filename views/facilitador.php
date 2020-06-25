@@ -299,32 +299,6 @@
                                             <span class="d-inline-block w-100 position-relative small mb-2">Grado de instrucción<i class="fas fa-asterisk text-danger position-absolute required"></i></span>
                                             
                                             <div>
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_1" name="grado_instruccion" class="custom-control-input radio_educacion" value="BI">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_1">Educ. básica incompleta</label>
-                                                </div>
-
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_2" name="grado_instruccion" class="custom-control-input radio_educacion" value="BC">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_2">Educ. básica completa</label>
-                                                </div>
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_3" name="grado_instruccion" class="custom-control-input radio_educacion" value="MI">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_3">Educ. media diversificada incompleta</label>
-                                                </div>
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_4" name="grado_instruccion" class="custom-control-input radio_educacion" value="MC">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_4">Educ. media diversificada completa</label>
-                                                </div>
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_5" name="grado_instruccion" class="custom-control-input radio_educacion" value="SI">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_5">Educ. superior incompleta</label>
-                                                </div>
-                                                <div class="custom-control custom-radio d-inline-block" style="width: calc(50% - 5px);">
-                                                    <input type="radio" id="grado_instruccion_6" name="grado_instruccion" class="custom-control-input radio_educacion" value="SC">
-                                                    <label class="custom-control-label radio_educacion_label v_radio" for="grado_instruccion_6">Educ. superior completa</label>
-                                                </div>
-
                                                 <div class="form-group form-row align-items-center mt-2 mb-0">
                                                     <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
                                                     <div class="col-sm-8">

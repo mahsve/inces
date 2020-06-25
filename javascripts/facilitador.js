@@ -561,29 +561,14 @@ $(function() {
             $('#icon-archivos').show();
         }
     }
+
+    
     //////////////////////// FUNCIONES MANTENER FECHA ////////////////////////
-    $('.input_fecha').click(function () {
-        fechaTemporal = $(this).val();
-    });
-    $('.input_fecha').blur(function () {
-        $(this).val(fechaTemporal);
-    });
-    $('.input_fecha').change(function () {
-        fechaTemporal = $(this).val();
-    });
+    $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
+    $('.input_fecha').blur(function () { $(this).val(fechaTemporal); });
+    $('.input_fecha').change(function () { fechaTemporal = $(this).val(); });
     //////////////////////// FUNCIONES CAMPOS ////////////////////////
-    $('#fecha_n').change(function (){
-        let edad = calcularEdad(fecha, $(this).val());
-        $('#edad').val(edad);
-    });
-    $('.radio_educacion').click(function () {
-        if ($(this).val() == 'SI' || $(this).val() == 'SC')
-            $('#titulo').attr('readonly', false);
-        else {
-            $('#titulo').attr('readonly', true);
-            $('#titulo').val('');
-        }
-    });
+    $('#fecha_n').change(function (){ let edad = calcularEdad(fecha, $(this).val()); $('#edad').val(edad); });
     $('#estado').change(function () {
         if ($(this).val() != '') {
             $.ajax({

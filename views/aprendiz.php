@@ -181,6 +181,7 @@
                             </div>
                         </div>
 
+                    <?php /*>
                         <!-- TITULO -->
                         <div class="col-sm-12 mt-4">
                             <h4 class="font-weight-normal text-secondary text-center text-uppercase">EMPRESA ANTERIOR</h4>    
@@ -254,6 +255,7 @@
                                 <textarea name="direccion_ea" id="direccion_ea" class="campos_formularios3 form-control form-control-sm" placeholder="Dirección de la empresa" style="height: 100px;" readonly="true"></textarea>
                             </div>
                         </div>
+                    */?>
                     </div>
                 </div>
 

@@ -346,6 +346,9 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
     $('#nombre_actividad_economica').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
+    $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
+    $('#pills-datos-contacto-tab').click(function () { setTimeout(() => { $('#contenedor-personas-contacto').scrollTop(0); }, 280); });
+    /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function () {
         $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
@@ -499,6 +502,7 @@ $(function () {
             }, 500);
         }
     });
+    /////////////////////////////////////////////////////////////////////
     // AGREGAR NUEVOS CONTACTOS.
     $('#btn-persona-contacto').click(function (e) {
         e.preventDefault();
@@ -806,6 +810,7 @@ $(function () {
             }
         }
     });
+    /////////////////////////////////////////////////////////////////////
     // REGISTRAR NUEVAS ACTIVIDADES ECONOMICAS
     $('#btn-cargo').click(function (e) {
         e.preventDefault();
@@ -1184,9 +1189,6 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES EXTRAS DE LOS CAMPOS.
-    $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
-    $('#pills-datos-contacto-tab').click(function () { setTimeout(() => { $('#contenedor-personas-contacto').scrollTop(0); }, 280); });
-
     $('#estado').change(buscarCiudades);
     $('#loader-ciudad-reload').click(function () { $('#estado').trigger('change'); });
     $('#estado_c').change(buscarCiudades);
@@ -1370,8 +1372,6 @@ $(function () {
                     type: 'POST',
                     data: data,
                     success: function (resultados) {
-                        console.log(resultados);
-
                         let color_alerta = '';
                         let icono_alerta = '';
 

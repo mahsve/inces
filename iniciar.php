@@ -11,14 +11,7 @@ session_start();
     <link rel="shortcut icon" href="images/app/favicon.png" type="image/png">
     <link rel="stylesheet" href="styles/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="styles/fontawesome/css/all.css">
-    <style>
-        html, body {
-            height: 100%;
-        }
-        body {
-            background: #F1EBEB;
-        }
-    </style>
+    <style> html, body { height: 100%; } body { background: #F1EBEB; } </style>
 </head>
 
 <body>
@@ -67,10 +60,6 @@ session_start();
     <script src="javascripts/jquery/jquery-3.4.1.min.js"></script>
     <script src="javascripts/popper/popper.min.js"></script>
     <script src="javascripts/bootstrap/bootstrap.min.js"></script>
-    <script>
-        setTimeout(() => {
-            $('.alert').hide(100);
-        }, 4500);
-    </script>
+    <script>setTimeout(() => { $('.alert').hide(100); }, 4500);</script>
 </body>
 </html>

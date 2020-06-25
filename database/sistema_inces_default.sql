@@ -2071,4 +2071,4 @@ INSERT INTO `t_datos_personales` (`nacionalidad`, `cedula`, `nombre1`, `nombre2`
 ('V', '00000000', 'Nombre', NULL, 'Apellido', NULL, 'I', '0000-00-00', NULL, NULL, 'I', 'I', NULL, NULL, 1, NULL, 'Dirección', '00000000000', NULL, NULL, 'A', 'A');
 
 INSERT INTO `t_usuario` (`usuario`, `contrasena`, `nacionalidad`, `cedula`, `pregunta_seguridad`, `respuesta_seguridad`, `codigo_rol`, `estatus`) VALUES
-('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 1, 'A');
+('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 1, 'E');

@@ -13,9 +13,6 @@ $(function () {
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
     let colorn = "#ffffff"; // COLOR BLANCO PARA MOSTRAR EL CAMPOS POR DEFECTO SIN ERRORES.
-    let listaPAnio   = ['', '1° semestre del año', '2° semestre del año'];
-    let listaModulos = ['', 'Módulo 1', 'Módulo 2', 'Módulo 3', 'Módulo 4'];
-    let listaSesiones = ['', 'Sesión A', 'Sesión B', 'Sesión C', 'Sesión D'];
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -25,6 +22,9 @@ $(function () {
     let fechaTemporal   = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL DE UN CAMPO CUANDO SEA CLIQUEADO.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
+    let mensaje_asignaturas     = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-hand-pointer"></i> Seleccione un oficio y un módulo</h6>';
+    let mensaje_asignaturas2    = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-file-alt"></i> No hay asignaturas registradas</h6>';
+    let mensaje_secciones       = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-file-alt"></i> Elija el numero de secciones</h6>';
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ $(function () {
     // DATOS DE LA TABLA Y PAGINACION 
     let numeroDeLaPagina    = 1;
     $('#campo_cantidad').change(restablecerN);
-    $('#campo_ordenar').change(restablecerN);
+    $('#campo_ordenar').change(restablecerN);   
     $('#campo_manera_ordenar').change(restablecerN);
     $('#campo_busqueda').keydown(function (e) { if (e.keyCode == 13) { restablecerN(); } else { window.actualizar_busqueda = true; } });
     $('#campo_busqueda').blur(function () { if (window.actualizar_busqueda) { buscar_listado(); } });
@@ -90,44 +90,43 @@ $(function () {
                         let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
                             let estatus_td = '';
-                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
-                            else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span>Inactivo</span></span>'; }
-
-                            // RECORTES NOMBRES
-                            let nombreDescripcion = '';
-                            if      (dataListado.resultados[i].descripcion.length <= 20) { nombreDescripcion = dataListado.resultados[i].descripcion; }
-                            else if (dataListado.resultados[i].descripcion.length > 20) {
-                                nombreDescripcion = dataListado.resultados[i].descripcion.substr(0, 20);
-                                if (nombreDescripcion[nombreDescripcion.length - 1] == ' ') { nombreDescripcion = nombreDescripcion.substr(0, 19) }
-                                nombreDescripcion += '...';
-                            }
-                            //////////////////////////////////////////////////////
-                            let nombreOficio = '';
-                            if      (dataListado.resultados[i].oficio.length <= 20) { nombreOficio = dataListado.resultados[i].oficio; }
-                            else if (dataListado.resultados[i].oficio.length > 20) {
-                                nombreOficio = dataListado.resultados[i].oficio.substr(0, 20);
-                                if (nombreOficio[nombreOficio.length - 1] == ' ') { nombreOficio = nombreOficio.substr(0, 19) }
-                                nombreOficio += '...';
-                            }
+                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-info"><i class="fas fa-book-open"></i> <span>En curso</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'F') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Finalizado</span></span>'; }
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
                             contenido_tabla += '<td class="py-2 px-1 text-right">'+cont+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1" data-toggle="tooltip" data-placement="top" title="'+dataListado.resultados[i].descripcion+'">'+nombreDescripcion+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].anio_modulo+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+listaPAnio[dataListado.resultados[i].parte_anio]+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1" data-toggle="tooltip" data-placement="top" title="'+dataListado.resultados[i].oficio+'">'+nombreOficio+' - '+listaModulos[dataListado.resultados[i].codigo_modulo]+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+listaSesiones[dataListado.resultados[i].codigo_seccion]+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].modulo+' - '+dataListado.resultados[i].oficio+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].fecha_inicio.substr(8, 2)+'-'+dataListado.resultados[i].fecha_inicio.substr(5, 2)+'-'+dataListado.resultados[i].fecha_inicio.substr(0, 4)+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].asignaturas.length+' Asg.</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].horas+' Hrs.</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
                                 contenido_tabla += '<td class="py-1 px-1">';
-                                if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
-                                if (permisos.act_desc == 1) {
-                                    if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
-                                    else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
-                                }
+                                    if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
+                                    // if (permisos.act_desc == 1) {
+                                    //     if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
+                                    //     else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
+                                    // }
+
+                                    // MAS OPCIONES
+                                    contenido_tabla += '<div class="dropdown d-inline-block">';
+                                        contenido_tabla += '<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                                            contenido_tabla += '<i class="fas fa-ellipsis-v px-1"></i>';
+                                        contenido_tabla += '</button>';
+
+                                        if (permisos.act_desc == 1) {
+                                            contenido_tabla += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
+                                            
+                                            if (dataListado.resultados[i].estatus == 'A') {
+                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Finalizar y registrar nuevo</span></a></li>';
+                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Eliminar curso</span></a></li>';
+                                            }
+                                            contenido_tabla += '</div>';
+                                        }
+                                    contenido_tabla += '</div>';
                                 contenido_tabla += '</td>';
                             }
                             ////////////////////////////////////////////////////////
@@ -209,40 +208,15 @@ $(function () {
     ////////////////////////// VALIDACIONES /////////////////////////////
     function verificarParte1 () {
         tarjeta_1 = true;
-
-        // VERIFICAR EL CAMPO DEL NOMBRE DEL MODULO.
-        let descripcion = $("#descripcion").val();
-        if (descripcion != "") {
-            if (descripcion.match(validar_caracteresEspeciales2)) {
-                $("#descripcion").css("background-color", colorb);
-            } else {
-                $("#descripcion").css("background-color", colorm);
-                tarjeta_1 = false;
-            }
+        // VERIFICAR EL CAMPO LA FECHA DE REGISTRO
+        let fecha = $("#fecha").val();
+        if (fecha != "") {
+            $("#fecha").css("background-color", colorb);
         } else {
-            $("#descripcion").css("background-color", colorm);
+            $("#fecha").css("background-color", colorm);
             tarjeta_1 = false;
         }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
-        let anio_modulo = $("#anio_modulo").val();
-        if (anio_modulo != "") {
-            $("#anio_modulo").css("background-color", colorb);
-        } else {
-            $("#anio_modulo").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
-        let p_anio_modulo = $("#p_anio_modulo").val();
-        if (p_anio_modulo != "") {
-            $("#p_anio_modulo").css("background-color", colorb);
-        } else {
-            $("#p_anio_modulo").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
+        // VERIFICAR EL CAMPO DE OFICIO
         let oficio = $("#oficio").val();
         if (oficio != "") {
             $("#oficio").css("background-color", colorb);
@@ -250,8 +224,7 @@ $(function () {
             $("#oficio").css("background-color", colorm);
             tarjeta_1 = false;
         }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
+        // VERIFICAR EL CAMPO DE MODULO PERTENECIENTE AL OFICIO
         let modulo = $("#modulo").val();
         if (modulo != "") {
             $("#modulo").css("background-color", colorb);
@@ -259,30 +232,31 @@ $(function () {
             $("#modulo").css("background-color", colorm);
             tarjeta_1 = false;
         }
-
-        // VERIFICAR EL CAMPO OFICIO AL QUE PERTENECE EL MODULO.
-        let sesion = $("#sesion").val();
-        if (sesion != "") {
-            $("#sesion").css("background-color", colorb);
+        // VERIFICAR EL CAMPOS DE SECCIONES (AL MENOS 1 SECCION)
+        let cant_seccion = $("#cant_seccion").val();
+        if (cant_seccion != "") {
+            $("#cant_seccion").css("background-color", colorb);
         } else {
-            $("#sesion").css("background-color", colorm);
+            $("#cant_seccion").css("background-color", colorm);
             tarjeta_1 = false;
         }
-        
-        // VERIFICAMOS QUE HAYAS ASIGNATURAS CARGADAS.
-        if ($('.campo_asignatura').length > 0) {
-            // REALIZAMOS UN CONTADOR PARA VERIFICAR CUANTAS ESTAN MARCADAS.
-            let total_checked = 0;
-            // RECORREMOS CADA UNOS DE LOS CHECKBOX.
-            $('.campo_asignatura').each(function () { if ($(this).prop('checked')) { total_checked++ } });
-            // SI NO HAY NINGUNO SELECCIONADO NO PERMITE GUARDAR.
-            if (total_checked == 0) { tarjeta_1 = false;}
-        } else {
+        // VERIFICAR QUE HAYA ASIGNATURAS REGISTRADAS
+        if ($('.codigo_registro').length == 0) {
             tarjeta_1 = false;
+        }
+        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
+        if (tarjeta_1) {
+            $('#icon-modulo').hide();
+        } else {
+            $('#icon-modulo').show();
         }
     }
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
+    $('.input_fecha').datepicker({ language: 'es' });
+    $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
+    $('.input_fecha').blur(function () { $(this).val(fechaTemporal); });
+    $('.input_fecha').change(function () { fechaTemporal = $(this).val(); });
     $('#nombre').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
     $('#show_form').click(function () {
         $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
@@ -293,8 +267,9 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Registrar';
         window.codigo   = '';
-        window.eliminarAsignaturas= [];
-        $('#oficio').trigger('change');
+        $('#fecha').val(fecha);
+        $('#contenedor_asignaturas').html(mensaje_asignaturas);
+        $('#lista_secciones').html(mensaje_secciones);
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
@@ -304,11 +279,80 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES EXTRAS SELECT.
-    $('#oficio').change(buscarAsignaturas);
-    $('#modulo').change(function () { $('#oficio').trigger('change'); });
-    $('#loader-asignaturas-reload').click(function () { $('#oficio').trigger('change'); });
+    // CONSULTAR MODULOS
+    $('#oficio').change(buscarModulos);
+    $('#loader-modulo-reload').click(function () { $('#oficio').trigger('change'); });
+    function buscarModulos () {
+        if ($('#oficio').val() != "") {
+            $('#loader-modulo').show();
+            $('#loader-modulo-reload').hide();
+
+            setTimeout(() => {
+                $.ajax({
+                    url: url + "controllers/c_modulo_curso.php",
+                    type: "POST",
+                    dataType: 'JSON',
+                    data: {
+                        opcion: "Traer módulos",
+                        oficio: $('#oficio').val()
+                    },
+                    success: function (resultados) {
+                        $('#loader-modulo').hide();
+
+                        let dataModulos = resultados.modulos;
+                        if (dataModulos) {
+                            $("#modulo").html('<option value="">Elija una opción</option>');
+                            for (let i in dataModulos) {
+                                $("#modulo").append('<option value="'+dataModulos[i].codigo +'">'+dataModulos[i].nombre+"</option>");
+                            }
+                        } else {
+                            $("#modulo").html('<option value="">No hay ciudades</option>');
+                        }
+
+                        // // CIUDAD EMPRESA, SI EXISTE UN VALOR GUARDADO SE AGREGA AL CAMPO Y SE ELIMINA LA VARIABLE
+                        // if (window.valor_modulos != undefined) {
+                        //     $("#modulo").val(window.valor_modulos);
+                        //     delete window.valor_modulos;
+                        //     // verificarParte1();
+
+                        //     $('#carga_espera').hide(400);
+                        // }
+                    },
+                    error: function (errorConsulta) {
+                        // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
+                        $('#loader-modulo').hide();
+                        $('#loader-modulo-reload').show();
+
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje2').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                        
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        } else {
+            $('#modulo').html('<option value="">Elija un oficio</option>');
+            $('#contenedor_asignaturas').html(mensaje_asignaturas);
+        }
+    }
+    // CONSULTAR ASIGNATURAS
+    $('#modulo').change(buscarAsignaturas);
+    $('#loader-asignaturas-reload').click(function () { $('#modulo').trigger('change'); });
     function buscarAsignaturas () {
-        if ($('#oficio').val() != "" && $('#modulo').val() != '') {
+        if ($('#modulo').val() != '') {
             $('#loader-asignaturas').show();
             $('#loader-asignaturas-reload').hide();
 
@@ -319,7 +363,6 @@ $(function () {
                     dataType: 'JSON',
                     data: {
                         opcion: "Traer asignaturas",
-                        oficio: $('#oficio').val(),
                         modulo: $('#modulo').val()
                     },
                     success: function (resultados) {
@@ -329,62 +372,31 @@ $(function () {
                         let dataAsignaturas = resultados.asignaturas;
                         if (dataAsignaturas) {
                             $('#contenedor_asignaturas').empty();
-
                             for (let i in dataAsignaturas) {
-                                let contenido_asig = '';
-                                contenido_asig += '<div class="d-flex align-items-center rounded w-100 p-1 mb-1 text-secondary font-weight-bold contenedor_select_asignatura">';
-                                    contenido_asig += '<div style="width: 25px;" class="custom-control custom-checkbox mr-sm-2">';
-                                        contenido_asig += '<input type="hidden" name="id_campo_asignatura[]" id="id-'+dataAsignaturas[i].codigo+'" class="custom-control-input id_campo_asignatura" value="0">';
-                                        contenido_asig += '<input type="checkbox" name="campo_asignatura[]" id="'+dataAsignaturas[i].codigo+'" class="custom-control-input campo_asignatura" value="'+dataAsignaturas[i].codigo+'" data-id="'+dataAsignaturas[i].codigo+'">';
-                                        contenido_asig += '<label class="custom-control-label" for="'+dataAsignaturas[i].codigo+'" data-id="'+dataAsignaturas[i].codigo+'"></label>';
-                                    contenido_asig += '</div>';
-                                    
-                                    contenido_asig += '<div style="width: calc(100% - 25px);" class="d-flex align-items-center seleccionar_asignatura" data-id="'+dataAsignaturas[i].codigo+'">';
-                                        contenido_asig += '<span style="width: 120px;">'+dataAsignaturas[i].codigo+'</span>';
-                                        contenido_asig += '<span style="width: calc(100% - 120px);">'+dataAsignaturas[i].nombre+'</span>';
-                                    contenido_asig += '</div>';
-                                contenido_asig += '</div>';
-                                $('#contenedor_asignaturas').append(contenido_asig);
+                                window.id_asignatura = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                                let nombre_asignatura = dataAsignaturas[i].nombre;
+            
+                                // VERIFICAMOS QUE NO SOBREPASE LOS 35 CARACTERES Y SI ES ASI LO RECORTAMOS.
+                                if (dataAsignaturas[i].nombre.length > 35) {
+                                    nombre_asignatura = dataAsignaturas[i].nombre.substr(0, 35);
+                                    if (nombre_asignatura[nombre_asignatura.length - 1] == ' ') { nombre_asignatura = dataAsignaturas[i].nombre.substr(0, 34); }
+                                    nombre_asignatura += '...';
+                                }
+
+                                let contenedor_asignatura = '';
+                                contenedor_asignatura += '<div id="asignatura-'+window.id_asignatura+'" class="bg-info text-white rounded d-flex align-items-center justify-content-between w-100 my-1 px-2 py-1">';
+                                    contenedor_asignatura += '<input type="hidden" name="codigo_registro[]" class="codigo_registro" value="0">';
+                                    contenedor_asignatura += '<input type="hidden" name="codigo_asignatura[]" class="codigo_asignatura" value="'+dataAsignaturas[i].codigo+'">';
+                                    contenedor_asignatura += '<input type="hidden" name="horas_asignaturas[]" class="horas_asignaturas" value="'+dataAsignaturas[i].horas+'">';
+                                    contenedor_asignatura += '<span class="nombre_asignatura" data-toggle="tooltip" data-placement="right" title="'+dataAsignaturas[i].nombre+'">'+nombre_asignatura+' | Horas: '+dataAsignaturas[i].horas+'</span>';
+
+                                    contenedor_asignatura += '<div></div>';
+                                contenedor_asignatura += '</div>';
+                                $('#contenedor_asignaturas').append(contenedor_asignatura);
+                                $('#asignatura-'+window.id_asignatura+' .nombre_asignatura').tooltip();
                             }
-
-                            // CUANDO DESMARQUE ALGUNA ASIGNATURA, TOMARA EL ID DE REGISTRO Y LO GUARDARA EN UN ARREGLO PARA SU POSTERIOR ELIMINACION
-                            $('.campo_asignatura').click(function () {
-                                let data_id = $(this).attr('data-id');
-                                if ($('#id-'+data_id).val() != 0) {
-                                    var i = window.eliminarAsignaturas.indexOf($('#id-'+data_id).val());
-                                    if      (i !== -1) { window.eliminarAsignaturas.splice(i, 1); }
-                                    else if (i === -1) { window.eliminarAsignaturas.push($('#id-'+data_id).val()); }
-                                }
-                            });
-
-                            $('.seleccionar_asignatura').click(function () {
-                                let data_id = $(this).attr('data-id');
-                                if      ($('#'+data_id).prop('checked')) { $('#'+data_id).prop('checked', false); }
-                                else    { $('#'+data_id).prop('checked', true); }
-
-                                // CUANDO DESMARQUE ALGUNA ASIGNATURA, TOMARA EL ID DE REGISTRO Y LO GUARDARA EN UN ARREGLO PARA SU POSTERIOR ELIMINACION
-                                if ($('#id-'+data_id).val() != 0) {
-                                    var i = window.eliminarAsignaturas.indexOf($('#id-'+data_id).val());
-                                    if      (i !== -1) { window.eliminarAsignaturas.splice(i, 1); }
-                                    else if (i === -1) { window.eliminarAsignaturas.push($('#id-'+data_id).val()); }
-                                }
-                            });
                         } else {
-                            let contenido_asig = '';
-                            contenido_asig += '<div class="d-flex justify-content-center align-items-center h-100">';
-                            contenido_asig += '<h5 class="font-weight-normal text-secondary text-center text-uppercase"><i class="fas fa-file-alt"></i> No hay asignaturas registradas</h5>';
-                            contenido_asig += '</div>';
-                            $('#contenedor_asignaturas').html(contenido_asig);
-                        }
-
-                        // CIUDAD, SI EXISTE UN VALOR GUARDADO SE AGREGA AL CAMPO Y SE ELIMINA LA VARIABLE
-                        if (window.asignaturas != undefined) {
-                            for (let i in window.asignaturas) {
-                                $('#id-'+window.asignaturas[i].codigo_asignatura).val(window.asignaturas[i].codigo);
-                                $('#'+window.asignaturas[i].codigo_asignatura).prop('checked', true);
-                            }
-                            delete window.asignaturas;
-                            verificarParte1();
+                            $('#contenedor_asignaturas').html(mensaje_asignaturas2);
                         }
                     },
                     error: function (errorConsulta) {
@@ -416,14 +428,78 @@ $(function () {
         } else {
             $('#loader-asignaturas').hide();
             $('#loader-asignaturas-reload').hide();
-
-            let contenido_asig = '';
-            contenido_asig += '<div class="d-flex justify-content-center align-items-center h-100">';
-            contenido_asig += '<h5 class="font-weight-normal text-secondary text-center text-uppercase"><i class="fas fa-hand-pointer"></i> Seleccione un oficio y un módulo</h5>';
-            contenido_asig += '</div>';
-            $('#contenedor_asignaturas').html(contenido_asig);
+            $('#contenedor_asignaturas').html(mensaje_asignaturas);
         }
     }
+    // HABILITAR SECCIONES SELECCIONADAS
+    $('#cant_seccion').change(function () {
+        let secciones   = $('#cant_seccion').val();
+        let secciones_h = $('.aprendices_seccion_m').length;
+        if (secciones != '') {
+            secciones   = parseInt($('#cant_seccion').val());
+
+            // SI NO HAY NINGUNA SECCION AGREGADA LA ELIMINA EL CONTENIDO POR DEFAULT
+            if ($('#lista_secciones').html() == mensaje_secciones) { $('#lista_secciones').empty(); }
+            if (secciones < secciones_h) {
+                // ELIMINAR LAS SECCIONES SOBRANTES
+                for (let i = secciones; i < secciones_h; i++) {
+                    $($('.aprendices_seccion_m')[$('.aprendices_seccion_m').length - 1]).remove();
+                    $($('.aprendices_seccion_v')[$('.aprendices_seccion_v').length - 1]).remove();
+                }
+            } else if (secciones > secciones_h) {
+                // AGREGAR NUEVAS SECCIONES AL MODULO
+                for (let i = secciones_h; i < secciones; i++) {
+                    let contenido_seccion = '';
+                    // SECCION MATUTINA
+                    contenido_seccion += '<div id="seccion_m'+(i + 1)+'" class="aprendices_seccion_m mb-2">';
+                        contenido_seccion += '<h5 class="font-weight-normal text-secondary text-center text-uppercase">Sección '+(i + 1)+' - Turno: matutino</h5>';
+                    
+                        contenido_seccion += '<div class="border rounded bg-white overflow-auto p-3"  style="max-height: 300px;">';
+                            contenido_seccion += '<table class="table table-borderless table-hover mb-0" style="min-width: 600px;">';
+                                contenido_seccion += '<thead>';
+                                    contenido_seccion += '<tr class="text-white">';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">Cédula</th>';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-right">Empresa</th>';
+                                    contenido_seccion += '</tr>';
+                                contenido_seccion += '</thead>';
+    
+                                contenido_seccion += '<tbody>';
+                                    contenido_seccion += '<tr class="border-bottom text-secondary"><td colspan="3" class="text-center p-2"><i class="fas fa-file-alt"></i><span style="font-weight: 500;"> Todavía no hay aprendices registrados.</span></td></tr>';
+                                contenido_seccion += '</tbody>';
+                            contenido_seccion += '</table>';
+                        contenido_seccion += '</div>';
+                    contenido_seccion += '</div>';
+                    // FIN SECCION MATUTINA
+    
+                    // SECCION VESPERTINA
+                    contenido_seccion += '<div id="seccion_v'+(i + 1)+'" class="aprendices_seccion_v mb-4">';
+                        contenido_seccion += '<h5 class="font-weight-normal text-secondary text-center text-uppercase">Sección '+(i + 1)+' - Turno: vespertino</h5>';
+                    
+                        contenido_seccion += '<div class="border rounded bg-white overflow-auto p-3"  style="max-height: 300px;">';
+                            contenido_seccion += '<table class="table table-borderless table-hover mb-0" style="min-width: 600px;">';
+                                contenido_seccion += '<thead>';
+                                    contenido_seccion += '<tr class="text-white">';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">Cédula</th>';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>';
+                                        contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-right">Empresa</th>';
+                                    contenido_seccion += '</tr>';
+                                contenido_seccion += '</thead>';
+    
+                                contenido_seccion += '<tbody>';
+                                    contenido_seccion += '<tr class="border-bottom text-secondary"><td colspan="3" class="text-center p-2"><i class="fas fa-file-alt"></i><span style="font-weight: 500;"> Todavía no hay aprendices registrados.</span></td></tr>';
+                                contenido_seccion += '</tbody>';
+                            contenido_seccion += '</table>';
+                        contenido_seccion += '</div>';
+                    contenido_seccion += '</div>';
+                    // FIN SECCION VESPERTINA
+                    $('#lista_secciones').append(contenido_seccion);
+                }
+            }
+        } else {
+            $('#lista_secciones').html(mensaje_secciones);
+        }
+    });
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
 
@@ -675,6 +751,8 @@ $(function () {
             dataType: 'JSON',
             data: { opcion: "Traer datos" },
             success: function (resultados) {
+                fecha = resultados.fecha;
+
                 let dataOficios = resultados.oficios;
                 if (dataOficios) {
                     for (let i in dataOficios) {

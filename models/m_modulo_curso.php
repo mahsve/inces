@@ -20,6 +20,9 @@ class model_modulo_curso extends conexion {
         mysqli_close($this->data_conexion);
     }
 
+
+    //////////////////////////////////////////////////////////
+    ///////////////// INFORMACION FORMULARIO /////////////////
     // FUNCION PARA CONSULTAR LOS OFICIOS ESPECIFICOS
     public function consultarOficios () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -31,13 +34,55 @@ class model_modulo_curso extends conexion {
         return $resultado;
     }
 
+    // FUNCION PARA CONSULTAR LOS MODULOS DEL OFICIOS SELECCIONADO
+    public function consultarModulos ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+
+        $sentencia = "SELECT t_modulo.*
+            FROM t_oficio_modulo
+            INNER JOIN t_modulo ON t_oficio_modulo.codigo_modulo = t_modulo.codigo
+            WHERE t_oficio_modulo.codigo_oficio='".$datos['oficio']."'
+            AND t_modulo.estatus='A'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+            $resultado[] = $columna;
+        }
+
+		$sentencia = "SELECT *
+            FROM t_modulo
+            WHERE codigo_oficio='".$datos['oficio']."'
+            AND estatus='A'
+        "; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
+        }
+
+        // SE PROCEDE A ORDENAR POR POSICION
+        $n; $i; $k; $aux;
+        $n = count($resultado);
+        for ($k = 1; $k < $n; $k++) {
+            for ($i = 0; $i < ($n - $k); $i++) {
+                if ($resultado[$i]['orden'] > $resultado[$i + 1]['orden']) {
+                    $aux = $resultado[$i];
+                    $resultado[$i] = $resultado[$i + 1];
+                    $resultado[$i + 1] = $aux;
+                }
+            }
+        }
+        
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
     // FUNCION PARA CONSULTAR LOS OFICIOS ESPECIFICOS
     public function consultarAsignaturas ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
-            FROM t_asignatura
-            WHERE codigo_oficio='".$datos['oficio']."'
-            AND codigo_modulo='".$datos['modulo']."'
+            FROM t_modulo_asig
+            INNER JOIN t_asignatura ON t_modulo_asig.codigo_asignatura = t_asignatura.codigo
+            WHERE t_modulo_asig.codigo_modulo='".$datos['modulo']."'
+            AND estatus='A'
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) {
@@ -45,17 +90,20 @@ class model_modulo_curso extends conexion {
         }
         return $resultado;
     }
+    /////////////// FIN INFORMACION FORMULARIO ///////////////
+    //////////////////////////////////////////////////////////
 
+    
+    //////////////////////////////////////////////////////////
+    //////////////////// NUEVO REGISTROS /////////////////////
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT *
             FROM td_modulo
-            WHERE anio_modulo='".htmlspecialchars($datos["anio_modulo"])."'
-            AND parte_anio='".htmlspecialchars($datos["p_anio_modulo"])."'
-            AND codigo_oficio='".htmlspecialchars($datos["oficio"])."'
+            WHERE codigo_oficio='".htmlspecialchars($datos["oficio"])."'
             AND codigo_modulo='".htmlspecialchars($datos["modulo"])."'
-            AND codigo_seccion='".htmlspecialchars($datos["sesion"])."'
+            AND estatus='A'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
             $resultado = mysqli_num_rows($consulta);
@@ -67,19 +115,15 @@ class model_modulo_curso extends conexion {
     public function registrarModuloCurso ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO td_modulo (
-            descripcion,
-            anio_modulo,
-            parte_anio,
+            fecha_inicio,
             codigo_oficio,
             codigo_modulo,
-            codigo_seccion
+            n_seccion
         ) VALUES (
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos["descripcion"])))."',
-            '".htmlspecialchars($datos['anio_modulo'])."',
-            '".htmlspecialchars($datos['p_anio_modulo'])."',
+            '".htmlspecialchars($datos['fecha'])."',
             '".htmlspecialchars($datos['oficio'])."',
             '".htmlspecialchars($datos['modulo'])."',
-            '".htmlspecialchars($datos['sesion'])."'
+            '".htmlspecialchars($datos['cant_seccion'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -93,10 +137,16 @@ class model_modulo_curso extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO td_asignatura (
             codigo_modulo,
-            codigo_asignatura
+            codigo_asignatura,
+            horas,
+            seccion,
+            turno
         ) VALUES (
             '".htmlspecialchars($datos['modulo'])."',
-            '".htmlspecialchars($datos['asignatura'])."'
+            '".htmlspecialchars($datos['asignatura'])."',
+            '".htmlspecialchars($datos['horas'])."',
+            '".htmlspecialchars($datos['seccion'])."',
+            '".htmlspecialchars($datos['turno'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -104,29 +154,49 @@ class model_modulo_curso extends conexion {
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
+    ////////////////// FIN NUEVO REGISTROS ///////////////////
+    //////////////////////////////////////////////////////////
 
+
+    //////////////////////////////////////////////////////////
+    ////////////////// CONSULTAR REGISTROS ///////////////////
     // FUNCION PARA CONSULTAR TODOS LOS ASIGNATURAS REGISTRADOS
     public function consultarModulosCursos ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT td_modulo.*, t_oficio.nombre AS oficio
+        $sentencia = "SELECT
+                td_modulo.*,
+                (
+                    SELECT SUM(horas)
+                    FROM td_asignatura
+                    WHERE td_modulo.codigo = td_asignatura.codigo_modulo
+                    AND seccion=1
+                    AND turno='M'
+                ) AS horas,
+                t_oficio.nombre AS oficio,
+                t_modulo.codigo AS codigo_modulo,
+                t_modulo.nombre AS modulo
             FROM td_modulo
             INNER JOIN t_oficio ON td_modulo.codigo_oficio = t_oficio.codigo
-            WHERE td_modulo.descripcion LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
-            AND td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
+            INNER JOIN t_modulo ON td_modulo.codigo_modulo = t_modulo.codigo
+            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
             ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
             LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) {
-            $columna['detalles_asignaturas'] = [];
+            $columna['asignaturas'] = [];
 
-            $sentencia2 = "SELECT *
+            // CONSULTAMOS LAS ASIGNATURAS
+            $sentencia = "SELECT td_asignatura.*, t_asignatura.nombre
                 FROM td_asignatura
-                WHERE codigo_modulo='".$columna['codigo']."'
+                INNER JOIN t_asignatura ON td_asignatura.codigo_asignatura = t_asignatura.codigo
+                WHERE td_asignatura.codigo_modulo='".$columna['codigo']."'
+                AND seccion=1
+                AND turno='M'
             "; // SENTENTCIA
-            $consulta2 = mysqli_query($this->data_conexion, $sentencia2); // REALIZAMOS LA CONSULTA.
+            $consulta2 = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
             while ($columna2 = mysqli_fetch_assoc($consulta2)) {
-                $columna['detalles_asignaturas'][] = $columna2;
+                $columna['asignaturas'][] = $columna2;
             }
 
             $resultado[] = $columna;
@@ -137,18 +207,33 @@ class model_modulo_curso extends conexion {
     // FUNCION PARA CONSULTAR EL NUMERO DE ASIGNATURAS REGISTRADOS EN TOTAL
     public function consultarModulosCursosTotal ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT td_modulo.*, t_oficio.nombre AS oficio
+        $sentencia = "SELECT
+                td_modulo.*,
+                (
+                    SELECT SUM(horas)
+                    FROM td_asignatura
+                    WHERE td_modulo.codigo = td_asignatura.codigo_modulo
+                    AND seccion=1
+                    AND turno='M'
+                ) AS horas,
+                t_oficio.nombre AS oficio,
+                t_modulo.codigo AS codigo_modulo,
+                t_modulo.nombre AS modulo
             FROM td_modulo
             INNER JOIN t_oficio ON td_modulo.codigo_oficio = t_oficio.codigo
-            WHERE td_modulo.descripcion LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
-            AND td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
+            INNER JOIN t_modulo ON td_modulo.codigo_modulo = t_modulo.codigo
+            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
             $resultado = mysqli_num_rows($consulta);
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////// FIN CONSULTAR REGISTROS /////////////////
+    //////////////////////////////////////////////////////////
 
+    //////////////////////////////////////////////////////////
+    ////////////////// MODIFICAR REGISTROS ///////////////////
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaM ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -193,6 +278,9 @@ class model_modulo_curso extends conexion {
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////// FIN MODIFICAR REGISTROS /////////////////
+    //////////////////////////////////////////////////////////
+
 
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
     public function estatusModuloCurso ($datos) {
@@ -208,6 +296,9 @@ class model_modulo_curso extends conexion {
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+
+    //////////////////////////////////////////////////////////
+    ///////////////// FUNCIONES TRANSACCIONES ////////////////
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
     public function nuevaTransaccion () {
 		mysqli_query($this->data_conexion,"START TRANSACTION");
@@ -222,4 +313,6 @@ class model_modulo_curso extends conexion {
     public function calcelarTransaccion () {
 		mysqli_query($this->data_conexion,"ROLLBACK");
     }
+    /////////////// FIN FUNCIONES TRANSACCIONES //////////////
+    //////////////////////////////////////////////////////////
 }

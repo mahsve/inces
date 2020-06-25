@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-06-2020 a las 22:14:30
+-- Tiempo de generación: 23-06-2020 a las 13:18:47
 -- Versión del servidor: 10.4.11-MariaDB
 -- Versión de PHP: 7.4.6
 
@@ -24,29 +24,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `td_aprendiz`
---
-
-CREATE TABLE `td_aprendiz` (
-  `numero_ficha` int(11) NOT NULL,
-  `codigo_modulo` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `td_asignatura`
 --
 
 CREATE TABLE `td_asignatura` (
   `codigo` int(11) NOT NULL,
   `codigo_modulo` int(11) NOT NULL,
-  `codigo_asignatura` varchar(10) NOT NULL,
+  `codigo_asignatura` int(11) NOT NULL,
   `nacionalidad_facilitador` char(1) DEFAULT NULL,
   `cedula_facilitador` varchar(12) DEFAULT NULL,
   `fecha_inicio` date NOT NULL,
   `horas` int(11) NOT NULL,
-  `horas_extras` int(11) NOT NULL,
+  `dias_extras` int(11) NOT NULL,
+  `seccion` int(11) NOT NULL,
+  `turno` char(1) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -64,13 +55,18 @@ CREATE TABLE `td_contacto` (
   `codigo_cargo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+
 --
--- Volcado de datos para la tabla `td_contacto`
+-- Estructura de tabla para la tabla `td_facilitador_asig`
 --
 
-INSERT INTO `td_contacto` (`numero`, `rif`, `nacionalidad`, `cedula`, `codigo_cargo`) VALUES
-(1, 'G-12345678', 'V', '25791966', 5),
-(2, 'G-12345678', 'V', '13584631', 1);
+CREATE TABLE `td_facilitador_asig` (
+  `codigo` int(11) NOT NULL,
+  `codigo_asignatura` int(11) NOT NULL,
+  `nacionalidad_f` char(1) NOT NULL,
+  `cedula_f` varchar(12) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -80,26 +76,10 @@ INSERT INTO `td_contacto` (`numero`, `rif`, `nacionalidad`, `cedula`, `codigo_ca
 
 CREATE TABLE `td_modulo` (
   `codigo` int(11) NOT NULL,
-  `descripcion` varchar(300) NOT NULL,
-  `anio_modulo` year(4) NOT NULL,
-  `parte_anio` int(11) NOT NULL,
-  `codigo_oficio` varchar(10) NOT NULL,
+  `fecha_inicio` date NOT NULL,
+  `codigo_oficio` int(11) NOT NULL,
   `codigo_modulo` int(11) NOT NULL,
-  `codigo_seccion` int(11) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `td_oficio_asignatura`
---
-
-CREATE TABLE `td_oficio_asignatura` (
-  `codigo` int(11) NOT NULL,
-  `codigo_oficio` varchar(10) NOT NULL,
-  `codigo_asignatura` varchar(10) NOT NULL,
-  `horas` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -150,6 +130,7 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 19, 1, 1, 1, 1),
 (1, 20, 1, 1, 1, 1),
 (1, 7, 1, 1, 1, 1),
+(1, 22, 1, 1, 1, 1),
 (1, 9, 1, 1, 1, 1),
 (1, 3, 1, 1, 1, 1),
 (1, 6, 1, 1, 1, 1),
@@ -161,7 +142,6 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 10, 1, 1, 1, 1),
 (1, 11, 1, 1, 1, 1),
 (1, 12, 1, 1, 1, 1),
-(1, 13, 1, 1, 1, 1),
 (1, 14, 1, 1, 1, 1),
 (1, 15, 1, 1, 1, 1);
 
@@ -177,15 +157,6 @@ CREATE TABLE `t_actividad_economica` (
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Volcado de datos para la tabla `t_actividad_economica`
---
-
-INSERT INTO `t_actividad_economica` (`codigo`, `nombre`, `estatus`) VALUES
-(1, 'Exportación de productos', 'A'),
-(2, 'Gestión de procesos', 'A'),
-(3, 'Soluciones informáticas', 'A');
-
 -- --------------------------------------------------------
 
 --
@@ -193,11 +164,39 @@ INSERT INTO `t_actividad_economica` (`codigo`, `nombre`, `estatus`) VALUES
 --
 
 CREATE TABLE `t_asignatura` (
-  `codigo` varchar(10) NOT NULL,
+  `codigo` int(11) NOT NULL,
   `nombre` varchar(60) NOT NULL,
-  `codigo_modulo` int(11) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `t_asignatura`
+--
+
+INSERT INTO `t_asignatura` (`codigo`, `nombre`, `estatus`) VALUES
+(1, 'Desarrollo del pensamiento', 'A'),
+(2, 'Técnica para el aprendizaje efectivo', 'A'),
+(3, 'ética', 'A'),
+(4, 'Relaciones interpersonales', 'A'),
+(5, 'Ecología', 'A'),
+(6, 'Metodología de trabajo', 'A'),
+(7, 'Educación de la sexualidad salud sexual y reproductiva', 'A'),
+(8, 'Seguridad y higiene', 'A'),
+(9, 'Equipo de oficina', 'A'),
+(10, 'Administración de recursos humano', 'A'),
+(11, 'Economía de materiales bienes y servicio s.', 'A'),
+(12, 'Calculo mercantil', 'A'),
+(13, 'Contabilidad', 'A'),
+(14, 'Mercadeo y ventas de producto', 'A'),
+(15, 'Organización de empresa', 'A'),
+(16, 'Lenguaje de comunicación', 'A'),
+(17, 'Informática', 'A'),
+(18, 'Nociones básica de economía', 'A'),
+(19, 'Inglés técnico', 'A'),
+(20, 'Estadística aplicada', 'A'),
+(21, 'Transmite aduanero', 'A'),
+(22, 'Impuesto sobre la renta', 'A'),
+(23, 'Deporte', 'A');
 
 -- --------------------------------------------------------
 
@@ -222,10 +221,11 @@ CREATE TABLE `t_asistencia` (
 CREATE TABLE `t_bitacora` (
   `numero` int(11) NOT NULL,
   `usuario` varchar(30) NOT NULL,
-  `fecha` datetime NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `navegador` varchar(255) NOT NULL,
   `operacion` char(1) NOT NULL,
-  `valor_viejo` varchar(10000) NOT NULL,
-  `valor_nuevo` varchar(10000) NOT NULL
+  `estatus` char(1) NOT NULL DEFAULT 'E'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -239,17 +239,6 @@ CREATE TABLE `t_cargo` (
   `nombre` varchar(80) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `t_cargo`
---
-
-INSERT INTO `t_cargo` (`codigo`, `nombre`, `estatus`) VALUES
-(1, 'Gerente', 'A'),
-(2, 'Administrador', 'A'),
-(3, 'Dep. informatica', 'A'),
-(4, 'Administrador a', 'A'),
-(5, 'Atención al cliente', 'A');
 
 -- --------------------------------------------------------
 
@@ -771,6 +760,19 @@ INSERT INTO `t_ciudad` (`codigo`, `nombre`, `codigo_estado`, `estatus`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `t_contrasenas`
+--
+
+CREATE TABLE `t_contrasenas` (
+  `numero` int(11) NOT NULL,
+  `usuario` varchar(30) NOT NULL,
+  `fecha` date NOT NULL,
+  `contrasena` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `t_datos_hogar`
 --
 
@@ -810,8 +812,10 @@ CREATE TABLE `t_datos_personales` (
   `nombre2` varchar(25) DEFAULT NULL,
   `apellido1` varchar(25) NOT NULL,
   `apellido2` varchar(25) DEFAULT NULL,
-  `sexo` char(1) NOT NULL,
+  `sexo` char(1) DEFAULT NULL,
   `fecha_n` date DEFAULT NULL,
+  `mayor_edad` char(1) DEFAULT NULL,
+  `codigo_ciudad_n` int(11) DEFAULT NULL,
   `lugar_n` varchar(100) DEFAULT NULL,
   `codigo_ocupacion` int(11) DEFAULT NULL,
   `estado_civil` char(1) DEFAULT NULL,
@@ -833,10 +837,9 @@ CREATE TABLE `t_datos_personales` (
 -- Volcado de datos para la tabla `t_datos_personales`
 --
 
-INSERT INTO `t_datos_personales` (`nacionalidad`, `cedula`, `nombre1`, `nombre2`, `apellido1`, `apellido2`, `sexo`, `fecha_n`, `lugar_n`, `codigo_ocupacion`, `estado_civil`, `nivel_instruccion`, `titulo_acade`, `mision_participado`, `codigo_ciudad`, `codigo_municipio`, `codigo_parroquia`, `direccion`, `telefono1`, `telefono2`, `correo`, `tipo_persona`, `estatus`) VALUES
-('V', '00000000', 'Nombre', NULL, 'Apellido', NULL, 'I', '0000-00-00', NULL, NULL, 'I', 'I', NULL, NULL, 1, NULL, NULL, 'Dirección', '00000000000', NULL, NULL, 'A', 'A'),
-('V', '13584631', 'Sandra', 'Jenne', 'Soto ', 'De Herrera', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 212, NULL, NULL, 'Avenida las palmas, casa 11', '02558336699', '04139355324', 'sandrasot-@hotmail.com', 'C', 'A'),
-('V', '25791966', 'Migue', 'Alejandro', 'Herrera', 'Soto', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 339, NULL, NULL, 'Urb. prado del sol, sector morichal', '02556634386', '04245071156', 'miguelsot959@hotmail.com', 'C', 'A');
+INSERT INTO `t_datos_personales` (`nacionalidad`, `cedula`, `nombre1`, `nombre2`, `apellido1`, `apellido2`, `sexo`, `fecha_n`, `mayor_edad`, `codigo_ciudad_n`, `lugar_n`, `codigo_ocupacion`, `estado_civil`, `nivel_instruccion`, `titulo_acade`, `mision_participado`, `codigo_ciudad`, `codigo_municipio`, `codigo_parroquia`, `direccion`, `telefono1`, `telefono2`, `correo`, `tipo_persona`, `estatus`) VALUES
+('V', '00000000', 'Nombre', NULL, 'Apellido', NULL, 'I', '0000-00-00', NULL, NULL, NULL, NULL, 'I', 'I', NULL, NULL, 1, NULL, NULL, 'Dirección', '00000000000', NULL, NULL, 'A', 'A'),
+('V', '10147888', 'Juan', 'Jose', 'Perez', 'Jimenez', 'M', '1989-07-13', NULL, NULL, NULL, 3, 'S', 'BI', '', '', 339, NULL, 734, 'Urb. villa del pilar', '04120570111', '', '', 'F', 'A');
 
 -- --------------------------------------------------------
 
@@ -871,13 +874,6 @@ CREATE TABLE `t_empresa` (
   `direccion` varchar(300) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `t_empresa`
---
-
-INSERT INTO `t_empresa` (`rif`, `nil`, `razon_social`, `codigo_actividad`, `codigo_aportante`, `telefono1`, `telefono2`, `correo`, `codigo_ciudad`, `direccion`, `estatus`) VALUES
-('G-12345678', '12312312', 'Exportaciones San Felipe', 2, '1234654679', '04124654657', '', '', 339, 'Avenida principal, calle 7, edificio 2', 'I');
 
 -- --------------------------------------------------------
 
@@ -929,18 +925,15 @@ INSERT INTO `t_estado` (`codigo`, `nombre`, `estatus`) VALUES
 --
 
 CREATE TABLE `t_familia` (
-  `id_familiar` int(11) NOT NULL,
-  `numero_informe` int(11) NOT NULL,
-  `nombre1` varchar(25) NOT NULL,
-  `nombre2` varchar(25) DEFAULT NULL,
-  `apellido1` varchar(25) NOT NULL,
-  `apellido2` varchar(25) DEFAULT NULL,
-  `fecha_n` date NOT NULL,
-  `sexo` char(1) NOT NULL,
+  `numero` int(11) NOT NULL,
+  `nacionalidad` char(1) NOT NULL,
+  `cedula` varchar(12) NOT NULL,
+  `nacionalidad_f` char(1) NOT NULL,
+  `cedula_f` varchar(12) NOT NULL,
   `parentesco` char(2) NOT NULL,
-  `codigo_ocupacion` int(11) NOT NULL,
   `trabaja` char(1) NOT NULL,
-  `ingresos` float NOT NULL
+  `ingresos` float NOT NULL,
+  `representante` char(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -984,7 +977,7 @@ CREATE TABLE `t_informe_social` (
   `fecha` date NOT NULL,
   `nacionalidad_aprendiz` char(1) NOT NULL,
   `cedula_aprendiz` varchar(12) NOT NULL,
-  `codigo_oficio` varchar(10) NOT NULL,
+  `codigo_oficio` int(11) NOT NULL,
   `turno` char(1) NOT NULL,
   `nacionalidad_fac` char(1) NOT NULL,
   `cedula_facilitador` varchar(12) NOT NULL,
@@ -994,7 +987,6 @@ CREATE TABLE `t_informe_social` (
   `diagnostico_preliminar` varchar(1000) NOT NULL,
   `conclusiones` varchar(1000) NOT NULL,
   `enfermos` char(1) NOT NULL,
-  `representante` int(11) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'E'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1010,6 +1002,64 @@ CREATE TABLE `t_justificativo` (
   `extencion_img` varchar(6) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_modulo`
+--
+
+CREATE TABLE `t_modulo` (
+  `codigo` int(11) NOT NULL,
+  `nombre` varchar(60) NOT NULL,
+  `repetir_modulo` char(1) DEFAULT NULL,
+  `codigo_oficio` int(11) DEFAULT NULL,
+  `orden` int(11) NOT NULL,
+  `estatus` char(1) NOT NULL DEFAULT 'A'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `t_modulo`
+--
+
+INSERT INTO `t_modulo` (`codigo`, `nombre`, `repetir_modulo`, `codigo_oficio`, `orden`, `estatus`) VALUES
+(1, 'Unidad programa del cont. inmediato', NULL, 1, 1, 'A'),
+(2, 'Unidad programa del cont. relativo', NULL, 1, 2, 'A'),
+(3, 'Unidad programa del cont. complementario', NULL, 1, 3, 'A');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_modulo_asig`
+--
+
+CREATE TABLE `t_modulo_asig` (
+  `codigo` int(11) NOT NULL,
+  `codigo_modulo` int(11) NOT NULL,
+  `codigo_asignatura` int(11) NOT NULL,
+  `horas` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `t_modulo_asig`
+--
+
+INSERT INTO `t_modulo_asig` (`codigo`, `codigo_modulo`, `codigo_asignatura`, `horas`) VALUES
+(1, 1, 9, 100),
+(2, 1, 10, 130),
+(3, 1, 11, 100),
+(4, 1, 12, 80),
+(5, 1, 13, 260),
+(6, 1, 14, 150),
+(7, 2, 15, 30),
+(8, 2, 16, 60),
+(9, 2, 17, 230),
+(10, 2, 18, 50),
+(11, 2, 19, 80),
+(12, 2, 20, 30),
+(13, 2, 21, 30),
+(14, 2, 22, 30),
+(15, 3, 23, 80);
 
 -- --------------------------------------------------------
 
@@ -1401,10 +1451,10 @@ CREATE TABLE `t_nota` (
   `codigo` int(11) NOT NULL,
   `codigo_asignatura` int(11) NOT NULL,
   `numero_ficha` int(11) NOT NULL,
-  `nota1` int(2) DEFAULT NULL,
-  `nota2` int(2) DEFAULT NULL,
-  `nota3` int(2) DEFAULT NULL,
-  `nota4` int(2) DEFAULT NULL
+  `nota1` char(2) DEFAULT NULL,
+  `nota2` char(2) DEFAULT NULL,
+  `nota3` char(2) DEFAULT NULL,
+  `nota4` char(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -1420,6 +1470,15 @@ CREATE TABLE `t_ocupacion` (
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+--
+-- Volcado de datos para la tabla `t_ocupacion`
+--
+
+INSERT INTO `t_ocupacion` (`codigo`, `nombre`, `formulario`, `estatus`) VALUES
+(1, 'Ingeniero en informática', 'F', 'A'),
+(2, 'Estudiante de bachillerato', 'B', 'A'),
+(3, 'Asistente administrativo', 'A', 'A');
+
 -- --------------------------------------------------------
 
 --
@@ -1427,10 +1486,27 @@ CREATE TABLE `t_ocupacion` (
 --
 
 CREATE TABLE `t_oficio` (
-  `codigo` varchar(10) NOT NULL,
+  `codigo` int(11) NOT NULL,
   `nombre` varchar(120) NOT NULL,
-  `horas_total` int(11) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `t_oficio`
+--
+
+INSERT INTO `t_oficio` (`codigo`, `nombre`, `estatus`) VALUES
+(1, 'Asistente administrativo', 'A');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `t_oficio_modulo`
+--
+
+CREATE TABLE `t_oficio_modulo` (
+  `codigo_oficio` int(11) NOT NULL,
+  `codigo_modulo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -2621,7 +2697,9 @@ CREATE TABLE `t_usuario` (
   `cedula` varchar(12) NOT NULL,
   `pregunta_seguridad` varchar(100) NOT NULL,
   `respuesta_seguridad` varchar(255) NOT NULL,
-  `codigo_rol` int(11) DEFAULT NULL,
+  `dias_cambios_c` int(11) NOT NULL,
+  `intentos` int(11) NOT NULL,
+  `codigo_rol` int(11) NOT NULL,
   `estatus` char(1) NOT NULL DEFAULT 'A'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -2629,8 +2707,8 @@ CREATE TABLE `t_usuario` (
 -- Volcado de datos para la tabla `t_usuario`
 --
 
-INSERT INTO `t_usuario` (`usuario`, `contrasena`, `nacionalidad`, `cedula`, `pregunta_seguridad`, `respuesta_seguridad`, `codigo_rol`, `estatus`) VALUES
-('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 1, 'A');
+INSERT INTO `t_usuario` (`usuario`, `contrasena`, `nacionalidad`, `cedula`, `pregunta_seguridad`, `respuesta_seguridad`, `dias_cambios_c`, `intentos`, `codigo_rol`, `estatus`) VALUES
+('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 0, 0, 1, 'A');
 
 -- --------------------------------------------------------
 
@@ -2654,35 +2732,29 @@ CREATE TABLE `t_vista` (
 INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`, `icono`) VALUES
 (1, 1, 'Informe social', 'informe_social', 1, 'fas fa-file-word'),
 (2, 1, 'Aprendiz', 'aprendiz', 2, 'fas fa-user-graduate'),
-(3, 8, 'Facilitador', 'facilitador', 5, 'fas fa-chalkboard-teacher'),
-(4, 4, 'Empresa', 'empresa', 1, 'fas fa-industry'),
+(3, 8, 'Facilitadores', 'facilitador', 6, 'fas fa-chalkboard-teacher'),
+(4, 4, 'Empresas', 'empresa', 1, 'fas fa-industry'),
 (5, 4, 'Actividad económica', 'actividad_economica', 2, 'fas fa-wallet'),
-(6, 8, 'Ocupación', 'ocupacion', 6, 'fas fa-briefcase'),
+(6, 8, 'Ocupación', 'ocupacion', 7, 'fas fa-briefcase'),
 (7, 8, 'Oficio aprendiz', 'oficio', 3, 'fas fa-graduation-cap'),
-(9, 8, 'Asignatura', 'asignatura', 4, 'fas fa-book'),
+(9, 8, 'Asignatura', 'asignatura', 5, 'fas fa-book'),
 (10, 5, 'Rol de usuario', 'rol', 2, 'fas fa-user-tag'),
 (11, 5, 'Módulo sistema', 'modulo_sistema', 3, 'fas fa-sitemap'),
 (12, 5, 'Vista del sistema', 'vista_sistema', 4, 'far fa-window-maximize'),
 (13, 5, 'Usuario', 'usuario', 5, 'fas fa-users'),
 (14, 6, 'Datos personales', 'datos_personales', 1, 'fas fa-id-card'),
 (15, 6, 'Seguridad', 'seguridad', 2, 'fas fa-user-shield'),
-(16, 7, 'Asistencia', 'asistencias', 1, 'fas fa-clipboard-list'),
-(17, 7, 'Nota', 'notas', 2, 'fas fa-address-book'),
-(18, 5, 'Base de dato', 'respaldo_db', 1, 'fas fa-database'),
+(16, 7, 'Asistencias', 'asistencias', 1, 'fas fa-clipboard-list'),
+(17, 7, 'Notas', 'notas', 2, 'fas fa-address-book'),
+(18, 5, 'Base de datos', 'respaldo_db', 1, 'fas fa-database'),
 (19, 8, 'Módulos en curso', 'modulo_curso', 1, 'fas fa-chalkboard'),
 (20, 8, 'Asignaturas en curso', 'asignatura_curso', 2, 'fas fa-book-reader'),
-(21, 4, 'Cargo contacto', 'cargo_contacto', 3, 'fas fa-id-card-alt');
+(21, 4, 'Cargo contacto', 'cargo_contacto', 3, 'fas fa-id-card-alt'),
+(22, 8, 'Módulo / Unidad', 'modulo', 4, 'fas fa-sitemap');
 
 --
 -- Índices para tablas volcadas
 --
-
---
--- Indices de la tabla `td_aprendiz`
---
-ALTER TABLE `td_aprendiz`
-  ADD KEY `fk_curso_aprendiz_curso_idx` (`codigo_modulo`),
-  ADD KEY `fk_ficha_aprendiz_aprendiz_curso_idx` (`numero_ficha`);
 
 --
 -- Indices de la tabla `td_asignatura`
@@ -2703,19 +2775,20 @@ ALTER TABLE `td_contacto`
   ADD KEY `fk_persona_contacto_idx` (`nacionalidad`,`cedula`);
 
 --
+-- Indices de la tabla `td_facilitador_asig`
+--
+ALTER TABLE `td_facilitador_asig`
+  ADD PRIMARY KEY (`codigo`),
+  ADD KEY `fk_asignatura_facilitador_idx` (`codigo_asignatura`),
+  ADD KEY `fk_dfacilitador_facilitador_idx` (`nacionalidad_f`,`cedula_f`);
+
+--
 -- Indices de la tabla `td_modulo`
 --
 ALTER TABLE `td_modulo`
   ADD PRIMARY KEY (`codigo`),
-  ADD KEY `fk_oficio_tdmodulo_idx` (`codigo_oficio`);
-
---
--- Indices de la tabla `td_oficio_asignatura`
---
-ALTER TABLE `td_oficio_asignatura`
-  ADD PRIMARY KEY (`codigo`),
-  ADD KEY `fk_oficio_asignaturas_idx` (`codigo_oficio`),
-  ADD KEY `fk_asignatura_td_asignaturas_idx` (`codigo_asignatura`);
+  ADD KEY `fk_oficio_tdmodulo_idx` (`codigo_oficio`),
+  ADD KEY `fk_modulo_tdmodulo_idx` (`codigo_modulo`);
 
 --
 -- Indices de la tabla `td_rol_modulo`
@@ -2749,7 +2822,7 @@ ALTER TABLE `t_asignatura`
 ALTER TABLE `t_asistencia`
   ADD PRIMARY KEY (`numero`),
   ADD KEY `fk_td_asignatura_asistencia_idx` (`codigo_asignatura`),
-  ADD KEY `fk_aprendiz_modulo_asistencia_idx` (`numero_ficha`);
+  ADD KEY `fk_aprendiz_asistencia_idx` (`numero_ficha`);
 
 --
 -- Indices de la tabla `t_bitacora`
@@ -2772,6 +2845,13 @@ ALTER TABLE `t_ciudad`
   ADD KEY `fk_estado_ciudad_idx` (`codigo_estado`);
 
 --
+-- Indices de la tabla `t_contrasenas`
+--
+ALTER TABLE `t_contrasenas`
+  ADD PRIMARY KEY (`numero`),
+  ADD KEY `fk_usuario_contrasenas_idx` (`usuario`);
+
+--
 -- Indices de la tabla `t_datos_hogar`
 --
 ALTER TABLE `t_datos_hogar`
@@ -2785,7 +2865,8 @@ ALTER TABLE `t_datos_personales`
   ADD KEY `fk_ciudad_datos_personales_idx` (`codigo_ciudad`),
   ADD KEY `fk_ocupacion_datos_personales_idx` (`codigo_ocupacion`),
   ADD KEY `fk_parroqui_datos_personales_idx` (`codigo_parroquia`),
-  ADD KEY `fk_municipio_datos_personales_idx` (`codigo_municipio`);
+  ADD KEY `fk_municipio_datos_personales_idx` (`codigo_municipio`),
+  ADD KEY `fk_ciudad_n_datos_personales_idx` (`codigo_ciudad_n`);
 
 --
 -- Indices de la tabla `t_documentos`
@@ -2812,9 +2893,9 @@ ALTER TABLE `t_estado`
 -- Indices de la tabla `t_familia`
 --
 ALTER TABLE `t_familia`
-  ADD PRIMARY KEY (`id_familiar`),
-  ADD KEY `fk_informe_social_familia_idx` (`numero_informe`),
-  ADD KEY `fk_ocupacion_familia_idx` (`codigo_ocupacion`);
+  ADD PRIMARY KEY (`numero`),
+  ADD KEY `fk_aprendiz_tfamiliar_idx` (`nacionalidad`,`cedula`),
+  ADD KEY `fk_familiar_tfamiliar_idx` (`nacionalidad_f`,`cedula_f`);
 
 --
 -- Indices de la tabla `t_ficha_aprendiz`
@@ -2848,6 +2929,21 @@ ALTER TABLE `t_justificativo`
   ADD KEY `fk_justificativo_asistencia_idx` (`numero_asistencia`);
 
 --
+-- Indices de la tabla `t_modulo`
+--
+ALTER TABLE `t_modulo`
+  ADD PRIMARY KEY (`codigo`),
+  ADD KEY `fk_oficio_modulo_idx` (`codigo_oficio`);
+
+--
+-- Indices de la tabla `t_modulo_asig`
+--
+ALTER TABLE `t_modulo_asig`
+  ADD PRIMARY KEY (`codigo`),
+  ADD KEY `fk_modulo_td_modulo_asig_idx` (`codigo_modulo`),
+  ADD KEY `fk_asignatura_td_modulo_asig_idx` (`codigo_asignatura`);
+
+--
 -- Indices de la tabla `t_modulo_sistema`
 --
 ALTER TABLE `t_modulo_sistema`
@@ -2865,8 +2961,8 @@ ALTER TABLE `t_municipio`
 --
 ALTER TABLE `t_nota`
   ADD PRIMARY KEY (`codigo`),
-  ADD KEY `fk_aprendiz_modulo_idx` (`numero_ficha`),
-  ADD KEY `fk_nota_asignatura_idx` (`codigo_asignatura`);
+  ADD KEY `fk_nota_asignatura_idx` (`codigo_asignatura`),
+  ADD KEY `fk_aprendiz_asignatura_idx` (`numero_ficha`);
 
 --
 -- Indices de la tabla `t_ocupacion`
@@ -2879,6 +2975,13 @@ ALTER TABLE `t_ocupacion`
 --
 ALTER TABLE `t_oficio`
   ADD PRIMARY KEY (`codigo`);
+
+--
+-- Indices de la tabla `t_oficio_modulo`
+--
+ALTER TABLE `t_oficio_modulo`
+  ADD KEY `fk_oficio_oficio_modl_idx` (`codigo_oficio`),
+  ADD KEY `fk_modulo_oficio_modl_idx` (`codigo_modulo`);
 
 --
 -- Indices de la tabla `t_parroquia`
@@ -2922,18 +3025,18 @@ ALTER TABLE `td_asignatura`
 -- AUTO_INCREMENT de la tabla `td_contacto`
 --
 ALTER TABLE `td_contacto`
-  MODIFY `numero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `numero` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `td_facilitador_asig`
+--
+ALTER TABLE `td_facilitador_asig`
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `td_modulo`
 --
 ALTER TABLE `td_modulo`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `td_oficio_asignatura`
---
-ALTER TABLE `td_oficio_asignatura`
   MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -2946,7 +3049,13 @@ ALTER TABLE `td_rol_vista`
 -- AUTO_INCREMENT de la tabla `t_actividad_economica`
 --
 ALTER TABLE `t_actividad_economica`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `t_asignatura`
+--
+ALTER TABLE `t_asignatura`
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `t_asistencia`
@@ -2964,13 +3073,19 @@ ALTER TABLE `t_bitacora`
 -- AUTO_INCREMENT de la tabla `t_cargo`
 --
 ALTER TABLE `t_cargo`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_ciudad`
 --
 ALTER TABLE `t_ciudad`
   MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=523;
+
+--
+-- AUTO_INCREMENT de la tabla `t_contrasenas`
+--
+ALTER TABLE `t_contrasenas`
+  MODIFY `numero` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_documentos`
@@ -2988,7 +3103,7 @@ ALTER TABLE `t_estado`
 -- AUTO_INCREMENT de la tabla `t_familia`
 --
 ALTER TABLE `t_familia`
-  MODIFY `id_familiar` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `numero` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `t_ficha_aprendiz`
@@ -3007,6 +3122,18 @@ ALTER TABLE `t_informe_social`
 --
 ALTER TABLE `t_justificativo`
   MODIFY `numero` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `t_modulo`
+--
+ALTER TABLE `t_modulo`
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `t_modulo_asig`
+--
+ALTER TABLE `t_modulo_asig`
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT de la tabla `t_modulo_sistema`
@@ -3030,7 +3157,13 @@ ALTER TABLE `t_nota`
 -- AUTO_INCREMENT de la tabla `t_ocupacion`
 --
 ALTER TABLE `t_ocupacion`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `t_oficio`
+--
+ALTER TABLE `t_oficio`
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `t_parroquia`
@@ -3048,18 +3181,11 @@ ALTER TABLE `t_rol`
 -- AUTO_INCREMENT de la tabla `t_vista`
 --
 ALTER TABLE `t_vista`
-  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `codigo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Restricciones para tablas volcadas
 --
-
---
--- Filtros para la tabla `td_aprendiz`
---
-ALTER TABLE `td_aprendiz`
-  ADD CONSTRAINT `fk_td_aprendiz_asistencia` FOREIGN KEY (`numero_ficha`) REFERENCES `t_ficha_aprendiz` (`numero`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_td_aprendiz_modulo` FOREIGN KEY (`codigo_modulo`) REFERENCES `td_modulo` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `td_asignatura`
@@ -3078,17 +3204,18 @@ ALTER TABLE `td_contacto`
   ADD CONSTRAINT `fk_persona_contacto` FOREIGN KEY (`nacionalidad`,`cedula`) REFERENCES `t_datos_personales` (`nacionalidad`, `cedula`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `td_facilitador_asig`
+--
+ALTER TABLE `td_facilitador_asig`
+  ADD CONSTRAINT `fk_asignatura_facilitador` FOREIGN KEY (`codigo_asignatura`) REFERENCES `t_asignatura` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_dfacilitador_facilitador` FOREIGN KEY (`nacionalidad_f`,`cedula_f`) REFERENCES `t_datos_personales` (`nacionalidad`, `cedula`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `td_modulo`
 --
 ALTER TABLE `td_modulo`
+  ADD CONSTRAINT `fk_modulo_tdmodulo` FOREIGN KEY (`codigo_modulo`) REFERENCES `t_modulo` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_oficio_tdmodulo` FOREIGN KEY (`codigo_oficio`) REFERENCES `t_oficio` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Filtros para la tabla `td_oficio_asignatura`
---
-ALTER TABLE `td_oficio_asignatura`
-  ADD CONSTRAINT `fk_asignatura_td_asignaturas` FOREIGN KEY (`codigo_asignatura`) REFERENCES `t_asignatura` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_oficio_td_asignaturas` FOREIGN KEY (`codigo_oficio`) REFERENCES `t_oficio` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `td_rol_modulo`
@@ -3108,20 +3235,26 @@ ALTER TABLE `td_rol_vista`
 -- Filtros para la tabla `t_asistencia`
 --
 ALTER TABLE `t_asistencia`
-  ADD CONSTRAINT `fk_aprendiz_modulo_asistencia` FOREIGN KEY (`numero_ficha`) REFERENCES `td_aprendiz` (`numero_ficha`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_aprendiz_asistencia` FOREIGN KEY (`numero_ficha`) REFERENCES `t_ficha_aprendiz` (`numero`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_tdasignatura_asistencia` FOREIGN KEY (`codigo_asignatura`) REFERENCES `td_asignatura` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_bitacora`
 --
 ALTER TABLE `t_bitacora`
-  ADD CONSTRAINT `fk_usuario_bitacora` FOREIGN KEY (`usuario`) REFERENCES `t_usuario` (`usuario`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_usuario_bitacora` FOREIGN KEY (`usuario`) REFERENCES `t_usuario` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_ciudad`
 --
 ALTER TABLE `t_ciudad`
   ADD CONSTRAINT `fk_estado_ciudad` FOREIGN KEY (`codigo_estado`) REFERENCES `t_estado` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `t_contrasenas`
+--
+ALTER TABLE `t_contrasenas`
+  ADD CONSTRAINT `fk_usuario_contrasenas` FOREIGN KEY (`usuario`) REFERENCES `t_usuario` (`usuario`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_datos_hogar`
@@ -3134,6 +3267,7 @@ ALTER TABLE `t_datos_hogar`
 --
 ALTER TABLE `t_datos_personales`
   ADD CONSTRAINT `fk_ciudad_datos_personales` FOREIGN KEY (`codigo_ciudad`) REFERENCES `t_ciudad` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_ciudad_n_datos_personales` FOREIGN KEY (`codigo_ciudad_n`) REFERENCES `t_ciudad` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_municipio_datos_personales` FOREIGN KEY (`codigo_municipio`) REFERENCES `t_municipio` (`codigo`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_ocupacion_datos_personales` FOREIGN KEY (`codigo_ocupacion`) REFERENCES `t_ocupacion` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_parroqui_datos_personales` FOREIGN KEY (`codigo_parroquia`) REFERENCES `t_parroquia` (`codigo`) ON DELETE SET NULL ON UPDATE CASCADE;
@@ -3155,8 +3289,8 @@ ALTER TABLE `t_empresa`
 -- Filtros para la tabla `t_familia`
 --
 ALTER TABLE `t_familia`
-  ADD CONSTRAINT `fk_informe_social_familia` FOREIGN KEY (`numero_informe`) REFERENCES `t_informe_social` (`numero`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_ocupacion_familia` FOREIGN KEY (`codigo_ocupacion`) REFERENCES `t_ocupacion` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_aprendiz_tfamiliar` FOREIGN KEY (`nacionalidad`,`cedula`) REFERENCES `t_datos_personales` (`nacionalidad`, `cedula`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_familiar_tfamiliar` FOREIGN KEY (`nacionalidad_f`,`cedula_f`) REFERENCES `t_datos_personales` (`nacionalidad`, `cedula`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_ficha_aprendiz`
@@ -3187,6 +3321,19 @@ ALTER TABLE `t_justificativo`
   ADD CONSTRAINT `fk_justificativo_asistencia` FOREIGN KEY (`numero_asistencia`) REFERENCES `t_asistencia` (`numero`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
+-- Filtros para la tabla `t_modulo`
+--
+ALTER TABLE `t_modulo`
+  ADD CONSTRAINT `fk_oficio_modulo` FOREIGN KEY (`codigo_oficio`) REFERENCES `t_oficio` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `t_modulo_asig`
+--
+ALTER TABLE `t_modulo_asig`
+  ADD CONSTRAINT `fk_asignatura_td_modulo_asig` FOREIGN KEY (`codigo_asignatura`) REFERENCES `t_asignatura` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_modulo_td_modulo_asig` FOREIGN KEY (`codigo_modulo`) REFERENCES `t_modulo` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Filtros para la tabla `t_municipio`
 --
 ALTER TABLE `t_municipio`
@@ -3196,8 +3343,15 @@ ALTER TABLE `t_municipio`
 -- Filtros para la tabla `t_nota`
 --
 ALTER TABLE `t_nota`
-  ADD CONSTRAINT `fk_aprendiz_modulo_nota` FOREIGN KEY (`numero_ficha`) REFERENCES `td_aprendiz` (`numero_ficha`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_aprendiz_asignatura` FOREIGN KEY (`numero_ficha`) REFERENCES `t_ficha_aprendiz` (`numero`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_nota_asignatura` FOREIGN KEY (`codigo_asignatura`) REFERENCES `td_asignatura` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `t_oficio_modulo`
+--
+ALTER TABLE `t_oficio_modulo`
+  ADD CONSTRAINT `fk_modulo_oficio_modl` FOREIGN KEY (`codigo_modulo`) REFERENCES `t_modulo` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_oficio_oficio_modl` FOREIGN KEY (`codigo_oficio`) REFERENCES `t_oficio` (`codigo`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_parroquia`
@@ -3210,7 +3364,7 @@ ALTER TABLE `t_parroquia`
 --
 ALTER TABLE `t_usuario`
   ADD CONSTRAINT `fk_datos_personales_usuario` FOREIGN KEY (`nacionalidad`,`cedula`) REFERENCES `t_datos_personales` (`nacionalidad`, `cedula`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_rol_usuario` FOREIGN KEY (`codigo_rol`) REFERENCES `t_rol` (`codigo`) ON DELETE SET NULL ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_rol_usuario` FOREIGN KEY (`codigo_rol`) REFERENCES `t_rol` (`codigo`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `t_vista`

@@ -16,7 +16,7 @@ $(function () {
     // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
-    let nombres_formularios = { 'B': 'Aprendiz', 'F': 'Facilitador', 'A': 'Administrativo' };
+    let dataTurno       = {'M': 'Matutino', 'V': 'Vespertino'};
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ $(function () {
 
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_ocupacion.php',
+                url : url+'controllers/c_asignatura_curso.php',
                 type: 'POST',
                 dataType: 'JSON',
                 data: {
@@ -82,24 +82,48 @@ $(function () {
                     if (dataListado.resultados) {
                         let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
+                            let nombre_asignatura = dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura;
+                            // VERIFICAMOS QUE NO SOBREPASE LOS 35 CARACTERES Y SI ES ASI LO RECORTAMOS.
+                            if ( (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).length > 35) {
+                                nombre_asignatura = (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).substr(0, 35);
+                                if (nombre_asignatura[nombre_asignatura.length - 1] == ' ') { nombre_asignatura = (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).substr(0, 34); }
+                                nombre_asignatura += '...';
+                            }
+                            
                             let estatus_td = '';
-                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
-                            else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span>Inactivo</span></span>'; }
+                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-info"><i class="fas fa-book-open"></i> <span>En curso</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'E') { estatus_td = '<span class="badge badge-info"><i class="fas fa-clock"></i> <span>En espera</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'F') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Finalizado</span></span>'; }
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
                             contenido_tabla += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+nombres_formularios[dataListado.resultados[i].formulario]+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].asignatura+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 tooltip-table" data-toggle="tooltip" data-placement="top" title="'+dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura+'">'+nombre_asignatura+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].seccion+'</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
                                 contenido_tabla += '<td class="py-1 px-1">';
-                                if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
-                                if (permisos.act_desc == 1) {
-                                    if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
-                                    else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
-                                }
+                                    if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
+                                    
+                                    // MAS OPCIONES
+                                    contenido_tabla += '<div class="dropdown d-inline-block">';
+                                        contenido_tabla += '<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                                            contenido_tabla += '<i class="fas fa-ellipsis-v px-1"></i>';
+                                        contenido_tabla += '</button>';
+
+                                        if (permisos.act_desc == 1) {
+                                            contenido_tabla += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
+                                            
+                                            if (dataListado.resultados[i].estatus == 'A') {
+                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Finalizar y registrar nuevo</span></a></li>';
+                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Eliminar curso</span></a></li>';
+                                            }
+                                            contenido_tabla += '</div>';
+                                        }
+                                    contenido_tabla += '</div>';
                                 contenido_tabla += '</td>';
                             }
                             ////////////////////////////////////////////////////////
@@ -107,6 +131,7 @@ $(function () {
                             $('#listado_tabla tbody').append(contenido_tabla);
                             cont++;
                         }
+                        $('.tooltip-table').tooltip();
                         $('.editar-registro').click(editarRegistro);
                         $('.cambiar-estatus').click(cambiarEstatus);
                     } else {

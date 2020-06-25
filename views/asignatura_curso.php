@@ -1,10 +1,6 @@
 <div id="info_table">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
         <h4 class="text-secondary text-uppercase font-weight-normal mb-0"><?php echo $titulo; ?></h4>
-
-        <?php if ($permisos['registrar'] == 1){ ?>
-            <button type="button" id="show_form" class="botones_formulario btn btn-sm btn-info" disabled="true"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
-        <?php } ?>
     </div>
 
     <div class="row align-items-center justify-content-between">
@@ -25,9 +21,7 @@
                 <div class="form-group col-sm-6 col-lg-3 col-xl-3 d-flex align-items-center text-info mb-2">
                     <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
-                        <option value="1">Código</option>
-                        <option value="2">Nombre</option>
-                        <option value="3">Oficio - modulo</option>
+                        <option value="1">Nombre</option>
                     </select>
                 </div>
 
@@ -43,8 +37,9 @@
                     <label for="campo_estatus" class="pr-2 m-0"><i class="fas fa-toggle-on"></i></label>
                     <select id="campo_estatus" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="">Todos</option>
-                        <option value="A">Activos</option>
-                        <option value="I">Inactivos</option>
+                        <option value="A">En curso</option>
+                        <option value="E" selected>En espera</option>
+                        <option value="F">Finalizado</option>
                     </select>
                 </div>
             </div>
@@ -61,9 +56,11 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">Código</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Asignatura</th>
-                    <th class="bg-info font-weight-normal px-1 py-2">Oficio - Módulo</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Descripción asignatura</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Turno</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="70">Sección</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
@@ -90,3 +87,188 @@
         <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
+
+<?php if ($permisos['registrar'] == 1 OR $permisos['modificar']){ ?>
+    <div id="gestion_form" style="display: none;">
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+            <h4 id="form_title" class="text-secondary text-uppercase font-weight-normal mb-0"></h4>
+            <button type="button" id="show_table" class="botones_formulario btn btn-sm btn-info"><i class="fas fa-reply"></i><span class="ml-1">Regresar</span></button>
+        </div>
+
+        <form name="formulario" id="formulario" class="formulario">
+            <div class="form-row">
+                <div class="col-sm-12">
+                    <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos de la asignatura</h3>    
+                </div>
+
+                <div class="col-sm-4 col-lg-3 col-xl-2">
+                    <div class="form-group mb-2">
+                        <label for="fecha_inicio" class="d-inline-block w-100 position-relative small m-0">Fecha de inicio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="fecha_inicio" id="fecha_inicio" class="campos_formularios form-control form-control-sm input_fecha" placeholder="dd-mm-aaaa" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3 col-xl-2">
+                    <div class="form-group mb-2">
+                        <label for="horas" class="d-inline-block w-100 position-relative small m-0">Horas<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="horas" id="horas" class="form-control form-control-sm input_fecha" autocomplete="off"  readonly="true"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3 col-xl-2">
+                    <div class="form-group mb-2">
+                        <label for="extender" class="d-inline-block w-100 position-relative small m-0">Extender (Días)<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="extender" id="extender" class="campos_formularios form-control form-control-sm input_fecha" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <div class="col-sm-4 col-lg-3 col-xl-2">
+                    <div class="form-group mb-2">
+                        <label for="fecha_fin" class="d-inline-block w-100 position-relative small m-0">Fecha de finalización<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="fecha_fin" id="fecha_fin" class="form-control form-control-sm input_fecha" placeholder="dd-mm-aaaa" readonly="true"/>
+                    </div>
+                </div>
+
+                <!-- TITULO -->
+                <div class="col-sm-12 mt-4">
+                    <h4 class="font-weight-normal text-secondary text-center text-uppercase">Datos del facilitador</h4>    
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <p class="small font-weight-bold text-secondary mb-0">Agregue al facilitador que Impartirá esta asignatura</p>
+                        <button type="button" id="btn-buscar-facilitador" class="btn btn-sm btn-info descripcion-tooltip" data-toggle="tooltip" data-placement="left" title="Mostrar facilitadores disponibles"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <!-- NACIONALIDAD -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm">
+                            <option value="">Elija una opción</option>
+                            <option value="V">Venezolano</option>
+                            <option value="E">Extranjero</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CEDULA -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula<i class="fas fa-asterisk text-danger position-absolute required"></i>
+                            <i id="spinner-cedula" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
+                            <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
+                        </label>
+                        <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <!-- NOMBRE 1 -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <!-- NOMBRE 2 -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="nombre_2" class="d-inline-block w-100 position-relative small m-0">Segundo nombre</label>
+                        <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <!-- APELLIDO 1 -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <!-- APELLIDO 2 -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group mb-2">
+                        <label for="apellido_2" class="d-inline-block w-100 position-relative small m-0">Segundo Apellido</label>
+                        <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
+                    </div>
+                </div>
+
+                <!-- OCUPACION -->
+                <div class="col-sm-12 col-lg-6 col-xl-5">
+                    <div class="form-group mb-2">
+                        <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <div class="d-flex">
+                            <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-12">
+                    <div id="contenedor-mensaje2"></div>
+                </div>
+            </div>
+
+            <!-- BOTON GUARDAR DATOS -->
+            <div class="pt-2 text-center">
+                <button id="guardar-datos" type="button" class="botones_formulario btn btn-sm btn-info px-4"><i class="fas fa-save"></i> <span>Guardar</span></button>
+            </div>
+            <!-- FIN BOTON GUARDAR DATOS -->
+        </form>
+    </div>
+
+    <div id="modal-mostrar-facilitadores" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header py-2">
+                    <h5 class="modal-title text-secondary">Facilitadores disponibles</h5>
+                    <button type="button" class="close botones_formulario_persona_contacto" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body py-2">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Cedula</th>
+                                <th scope="col">Nombre completo</th>
+                                <th scope="col">Sexo</th>
+                                <th scope="col">Edad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Mark</td>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                            </tr>
+                            <tr>
+                                <td>Jacob</td>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                            </tr>
+                            <tr>
+                                <td>Larry</td>
+                                <td>Larry</td>
+                                <td>the Bird</td>
+                                <td>@twitter</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+
+<!-- PASAR DATOS DE PHP A JAVASCRIPT -->
+<script> let url = '<?php echo SERVERURL; ?>'; </script>
+<script src="<?php echo SERVERURL; ?>javascripts/asignatura_curso.js"></script>
+<!-- <script>
+    $(function () {
+        $('#btn-buscar-facilitador').click(function () {
+            $('#modal-mostrar-facilitadores').modal();
+        });
+    });
+</script> -->

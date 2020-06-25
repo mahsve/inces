@@ -50,7 +50,7 @@ class model_oficio extends conexion{
 
     // CONSULTAMOS TODOS LOS MODULOS QUE SEAN COMPARTIDOS EN TODOS LOS OFICIOS PARA AGREGARLO AL NUEVO OFICIO REGISTRADO
     public function consultarModulosGenerales () {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $resultado = []; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_modulo
             WHERE repetir_modulo='S'

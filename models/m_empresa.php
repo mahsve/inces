@@ -20,6 +20,8 @@ class model_empresa extends conexion {
         mysqli_close($this->data_conexion);
     }
 
+
+    
     ///////////////// INFORMACION FORMULARIO /////////////////
     // FUNCION PARA CONSULTAR LAS ACTIVIDADES ECONOMICAS.
     public function consultarActividades () {
@@ -68,6 +70,8 @@ class model_empresa extends conexion {
     /////////////// FIN INFORMACION FORMULARIO ///////////////
     //////////////////////////////////////////////////////////
 
+
+
     /////////////////// VERIFICAR REGISTROS ///////////////////
     // FUNCION PARA CONSULTAR LAS CIUDADES DE UN ESTADO EN ESPECIFICO
 	public function verificarRIF ($datos) {
@@ -96,6 +100,8 @@ class model_empresa extends conexion {
     }
     ///////////////// FIN VERIFICAR REGISTROS /////////////////
     //////////////////////////////////////////////////////////
+
+
 
     //////////////////////////////////////////////////////////
     // FUNCIONES PARA REGISTROS RAPIDOS DE FORMULARIO.

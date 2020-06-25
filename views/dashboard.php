@@ -18,7 +18,7 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
         <div class="bg-info rounded shadow-sm">
             <div class="d-flex align-items-center text-center" style="font-size: 45px;">
                 <div class="w-50"><i class="fas <?php echo $iconos[0]; ?> text-white" style="opacity: .5;"></i></div>
-                <div class="w-50 bg-light text-secondary py-3" style="font-size: 30px;">60</div>
+                <div id="grafica_1" class="w-50 bg-light text-secondary py-3" style="font-size: 30px;"><i class="fas fa-spinner fa-spin"></i></div>
             </div>
             <p class="px-1 pb-1 m-0 text-white" style="opacity: .7;"><?php echo $descripcion[0];?></p>
         </div>
@@ -27,7 +27,7 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
         <div class="bg-info rounded shadow-sm">
             <div class="d-flex align-items-center text-center" style="font-size: 45px;">
                 <div class="w-50"><i class="fas <?php echo $iconos[1]; ?> text-white" style="opacity: .5;"></i></div>
-                <div class="w-50 bg-light text-secondary py-3" style="font-size: 30px;">5000</div>
+                <div id="grafica_2" class="w-50 bg-light text-secondary py-3" style="font-size: 30px;"><i class="fas fa-spinner fa-spin"></i></div>
             </div>
             <p class="px-1 pb-1 m-0 text-white" style="opacity: .7;"><?php echo $descripcion[1];?></p>
         </div>
@@ -36,7 +36,7 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
         <div class="bg-info rounded shadow-sm">
             <div class="d-flex align-items-center text-center" style="font-size: 45px;">
                 <div class="w-50"><i class="fas <?php echo $iconos[2]; ?> text-white" style="opacity: .5;"></i></div>
-                <div class="w-50 bg-light text-secondary py-3" style="font-size: 30px;">12</div>
+                <div id="grafica_3" class="w-50 bg-light text-secondary py-3" style="font-size: 30px;"><i class="fas fa-spinner fa-spin"></i></div>
             </div>
             <p class="px-1 pb-1 m-0 text-white" style="opacity: .7;"><?php echo $descripcion[2];?></p>
         </div>
@@ -45,19 +45,13 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
         <div class="bg-info rounded shadow-sm">
             <div class="d-flex align-items-center text-center" style="font-size: 45px;">
                 <div class="w-50"><i class="fas <?php echo $iconos[3]; ?> text-white" style="opacity: .5;"></i></div>
-                <div class="w-50 bg-light text-secondary py-3" style="font-size: 30px;">100</div>
+                <div id="grafica_4" class="w-50 bg-light text-secondary py-3" style="font-size: 30px;"><i class="fas fa-spinner fa-spin"></i></div>
             </div>
             <p class="px-1 pb-1 m-0 text-white" style="opacity: .7;"><?php echo $descripcion[3];?></p>
         </div>
     </div>
-
-    <div class="col-sm-12 col-lg-9 mb-3">
-        <div class="rounded shadow-sm" style="height: 300px;">
-            <h3 style="padding-top: 40px;">Grafica</h3>
-        </div>
-    </div>
-    <div class="col-sm-12 col-lg-3 mb-3">
-        <div class="rounded shadow-sm" style="height: 300px;">
-        </div>
-    </div>
 </div>
+
+<!-- PASAR DATOS DE PHP A JAVASCRIPT -->
+<script> let url = '<?php echo SERVERURL; ?>'; </script>
+<script src="<?php echo SERVERURL; ?>javascripts/dashboard.js"></script>

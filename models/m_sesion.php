@@ -4,42 +4,116 @@ class model_sesion extends conexion {
     private $data_conexion; // VARIABLE QUE CONTENDRA LA CONEXION.
 
     // DEFINIMOS EL CONSTRUCTOR.
-    public function model_sesion() {
+    public function model_sesion () {
         $this->conexion(); // SE DEFINE LA CLASE PARA HEREDAR SUS ATRIBUTOS.
     }
 
     // FUNCION PARA ABRIR CONEXION.
-    public function conectar() {
+    public function conectar () {
         $datos = $this->obtenerDatos(); // OBTENEMOS LOS DATOS DE CONEXION.
         $this->data_conexion = mysqli_connect($datos['local'], $datos['user'], $datos['password'], $datos['database']); // SE CREA LA CONEXION A LA BASE DE DATOS.
         mysqli_query($this->data_conexion, "SET NAMES 'utf8'");
     }
 
     // FUNCION PARA CERRAR CONEXION.
-    public function desconectar() {
+    public function desconectar () {
         mysqli_close($this->data_conexion);
     }
 
+    //////////////////////////////////////////////////////////
+    ///////////// CONSULTAR Y ACTUALIZAR USUARIO /////////////
 	// FUNCION PARA CONSULTAR LOS DATOS DE INICIO DE SESION.
-	function consultarUsuario($datos) {
+	public function consultarUsuario ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
+		$sentencia = "SELECT t_usuario.*, t_rol.*, t_datos_personales.*, t_usuario.estatus AS estatus_usuario
             FROM t_usuario
-            INNER JOIN t_datos_personales ON t_usuario.nacionalidad = t_datos_personales.nacionalidad
-            AND t_usuario.cedula = t_datos_personales.cedula
             INNER JOIN t_rol ON t_usuario.codigo_rol = t_rol.codigo
-            WHERE t_usuario.usuario='$datos[usuario]'
+            INNER JOIN t_datos_personales
+                ON t_usuario.nacionalidad = t_datos_personales.nacionalidad
+                AND t_usuario.cedula = t_datos_personales.cedula
+            WHERE t_usuario.usuario='".htmlspecialchars($datos["usuario"])."'
         "; // SENTENCIA.
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
+        $consulta = mysqli_query($this->data_conexion, $sentencia);
+        if ($columna = mysqli_fetch_assoc($consulta)) {
+            // ESTABLECEMOS UN HISTORIAL DE CONTRASEÑAS POR SI NO ENCUENTRA NINGUNO
+            $columna['historial_contrasenas'] = [];
+
+            // CONSULTAMOS LAS ACTUALIZACIONES DE CONTRASEÑAS.
+            $sentencia = "SELECT *
+                FROM t_contrasenas
+                WHERE usuario='".$columna['usuario']."'
+                ORDER BY numero DESC
+                LIMIT 1
+            "; // SENTENCIA.
+            $consulta2 = mysqli_query($this->data_conexion, $sentencia);
+            if ($columna2 = mysqli_fetch_assoc($consulta2)) {
+                $columna['historial_contrasenas'] = $columna2;
+            }
+
+            // ALMACENAMOS TODO EN LA VARIABLE RESULTADO.
+			$resultado = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
+    // FUNCION PARA REGISTRAR LAS ASIGNATURAS EN LA TABLA DE DETALLES DEL MODULO.
+    public function registrarBitacora ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO t_bitacora (
+            usuario,
+            fecha,
+            hora,
+            navegador,
+            operacion
+        ) VALUES (
+            '".htmlspecialchars($datos["usuario"])."',
+            '".htmlspecialchars($datos["fecha"])."',
+            '".htmlspecialchars($datos["hora"])."',
+            '".htmlspecialchars($datos["navegador"])."',
+            '".htmlspecialchars($datos["operacion"])."'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA ACTUALIZAR LOS INTENTOS FALLIDOS DEL USUARIO AL INTENTAR INICIAR SESION
+    public function actualizarIntentos ($datos) {
+        $resultado = false;
+        $sentencia ="UPDATE t_usuario SET
+            intentos='".htmlspecialchars($datos["intentos"])."'
+            WHERE usuario='".htmlspecialchars($datos["usuario"])."'
+        "; // SENTENCIA.
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+        return $resultado;
+    }
+
+    // FUNCION PARA BLOQUEAR EL USUARIO POR INTENTOS FALLIDOS.
+	public function bloquearUsuario ($datos) {
+        $resultado = false;
+		$sentencia ="UPDATE t_usuario SET
+            intentos='".htmlspecialchars($datos["intentos"])."',
+            estatus='B'
+            WHERE usuario='".htmlspecialchars($datos["usuario"])."'
+        "; // SENTENCIA.
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
+        }
+        return $resultado;
+    }
+    /////////// FIN CONSULTAR Y ACTUALIZAR USUARIO ///////////
+    //////////////////////////////////////////////////////////
+
+    //////////////////////////////////////////////////////////
+    /////////////// CONSULTAR PERMISOS Y MENU ////////////////
     // FUNCION PARA CONSULTAR PERMISOS, ENTRAR UNA VISTA, REGISTRAR, MODIFICAR, ELIMINAR, CAMBIAR ESTATUS.
-    function consultarPermisos($datos) {
+    function consultarPermisos ($datos) {
         $resultado = false;
 		$sentencia = "SELECT *
             FROM t_vista
@@ -56,7 +130,7 @@ class model_sesion extends conexion {
     }
 
     // FUNCION PARA TRAER LOS MODULOS A LOS EL USUARIO TIENE PERMISO.
-    function consultarMenu($datos) {
+    function consultarMenu ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT t_modulo_sistema.*
             FROM td_rol_modulo
@@ -87,10 +161,6 @@ class model_sesion extends conexion {
         }
 		return $resultado;
     }
-
-    // FUNCION PARA BLOQUEAR EL USUARIO POR INTENTOS FALLIDOS.
-	public function bloquearUsuario($datos) {
-		$sentencia ="UPDATE t_usuario SET estatus='B' WHERE usuario='$datos[usuario]'"; // SENTENCIA.
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-	}
+    //////////////// FIN CONSULTAR REGISTROS /////////////////
+    //////////////////////////////////////////////////////////
 }

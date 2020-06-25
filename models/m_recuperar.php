@@ -47,15 +47,11 @@ class model_recuperar extends conexion {
 
     // FUNCION PARA GUARDAR LA NUEVA CONTRASEÑA.
 	function guardarContrasena($datos) {
+        $resultado = false; // RETORNAMOS VERDADERO SI ACTUALIZO.
 		$sentencia = "UPDATE t_usuario SET contrasena='$datos[contrasena]', estatus='A' WHERE usuario='$datos[usuario]' AND (estatus='A' OR estatus='B')"; // SENTENTCIA.
         $consulta = mysqli_query($this->data_conexion,$sentencia); // EJECUTA LA SENTENCIA.
-        if (mysqli_affected_rows($this->data_conexion) > 0) // VERIFICAMOS QUE SI HAYA ACTUALIZADO.
-        {
-            $resultado = true; // RETORNAMOS VERDADERO SI ACTUALIZO.
-        }
-        else
-        {
-            $resultado = false; // RETORNAMOS VERDADERO SI ACTUALIZO.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }

@@ -109,9 +109,9 @@
                         <label for="c_formulario" class="d-inline-block w-100 position-relative small m-0">Formulario<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <select name="c_formulario" id="c_formulario" class="campos_formularios custom-select custom-select-sm">
                             <option value="">Elija una opcion</option>
-                            <option value="A">Aprendiz</option>
-                            <option value="B">Familia del aprendiz</option>
+                            <option value="B">Aprendiz</option>
                             <option value="F">Facilitador</option>
+                            <option value="A">Administrativo</option>
                         </select>
                     </div>
 

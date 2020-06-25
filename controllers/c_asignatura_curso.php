@@ -1,24 +1,17 @@
 <?php 
 session_start();
 if ($_POST['opcion']) {
-    require_once('../models/m_usuario.php');
-    $objeto = new model_usuario;
+    require_once('../models/m_asignatura_curso.php');
+    $objeto = new model_asignatura_curso;
     
     switch ($_POST['opcion']) {
-        case 'Registrar':
+        case '':
             $objeto->conectar();
-            // SE CONFIRMA QUE NO ESTE REGISTRADO
-            if ($objeto->confirmarExistenciaR($_POST) == 0) {
-                // SE PROCEDE A REGISTRAR
-                if ($objeto->registrarOcupacion($_POST)) {
-                    echo 'Registro exitoso';
-                } else {
-                    echo 'Registro fallido';
-                }
-            } else {
-                echo 'Ya está registrado';
+            $diasFeriados =[ '01-01', '24-02', '25-02', '09-04', '10-04', '19-04', '01-05', '24-06', '05-07', '24-07', '12-10', '24-12', '25-12', '31-12', ];
+        
+            if ($vasdas) {
+
             }
-            $objeto->desconectar();
         break;
 
         case 'Consultar':
@@ -30,15 +23,14 @@ if ($_POST['opcion']) {
             if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
             else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $campo_ordenar = 'nombre '.$campo_m_ordenar;
-            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'formulario '.$campo_m_ordenar; }
+            $campo_ordenar = 't_asignatura.nombre '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 't_asignatura.nombre '.$campo_m_ordenar; }
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarOcupaciones($_POST);
-            $resultados['total']        = $objeto->consultarOcupacionesTotal($_POST);
+            $resultados['resultados']   = $objeto->consultarAsignaturas($_POST);
+            $resultados['total']        = $objeto->consultarAsignaturasTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
@@ -48,7 +40,7 @@ if ($_POST['opcion']) {
             // SE CONFIRMA QUE NO ESTE REGISTRADO
             if ($objeto->confirmarExistenciaM($_POST) == 0) {
                 // SE PROCEDE A MODIFICAR
-                if ($objeto->modificarOcupacion($_POST)) {
+                if ($objeto->modificarCargoContacto($_POST)) {
                     echo 'Modificación exitosa';
                 } else {
                     echo 'Modificación fallida';
@@ -61,7 +53,7 @@ if ($_POST['opcion']) {
 
         case 'Estatus':
             $objeto->conectar();
-            if ($objeto->estatusOcupacion($_POST)) {
+            if ($objeto->estatusCargoContacto($_POST)) {
                 echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';

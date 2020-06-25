@@ -192,7 +192,7 @@ class model_modulo extends conexion {
 
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS PARA AGREGARLE EL MODULO COMPARTIDO
     public function consultarOficiosTodos () {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $resultado = []; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) {

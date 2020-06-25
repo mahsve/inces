@@ -83,62 +83,66 @@ if (isset($_SESSION['sesion'])) {
 
     <!-- CONTENEDOR PRINCIPAL -->
     <div id="container-main">
-        <!-- SIDEBAR -->
-        <div id="sidebar" class="bg-white px-0 m-0">
-            <!-- INFORMACION DEL USUARIO -->
-            <div id="info_user" class="d-flex border-bottom px-3 py-2">
-                <img src="<?php echo SERVERURL; ?>images/app/man.png" class="rounded pt-2 px-1 mr-2">
+        <?php // if (!$_SESSION['actualizar_contrasena']) { ?>
+            <!-- SIDEBAR -->
+            <div id="sidebar" class="bg-white px-0 m-0">
+                <!-- INFORMACION DEL USUARIO -->
+                <div id="info_user" class="d-flex border-bottom px-3 py-2">
+                    <img src="<?php echo SERVERURL; ?>images/app/man.png" class="rounded pt-2 px-1 mr-2">
 
-                <div id="user-data" class="text-secondary text-uppercase">
-                    <p class="m-0"><i class="fas fa-user text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre1'].' '.$_SESSION['usuario']['apellido1']; ?></span></p>
-                    <p class="m-0"><i class="fas fa-user-tag text-center mr-2"></i><span>C.I: <?php echo $_SESSION['usuario']['nacionalidad'].'-'.$_SESSION['usuario']['cedula']; ?></span></p>
-                    <p class="m-0"><i class="fas fa-address-card text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre']; ?></span></p>
-                </div>
-            </div>
-            <!-- FIN INFORMACION DEL USUARIO -->
-
-            <!-- COMPONENTE MENU -->
-            <ul id="menu-list" class="mt-3 px-3">
-                <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard' || $titulo == 'Sin acceso') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
-                
-                <?php if ($menu) {
-                foreach ($menu AS $modulos) { ?>
-                    <li class="dropdown mb-1">
-                        <?php
-                        $active = '';
-                        foreach ($modulos['vistas'] AS $vistas) {
-                            if ($titulo == $vistas['nombre'])
-                                $active = 'active';
-                        } ?>
-
-                        <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-center <?php echo $modulos['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
-                
-                        <ul class="dropdown-menu w-100">
-                            <?php foreach ($modulos['vistas'] AS $vistas) { ?>
-                                <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
-                            <?php } ?>
-                        </ul>
-                    </li>
-                <?php }
-                } ?>
-            </ul>
-            <!-- COMPONENTE MENU -->
-        </div>
-        <!-- FIN SIDEBAR -->
-
-        <!-- CONTENIDO -->
-        <div id="main-containt" class="p-3">
-            <div class="row">
-                <!-- CONTENEDOR FORMULARIOS Y DASHBOARD -->
-                <div class="col-sm-12">
-                    <div class="bg-white rounded p-3 shadow-sm">
-                        <?php include_once $vista; ?>
+                    <div id="user-data" class="text-secondary text-uppercase">
+                        <p class="m-0"><i class="fas fa-user text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre1'].' '.$_SESSION['usuario']['apellido1']; ?></span></p>
+                        <p class="m-0"><i class="fas fa-user-tag text-center mr-2"></i><span>C.I: <?php echo $_SESSION['usuario']['nacionalidad'].'-'.$_SESSION['usuario']['cedula']; ?></span></p>
+                        <p class="m-0"><i class="fas fa-address-card text-center mr-2"></i><span><?php echo $_SESSION['usuario']['nombre']; ?></span></p>
                     </div>
                 </div>
-                <!-- FIN CONTENEDOR FORMULARIOS Y DASHBOARD -->
+                <!-- FIN INFORMACION DEL USUARIO -->
+
+                <!-- COMPONENTE MENU -->
+                <ul id="menu-list" class="mt-3 px-3">
+                    <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard' || $titulo == 'Sin acceso') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
+                    
+                    <?php if ($menu) {
+                    foreach ($menu AS $modulos) { ?>
+                        <li class="dropdown mb-1">
+                            <?php
+                            $active = '';
+                            foreach ($modulos['vistas'] AS $vistas) {
+                                if ($titulo == $vistas['nombre'])
+                                    $active = 'active';
+                            } ?>
+
+                            <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-center <?php echo $modulos['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
+                    
+                            <ul class="dropdown-menu w-100">
+                                <?php foreach ($modulos['vistas'] AS $vistas) { ?>
+                                    <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
+                                <?php } ?>
+                            </ul>
+                        </li>
+                    <?php }
+                    } ?>
+                </ul>
+                <!-- COMPONENTE MENU -->
             </div>
-        </div>
-        <!-- FIN CONTENIDO -->
+            <!-- FIN SIDEBAR -->
+
+            <!-- CONTENIDO -->
+            <div id="main-containt" class="p-3">
+                <div class="row">
+                    <!-- CONTENEDOR FORMULARIOS Y DASHBOARD -->
+                    <div class="col-sm-12">
+                        <div class="bg-white rounded p-3 shadow-sm">
+                            <?php include_once $vista; ?>
+                        </div>
+                    </div>
+                    <!-- FIN CONTENEDOR FORMULARIOS Y DASHBOARD -->
+                </div>
+            </div>
+            <!-- FIN CONTENIDO -->
+        <?php /* } else {
+            include_once 'views/actualizar_contrasena.php';
+        } */ ?>
     </div>
     <!-- FIN CONTENDOR PRINCIPAL-->
 

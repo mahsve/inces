@@ -81,6 +81,9 @@ $(function () {
                     if (dataListado.resultados) {
                         let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
+                            let horas = 0;
+                            if (dataListado.resultados[i].horas != null) { horas = dataListado.resultados[i].horas; }
+
                             let estatus_td = '';
                             if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
                             else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span>Inactivo</span></span>'; }
@@ -90,7 +93,7 @@ $(function () {
                             contenido_tabla += '<td class="py-2 px-1 text-right">'+dataListado.resultados[i].codigo+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
                             contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].asignaturas+' Asg.</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].horas+' Hrs.</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+horas+' Hrs.</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {

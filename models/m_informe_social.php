@@ -20,14 +20,16 @@ class model_informeSocial extends conexion {
         mysqli_close($this->data_conexion);
     }
 
+
+
+    ///////////////// INFORMACION FORMULARIO /////////////////
     // FUNCION PARA CONSULTAR LAS OCUPACIONES
 	public function consultarOcupaciones () {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ocupacion WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -37,9 +39,8 @@ class model_informeSocial extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_oficio WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -49,9 +50,8 @@ class model_informeSocial extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_estado WHERE estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -61,9 +61,8 @@ class model_informeSocial extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_ciudad WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -73,9 +72,8 @@ class model_informeSocial extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -85,40 +83,25 @@ class model_informeSocial extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    /////////////// FIN INFORMACION FORMULARIO ///////////////
+    //////////////////////////////////////////////////////////
 
-    // FUNCION PARA CONSULTAR LOS FACILITADORES ACTIVOS.
-	public function consultarFacilitadores($datos) {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
-        FROM t_datos_personales
-        WHERE ( concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['buscar']."%' OR 
-                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".$datos['buscar']."%' OR
-                concat(nacionalidad, ' ', cedula) LIKE '%".$datos['buscar']."%' OR 
-                concat(nacionalidad, cedula) LIKE '%".$datos['buscar']."%' OR
-                concat(nacionalidad, '-', cedula) LIKE '%".$datos['buscar']."%' )
-        AND tipo_persona='F'
-        AND estatus='A'"; // SENTENTCIA
-        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
-		}
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
 
+
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA REGISTROS RAPIDOS DE FORMULARIO.
     // FUNCION PARA VERIFICAR PRIMERO SI EXISTE ESTA OCUPACION
-	public function confirmarExistenciaOcupacionR($datos) {
+    public function confirmarExistenciaR_O ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_ocupacion
-            WHERE nombre='".htmlspecialchars($datos["nueva_nombre_ocupacion"])."'
-            AND formulario='".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
+            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_ocupacion'])))."'
+            AND formulario='".htmlspecialchars($datos["formulario"])."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -133,8 +116,8 @@ class model_informeSocial extends conexion {
             nombre,
             formulario
         ) VALUES (
-            '".htmlspecialchars($datos["nueva_nombre_ocupacion"])."',
-            '".htmlspecialchars($datos["nueva_fomulario_ocupacion"])."'
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre_ocupacion'])))."',
+            '".htmlspecialchars($datos['formulario'])."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -142,14 +125,16 @@ class model_informeSocial extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
+
+
+    
     // FUNCION PARA REGISTRAR LOS DATOS PERSONALES DEL APRENDIZ.
     public function registrarDatosPersonales($datos) {
-        $valor_municipio = 'NULL';
-        if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
-
-        $valor_parroquia = 'NULL';
-        if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
+        $valor_ciudad    = "NULL"; if ($datos['ciudad_n'] != '') { $valor_ciudad = htmlspecialchars($datos['ciudad_n']); }
+        $valor_municipio = "NULL"; if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
+        $valor_parroquia = "NULL"; if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
 
         $resultado = false;
         $sentencia = "INSERT INTO t_datos_personales (
@@ -161,6 +146,7 @@ class model_informeSocial extends conexion {
             apellido2,
             sexo,
             fecha_n,
+            codigo_ciudad_n,
             lugar_n,
             codigo_ocupacion,
             estado_civil,
@@ -175,7 +161,7 @@ class model_informeSocial extends conexion {
             telefono2,
             correo,
             tipo_persona
-        ) VALUES (
+        ) VALUES ("."
             '".htmlspecialchars($datos['nacionalidad'])."',
             '".htmlspecialchars($datos['cedula'])."',
             '".htmlspecialchars($datos['nombre_1'])."',
@@ -184,6 +170,7 @@ class model_informeSocial extends conexion {
             '".htmlspecialchars($datos['apellido_2'])."',
             '".htmlspecialchars($datos['sexo'])."',
             '".htmlspecialchars($datos['fecha_n'])."',
+            $valor_ciudad,
             '".htmlspecialchars($datos['lugar_n'])."',
             '".htmlspecialchars($datos['ocupacion'])."',
             '".htmlspecialchars($datos['estado_civil'])."',
@@ -200,8 +187,7 @@ class model_informeSocial extends conexion {
             'B'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
@@ -250,7 +236,7 @@ class model_informeSocial extends conexion {
             '".htmlspecialchars($datos['sala'])."',
             '".htmlspecialchars($datos['comedor'])."',
             '".htmlspecialchars($datos['cocina'])."',
-            '".htmlspecialchars($datos['bano'])."',
+            '".htmlspecialchars($datos['banio'])."',
             '".htmlspecialchars($datos['dormitorio'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -277,8 +263,7 @@ class model_informeSocial extends conexion {
             diagnostico_social,
             diagnostico_preliminar,
             conclusiones,
-            enfermos,
-            representante
+            enfermos
         ) VALUES (
             '".htmlspecialchars($datos['fecha'])."',
             '".htmlspecialchars($datos['nacionalidad'])."',
@@ -292,49 +277,11 @@ class model_informeSocial extends conexion {
             '".htmlspecialchars($datos['diagnostico_social'])."',
             '".htmlspecialchars($datos['diagnostico_preliminar'])."',
             '".htmlspecialchars($datos['conclusiones'])."',
-            '".htmlspecialchars($datos['enfermos'])."',
-            '".htmlspecialchars($datos['responsable_apre'])."'
+            '".htmlspecialchars($datos['enfermos'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
-            $resultado = mysqli_insert_id ($this->data_conexion);
-        }
-		return $resultado; // RETORNAMOS LOS DATOS.
-    }
-
-    // FUNCION PARA REGISTRAR LOS DATOS DEL LOS FAMILIARES DEL APRENDIZ.
-    public function registrarFamilares($datos) {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "INSERT INTO t_familia (
-            numero_informe,
-            nombre1,
-            nombre2,
-            apellido1,
-            apellido2,
-            fecha_n,
-            sexo,
-            parentesco,
-            codigo_ocupacion,
-            trabaja,
-            ingresos
-        ) VALUES (
-            '".htmlspecialchars($datos['id_ficha'])."',
-            '".htmlspecialchars($datos['nombre_familiar1'])."',
-            '".htmlspecialchars($datos['nombre_familiar2'])."',
-            '".htmlspecialchars($datos['apellido_familiar1'])."',
-            '".htmlspecialchars($datos['apellido_familiar2'])."',
-            '".htmlspecialchars($datos['fecha_familiar'])."',
-            '".htmlspecialchars($datos['sexo_familiar'])."',
-            '".htmlspecialchars($datos['parentesco_familiar'])."',
-            '".htmlspecialchars($datos['ocupacion_familiar'])."',
-            '".htmlspecialchars($datos['trabaja_familiar'])."',
-            '".htmlspecialchars($datos['ingresos_familiar'])."'
-        )"; // SENTENTCIA
-        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
-        if (mysqli_affected_rows($this->data_conexion) > 0)
-        {
-            $resultado = true;
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = mysqli_insert_id($this->data_conexion);
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -358,6 +305,8 @@ class model_informeSocial extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+
+
 
     // FUNCION PARA CONSULTAR LOS APRENDICES REGISTRADOS Y MOSTRARLOS EN UNA LISTA.
     public function consultarInformeSocial($datos) {
@@ -383,19 +332,18 @@ class model_informeSocial extends conexion {
             t_datos_personales.codigo_ciudad = t_ciudad.codigo
             LEFT JOIN t_parroquia ON
             t_datos_personales.codigo_parroquia = t_parroquia.codigo
-            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
-                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
-                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
-                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
-                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
-            ) AND t_informe_social.estatus LIKE '%".$datos['estatus']."%' 
-            ORDER BY ".$datos['ordenar_por']." 
-            LIMIT ".$datos['numero'].", ".$datos['cantidad']."
+            WHERE (concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            ) AND t_informe_social.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
+            ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
+            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion, $sentencia); // REALIZAMOS LA CONSULTA.
-        while ($columna = mysqli_fetch_assoc($consulta)) // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-        {
-			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN UN ARREGLO.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -408,12 +356,12 @@ class model_informeSocial extends conexion {
             INNER JOIN t_datos_personales ON
             t_informe_social.nacionalidad_aprendiz = t_datos_personales.nacionalidad
             AND t_informe_social.cedula_aprendiz = t_datos_personales.cedula
-            WHERE ( concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR 
-                    concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".$datos['campo']."%' OR
-                    concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR 
-                    concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".$datos['campo']."%' OR
-                    concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".$datos['campo']."%'
-            ) AND t_informe_social.estatus LIKE '%".$datos['estatus']."%'
+            WHERE (concat(t_datos_personales.nombre1, ' ', t_datos_personales.nombre2, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nombre1, ' ', t_datos_personales.apellido1, ' ', t_datos_personales.apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, ' ', t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+                OR concat(t_datos_personales.nacionalidad, '-', t_datos_personales.cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%'
+            ) AND t_informe_social.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia))
         {
@@ -421,6 +369,8 @@ class model_informeSocial extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+
+
 
     // FUNCION PARA CONSULTAR LOS DATOS DE LA VIVIENDA DE UN APRENDIZ EN CONCRETO.
     public function consultarDatosVivienda($datos) {

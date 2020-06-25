@@ -25,8 +25,7 @@
                 <div class="form-group col-sm-6 col-lg-3 col-xl-3 d-flex align-items-center text-info mb-2">
                     <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
                     <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
-                        <option value="1">Descripción</option>
-                        <option value="2">Oficio - módulo</option>
+                        <option value="1">Fecha</option>
                     </select>
                 </div>
 
@@ -42,8 +41,8 @@
                     <label for="campo_estatus" class="pr-2 m-0"><i class="fas fa-toggle-on"></i></label>
                     <select id="campo_estatus" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="">Todos</option>
-                        <option value="A">Activos</option>
-                        <option value="I">Inactivos</option>
+                        <option value="A" selected>En curso</option>
+                        <option value="F">Finalizados</option>
                     </select>
                 </div>
             </div>
@@ -61,11 +60,10 @@
             <thead>
                 <tr class="text-white">
                     <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
-                    <th class="bg-info font-weight-normal px-1 py-2">Descripción</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="50">Año</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="160">Parte del año</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="260">Oficio - Módulo</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="70">Sesión</th>
+                    <th class="bg-info font-weight-normal px-1 py-2">Descripción modulo</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Fecha</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="93">Asignaturas</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="80">Horas</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
@@ -101,70 +99,81 @@
         </div>
 
         <form name="formulario" id="formulario" class="formulario">
-            <div class="form-row">
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group mb-2">
-                        <label for="descripcion" class="d-inline-block w-100 position-relative small m-0">Descripción<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="descripcion" id="descripcion" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la descripción" autocomplete="off"/>
-                    </div>
+            <ul class="nav nav-pills mb-2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="pills-modulo-tab" data-toggle="pill" href="#pills-modulo" role="tab" aria-controls="pills-modulo" aria-selected="true">
+                        <i class="fas fa-chalkboard"></i><span class="ml-1">Módulo</span><i id="icon-modulo" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="pills-secciones-tab" data-toggle="pill" href="#pills-secciones" role="tab" aria-controls="pills-secciones" aria-selected="false">
+                        <i class="fas fa-list"></i><span class="ml-1">Lista por sección</span><i id="icon-secciones" class="fas fa-exclamation-triangle icon-alert ml-2" style="display: none;"></i>
+                    </a>
+                </li>
+            </ul>
+        
+            <div class="tab-content border rounded position-relative">
+                <div id="pills-modulo" class="tab-pane fade px-3 py-2 show active" role="tabpanel" aria-labelledby="pills-modulo-tab">
+                    <div class="form-row">
+                        <div class="col-sm-12 offset-md-2 col-md-8 offset-xl-3 col-xl-6">
+                            <div class="form-group position-relative mb-2">
+                                <label for="fecha" class="d-inline-block w-100 position-relative small m-0">Fecha de inicio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="fecha" id="fecha" class="campos_formularios input_fecha form-control form-control-sm" style="background-color: white; padding-right: 30px;" data-date-format="dd-mm-yyyy" placeholder="dd-mm-aaaa" readonly="true"/>
+                                <label for="fecha" class="position-absolute text-info m-0" style="bottom: 4px; right: 8px; cursor: pointer;"><i class="fas fa-calendar-day"></i></label>
+                            </div>
+                            
+                            <div class="form-group mb-2">
+                                <label class="d-inline-block w-100 position-relative small m-0">Oficio
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                    <i id="loader-modulo" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-modulo-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
+                                </label>
+                                <select name="oficio" id="oficio" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija una opción</option>
+                                </select>
+                            </div>
 
-                    <div class="form-group mb-2">
-                        <label for="anio_modulo" class="d-inline-block w-100 position-relative small m-0">Año de curso<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="anio_modulo" id="anio_modulo" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una año</option>
-                            <?php for ($var = 2020; $var > 2000; $var--) { ?>
-                                <option value="<?php echo $var; ?>"><?php echo $var; ?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
+                            <div class="form-group mb-2">
+                                <label for="modulo" class="d-inline-block w-100 position-relative small m-0">Módulo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="modulo" id="modulo" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija un oficio</option>
+                                </select>
+                            </div>
 
-                    <div class="form-group mb-2">
-                        <label for="p_anio_modulo" class="d-inline-block w-100 position-relative small m-0">Parte del año<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="p_anio_modulo" id="p_anio_modulo" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una año</option>
-                            <option value="1">Primer semestre del año</option>
-                            <option value="2">Segundo semestre del año</option>
-                        </select>
-                    </div>
+                            <div class="form-group mb-2">
+                                <label for="cant_seccion" class="d-inline-block w-100 position-relative small m-0">Cantidad de secciones hábiles<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <select name="cant_seccion" id="cant_seccion" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija el n° de secciones</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                </select>
+                            </div>
 
-                    <div class="form-group mb-2">
-                        <label for="oficio" class="d-inline-block w-100 position-relative small m-0">Oficio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="oficio" id="oficio" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una opción</option>
-                        </select>
-                    </div>
+                            <h5 class="font-weight-normal text-secondary text-center text-uppercase position-relative mt-4">Asignaturas
+                                <i id="loader-asignaturas" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; top: 4px; right: 5px;"></i>
+                                <i id="loader-asignaturas-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; top: 4px; right: 5px; cursor: pointer;"></i>  
+                            </h5>
+                            <p class="text-secondary mb-0 small">Asignaturas presentes en este módulo</p>
 
-                    <div class="form-group mb-2">
-                        <label for="modulo" class="d-inline-block w-100 position-relative small m-0">Módulo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="modulo" id="modulo" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una opción</option>
-                            <option value="1">Módulo 1</option>
-                            <option value="2">Módulo 2</option>
-                            <option value="3">Módulo 3</option>
-                            <option value="4">Módulo 4</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group mb-2">
-                        <label for="sesion" class="d-inline-block w-100 position-relative small m-0">Sesión<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="sesion" id="sesion" class="campos_formularios custom-select custom-select-sm">
-                            <option value="">Elija una opción</option>
-                            <option value="1">Sesión A</option>
-                            <option value="2">Sesión B</option>
-                            <option value="3">Sesión C</option>
-                            <option value="4">Sesión D</option>
-                        </select>
+                            <div id="contenedor_asignaturas" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 300px;"></div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-sm-12 col-md-6">
-                    <h6 class="font-weight-normal text-secondary text-center text-uppercase position-relative">Asignaturas
-                        <i id="loader-asignaturas" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; top: 4px; right: 5px;"></i>
-                        <i id="loader-asignaturas-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; top: 4px; right: 5px; cursor: pointer;"></i>  
-                    </h6>
-                    <i class="d-inline-block w-100 text-center text-secondary">Selecciones las asignaturas correspondientes de este año</i>
+                <div id="pills-secciones" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-secciones-tab">
+                    <div class="form-row">
+                        <div id="lista_secciones" class="col-sm-12">
+                            <!-- LISTA DE SECCIONES CON SUS APRENDICES POR SECCION Y TURNO JAVASCRIPT -->
+                        </div>
+                    </div>
+                </div>
 
-                    <div id="contenedor_asignaturas" class="border rounded bg-white overflow-auto p-3"  style="height: calc(100% - 60px); min-height: 300px;"></div>
+                <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
+                    <div class="d-flex justify-content-center align-items-center w-100 h-100">
+                        <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>
+                    </div>
                 </div>
             </div>
 

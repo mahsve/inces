@@ -199,7 +199,7 @@
                                     <select name="actividad_economica" id="actividad_economica" class="campos_formularios custom-select custom-select-sm">
                                         <option value="">Elija una opción</option>
                                     </select>
-                                    <button type="button" id="btn-actividad-economica" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="top" title="Registrar actividad económica"><i class="fas fa-plus"></i></button>
+                                    <button type="button" id="btn-actividad-economica" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="left" title="Registrar actividad económica"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
