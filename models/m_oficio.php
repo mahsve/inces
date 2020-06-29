@@ -20,12 +20,15 @@ class model_oficio extends conexion{
         mysqli_close($this->data_conexion);
     }
 
+
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA REGISTROS DEL OFICIO
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
     public function confirmarExistenciaR ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
 		$sentencia = "SELECT *
             FROM t_oficio
-            WHERE nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
+            WHERE codigo='".mb_strtoupper(htmlspecialchars($datos['codigo']))."'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
 			$resultado = mysqli_num_rows($consulta);
@@ -37,13 +40,15 @@ class model_oficio extends conexion{
     public function registrarOficio ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_oficio (
+            codigo,
             nombre
         ) VALUES (
+            '".mb_strtoupper(htmlspecialchars($datos['codigo']))."',
             '".ucfirst(mb_strtolower(htmlspecialchars($datos["nombre"])))."'
         )";
         mysqli_query($this->data_conexion,$sentencia); // EJECUTAMOS LA OPERACION.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
-            $resultado = mysqli_insert_id($this->data_conexion);
+            $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
@@ -69,7 +74,7 @@ class model_oficio extends conexion{
             codigo_oficio,
             codigo_modulo
         ) VALUES (
-            '".htmlspecialchars($datos["codigo_oficio"])."',
+            '".mb_strtoupper(htmlspecialchars($datos['codigo_oficio']))."',
             '".htmlspecialchars($datos["codigo_modulo"])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
@@ -78,7 +83,12 @@ class model_oficio extends conexion{
         }
         return $resultado; // RETORNAMOS LOS DATOS.
     }
+    // FIN FUNCIONES PARA REGISTROS DEL OFICIO
+    //////////////////////////////////////////////////////////
 
+
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA CONSULTAR LOS OFICIOS
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS REGISTRADOS
 	public function consultarOficios ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -147,35 +157,46 @@ class model_oficio extends conexion{
         }
 		return $resultado;
     }
+    // FIN FUNCIONES PARA CONSULTAR LOS OFICIOS
+    //////////////////////////////////////////////////////////
 
+
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA MODIFICACIONES DEL OFICIO
     // FUNCION PARA VERIFICAR QUE NO EXISTA OTRO.
     public function confirmarExistenciaM ($datos) {
         $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
-		$sentencia = "SELECT *
-            FROM t_ocupacion
-            WHERE codigo!='".htmlspecialchars($datos['codigo'])."'
-            AND nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
-        "; // SENTENTCIA
-        if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
-			$resultado = mysqli_num_rows($consulta);
+        if (mb_strtoupper(htmlspecialchars($datos['codigo'])) != htmlspecialchars($datos['codigo2'])) {
+            $sentencia = "SELECT *
+                FROM t_oficio
+                WHERE codigo='".mb_strtoupper(htmlspecialchars($datos['codigo']))."'
+            "; // SENTENTCIA
+            if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
+                $resultado = mysqli_num_rows($consulta);
+            }
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
 
     // FUNCION PARA MODIFICAR UN OFICIO EXISTENTE.
     public function modificarOficio ($datos) {
-        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $resultado = 0; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_oficio SET
-            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."'
-            WHERE codigo='".htmlspecialchars($datos['codigo'])."'
+            nombre='".ucfirst(mb_strtolower(htmlspecialchars($datos['nombre'])))."',
+            codigo='".mb_strtoupper(htmlspecialchars($datos['codigo']))."'
+            WHERE codigo='".htmlspecialchars($datos['codigo2'])."'
         ";
         if (mysqli_query($this->data_conexion,$sentencia)) {
             $resultado = true;
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    // FIN FUNCIONES PARA MODIFICACIONES DEL OFICIO
+    //////////////////////////////////////////////////////////
 
-    // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
+
+    //////////////////////////////////////////////////////////
+    // FUNCION PARA CAMBIAR EL ESTATUS DE UN OFICIO
     public function estatusOficio ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_oficio
@@ -188,7 +209,10 @@ class model_oficio extends conexion{
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
+
+    ///////////////////// TRANSACCIONES /////////////////////
     // FUNCION PARA EMPEZAR NUEVA TRANSACCION.
     public function nuevaTransaccion () {
 		mysqli_query($this->data_conexion,"START TRANSACTION");
@@ -203,4 +227,6 @@ class model_oficio extends conexion{
     public function calcelarTransaccion () {
 		mysqli_query($this->data_conexion,"ROLLBACK");
     }
+    /////////////////// FIN TRANSACCIONES ////////////////////
+    //////////////////////////////////////////////////////////
 }

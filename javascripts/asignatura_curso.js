@@ -1,8 +1,6 @@
 $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
-    // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
@@ -14,9 +12,12 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
+    let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
+    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL DE UN CAMPO CUANDO SEA CLIQUEADO.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
-    let dataTurno       = {'M': 'Matutino', 'V': 'Vespertino'};
+    let dataTurno       = {'': 'Elija una opción', 'M': 'Matutino', 'V': 'Vespertino'};
+    let mensaje_fechas = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary">Presione el botón <button type="button" class="btn btn-sm btn-info" disabled="true" style="height: 22px; padding: 3px 5px; vertical-align: top; cursor: default;"><i class="fas fa-plus" style="font-size: 9px; vertical-align: top; padding-top: 3px;"></i></button> para agregar fechas no laborados</h6>';
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -82,14 +83,9 @@ $(function () {
                     if (dataListado.resultados) {
                         let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
-                            let nombre_asignatura = dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura;
-                            // VERIFICAMOS QUE NO SOBREPASE LOS 35 CARACTERES Y SI ES ASI LO RECORTAMOS.
-                            if ( (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).length > 35) {
-                                nombre_asignatura = (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).substr(0, 35);
-                                if (nombre_asignatura[nombre_asignatura.length - 1] == ' ') { nombre_asignatura = (dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura).substr(0, 34); }
-                                nombre_asignatura += '...';
-                            }
-                            
+                            let nombre_asignatura       = abreviarDescripcion(dataListado.resultados[i].asignatura, 30);
+                            let descripcion_asignatura  = abreviarDescripcion(dataListado.resultados[i].modulo+' - '+dataListado.resultados[i].oficio, 30);
+
                             let estatus_td = '';
                             if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-info"><i class="fas fa-book-open"></i> <span>En curso</span></span>'; }
                             else if (dataListado.resultados[i].estatus == 'E') { estatus_td = '<span class="badge badge-info"><i class="fas fa-clock"></i> <span>En espera</span></span>'; }
@@ -98,8 +94,8 @@ $(function () {
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
                             contenido_tabla += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].asignatura+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1 tooltip-table" data-toggle="tooltip" data-placement="top" title="'+dataListado.resultados[i].oficio+' - '+dataListado.resultados[i].asignatura+'">'+nombre_asignatura+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1"><span class="tooltip-table" data-toggle="tooltip" data-placement="right" title="'+dataListado.resultados[i].asignatura+'">'+nombre_asignatura+'</span></td>';
+                            contenido_tabla += '<td class="py-2 px-1"><span class="tooltip-table" data-toggle="tooltip" data-placement="right" title="'+dataListado.resultados[i].modulo+' - '+dataListado.resultados[i].oficio+'">'+descripcion_asignatura+'</span></td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
                             contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].seccion+'</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
@@ -206,36 +202,37 @@ $(function () {
     function verificarParte1 () {
         tarjeta_1 = true; // CAMBIA A FALSO SI ALGUNO DE LOS CAMPOS ESTA MAL DEFINIDO.
 
-        // VALIDAR NOMBRE DE LA OCUPACION
-        let nombre = $("#nombre").val();
-        if (nombre != '') {
-            if (nombre.match(validar_caracteresEspeciales)) { $("#nombre").css("background-color", colorb); }
-            else { $("#nombre").css("background-color", colorm); tarjeta_1 = false; }
-        } else {
-            $("#nombre").css("background-color", colorm); tarjeta_1 = false;
-        }
+        // // VALIDAR NOMBRE DE LA OCUPACION
+        // let nombre = $("#nombre").val();
+        // if (nombre != '') {
+        //     if (nombre.match(validar_caracteresEspeciales)) { $("#nombre").css("background-color", colorb); }
+        //     else { $("#nombre").css("background-color", colorm); tarjeta_1 = false; }
+        // } else {
+        //     $("#nombre").css("background-color", colorm); tarjeta_1 = false;
+        // }
         
-        // VALIDAR FORMULARIO A DONDE VA DIRIGIDO
-        let c_formulario = $("#c_formulario").val();
-        if (c_formulario != '') {
-            $("#c_formulario").css("background-color", colorb);
-        } else {
-            $("#c_formulario").css("background-color", colorm); tarjeta_1 = false;
-        }
+        // // VALIDAR FORMULARIO A DONDE VA DIRIGIDO
+        // let c_formulario = $("#c_formulario").val();
+        // if (c_formulario != '') {
+        //     $("#c_formulario").css("background-color", colorb);
+        // } else {
+        //     $("#c_formulario").css("background-color", colorm); tarjeta_1 = false;
+        // }
     }
+    //////////////////////// FIN VALIDACIONES ///////////////////////////
+
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // CLASES EXTRAS Y LIMITACIONES
+    $('.input_fecha').datepicker({ language: 'es' });
+    $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
+    $('.input_fecha').blur(function () { $(this).val(fechaTemporal); });
+    $('.input_fecha').change(function () { fechaTemporal = $(this).val(); });
     $('#nombre').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
-    $('#show_form').click(function () {
-        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
-        $('#gestion_form').show(400); // MUESTRA FORMULARIO
-        $('#form_title').html('Registrar');
-        $('.campos_formularios').css('background-color', colorn);
-        
-        document.formulario.reset();
-        tipoEnvio       = 'Registrar';
-        window.codigo   = '';
-    });
+    /////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
         $('#gestion_form').hide(400); // ESCONDE FORMULARIO
@@ -256,8 +253,10 @@ $(function () {
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.codigo   = dataListado.resultados[posicion].codigo;
+
         $('#nombre').val(dataListado.resultados[posicion].nombre);
         $('#c_formulario').val(dataListado.resultados[posicion].formulario);
+        $('#no_laborales').html(mensaje_fechas);
 
         verificarParte1();
     }

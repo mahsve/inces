@@ -117,13 +117,29 @@ class model_modulo_curso extends conexion {
         $sentencia = "INSERT INTO td_modulo (
             fecha_inicio,
             codigo_oficio,
-            codigo_modulo,
-            n_seccion
+            codigo_modulo
         ) VALUES (
             '".htmlspecialchars($datos['fecha'])."',
             '".htmlspecialchars($datos['oficio'])."',
-            '".htmlspecialchars($datos['modulo'])."',
-            '".htmlspecialchars($datos['cant_seccion'])."'
+            '".htmlspecialchars($datos['modulo'])."'
+        )"; // SENTENTCIA
+        mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        if (mysqli_affected_rows($this->data_conexion) > 0) {
+            $resultado = mysqli_insert_id($this->data_conexion);
+        }
+        return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    public function registrarModuloSeccion ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+        $sentencia = "INSERT INTO td_seccion (
+            seccion,
+            turno,
+            codigo_modulo
+        ) VALUES (
+            '".mb_strtoupper(htmlspecialchars($datos['seccion']))."',
+            '".htmlspecialchars($datos['turno'])."',
+            '".htmlspecialchars($datos['modulo'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -136,17 +152,13 @@ class model_modulo_curso extends conexion {
     public function registrarModuloCursoAsig ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO td_asignatura (
-            codigo_modulo,
             codigo_asignatura,
             horas,
-            seccion,
-            turno
+            codigo_seccion
         ) VALUES (
-            '".htmlspecialchars($datos['modulo'])."',
             '".htmlspecialchars($datos['asignatura'])."',
             '".htmlspecialchars($datos['horas'])."',
-            '".htmlspecialchars($datos['seccion'])."',
-            '".htmlspecialchars($datos['turno'])."'
+            '".htmlspecialchars($datos['seccion'])."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -165,38 +177,46 @@ class model_modulo_curso extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT
                 td_modulo.*,
-                (
-                    SELECT SUM(horas)
-                    FROM td_asignatura
-                    WHERE td_modulo.codigo = td_asignatura.codigo_modulo
-                    AND seccion=1
-                    AND turno='M'
-                ) AS horas,
                 t_oficio.nombre AS oficio,
-                t_modulo.codigo AS codigo_modulo,
                 t_modulo.nombre AS modulo
             FROM td_modulo
             INNER JOIN t_oficio ON td_modulo.codigo_oficio = t_oficio.codigo
             INNER JOIN t_modulo ON td_modulo.codigo_modulo = t_modulo.codigo
-            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
+            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
             ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
             LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) {
-            $columna['asignaturas'] = [];
+            $columna['secciones'] = [];
 
-            // CONSULTAMOS LAS ASIGNATURAS
-            $sentencia = "SELECT td_asignatura.*, t_asignatura.nombre
-                FROM td_asignatura
-                INNER JOIN t_asignatura ON td_asignatura.codigo_asignatura = t_asignatura.codigo
-                WHERE td_asignatura.codigo_modulo='".$columna['codigo']."'
-                AND seccion=1
-                AND turno='M'
+            /////////////////////////////////////////////////////
+            $sentencia = "SELECT *
+                FROM td_seccion
+                WHERE codigo_modulo='".$columna['codigo']."'
             "; // SENTENTCIA
             $consulta2 = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+            /////////////////////////////////////////////////////
+
             while ($columna2 = mysqli_fetch_assoc($consulta2)) {
-                $columna['asignaturas'][] = $columna2;
+                $columna2['asignaturas'] = [];
+
+                /////////////////////////////////////////////////////
+                $sentencia = "SELECT
+                        td_asignatura.*,
+                        t_asignatura.nombre
+                    FROM td_asignatura
+                    INNER JOIN t_asignatura ON td_asignatura.codigo_asignatura = t_asignatura.codigo
+                    WHERE td_asignatura.codigo_seccion='".$columna2['codigo']."'
+                "; // SENTENTCIA
+                $consulta3 = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+                /////////////////////////////////////////////////////
+
+                while ($columna3 = mysqli_fetch_assoc($consulta3)) {
+                    $columna2['asignaturas'][] = $columna3;
+                }
+
+                $columna['secciones'][] = $columna2;
             }
 
             $resultado[] = $columna;
@@ -209,20 +229,13 @@ class model_modulo_curso extends conexion {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "SELECT
                 td_modulo.*,
-                (
-                    SELECT SUM(horas)
-                    FROM td_asignatura
-                    WHERE td_modulo.codigo = td_asignatura.codigo_modulo
-                    AND seccion=1
-                    AND turno='M'
-                ) AS horas,
                 t_oficio.nombre AS oficio,
                 t_modulo.codigo AS codigo_modulo,
                 t_modulo.nombre AS modulo
             FROM td_modulo
             INNER JOIN t_oficio ON td_modulo.codigo_oficio = t_oficio.codigo
             INNER JOIN t_modulo ON td_modulo.codigo_modulo = t_modulo.codigo
-            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%' 
+            WHERE td_modulo.estatus LIKE '%".htmlspecialchars($datos['campo_estatus'])."%'
         "; // SENTENTCIA
         if ($consulta = mysqli_query($this->data_conexion, $sentencia)) {
             $resultado = mysqli_num_rows($consulta);
@@ -232,6 +245,7 @@ class model_modulo_curso extends conexion {
     //////////////// FIN CONSULTAR REGISTROS /////////////////
     //////////////////////////////////////////////////////////
 
+    
     //////////////////////////////////////////////////////////
     ////////////////// MODIFICAR REGISTROS ///////////////////
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MISMO DATO,
@@ -282,6 +296,7 @@ class model_modulo_curso extends conexion {
     //////////////////////////////////////////////////////////
 
 
+    //////////////////////////////////////////////////////////
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
     public function estatusModuloCurso ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -295,6 +310,7 @@ class model_modulo_curso extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
 
     //////////////////////////////////////////////////////////

@@ -91,74 +91,74 @@ $(function () {
                 success: function (resultados) {
                     dataListado = resultados;
 
-                    $('#listado_aprendices tbody').empty();
-                    if (dataListado.resultados) {
-                        let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
-                        for (var i in dataListado.resultados) {
-                            let contenido = '';
-                            contenido += '<tr class="border-bottom text-secondary">';
-                            contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].fecha.substr(8,2)+'-'+dataListado.resultados[i].fecha.substr(5,2)+'-'+dataListado.resultados[i].fecha.substr(0,4)+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
+                    // $('#listado_aprendices tbody').empty();
+                    // if (dataListado.resultados) {
+                    //     let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#cantidad_a_buscar').val()) + 1;
+                    //     for (var i in dataListado.resultados) {
+                    //         let contenido = '';
+                    //         contenido += '<tr class="border-bottom text-secondary">';
+                    //         contenido += '<td class="text-right py-2 px-1">'+cont+'</td>';
+                    //         contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].fecha.substr(8,2)+'-'+dataListado.resultados[i].fecha.substr(5,2)+'-'+dataListado.resultados[i].fecha.substr(0,4)+'</td>';
+                    //         contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].nacionalidad+'-'+dataListado.resultados[i].cedula+'</td>';
                             
-                            let nombre_completo = dataListado.resultados[i].nombre1;
-                            if (dataListado.resultados[i].nombre2 != null) nombre_completo += ' '+dataListado.resultados[i].nombre2.substr(0,1)+'.';
-                            nombre_completo += ' '+dataListado.resultados[i].apellido1;
-                            if (dataListado.resultados[i].apellido2 != null) nombre_completo += ' '+dataListado.resultados[i].apellido2.substr(0,1)+'.';
-                            contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
-                            let edad = calcularEdad(fecha, dataListado);
+                    //         let nombre_completo = dataListado.resultados[i].nombre1;
+                    //         if (dataListado.resultados[i].nombre2 != null) nombre_completo += ' '+dataListado.resultados[i].nombre2.substr(0,1)+'.';
+                    //         nombre_completo += ' '+dataListado.resultados[i].apellido1;
+                    //         if (dataListado.resultados[i].apellido2 != null) nombre_completo += ' '+dataListado.resultados[i].apellido2.substr(0,1)+'.';
+                    //         contenido += '<td class="py-2 px-1">'+nombre_completo+'</td>';
+                    //         let edad = calcularEdad(fecha, dataListado);
                 
-                            let estatus = '';
-                            if (dataListado.resultados[i].estatus_informe == 'E') {
-                                estatus = '<span class="badge badge-info"><i class="fas fa-clock mr-1"></i>En espera</span>';
-                            } else if (dataListado.resultados[i].estatus_informe == 'A') {
-                                estatus = '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Aceptado</span>';
-                            } else if (dataListado.resultados[i].estatus_informe == 'R') {
-                                estatus = '<span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Rechazado</span>';
-                            }
+                    //         let estatus = '';
+                    //         if (dataListado.resultados[i].estatus_informe == 'E') {
+                    //             estatus = '<span class="badge badge-info"><i class="fas fa-clock mr-1"></i>En espera</span>';
+                    //         } else if (dataListado.resultados[i].estatus_informe == 'A') {
+                    //             estatus = '<span class="badge badge-success"><i class="fas fa-check mr-1"></i>Aceptado</span>';
+                    //         } else if (dataListado.resultados[i].estatus_informe == 'R') {
+                    //             estatus = '<span class="badge badge-danger"><i class="fas fa-times mr-1"></i>Rechazado</span>';
+                    //         }
                 
-                            contenido += '<td class="text-center py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+edad+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].oficio+'</td>';
-                            contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
-                            contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
-                            contenido += '<td class="py-1 px-1">';
-                            if (permisos.modificar == 1){
-                                if (dataListado.resultados[i].estatus_informe != 'E') contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'" disabled="true"><i class="fas fa-pencil-alt"></i></button>';
-                                else contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
-                            }
+                    //         contenido += '<td class="text-center py-2 px-1">'+day+'-'+month+'-'+year+'</td>';
+                    //         contenido += '<td class="text-center py-2 px-1">'+edad+'</td>';
+                    //         contenido += '<td class="py-2 px-1">'+dataListado.resultados[i].oficio+'</td>';
+                    //         contenido += '<td class="py-2 px-1">'+dataTurno[dataListado.resultados[i].turno]+'</td>';
+                    //         contenido += '<td class="text-center py-2 px-1">'+estatus+'</td>';
+                    //         contenido += '<td class="py-1 px-1">';
+                    //         if (permisos.modificar == 1){
+                    //             if (dataListado.resultados[i].estatus_informe != 'E') contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'" disabled="true"><i class="fas fa-pencil-alt"></i></button>';
+                    //             else contenido += '<button type="button" class="btn btn-sm btn-info editar_registro mr-1" data-posicion="'+i+'"><i class="fas fa-pencil-alt"></i></button>';
+                    //         }
                             
-                            contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
-                            contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-                            if (permisos.act_desc == 1) {
-                                if (dataListado.resultados[i].estatus_informe == 'E') {
-                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
-                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
-                                } else if (dataListado.resultados[i].estatus_informe == 'R') {
-                                    contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 reactivar_postulante" data-posicion="'+i+'"><i class="fas fa-redo text-center" style="width:20px;"></i><span class="ml-2">Reactivar</span></a></li>';
-                                }
-                            }
-                            contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 imprimir_informe" data-posicion="'+i+'"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
-                            contenido += '</div></div></td></tr>';
-                            $('#listado_aprendices tbody').append(contenido);
-                            cont++;
-                        }
+                    //         contenido += '<div class="dropdown d-inline-block"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v px-1"></i></button>';
+                    //         contenido += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
+                    //         if (permisos.act_desc == 1) {
+                    //             if (dataListado.resultados[i].estatus_informe == 'E') {
+                    //                 contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Aceptar</span></a></li>';
+                    //                 contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Rechazar</span></a></li>';
+                    //             } else if (dataListado.resultados[i].estatus_informe == 'R') {
+                    //                 contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 reactivar_postulante" data-posicion="'+i+'"><i class="fas fa-redo text-center" style="width:20px;"></i><span class="ml-2">Reactivar</span></a></li>';
+                    //             }
+                    //         }
+                    //         contenido += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 imprimir_informe" data-posicion="'+i+'"><i class="fas fa-print text-center" style="width:20px;"></i><span class="ml-2">Imprimir</span></a></li>';
+                    //         contenido += '</div></div></td></tr>';
+                    //         $('#listado_aprendices tbody').append(contenido);
+                    //         cont++;
+                    //     }
 
-                        $('.editar_registro').click(editarInforme);
-                        $('.aceptar_postulante').click(aceptarPostulante);
-                        $('.rechazar_postulante').click(rechazarPostulante);
-                        $('.reactivar_postulante').click(reactivarPostulante);
-                        $('.imprimir_informe').click(imprimirInforme);
-                    } else {
-                        // MOSTRAMOS MENSAJE "SIN RESULTADOS" EN LA TABLA
-                        let contenido_tabla = '';
-                        contenido_tabla += '<tr>';
-                        contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay informes registrados.</span>';
-                        contenido_tabla += '</td>';
-                        contenido_tabla += '</tr>';
-                        $('#listado_tabla tbody').html(contenido_tabla);
-                    }
+                    //     $('.editar_registro').click(editarInforme);
+                    //     $('.aceptar_postulante').click(aceptarPostulante);
+                    //     $('.rechazar_postulante').click(rechazarPostulante);
+                    //     $('.reactivar_postulante').click(reactivarPostulante);
+                    //     $('.imprimir_informe').click(imprimirInforme);
+                    // } else {
+                    //     // MOSTRAMOS MENSAJE "SIN RESULTADOS" EN LA TABLA
+                    //     let contenido_tabla = '';
+                    //     contenido_tabla += '<tr>';
+                    //     contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
+                    //     contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay informes registrados.</span>';
+                    //     contenido_tabla += '</td>';
+                    //     contenido_tabla += '</tr>';
+                    //     $('#listado_tabla tbody').html(contenido_tabla);
+                    // }
 
                     // $('#listado_tabla tbody').empty();
                     // if (dataListado.resultados) {
@@ -881,6 +881,7 @@ $(function () {
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
         $('#form_title').html('Registrar');
         $('.campos_formularios').css('background-color', colorn);
+
         $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');  // CHECK DE VALIDACION DE CEDULA Y RIF (ICONO)
         $('.ocultar-iconos').hide();  // ICONO DE CARGA DE CEDULA Y RIF (ICONO)
         $('.btn-recargar').hide(); // BOTON RECARGAR DE LAS CONSULTAS INDEPENDIENTES (CARGO, ACTIVIDAD ECONOMICA).
@@ -1200,6 +1201,9 @@ $(function () {
         }
     });
     /////////////////////////////////////////////////////////////////////
+
+
+    
     $('.campos_ingresos').click(function () { if ($(this).val() == 0) { $(this).val(''); } });
     $('.campos_ingresos').blur(function () { if ($(this).val() == '') { $(this).val(0); } });
     $('.i_ingresos').keyup(function () {

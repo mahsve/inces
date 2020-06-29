@@ -5,6 +5,7 @@ if ($_POST['opcion']) {
     $objeto = new model_modulo;
 
     switch ($_POST['opcion']) {
+        // CONSULTAR DATOS
         case 'Traer datos':
             $resultados = [];
             $objeto->conectar();
@@ -28,7 +29,10 @@ if ($_POST['opcion']) {
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
+        // FIN CONSULTAR DATOS
 
+
+        // MODIFICACIONES RAPIDAS
         case 'Guardar orden modulos':
             $objeto->conectar();
             $objeto->nuevaTransaccion();
@@ -55,7 +59,10 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // FIN MODIFICACIONES RAPIDAS
 
+
+        // OPERACIONES BASICAS
         case 'Registrar':
             $objeto->conectar();
             $objeto->nuevaTransaccion();
@@ -270,6 +277,7 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // FIN OPERACIONES BASICAS
     }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 } else {

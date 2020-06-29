@@ -2015,8 +2015,8 @@ INSERT INTO `t_modulo_sistema` (`codigo`, `nombre`, `posicion`, `icono`) VALUES
 (8, 'Curso', 2, 'fas fa-file');
 
 INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`, `icono`) VALUES
-(1, 1, 'Informe social', 'informe_social', 1, 'fas fa-file-word'),
-(2, 1, 'Aprendiz', 'aprendiz', 2, 'fas fa-user-graduate'),
+(1, 1, 'Informe social', 'informe_social', 2, 'fas fa-file-word'),
+(2, 1, 'Aprendiz', 'aprendiz', 3, 'fas fa-user-graduate'),
 (3, 8, 'Facilitadores', 'facilitador', 6, 'fas fa-chalkboard-teacher'),
 (4, 4, 'Empresas', 'empresa', 1, 'fas fa-industry'),
 (5, 4, 'Actividad económica', 'actividad_economica', 2, 'fas fa-wallet'),
@@ -2029,23 +2029,27 @@ INSERT INTO `t_vista` (`codigo`, `codigo_modulo`, `nombre`, `enlace`, `posicion`
 (13, 5, 'Usuario', 'usuario', 5, 'fas fa-users'),
 (14, 6, 'Datos personales', 'datos_personales', 1, 'fas fa-id-card'),
 (15, 6, 'Seguridad', 'seguridad', 2, 'fas fa-user-shield'),
-(16, 7, 'Asistencias', 'asistencias', 1, 'fas fa-clipboard-list'),
-(17, 7, 'Notas', 'notas', 2, 'fas fa-address-book'),
+(16, 7, 'Asistencias', 'asistencias', 2, 'fas fa-clipboard-list'),
+(17, 7, 'Notas', 'notas', 1, 'fas fa-address-book'),
 (18, 5, 'Base de datos', 'respaldo_db', 1, 'fas fa-database'),
 (19, 8, 'Módulos en curso', 'modulo_curso', 1, 'fas fa-chalkboard'),
 (20, 8, 'Asignaturas en curso', 'asignatura_curso', 2, 'fas fa-book-reader'),
 (21, 4, 'Cargo contacto', 'cargo_contacto', 3, 'fas fa-id-card-alt'),
-(22, 8, 'Módulo / Unidad', 'modulo', 4, 'fas fa-sitemap');
+(22, 8, 'Módulo / Unidad', 'modulo', 4, 'fas fa-sitemap'),
+(23, 1, 'Aspirante', 'aspirante', 1, 'fas fa-book-reader');
 
 INSERT INTO `td_rol_modulo` (`codigo_rol`, `codigo_modulo`) VALUES
 (1, 1),
 (1, 8),
 (1, 7),
+(1, 3),
 (1, 4),
 (1, 5),
 (1, 6);
 
+
 INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modificar`, `act_desc`, `eliminar`) VALUES
+(1, 23, 1, 1, 1, 1),
 (1, 1, 1, 1, 1, 1),
 (1, 2, 1, 1, 1, 1),
 (1, 19, 1, 1, 1, 1),
@@ -2055,8 +2059,8 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 (1, 9, 1, 1, 1, 1),
 (1, 3, 1, 1, 1, 1),
 (1, 6, 1, 1, 1, 1),
-(1, 16, 1, 1, 1, 1),
 (1, 17, 1, 1, 1, 1),
+(1, 16, 1, 1, 1, 1),
 (1, 4, 1, 1, 1, 1),
 (1, 5, 1, 1, 1, 1),
 (1, 21, 1, 1, 1, 1),
@@ -2070,5 +2074,5 @@ INSERT INTO `td_rol_vista` (`codigo_rol`, `codigo_vista`, `registrar`, `modifica
 INSERT INTO `t_datos_personales` (`nacionalidad`, `cedula`, `nombre1`, `nombre2`, `apellido1`, `apellido2`, `sexo`, `fecha_n`, `lugar_n`, `codigo_ocupacion`, `estado_civil`, `nivel_instruccion`, `titulo_acade`, `mision_participado`, `codigo_ciudad`, `codigo_parroquia`, `direccion`, `telefono1`, `telefono2`, `correo`, `tipo_persona`, `estatus`) VALUES
 ('V', '00000000', 'Nombre', NULL, 'Apellido', NULL, 'I', '0000-00-00', NULL, NULL, 'I', 'I', NULL, NULL, 1, NULL, 'Dirección', '00000000000', NULL, NULL, 'A', 'A');
 
-INSERT INTO `t_usuario` (`usuario`, `contrasena`, `nacionalidad`, `cedula`, `pregunta_seguridad`, `respuesta_seguridad`, `codigo_rol`, `estatus`) VALUES
-('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 1, 'E');
+INSERT INTO `t_usuario` (`usuario`, `contrasena`, `nacionalidad`, `cedula`, `pregunta_seguridad`, `respuesta_seguridad`, `dias_cambios_c`, `intentos` `codigo_rol`, `estatus`) VALUES
+('00000000', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 'V', '00000000', 'Número predeterminado', '$2y$10$otIExl5ApgiNyK3DGGSuN.ZsGDUVgVx0lHSvPjFiTuIaHvO.1EBRy', 0, 0, 1, 'E');

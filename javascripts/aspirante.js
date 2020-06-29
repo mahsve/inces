@@ -2,9 +2,14 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
-    let validar_caracteresSimples   =/^([a-zA-Z0-9])+$/;
+    let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Ü.,-- ])+$/;
+    let validar_caracteresEspeciales1=/^([a-zá-úä-üA-ZÁ-úÄ-Ü. ])+$/;
+    let validar_caracteresEspeciales2=/^([a-zá-úä-üA-ZÁ-úÄ-Ü0-9.,--# ])+$/;
+    let validar_soloNumeros         =/^([0-9])+$/;
+    let validar_correoElectronico   =/^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1, tarjeta_2;
+    let vd_ocupacion;
     // COLORES PARA VISUALMENTE MOSTRAR SI UN CAMPO CUMPLE LOS REQUISITOS
     let colorb = "#d4ffdc"; // COLOR DE EXITO, EL CAMPO CUMPLE LOS REQUISITOS.
     let colorm = "#ffc6c6"; // COLOR DE ERROR, EL CAMPO NO CUMPLE LOS REQUISITOS.
@@ -15,14 +20,9 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     // VARIABLES NECESARIAS PARA GUARDAR LOS DATOS CONSULTADOS
     let fecha           = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL.
-    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR LA FECHA ACTUAL DE UN CAMPO CUANDO SEA CLIQUEADO.
+    let fechaTemporal   = '';   // VARIABLE PARA GUARDAR UNA FECHA TEMPORAL EN FAMILIAR.
     let tipoEnvio       = '';   // VARIABLE PARA ENVIAR EL TIPO DE GUARDADO DE DATOS (REGISTRO / MODIFICACION).
     let dataListado     = [];   // VARIABLE PARAGUARDAR LOS RESULTADOS CONSULTADOS.
-    let dataTurno       = {'': 'Elija una opción', 'M': 'Matutino', 'V': 'Vespertino'};
-    let mensaje_asignaturas     = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-hand-pointer"></i> Seleccione un oficio y un módulo</h6>';
-    let mensaje_asignaturas2    = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-file-alt"></i> No hay asignaturas registradas</h6>';
-    let mensaje_secciones       = '<h6 class="text-center py-4 m-0 text-uppercase text-secondary"><i class="fas fa-file-alt"></i> Agregue al menos una sección.</h6>';
-    let mensaje_table_seccion   = '<tr class="border-bottom text-secondary"><td colspan="3" class="text-center p-2"><i class="fas fa-file-alt"></i><span style="font-weight: 500;"> Todavía no hay aprendices registrados.</span></td></tr>';
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ $(function () {
     // DATOS DE LA TABLA Y PAGINACION 
     let numeroDeLaPagina    = 1;
     $('#campo_cantidad').change(restablecerN);
-    $('#campo_ordenar').change(restablecerN);   
+    $('#campo_ordenar').change(restablecerN);
     $('#campo_manera_ordenar').change(restablecerN);
     $('#campo_busqueda').keydown(function (e) { if (e.keyCode == 13) { restablecerN(); } else { window.actualizar_busqueda = true; } });
     $('#campo_busqueda').blur(function () { if (window.actualizar_busqueda) { buscar_listado(); } });
@@ -68,7 +68,7 @@ $(function () {
 
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_modulo_curso.php',
+                url : url+'controllers/c_oficio.php',
                 type: 'POST',
                 dataType: 'JSON',
                 data: {
@@ -87,56 +87,28 @@ $(function () {
                     if (dataListado.resultados) {
                         let cont = parseInt(numeroDeLaPagina-1) * parseInt($('#campo_cantidad').val()) + 1;
                         for (var i in dataListado.resultados) {
-                            let nombre_modulo = abreviarDescripcion(dataListado.resultados[i].modulo+' - '+dataListado.resultados[i].oficio, 45);
-
-                            let total_horas         = 0;
-                            let total_asignaturas   = 0;
-
-                            let dataAsignaturas = dataListado.resultados[i].secciones[0].asignaturas;
-                            for (let ix = 0; ix < dataAsignaturas.length; ix++) {
-                                // SOLO TOMARAN EN CUENTA LA DE LA PRIMERA SECCION
-                                total_horas += parseInt(dataAsignaturas[ix].horas);
-                                total_asignaturas++;
-                            }
+                            let horas = 0;
+                            if (dataListado.resultados[i].horas != null) { horas = dataListado.resultados[i].horas; }
 
                             let estatus_td = '';
-                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-info"><i class="fas fa-book-open"></i> <span>En curso</span></span>'; }
-                            else if (dataListado.resultados[i].estatus == 'F') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Finalizado</span></span>'; }
+                            if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
+                            else if (dataListado.resultados[i].estatus == 'I') { estatus_td = '<span class="badge badge-danger"><i class="fas fa-times"></i> <span>Inactivo</span></span>'; }
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
-                            contenido_tabla += '<td class="py-2 px-1 text-right">'+cont+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1"><span class="tooltip-table" data-toggle="tooltip" data-placement="right" title="'+dataListado.resultados[i].modulo+' - '+dataListado.resultados[i].oficio+'">'+nombre_modulo+'</span></td>';
-                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].fecha_inicio.substr(8, 2)+'-'+dataListado.resultados[i].fecha_inicio.substr(5, 2)+'-'+dataListado.resultados[i].fecha_inicio.substr(0, 4)+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+total_asignaturas+' Asg.</td>';
-                            contenido_tabla += '<td class="py-2 px-1 text-center">'+total_horas+' Hrs.</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-right">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].asignaturas+' Asg.</td>';
+                            contenido_tabla += '<td class="py-2 px-1 text-center">'+horas+' Hrs.</td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
-                            
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
                                 contenido_tabla += '<td class="py-1 px-1">';
-                                    if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
-                                    // if (permisos.act_desc == 1) {
-                                    //     if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
-                                    //     else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
-                                    // }
-
-                                    // MAS OPCIONES
-                                    contenido_tabla += '<div class="dropdown d-inline-block">';
-                                        contenido_tabla += '<button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                                            contenido_tabla += '<i class="fas fa-ellipsis-v px-1"></i>';
-                                        contenido_tabla += '</button>';
-
-                                        if (permisos.act_desc == 1) {
-                                            contenido_tabla += '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">';
-                                            
-                                            if (dataListado.resultados[i].estatus == 'A') {
-                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 aceptar_postulante" data-posicion="'+i+'"><i class="fas fa-check text-center" style="width:20px;"></i><span class="ml-2">Finalizar y registrar nuevo</span></a></li>';
-                                                contenido_tabla += '<li class="dropdown-item p-0"><a href="#" class="d-inline-block w-100 p-1 rechazar_postulante" data-posicion="'+i+'"><i class="fas fa-times text-center" style="width:20px;"></i><span class="ml-2">Eliminar curso</span></a></li>';
-                                            }
-                                            contenido_tabla += '</div>';
-                                        }
-                                    contenido_tabla += '</div>';
+                                if (permisos.modificar == 1) { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-info editar-registro" data-posicion="'+i+'" style="margin-right: 2px;"><i class="fas fa-pencil-alt"></i></button>'; }
+                                if (permisos.act_desc == 1) {
+                                    if      (dataListado.resultados[i].estatus == 'A') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-danger cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye-slash" style="font-size: 12px;"></i></button>'; }
+                                    else if (dataListado.resultados[i].estatus == 'I') { contenido_tabla += '<button type="button" class="botones_formulario btn btn-sm btn-success cambiar-estatus" data-posicion="'+i+'"><i class="fas fa-eye"></i></button>'; }
+                                }
                                 contenido_tabla += '</td>';
                             }
                             ////////////////////////////////////////////////////////
@@ -144,7 +116,6 @@ $(function () {
                             $('#listado_tabla tbody').append(contenido_tabla);
                             cont++;
                         }
-                        $('.tooltip-table').tooltip();
                         $('.editar-registro').click(editarRegistro);
                         $('.cambiar-estatus').click(cambiarEstatus);
                     } else {
@@ -152,7 +123,7 @@ $(function () {
                         let contenido_tabla = '';
                         contenido_tabla += '<tr>';
                         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay módulos registrados.</span>';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay oficios registrados.</span>';
                         contenido_tabla += '</td>';
                         contenido_tabla += '</tr>';
                         $('#listado_tabla tbody').html(contenido_tabla);
@@ -213,87 +184,113 @@ $(function () {
         buscar_listado();
     }
     /////////////////////////////////////////////////////////////////////
-
+    
     /////////////////////////////////////////////////////////////////////
     ////////////////////////// VALIDACIONES /////////////////////////////
+    // FUNCION PARA VERIFICAR LA CEDULA Y QUE NO ESTE REGISTRADO
+    let validarCedula = false;
+    $('#nacionalidad').change(function () { $('#cedula').trigger('blur'); });
+    $('#loader-cedula-reload').click(function () { $('#cedula').trigger('blur'); });
+    $('#cedula').blur(function () {
+        validarCedula = false;
+        $('#spinner-cedula').hide();
+        $('#loader-cedula-reload').hide();
+        $('#spinner-cedula-confirm').hide();
+        $('#spinner-cedula-confirm').removeClass('fa-check text-success fa-times text-danger fa-exclamation-triangle text-warning');
+
+        if($('#nacionalidad').val() != '') {
+            if ($('#cedula').val() != '') {
+                if ($('#cedula').val().match(validar_soloNumeros) && $('#cedula').val().length >= 7) {
+                    if (window.nacionalidad != $('#nacionalidad').val() || window.cedula != $('#cedula').val()) {
+                        $('#spinner-cedula').show();
+                        
+                        setTimeout(() => {
+                            $.ajax({
+                                url : url+'controllers/c_aspirante.php',
+                                type: 'POST',
+                                dataType: 'JSON',
+                                data: {
+                                    opcion      : 'Verificar cedula',
+                                    nacionalidad: $('#nacionalidad').val(),
+                                    cedula      : $('#cedula').val()
+                                },
+                                success: function (resultados) {
+                                    $('#spinner-cedula').hide();
+                                    if (!resultados) {
+                                        $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+                                    } else {
+                                        validarCedula = true;
+                                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                                    }
+                                    $('#spinner-cedula-confirm').show(200);
+                                },
+                                error: function (errorConsulta) {
+                                    // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
+                                    $('#spinner-cedula').hide();
+                                    $('#loader-cedula-reload').show();
+            
+                                    // MENSAJE DE ERROR DE CONEXION.
+                                    let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                                    let contenedor_mensaje = '';
+                                    contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                                    contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                                    contenedor_mensaje += '</button>';
+                                    contenedor_mensaje += '</div>';
+                                    $('#contenedor-mensaje2').html(contenedor_mensaje);
+            
+                                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                                    setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                                    
+                                    // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                                    console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                                    console.log(errorConsulta.responseText);
+                                }, timer: 15000
+                            });
+                        }, 500);
+                    } else {
+                        validarCedula = true;
+                        $('#spinner-cedula-confirm').addClass('fa-check text-success');
+                        $('#spinner-cedula-confirm').show();
+                    }
+                } else {
+                    // MOSTRAMOS ICONO DE ERROR
+                    $('#spinner-cedula-confirm').show();
+                    $('#spinner-cedula-confirm').addClass('fa-times text-danger');
+
+                    // MENSAJE DE ERROR, RIF INCORRECTO.
+                    let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                    let contenedor_mensaje = '';
+                    contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                    contenedor_mensaje += '<i class="fas fa-times"></i> <span style="font-weight: 500;">Debe escribir la cédula correctamente, debe tener al menos 7 números.</span>';
+                    contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                    contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                    contenedor_mensaje += '</button>';
+                    contenedor_mensaje += '</div>';
+                    $('#contenedor-mensaje2').html(contenedor_mensaje);
+
+                    // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                    setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+                }
+            }
+        }
+    });
     // VERIFICAR LOS CAMPOS DEL FORMULARIO
     function verificarParte1 () {
         tarjeta_1 = true;
-        // VERIFICAR EL CAMPO LA FECHA DE REGISTRO
-        let fecha = $("#fecha").val();
-        if (fecha != "") {
-            $("#fecha").css("background-color", colorb);
+        // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
+        let nombre = $("#nombre").val();
+        if (nombre != '') {
+            if(nombre.match(validar_caracteresEspeciales)){
+                $("#nombre").css("background-color", colorb);
+            }else{
+                $("#nombre").css("background-color", colorm);
+                tarjeta_1 = false;
+            }
         } else {
-            $("#fecha").css("background-color", colorm);
+            $("#nombre").css("background-color", colorm);
             tarjeta_1 = false;
-        }
-        // VERIFICAR EL CAMPO DE OFICIO
-        let oficio = $("#oficio").val();
-        if (oficio != "") {
-            $("#oficio").css("background-color", colorb);
-        } else {
-            $("#oficio").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-        // VERIFICAR EL CAMPO DE MODULO PERTENECIENTE AL OFICIO
-        let modulo = $("#modulo").val();
-        if (modulo != "") {
-            $("#modulo").css("background-color", colorb);
-        } else {
-            $("#modulo").css("background-color", colorm);
-            tarjeta_1 = false;
-        }
-        // VERIFICAR QUE HAYA ASIGNATURAS REGISTRADAS
-        if ($('.codigo_asignatura').length == 0) {
-            tarjeta_1 = false;
-        }
-        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (tarjeta_1) {
-            $('#icon-modulo').hide();
-        } else {
-            $('#icon-modulo').show();
-        }
-    }
-    function verificarParte2 () {
-        tarjeta_2 = true;
-
-        if ($('.aprendices_seccion').length > 0) {
-            $('#lista_secciones').css('background-color', '');
-
-            $('.campo_seccion').each(function () {
-                let campo_seccion = $(this).val();
-                if (campo_seccion != "") {
-                    if (campo_seccion.match(validar_caracteresSimples)) {
-                        $(this).css("background-color", colorb);
-                    } else {
-                        $(this).css("background-color", colorm);
-                        tarjeta_2 = false;
-                    }
-                } else {
-                    $(this).css("background-color", colorm);
-                    tarjeta_2 = false;
-                }
-            });
-
-            $('.campo_turno').each(function () {
-                let campo_turno = $(this).val();
-                if (campo_turno != "") {
-                    $(this).css("background-color", colorb);
-                } else {
-                    $(this).css("background-color", colorm);
-                    tarjeta_2 = false;
-                }
-            });
-        } else {
-            $('#lista_secciones').css('background-color', colorm);
-            tarjeta_2 = false;
-        }
-
-        // SI ALGUNO NO CUMPLE LOS CAMPOS SE MUESTRA UN ICONO Y NO SE DEJA ENVIAR EL FORMULARIO.
-        if (tarjeta_2) {
-            $('#icon-secciones').hide();
-        } else {
-            $('#icon-secciones').show();
         }
     }
     //////////////////////// FIN VALIDACIONES ///////////////////////////
@@ -305,9 +302,13 @@ $(function () {
     $('.input_fecha').click(function () { fechaTemporal = $(this).val(); });
     $('.input_fecha').blur(function () { $(this).val(fechaTemporal); });
     $('.input_fecha').change(function () { fechaTemporal = $(this).val(); });
-    $('#nombre').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
+    $('#fecha').change(function () { obtenerEdad(); });
+    $('#fecha_n').change(function (){ obtenerEdad(); });
+    function obtenerEdad () { $('#edad').val(calcularEdad($('#fecha').val(), $('#fecha_n').val())); }
+    $('.solo-numeros').keypress(function (e) { if (!(e.keyCode >= 48 && e.keyCode <= 57)) { e.preventDefault(); } });
+    $('#nombre_ocupacion').keypress(function (e){ if (e.keyCode == 13) { e.preventDefault(); } });
     /////////////////////////////////////////////////////////////////////
-
+    
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     $('#show_form').click(function () {
@@ -322,140 +323,213 @@ $(function () {
         $('.icon-alert').hide(); // ICONOS EN LAS PESTAÑAS DE LOS FORMULARIOS.
 
         document.formulario.reset();
-        tipoEnvio       = 'Registrar';
-        window.codigo   = '';
-        window.eliminarSeccion = [];
+        tipoEnvio           = 'Registrar';
+        window.nacionalidad = '';
+        window.cedula       = '';
 
+        $('#ciudad').html('<option value="">Elija un estado</option>');
+        $('#municipio').html('<option value="">Elija un estado</option>');
+        $('#parroquia').html('<option value="">Elija un municipio</option>');
         $('#fecha').val(fecha);
-        $('#modulo').html('<option value="">Elija un oficio</option>');
-        $('#contenedor_asignaturas').html(mensaje_asignaturas);
-        $('#lista_secciones').html(mensaje_secciones);
-        $('#lista_secciones').css('background-color', '');
+        $('#edad').val(0);
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
         $('#gestion_form').hide(400); // ESCONDE FORMULARIO
-        $('#pills-modulo-tab').tab('show');
+        $('#pills-datos-ciudadano-tab').tab('show');
     });
     /////////////////////////////////////////////////////////////////////
 
+    /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // AGREGAR INFORMACION AL FORMULARIO DINAMICAMENTE.
-    // AGREGAR SECCION DINAMICAMENTE Y ELEGIR TURNO
-    $('#btn-agregar-seccion').click(function () {
-        // ELIMINAMOS MENSAJE POR DEFECTO DEL CONTENEDOR SI LO POSEE
-        if ($('#lista_secciones').html() == mensaje_secciones) { $('#lista_secciones').empty(); }
-
-        // ID DINAMICO
-        window.id_seccion = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
-
-        // NUEVA SECCION
-        let contenido_seccion = '';
-        contenido_seccion += '<div id="seccion_'+window.id_seccion+'" class="aprendices_seccion position-relative border rounded bg-white my-2 mb-2 p-3">';
-            contenido_seccion += '<button type="button" class="btn btn-sm btn-danger position-absolute rounded-circle eliminar-seccion p-0" data-id-seccion="'+window.id_seccion+'" style="width: 25px; height: 25px; right: 1rem;"><i class="fas fa-times px-1" style="font-size: 12px;"></i></button>';
-        
-            contenido_seccion += '<input type="hidden" name="registro_seccion[]" class="registro_seccion" value="0">'
-            contenido_seccion += '<h5 class="font-weight-normal text-secondary text-center text-uppercase">';
-                contenido_seccion += 'Sección'
-                contenido_seccion += '<input type="text" name="seccion[]" class="campo_seccion form-control form-control-sm d-inline-block position-relative text-center ml-1" style="width: 50px; top: -1px;"/>';
-                contenido_seccion += ' - Turno: ';
-                contenido_seccion += '<select name="turno[]" class="campo_turno custom-select custom-select-sm position-relative" style="width: auto; top: -2px;">';
-                    for (let i in dataTurno) { contenido_seccion += '<option value="'+i+'">'+dataTurno[i]+'</option>'; }
-                contenido_seccion += '</select>';
-            contenido_seccion += '</h5>';
-        
-            contenido_seccion += '<div class="pb-1" style="max-height: 250px;">';
-                contenido_seccion += '<table class="table table-borderless table-hover mb-0">';
-                    contenido_seccion += '<thead>';
-                        contenido_seccion += '<tr class="text-white">';
-                            contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="100">Cédula</th>';
-                            contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2">Nombre completo</th>';
-                            contenido_seccion += '<th class="bg-info font-weight-normal px-1 py-2 rounded-right">Empresa</th>';
-                        contenido_seccion += '</tr>';
-                    contenido_seccion += '</thead>';
-
-                    contenido_seccion += '<tbody>';
-                        contenido_seccion += mensaje_table_seccion;
-                    contenido_seccion += '</tbody>';
-                contenido_seccion += '</table>';
-            contenido_seccion += '</div>';
-        contenido_seccion += '</div>';
-        // FIN NUEVA SECCION
-
-        $('#lista_secciones').append(contenido_seccion);
-        $('#seccion_'+window.id_seccion+' .eliminar-seccion').click(eliminarSeccion);
-    });
-    function eliminarSeccion (e) {
+    // REGISTRAR NUEVA OCUPACION
+    $('#btn-ocupacion-aprendiz').click(function (e) {
         e.preventDefault();
-
-        // OBTENEMOS EL ID DEL CONTENEDOR
-        let id_seccion = $(this).attr('data-id-seccion');
-        // PARA ELIMINAR UNA SECCION NO DEBE TENER APRENDICES
-        if ($('#seccion_'+window.id_seccion+' table tbody').html() == mensaje_table_seccion) {
-            // SI YA FUE REGISTRADO EN LA BASE DE DATOS, PROCEDEMOS A GUARDAR EL ID EN UN ARREGLO PARA ELIMINARLO COMPLETAMENTE.
-            if ($('#seccion_'+window.id_seccion+' .registro_seccion').val() != 0) {
-                window.eliminarSeccion.push($('#seccion_'+window.id_seccion+' .registro_seccion').val());
+        modalOcupacion();
+        window.formulario_ocupacion = 'B'; // PARA EL FORMULARIO DE APRENDIZ
+    });
+    function modalOcupacion () {
+        document.form_registrar_ocupacion.reset();
+        $(".campos_formularios_ocupacion").css('background-color', '');
+        $('.botones_formulario_ocupacion').attr('disabled', false);
+        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+        $('#btn-registrar-ocupacion span').html('Guardar');
+        $('#contenedor-mensaje-ocupacion').empty();
+        $('#modal-ocupacion').modal();
+    }
+    function validar_ocupacion () {
+        vd_ocupacion = true;
+        let nombre_ocupacion = $("#nombre_ocupacion").val();
+        if (nombre_ocupacion != '') {
+            if (nombre_ocupacion.match(validar_caracteresEspeciales)) {
+                $("#nombre_ocupacion").css("background-color", colorb);
+            } else {
+                $("#nombre_ocupacion").css("background-color", colorm);
+                vd_ocupacion = false;
             }
-
-            // ELIMINAMOS EL ELEMENTO DEL DOM
-            $('#seccion_'+window.id_seccion).remove();
-        }
-
-        // SI QUEDA VACIO LE AGREGAMOS EL MENSAJE POR DEFECTO NUEVAMENTE
-        if ($('#lista_secciones').html() == '') {
-            $('#lista_secciones').html(mensaje_secciones);
+        } else {
+            $("#nombre_ocupacion").css("background-color", colorm);
+            vd_ocupacion = false;
         }
     }
+    $('#btn-registrar-ocupacion').click(function (e) {
+        e.preventDefault();
+        validar_ocupacion();
+
+        if (vd_ocupacion) {
+            let data = $("#form_registrar_ocupacion").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar ocupacion' });
+            data.push({ name: 'formulario_ocupacion', value: window.formulario_ocupacion });
+
+            // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+            $('.botones_formulario_ocupacion').attr('disabled', true);
+            $('#btn-registrar-ocupacion i.fa-save').addClass('fa-spin');
+            $('#btn-registrar-ocupacion span').html('Guardando...');
+            $('#contenedor-mensaje-ocupacion').empty();
+
+            setTimeout(() => {
+                $.ajax({
+                    url : url+'controllers/c_aspirante.php',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resultados) {
+                        let color_alerta = '';
+                        let icono_alerta = '';
+
+                        if (resultados == 'Ya está registrado') {
+                            // MENSAJE AL USUARIO SI YA ESTA REGISTRADO.
+                            color_alerta = 'alert-warning';
+                            icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                        } else if (resultados == 'Registro fallido') {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-danger';
+                            icono_alerta = '<i class="fas fa-times"></i>';
+                        } else {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-success';
+                            icono_alerta = '<i class="fas fa-check"></i>';
+
+                            // CARGAR LAS OCUPACIONES DEL APRENDIS
+                            let valor_anterior = $("#ocupacion").val();
+                            $("#ocupacion").html('<option value="">Elija una opción</option>');
+                            let dataOcupaciones = resultados.ocupaciones;
+                            if (dataOcupaciones) {
+                                for (let i in dataOcupaciones) {
+                                    $("#ocupacion").append('<option value="'+dataOcupaciones[i].codigo +'">'+dataOcupaciones[i].nombre+"</option>");
+                                }
+                            } else {
+                                $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
+                            }
+                            $('#ocupacion').val(valor_anterior);
+                            
+                            // CERRAMOS LA VENTANA.
+                            $('#modal-ocupacion').modal('hide');
+                            resultados = 'Registro exitoso';
+                        }
+
+                        // MENSAJE SOBRE EL ESTATUS DE LA CONSULTA.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += icono_alerta+' '+resultados;
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+
+                        // CARGAMOS EL MENSAJE EN EL CONTENEDOR CORRESPONDIENTE.
+                        if (resultados == 'Ya está registrado' || resultados == 'Registro fallido') { $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje); }
+                        else { $('#contenedor-mensaje2').html(contenedor_mensaje); }
+
+                        // OCULTAMOS EL MENSAJE DESPUES DE 5 SEGUNDOS.
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-ocupacion span').html('Guardar');
+                    },
+                    error: function (errorConsulta) {
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-ocupacion span').html('Guardar');
+
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        }
+    });
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // FUNCIONES EXTRAS DE LOS CAMPOS.
-    // CONSULTAR LOS MODULOS DEL OFICIO
-    $('#oficio').change(buscarModulos);
-    $('#loader-modulo-reload').click(function () { $('#oficio').trigger('change'); });
-    function buscarModulos () {
-        if ($('#oficio').val() != "") {
-            $('#loader-modulo').show();
-            $('#loader-modulo-reload').hide();
+    // CONSULTAR LAS CIUDADES Y MUNICIPIOS DEL ESTADO
+    $('#loader-ciudad-reload').click(function () { $('#estado').trigger('change'); });
+    $('#estado').change(function () {
+        if ($(this).val() != "") {
+            $('#loader-ciudad').show();
+            $('#loader-ciudad-reload').hide();
 
             setTimeout(() => {
                 $.ajax({
-                    url: url + "controllers/c_modulo_curso.php",
+                    url: url + "controllers/c_aspirante.php",
                     type: "POST",
                     dataType: 'JSON',
                     data: {
-                        opcion: "Traer módulos",
-                        oficio: $('#oficio').val()
+                        opcion: "Traer divisiones",
+                        estado: $(this).val()
                     },
                     success: function (resultados) {
                         // OCULTAR ICONO DE CARGA
-                        $('#loader-modulo').hide();
+                        $('#loader-ciudad').hide();
 
-                        // CARGAMOS LOS MODULOS
-                        let dataModulos = resultados.modulos;
-                        if (dataModulos) {
-                            $("#modulo").html('<option value="">Elija una opción</option>');
-                            for (let i in dataModulos) {
-                                $("#modulo").append('<option value="'+dataModulos[i].codigo +'">'+dataModulos[i].nombre+"</option>");
+                        // CARGAMOS LA CUIDADES
+                        let dataCiudades = resultados.ciudades;
+                        if (dataCiudades) {
+                            $("#ciudad").html('<option value="">Elija una opción</option>');
+                            for (let i in dataCiudades) {
+                                $("#ciudad").append('<option value="'+dataCiudades[i].codigo +'">'+dataCiudades[i].nombre+"</option>");
                             }
                         } else {
-                            $("#modulo").html('<option value="">No hay ciudades</option>');
+                            $("#ciudad").html('<option value="">No hay ciudades</option>');
                         }
 
-                        // CARGAMOS LOS MODULOS TRAIDOS DESDE LA BASE DE DATOS AL EDITAR.
-                        if (window.valor_modulos != undefined) {
-                            $("#modulo").val(window.valor_modulos);
-                            delete window.valor_modulos;
-
-                            verificarParte1();
-                            $('#carga_espera').hide(400);
+                        // CARGAMOS LOS MUNICIPIOS
+                        let dataMunicipios = resultados.municipios;
+                        if (dataMunicipios) {
+                            $("#municipio").html('<option value="">Elija una opción</option>');
+                            for (let i in dataMunicipios) {
+                                $("#municipio").append('<option value="'+dataMunicipios[i].codigo +'">'+dataMunicipios[i].nombre+"</option>");
+                            }
+                        } else {
+                            $("#municipio").html('<option value="">No hay municipios</option>');
                         }
                     },
                     error: function (errorConsulta) {
                         // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
-                        $('#loader-modulo').hide();
-                        $('#loader-modulo-reload').show();
+                        $('#loader-ciudad').hide();
+                        $('#loader-ciudad-reload').show();
 
                         // MENSAJE DE ERROR DE CONEXION.
                         let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
@@ -478,60 +552,46 @@ $(function () {
                 });
             }, 500);
         } else {
-            $('#modulo').html('<option value="">Elija un oficio</option>');
-            $('#contenedor_asignaturas').html(mensaje_asignaturas);
+            $('#ciudad').html('<option value="">Elija un estado</option>');
+            $('#municipio').html('<option value="">Elija un estado</option>');
+            $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
-    }
-    // CONSULTAR ASIGNATURAS DEL OFICIO SEGUN EL MODULO
-    $('#modulo').change(buscarAsignaturas);
-    $('#loader-asignaturas-reload').click(function () { $('#modulo').trigger('change'); });
-    function buscarAsignaturas () {
-        if ($('#modulo').val() != '') {
-            $('#loader-asignaturas').show();
-            $('#loader-asignaturas-reload').hide();
+    });
+    // CONSUTAR LAS PARROQUIAS DEL MUNICIPIO
+    $('#loader-parroquia-reload').click(function () { $('#municipio').trigger('change'); });
+    $('#municipio').change(function () {
+        if ($(this).val() != '') {
+            $('#loader-parroquia').show();
+            $('#loader-parroquia-reload').hide();
 
             setTimeout(() => {
                 $.ajax({
-                    url: url + "controllers/c_modulo_curso.php",
-                    type: "POST",
+                    url : url+'controllers/c_aspirante.php',
+                    type: 'POST',
                     dataType: 'JSON',
                     data: {
-                        opcion: "Traer asignaturas",
-                        modulo: $('#modulo').val()
+                        opcion: 'Traer parroquias',
+                        municipio: $('#municipio').val()
                     },
                     success: function (resultados) {
-                        $('#loader-asignaturas').hide();
+                        // OCULTAR ICONO DE CARGA
+                        $('#loader-parroquia').hide();
 
-                        // CARGAMOS LAS CIUDADES DEL ESTADO SELECCIONADO
-                        let dataAsignaturas = resultados.asignaturas;
-                        if (dataAsignaturas) {
-                            $('#contenedor_asignaturas').empty();
-                            for (let i in dataAsignaturas) {
-                                // GENERA UN ID ALEATORIO.
-                                window.id_asignatura = Math.random().toString().replace('.', '-');
-                                // RECORAMOS LA DESCRIPCION.
-                                let nombre_asignatura = abreviarDescripcion(dataAsignaturas[i].nombre, 30);
-            
-                                let contenedor_asignatura = '';
-                                contenedor_asignatura += '<div id="asignatura-'+window.id_asignatura+'" class="bg-info text-white rounded d-flex align-items-center justify-content-between w-100 my-1 px-2 py-1">';
-                                    contenedor_asignatura += '<input type="hidden" name="codigo_asignatura[]" class="codigo_asignatura" value="'+dataAsignaturas[i].codigo+'">';
-                                    contenedor_asignatura += '<input type="hidden" name="horas_asignaturas[]" class="horas_asignaturas" value="'+dataAsignaturas[i].horas+'">';
-                                    contenedor_asignatura += '<span class="nombre_asignatura" data-toggle="tooltip" data-placement="right" title="'+dataAsignaturas[i].nombre+'">'+nombre_asignatura+' | Horas: '+dataAsignaturas[i].horas+'</span>';
-
-                                    contenedor_asignatura += '<div></div>';
-                                contenedor_asignatura += '</div>';
-                                $('#contenedor_asignaturas').append(contenedor_asignatura);
-                                $('#asignatura-'+window.id_asignatura+' .nombre_asignatura').tooltip();
+                        // CARGAR LAS OCUPACIONES DEL APRENDIS
+                        let dataParroquia = resultados.parroquias;
+                        if (dataParroquia) {
+                            $('#parroquia').html('<option value="">Elija una opción</option>');
+                            for (let i in dataParroquia) {
+                                $("#parroquia").append('<option value="'+dataParroquia[i].codigo +'">'+dataParroquia[i].nombre+"</option>");
                             }
                         } else {
-                            $('#contenedor_asignaturas').html(mensaje_asignaturas2);
+                            $('#parroquia').html('<option value="">No hay parroquias</option>');
                         }
                     },
                     error: function (errorConsulta) {
                         // MOSTRAMOS ICONO PARA REALIZAR NUEVAMENTE LA CONSULTA.
-                        $('#loader-asignaturas').hide();
-                        $('#loader-asignaturas-reload').show();
-                        $('#contenedor_asignaturas').empty();
+                        $('#loader-parroquia').hide();
+                        $('#loader-parroquia-reload').show();
 
                         // MENSAJE DE ERROR DE CONEXION.
                         let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
@@ -554,11 +614,9 @@ $(function () {
                 });
             }, 500);
         } else {
-            $('#loader-asignaturas').hide();
-            $('#loader-asignaturas-reload').hide();
-            $('#contenedor_asignaturas').html(mensaje_asignaturas);
+            $('#parroquia').html('<option value="">Elija un municipio</option>');
         }
-    }
+    });
     /////////////////////////////////////////////////////////////////////
 
     /////////////////////////////////////////////////////////////////////
@@ -566,72 +624,29 @@ $(function () {
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarRegistro () {
         let posicion = $(this).attr('data-posicion');
-
-        $('#info_table').hide(400);  // ESCONDE TABLA DE RESULTADOS.
+        
+        $('#info_table').hide(400); // ESCONDE TABLA DE RESULTADOS.
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
         $('#form_title').html('Modificar');
         $('.campos_formularios').css('background-color', colorn);
-        $('#carga_espera').show();
 
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
         window.codigo   = dataListado.resultados[posicion].codigo;
+        $('#nombre').val(dataListado.resultados[posicion].nombre);
 
-        let fecha_nu = dataListado.resultados[posicion].fecha_inicio;
-        $('#fecha').val(fecha_nu.substr(8, 2)+'-'+fecha_nu.substr(5, 2)+'-'+fecha_nu.substr(0, 4));
-        $('#oficio').val(dataListado.resultados[posicion].codigo_oficio);
-        $('#modulo').html('<option value="">Elija un oficio</option>');
-
-        let dataAsignaturas = dataListado.resultados[posicion].secciones[0].asignaturas;
-        if (dataAsignaturas) {
-            $('#contenedor_asignaturas').empty();
-            for (let i = 0; i < dataAsignaturas.length; i++) {
-                // GENERA UN ID ALEATORIO.
-                window.id_asignatura = Math.random().toString().replace('.', '-');
-                // RECORAMOS LA DESCRIPCION.
-                let nombre_asignatura = abreviarDescripcion(dataAsignaturas[i].nombre, 30);
-
-                let contenedor_asignatura = '';
-                contenedor_asignatura += '<div id="asignatura-'+window.id_asignatura+'" class="bg-info text-white rounded d-flex align-items-center justify-content-between w-100 my-1 px-2 py-1">';
-                    contenedor_asignatura += '<input type="hidden" name="codigo_asignatura[]" class="codigo_asignatura" value="'+dataAsignaturas[i].codigo_asignatura+'">';
-                    contenedor_asignatura += '<input type="hidden" name="horas_asignaturas[]" class="horas_asignaturas" value="'+dataAsignaturas[i].horas+'">';
-                    contenedor_asignatura += '<span class="nombre_asignatura" data-toggle="tooltip" data-placement="right" title="'+dataAsignaturas[i].nombre+'">'+nombre_asignatura+' | Horas: '+dataAsignaturas[i].horas+'</span>';
-
-                    contenedor_asignatura += '<div></div>';
-                contenedor_asignatura += '</div>';
-                $('#contenedor_asignaturas').append(contenedor_asignatura);
-                $('#asignatura-'+window.id_asignatura+' .nombre_asignatura').tooltip();
-            }
-        } else {
-            $('#contenedor_asignaturas').html(mensaje_asignaturas2);
-        }
-
-        $('#lista_secciones').empty();
-        let dataSecciones = dataListado.resultados[posicion].secciones;
-        for (let ix = 0; ix < dataSecciones.length; ix++) {
-            $('#btn-agregar-seccion').trigger('click');
-
-            $('#seccion_'+window.id_seccion+' .registro_seccion').val(dataSecciones[ix].codigo);
-            $('#seccion_'+window.id_seccion+' .campo_seccion').val(dataSecciones[ix].seccion);
-            $('#seccion_'+window.id_seccion+' .campo_turno').val(dataSecciones[ix].turno);
-        }
-        verificarParte2();
-
-        window.valor_modulos= dataListado.resultados[posicion].codigo_modulo;
-        $('#oficio').trigger('change');
+        verificarParte1();
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar-datos').click(function (e) {
         e.preventDefault();
         verificarParte1();
-        verificarParte2();
 
         // SE VERIFICA QUE TODOS LOS CAMPOS ESTEN DEFINIDOS CORRECTAMENTE.
-        if (tarjeta_1 && tarjeta_2) {
+        if (tarjeta_1) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
             data.push({ name: 'codigo', value: window.codigo });
-            data.push({ name: 'eliminar_seccion', value: JSON.stringify(window.eliminarSeccion) });
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('.botones_formulario').attr('disabled', true);
@@ -644,7 +659,7 @@ $(function () {
             
             setTimeout(() => {
                 $.ajax({
-                    url : url+'controllers/c_modulo_curso.php',
+                    url : url+'controllers/c_oficio.php',
                     type: 'POST',
                     data: data,
                     success: function (resultados) {
@@ -742,7 +757,7 @@ $(function () {
         
         setTimeout(() => {
             $.ajax({
-                url : url+'controllers/c_modulo_curso.php',
+                url : url+'controllers/c_oficio.php',
                 type: 'POST',
                 data: {
                     opcion: 'Estatus',
@@ -836,13 +851,25 @@ $(function () {
         $('.botones_formulario').attr('disabled', true);
 
         $.ajax({
-            url: url + "controllers/c_modulo_curso.php",
+            url: url + "controllers/c_aspirante.php",
             type: "POST",
             dataType: 'JSON',
             data: { opcion: "Traer datos" },
             success: function (resultados) {
+                // CARGAMOS LA FECHA ACTUAL EN UNA VARIABLE.
                 fecha = resultados.fecha;
 
+                // CARGAMOS LAS OCUPACIONES
+                let dataOcupaciones = resultados.ocupaciones;
+                if (dataOcupaciones) {
+                    for (let i in dataOcupaciones) {
+                        $("#ocupacion").append('<option value="'+dataOcupaciones[i].codigo +'">'+dataOcupaciones[i].nombre+"</option>");
+                    }
+                } else {
+                    $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
+                }
+
+                // CARGAMOS LOS OFICIOS
                 let dataOficios = resultados.oficios;
                 if (dataOficios) {
                     for (let i in dataOficios) {
@@ -850,6 +877,16 @@ $(function () {
                     }
                 } else {
                     $("#oficio").html('<option value="">No hay oficios</option>');
+                }
+
+                // CARGAMOS LOS ESTADOS DEL PAIS
+                let dataEstados = resultados.estados;
+                if (dataEstados) {
+                    for (let i in dataEstados) {
+                        $("#estado").append('<option value="'+dataEstados[i].codigo +'">'+dataEstados[i].nombre+"</option>");
+                    }
+                } else {
+                    $("#estado").html('<option value="">No hay estados</option>');
                 }
                 buscar_listado();
             },

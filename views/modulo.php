@@ -107,38 +107,56 @@
 
         <form name="formulario" id="formulario" class="formulario">
             <div class="form-row">
-                <div class="col-sm-12 offset-md-2 col-md-8 offset-xl-3 col-xl-6">
-                    <!-- NOMBRE DEL OFICIO -->
+                <!-- NOMBRE DEL OFICIO -->
+                <div class="col-sm-12 col-lg-6">
                     <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el módulo o unidad" autocomplete="off"/>
                     </div>
+                </div>
 
-                    <!-- OFICIO AL QUE PERTENECE EL MODULO (SI NO ES COMPARTIDO) -->
+                <!-- OFICIO AL QUE PERTENECE EL MODULO (SI NO ES COMPARTIDO) -->
+                <div class="col-sm-12 col-lg-6">
                     <div class="form-group mb-2">
                         <label for="oficio" class="d-inline-block w-100 position-relative small m-0">Oficio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <select name="oficio" id="oficio" class="campos_formularios custom-select custom-select-sm">
                             <option value="">Elija una opcion</option>
                         </select>
                     </div>
+                </div>
 
-                    <!-- MODULO COMPARTIDO PARA TODO LOS MODULOS (DESACTIVA EL SELECT OFICIO SI ES ASI) -->
+                <!-- MODULO COMPARTIDO PARA TODO LOS MODULOS (DESACTIVA EL SELECT OFICIO SI ES ASI) -->
+                <div class="col-sm-12">
                     <div class="custom-control custom-checkbox mb-2" mr-sm-2">
                         <input type="checkbox" class="custom-control-input" name="repeticion_modulo" id="repeticion_modulo" value="S">
                         <label class="custom-control-label small" for="repeticion_modulo">Repetir en todos <span class="text-secondary">(Módulo repetido en todos los oficios)</span></label>
                     </div>
+                </div>
 
-                    <!-- LISTA ASIGNATURAS DEL MODULO -->
+                <!-- TITULO -->
+                <div class="col-sm-12">
                     <h5 class="font-weight-normal text-secondary text-center text-uppercase mt-4">Asignaturas</h5>
+                </div>
+
+                <!-- LISTA ASIGNATURAS DEL MODULO -->
+                <div class="col-sm-12">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <p class="text-secondary mb-0 small">Agregue las asignaturas presentes en este módulo</p>
                         <button id="btn-buscar-asignatura" type="button" class="btn btn-sm btn-info descripcion-tooltip" data-toggle="tooltip" data-placement="left" title="Buscar las asignaturas"><i class="fas fa-search"></i></button>
                     </div>
+                </div>
 
-                    <!-- LISTA OFICIOS -->
-                    <div id="contenedor-asignatura" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 300px;"></div>
+                <!-- CONTENEDOR ASIGNATURAS -->
+                <div class="col-sm-12">
+                    <div class="overflow-auto">
+                        <div id="contenedor-asignatura" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 300px; min-width: 600px;">
+                            <!-- JAVASCRIPT -->
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- CONTENEDOR PARA MENSAJES PERSONALIZADOS -->
+                <!-- CONTENEDOR PARA MENSAJES PERSONALIZADOS -->
+                <div class="col-sm-12">
                     <div id="contenedor-mensaje2"></div>
                 </div>
             </div>

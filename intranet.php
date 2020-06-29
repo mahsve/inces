@@ -102,26 +102,18 @@ if (isset($_SESSION['sesion'])) {
                 <ul id="menu-list" class="mt-3 px-3">
                     <li class="mb-1"><a href="<?php echo SERVERURL; ?>intranet" class="d-inline-block w-100 rounded px-3 py-2 <?php if ($titulo == 'Dashboard' || $titulo == 'Sin acceso') { echo 'active'; } ?>"><i class="fas fa-home"></i><span class="ml-2">Inicio</span></a></li>
                     
-                    <?php if ($menu) {
-                    foreach ($menu AS $modulos) { ?>
+                    <?php if ($menu) { foreach ($menu AS $modulos) { ?>
                         <li class="dropdown mb-1">
-                            <?php
-                            $active = '';
-                            foreach ($modulos['vistas'] AS $vistas) {
-                                if ($titulo == $vistas['nombre'])
-                                    $active = 'active';
-                            } ?>
+                            <?php $active = ''; foreach ($modulos['vistas'] AS $vistas) { if ($titulo == $vistas['nombre']) { $active = 'active'; } } ?>
 
                             <a href="#" class="dropdown-toggle d-inline-block w-100 rounded px-3 py-2 <?php echo $active; ?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="text-center <?php echo $modulos['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $modulos['nombre']; ?></span></a>
-                    
                             <ul class="dropdown-menu w-100">
                                 <?php foreach ($modulos['vistas'] AS $vistas) { ?>
                                     <li class="dropdown-item p-0"><a href="<?php echo SERVERURL.'intranet/'.$vistas['enlace']; ?>" class="d-inline-block w-100 px-2 py-1"><i class="text-center <?php echo $vistas['icono']; ?>" style="width:16px;"></i><span class="ml-2"><?php echo $vistas['nombre']; ?></span></a></li>
                                 <?php } ?>
                             </ul>
                         </li>
-                    <?php }
-                    } ?>
+                    <?php } } ?>
                 </ul>
                 <!-- COMPONENTE MENU -->
             </div>

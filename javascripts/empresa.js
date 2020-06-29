@@ -354,15 +354,16 @@ $(function () {
         $('#gestion_form').show(400); // MUESTRA FORMULARIO
         $('#form_title').html('Registrar');
         $('.campos_formularios').css('background-color', colorn);
+
         $('.limpiar-estatus').removeClass('fa-check text-success fa-times text-danger');  // CHECK DE VALIDACION DE CEDULA Y RIF (ICONO)
         $('.ocultar-iconos').hide();  // ICONO DE CARGA DE CEDULA Y RIF (ICONO)
         $('.btn-recargar').hide(); // BOTON RECARGAR DE LAS CONSULTAS INDEPENDIENTES (CARGO, ACTIVIDAD ECONOMICA).
         $('.icon-alert').hide(); // ICONOS EN LAS PESTAÑAS DE LOS FORMULARIOS.
-        $('#contenedor-personas-contacto').html(mensaje_contato);
-        $('#contenedor-personas-contacto').css('background-color', '');
-        
+
         $('#ciudad').html('<option value="">Elija un estado</option>');
         $('#ciudad_c').html('<option value="">Elija un estado</option>');
+        $('#contenedor-personas-contacto').html(mensaje_contato);
+        $('#contenedor-personas-contacto').css('background-color', '');
 
         document.formulario.reset();
         tipoEnvio       = 'Registrar';

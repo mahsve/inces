@@ -59,8 +59,8 @@
                     <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Asignatura</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Descripción asignatura</th>
-                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Turno</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="70">Sección</th>
+                    <th class="bg-info font-weight-normal px-1 py-2" width="90">Turno</th>
                     <th class="bg-info font-weight-normal <?php if ($permisos['modificar'] != 1 AND $permisos['act_desc'] != 1) echo 'rounded-right'; ?> text-center px-1 py-2" width="85">Estatus</th>
                     
                     <?php if ($permisos['modificar'] == 1 OR $permisos['act_desc'] == 1) { ?>
@@ -97,35 +97,55 @@
 
         <form name="formulario" id="formulario" class="formulario">
             <div class="form-row">
+                <!-- TITULO -->
                 <div class="col-sm-12">
                     <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos de la asignatura</h3>    
                 </div>
 
-                <div class="col-sm-4 col-lg-3 col-xl-2">
-                    <div class="form-group mb-2">
+                <!-- FECHA DE INICIO -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
+                    <div class="form-group position-relative mb-2">
                         <label for="fecha_inicio" class="d-inline-block w-100 position-relative small m-0">Fecha de inicio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="fecha_inicio" id="fecha_inicio" class="campos_formularios form-control form-control-sm input_fecha" placeholder="dd-mm-aaaa" autocomplete="off"/>
+                        <input type="text" name="fecha_inicio" id="fecha_inicio" class="campos_formularios input_fecha form-control form-control-sm" style="background-color: white; padding-right: 30px;" data-date-format="dd-mm-yyyy" placeholder="dd-mm-aaaa" readonly="true"/>
+                        <label for="fecha_inicio" class="position-absolute text-info m-0" style="bottom: 4px; right: 8px; cursor: pointer;"><i class="fas fa-calendar-day"></i></label>
                     </div>
                 </div>
 
-                <div class="col-sm-4 col-lg-3 col-xl-2">
+                <!-- HORAS (AUTOMATICO) -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="horas" class="d-inline-block w-100 position-relative small m-0">Horas<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <label for="horas" class="d-inline-block w-100 position-relative small m-0">Horas <span class="small">(Automatico)</span></label>
                         <input type="text" name="horas" id="horas" class="form-control form-control-sm input_fecha" autocomplete="off"  readonly="true"/>
                     </div>
                 </div>
 
-                <div class="col-sm-4 col-lg-3 col-xl-2">
+                <!-- FECHA FIN -->
+                <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="extender" class="d-inline-block w-100 position-relative small m-0">Extender (Días)<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="extender" id="extender" class="campos_formularios form-control form-control-sm input_fecha" autocomplete="off"/>
+                        <label for="fecha_fin" class="d-inline-block w-100 position-relative small m-0">Finalización <span class="small">(Automatico)</span></label>
+                        <input type="text" name="fecha_fin" id="fecha_fin" class="form-control form-control-sm input_fecha" placeholder="dd-mm-aaaa" readonly="true"/>
                     </div>
                 </div>
 
-                <div class="col-sm-4 col-lg-3 col-xl-2">
-                    <div class="form-group mb-2">
-                        <label for="fecha_fin" class="d-inline-block w-100 position-relative small m-0">Fecha de finalización<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="fecha_fin" id="fecha_fin" class="form-control form-control-sm input_fecha" placeholder="dd-mm-aaaa" readonly="true"/>
+                <!-- TITULO -->
+                <div class="col-sm-12 mt-4">
+                    <h4 class="font-weight-normal text-secondary text-center text-uppercase">Fechas no laborados</h4>    
+                </div>
+                
+                <!-- DESCRIPCION Y BOTON -->
+                <div class="col-sm-12 mt-4">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <p class="text-secondary small mb-0">Agregue las fechas que no se laboraron</p>
+                        <button type="button" id="btn-agregar-fecha" class="btn btn-sm btn-info descripcion-tooltip" data-toggle="tooltip" data-placement="left" title="Agregar fecha no laboral"><i class="fas fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <!-- CONTENEDOR DE FECHAS NO LABORALES -->
+                <div class="col-sm-12">
+                    <div class="overflow-auto">
+                        <div id="no_laborales" class="border rounded overflow-auto px-3 py-2 mb-2" style="min-width: 600px;">
+                            <!-- JAVASCRIPT -->
+                        </div>
                     </div>
                 </div>
 
@@ -142,31 +162,25 @@
                 <!-- NACIONALIDAD -->
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm">
-                            <option value="">Elija una opción</option>
-                            <option value="V">Venezolano</option>
-                            <option value="E">Extranjero</option>
-                        </select>
+                        <label for="nacionalidad2" class="d-inline-block w-100 position-relative small m-0">Nacionalidad</label>
+                        <input type="text" name="nacionalidad2" id="nacionalidad2" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
+                        <input type="hidden" name="nacionalidad" id="nacionalidad" value="0"/>
                     </div>
                 </div>
 
                 <!-- CEDULA -->
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula<i class="fas fa-asterisk text-danger position-absolute required"></i>
-                            <i id="spinner-cedula" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
-                            <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
-                        </label>
-                        <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                        <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula</label>
+                        <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
                 <!-- NOMBRE 1 -->
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
+                        <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre</label>
+                        <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
@@ -174,15 +188,15 @@
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
                         <label for="nombre_2" class="d-inline-block w-100 position-relative small m-0">Segundo nombre</label>
-                        <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
+                        <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
                 <!-- APELLIDO 1 -->
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
-                        <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
+                        <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido</label>
+                        <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
@@ -190,20 +204,19 @@
                 <div class="col-sm-6 col-lg-4 col-xl-3">
                     <div class="form-group mb-2">
                         <label for="apellido_2" class="d-inline-block w-100 position-relative small m-0">Segundo Apellido</label>
-                        <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
+                        <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
                 <!-- OCUPACION -->
                 <div class="col-sm-12 col-lg-6 col-xl-5">
                     <div class="form-group mb-2">
-                        <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                        <div class="d-flex">
-                            <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm"></select>
-                        </div>
+                        <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación</label>
+                        <input type="text" name="ocupacion" id="ocupacion" class="form-control form-control-sm" autocomplete="off" readonly="true"/>
                     </div>
                 </div>
 
+                <!-- MENSAJES PERSONALIZADOS -->
                 <div class="col-sm-12">
                     <div id="contenedor-mensaje2"></div>
                 </div>

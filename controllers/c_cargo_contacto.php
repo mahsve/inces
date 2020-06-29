@@ -5,6 +5,7 @@ if ($_POST['opcion']) {
     $objeto = new model_cargo_contacto;
     
     switch ($_POST['opcion']) {
+        // OPERACIONES BASICAS
         case 'Registrar':
             $objeto->conectar();
             // SE CONFIRMA QUE NO ESTE REGISTRADO
@@ -67,6 +68,7 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // FIN OPERACIONES BASICAS
     }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 } else {

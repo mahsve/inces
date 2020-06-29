@@ -2,6 +2,7 @@ $(function () {
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
     // PARAMETROS PARA VERIFICAR LOS CAMPOS CORRECTAMENTE.
+    let validar_codigo_registro     =/^([a-zA-Z0-9--])+$/;
     let validar_caracteresEspeciales=/^([a-zá-úä-üA-ZÁ-úÄ-Üa.,-- ])+$/;
     // VARIABLE QUE GUARDARA FALSE SI ALGUNOS DE LOS CAMPOS NO ESTA CORRECTAMENTE DEFINIDO
     let tarjeta_1;
@@ -90,7 +91,7 @@ $(function () {
 
                             let contenido_tabla = '';
                             contenido_tabla += '<tr class="border-bottom text-secondary">';
-                            contenido_tabla += '<td class="py-2 px-1 text-right">'+dataListado.resultados[i].codigo+'</td>';
+                            contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].codigo+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].nombre+'</td>';
                             contenido_tabla += '<td class="py-2 px-1 text-center">'+dataListado.resultados[i].asignaturas+' Asg.</td>';
                             contenido_tabla += '<td class="py-2 px-1 text-center">'+horas+' Hrs.</td>';
@@ -183,7 +184,20 @@ $(function () {
     ////////////////////////// VALIDACIONES /////////////////////////////
     function verificarParte1 () {
         tarjeta_1 = true;
-        // VERIFICAR EL CAMPO DEL NOMBRE DE LA OCUPACION.
+        // VERIFICAR EL CAMPO DEL CODIGO DEL OFICIO
+        let codigo = $("#codigo").val();
+        if (codigo != '') {
+            if(codigo.match(validar_codigo_registro)){
+                $("#codigo").css("background-color", colorb);
+            }else{
+                $("#codigo").css("background-color", colorm);
+                tarjeta_1 = false;
+            }
+        } else {
+            $("#codigo").css("background-color", colorm);
+            tarjeta_1 = false;
+        }
+        // VERIFICAR EL CAMPO DEL NOMBRE DEL OFICIO
         let nombre = $("#nombre").val();
         if (nombre != '') {
             if(nombre.match(validar_caracteresEspeciales)){
@@ -209,7 +223,7 @@ $(function () {
         
         document.formulario.reset();
         tipoEnvio       = 'Registrar';
-        window.codigo   = '';
+        window.codigo2  = '';
     });
     $('#show_table').click(function () {
         $('#info_table').show(400); // MUESTRA TABLA DE RESULTADOS.
@@ -230,7 +244,8 @@ $(function () {
 
         document.formulario.reset();
         tipoEnvio       = 'Modificar';
-        window.codigo   = dataListado.resultados[posicion].codigo;
+        window.codigo2  = dataListado.resultados[posicion].codigo;
+        $('#codigo').val(dataListado.resultados[posicion].codigo);
         $('#nombre').val(dataListado.resultados[posicion].nombre);
 
         verificarParte1();
@@ -244,7 +259,7 @@ $(function () {
         if (tarjeta_1) {
             var data = $("#formulario").serializeArray();
             data.push({ name: 'opcion', value: tipoEnvio });
-            data.push({ name: 'codigo', value: window.codigo });
+            data.push({ name: 'codigo2', value: window.codigo2 });
 
             // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
             $('.botones_formulario').attr('disabled', true);

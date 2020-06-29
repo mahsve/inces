@@ -5,7 +5,7 @@ if ($_POST['opcion']) {
     $objeto = new model_asignatura_curso;
     
     switch ($_POST['opcion']) {
-        case '':
+        case 'Calcular fecha fin':
             $objeto->conectar();
             $diasFeriados =[ '01-01', '24-02', '25-02', '09-04', '10-04', '19-04', '01-05', '24-06', '05-07', '24-07', '12-10', '24-12', '25-12', '31-12', ];
         

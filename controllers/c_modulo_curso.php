@@ -8,6 +8,7 @@ if ($_POST['opcion']) {
     $objeto = new model_modulo_curso;
     
     switch ($_POST['opcion']) {
+        // CONSULTAR DATOS
         case 'Traer datos':
             $objeto->conectar();
             $resultados = [];
@@ -32,48 +33,65 @@ if ($_POST['opcion']) {
             $objeto->desconectar();
             echo json_encode($resultados);
         break;
+        // FIN CONSULTAR DATOS
 
+
+        // OPERACIONES BASICAS
         case 'Registrar':
             $objeto->conectar();
             $objeto->nuevaTransaccion();
 
+            // REORDENAMOS LA FECHA
             $fecha_c = $_POST['fecha'];     $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+
             // VERIFICAMOS QUE NO EXISTA UN MODULO ACTIVO CON EL MISMO OFICIO Y MODULO.
             if ($objeto->confirmarExistenciaR($_POST) == 0) {
                 // REGISTRA EL MODULO EN CURSO
-                if ($numero = $objeto->registrarModuloCurso($_POST)) {
-                    $errores = 0;
-                    // PROCEDEMOS A REGISTRAR TODAS LAS ASIGNATURAS POR SECCION
-                    for ($var1 = 1; $var1 <= intval($_POST['cant_seccion']); $var1++) {
-                        // REGISTRA DOS VECES, TURNO MATUTINO Y VESPERTINO
-                        for ($var2 = 0; $var2 < 2; $var2++) {
-                            if ($var2 == 0) { $turno = 'M'; } // EL PRIMERO COMO MATUTINO
-                            if ($var2 == 1) { $turno = 'V'; } // EL SEGUNDO COMO VESPERTINO
+                if ($codigo_modulo = $objeto->registrarModuloCurso($_POST)) {
+                    $errores_s = 0;
+                    // PROCEDEMOS A REGISTRAR LAS SECCION
+                    for ($var1 = 0; $var1 < count($_POST['registro_seccion']); $var1++) {
+                        // DATOS PARA REGISTRAR SECCION.
+                        $datos_seccion = [
+                            'codigo'    => $_POST['registro_seccion'][$var1],
+                            'seccion'   => $_POST['seccion'][$var1],
+                            'turno'     => $_POST['turno'][$var1],
+                            'modulo'    => $codigo_modulo,
+                        ];
+
+                        // SI NO SE REGISTRO SUMA UN ERROR COMETIDO.
+                        if ($codigo_seccion = $objeto->registrarModuloSeccion($datos_seccion)) {
+                            $errores_a = 0;
 
                             // RECORREMOS TODAS LAS ASIGNATURAS PRA EL REGISTRO
-                            for ($var3 = 0; $var3 < count($_POST['codigo_registro']); $var3++) {
+                            for ($var2 = 0; $var2 < count($_POST['codigo_asignatura']); $var2++) {
                                 $datos_asignatura = [
-                                    'codigo'    => $_POST['codigo_registro'][$var3],
-                                    'modulo'    => $numero,
-                                    'asignatura'=> $_POST['codigo_asignatura'][$var3],
-                                    'horas'     => $_POST['horas_asignaturas'][$var3],
-                                    'seccion'   => $var1,
-                                    'turno'     => $turno,
+                                    'asignatura'=> $_POST['codigo_asignatura'][$var2],
+                                    'horas'     => $_POST['horas_asignaturas'][$var2],
+                                    'seccion'   => $codigo_seccion
                                 ];
         
                                 // SI NO SE REGISTRO SUMA UN ERROR COMETIDO.
-                                if (!$objeto->registrarModuloCursoAsig($datos_asignatura)) { $errores++; }
+                                if (!$objeto->registrarModuloCursoAsig($datos_asignatura)) { $errores_a++; }
                             }
+                        } else {
+                            $errores_s++;
                         }
                     }
 
                     // SI LO ERRORES SE MANTUVIERON EN 0 TODO ESTA EXITOSO Y GUARDAMOS LAS TRANSACCIONES.
-                    if ($errores == 0) {
+                    if ($errores_s == 0 AND $errores_a == 0) {
                         $objeto->guardarTransaccion();
                         echo 'Registro exitoso';
                     } else {
                         $objeto->calcelarTransaccion();
-                        echo 'Registro fallido: Asignaturas del módulo';
+                        if ($errores_s > 0 AND $errores_a == 0) {
+                            echo 'Registro fallido: Secciones del módulo';
+                        } else if ($errores_s == 0 AND $errores_a > 0) {
+                            echo 'Registro fallido: Asignaturas del módulo';
+                        } else {
+                            echo 'Registro fallido: Secciones y asignaturas del módulo';
+                        }
                     }
                 } else {
                     $objeto->calcelarTransaccion();
@@ -95,9 +113,8 @@ if ($_POST['opcion']) {
             if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
             else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $campo_ordenar = 'fecha_inicio '.$campo_m_ordenar;
-            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'fecha_inicio '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'td_modulo.anio_modulo, t_oficio.nombre, td_modulo.codigo_modulo '.$campo_m_ordenar; }
+            $campo_ordenar = 'td_modulo.fecha_inicio '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'td_modulo.fecha_inicio '.$campo_m_ordenar; }
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 
@@ -167,6 +184,7 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // FIN OPERACIONES BASICAS
     }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 } else {

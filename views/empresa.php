@@ -245,7 +245,9 @@
                         </div>
 
                         <div class="col-sm-12 overflow-auto">
-                            <div id="contenedor-personas-contacto" class="border overflow-auto px-3 py-2 mb-2" style="max-height: 400px; min-width: 900px;"></div>
+                            <div id="contenedor-personas-contacto" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 400px; min-width: 900px;">
+                                <!-- JAVASCRIPT -->
+                            </div>
                         </div>
                     </div>
                 </div>

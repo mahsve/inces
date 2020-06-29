@@ -22,8 +22,8 @@ if ($_POST['opcion']){
         case 'Traer divisiones':
             $resultados = [];
             $objeto->conectar();
-            $resultados['ciudades'] = $objeto->consultarCiudades($_POST);
-            $resultados['municipios'] = $objeto->consultarMunicipios($_POST);
+            // $resultados['ciudades'] = $objeto->consultarCiudades($_POST);
+            // $resultados['municipios'] = $objeto->consultarMunicipios($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
         break;

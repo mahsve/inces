@@ -17,3 +17,19 @@ function calcularEdad (fechaA, fechaN) {
     }
     return edad;
 }
+
+function abreviarDescripcion (descripcion, total_caracteres) {
+    // GUARDAMOS LOS DATOS EN UNA VARIABLE
+    let descripcion_completa = descripcion;
+    
+    // VERIFICAMOS QUE NO SOBREPASE EL MAXIMODE CARACTERES ESTABLECIDOS
+    if (descripcion_completa.length > total_caracteres) {
+        // TOMAMOS SOLO LOS CARACTERES ESTABLECIDOS
+        descripcion_completa = descripcion_completa.substr(0, total_caracteres);
+        // VERIFICAMOS QUE LA ULTIMA POSICION NO SEA UN ESPACIO (ERROR VISUAL).
+        if (descripcion_completa[descripcion_completa.length - 1] == ' ') { descripcion_completa = descripcion_completa.substr(0, (total_caracteres - 1)); }
+        // SE LE CONCATENA ... PARA DESCRIBIR QUE FUE RECORTADA LA DESCRIPCION
+        descripcion_completa += '...';
+    }
+    return descripcion_completa;
+}

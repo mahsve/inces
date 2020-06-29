@@ -285,7 +285,6 @@ class model_modulo extends conexion {
     //////////////////////////////////////////////////////////
 
 
-
     //////////////////////////////////////////////////////////
     // FUNCIONES PARA MODIFICAR UN MODULO
     // FUNCION PARA VERIFICAR QUE NO ESTE REGISTRADO EL MODULO CON ESTA CARACTERISTICAS CON OTRO CODIGO.
@@ -385,7 +384,7 @@ class model_modulo extends conexion {
     //////////////////////////////////////////////////////////
 
     
-
+    //////////////////////////////////////////////////////////
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
     public function estatusModulo ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -399,6 +398,7 @@ class model_modulo extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
 
     ///////////////////// TRANSACCIONES /////////////////////

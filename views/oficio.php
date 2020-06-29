@@ -59,7 +59,7 @@
         <table id="listado_tabla" class="table table-borderless table-hover mb-0" style="min-width: 950px;">
             <thead>
                 <tr class="text-white">
-                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">N°</th>
+                    <th class="bg-info font-weight-normal px-1 py-2 rounded-left" width="80">Código</th>
                     <th class="bg-info font-weight-normal px-1 py-2">Nombre del oficio</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="93">Asignaturas</th>
                     <th class="bg-info font-weight-normal px-1 py-2" width="80">Horas</th>
@@ -100,6 +100,11 @@
         <form name="formulario" id="formulario" class="formulario">
             <div class="form-row">
                 <div class="col-sm-12 offset-md-3 col-md-6">
+                    <div class="form-group mb-2">
+                        <label for="codigo" class="d-inline-block w-100 position-relative small m-0">Código<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="codigo" id="codigo" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el código" autocomplete="off"/>
+                    </div>
+
                     <div class="form-group mb-2">
                         <label for="nombre" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                         <input type="text" name="nombre" id="nombre" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el oficio" autocomplete="off"/>

@@ -205,29 +205,18 @@ class model_facilitador extends conexion{
             INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
             LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
             WHERE (
-                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
-                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
-                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
-                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
-                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%')
+                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR 
+                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
+                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR 
+                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
+                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%')
             AND t_datos_personales.tipo_persona='F'
             AND t_datos_personales.estatus LIKE '%".htmlspecialchars($datos['estatus'])."%'
-            ORDER BY ".$datos['ordenar_por']."
-            LIMIT ".$datos['numero'].", ".$datos['cantidad']."
+            ORDER BY ".htmlspecialchars($datos['campo_ordenar'])."
+            LIMIT ".htmlspecialchars($datos["campo_numero"]).", ".htmlspecialchars($datos['campo_cantidad'])."
         "; // SENTENTCIA
-
         $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         while ($columna = mysqli_fetch_assoc($consulta)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-
-            // CONSULTAR LOS ARCHIVOS DE LOS FACILITADORES
-            $archivos = [];
-            $sentencia1 = "SELECT * FROM t_documentos WHERE nacionalidad='".$columna['nacionalidad']."' AND cedula='".$columna['cedula']."'"; // SENTENTCIA
-            $consulta1 = mysqli_query($this->data_conexion, $sentencia1); // REALIZAMOS LA CONSULTA.
-            while ($columna1 = mysqli_fetch_assoc($consulta1)) { // CONVERTIRMOS LOS DATOS EN UN ARREGLO.
-                $archivos[] = $columna1;
-            }
-
-            $columna['detalles_archivos'] = $archivos;
 			$resultado[] = $columna; // GUARDAMOS LOS DATOS EN LA VARIABLE.
 		}
 		return $resultado; // RETORNAMOS LOS DATOS.
@@ -236,14 +225,16 @@ class model_facilitador extends conexion{
     // FUNCION PARA CONSULTAR EL NUMERO TOTAL DE FACILITADORES REGISTRADOS.
     public function consultarDatosPersonalesTotal ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
-        $sentencia = "SELECT *
+        $sentencia = "SELECT t_datos_personales.*, t_ciudad.codigo_estado, t_parroquia.codigo_municipio
             FROM t_datos_personales
+            INNER JOIN t_ciudad ON t_datos_personales.codigo_ciudad = t_ciudad.codigo
+            LEFT JOIN t_parroquia ON t_datos_personales.codigo_parroquia = t_parroquia.codigo
             WHERE (
-                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
-                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
-                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR 
-                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' OR
-                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo'])."%' )
+                concat(nombre1, ' ', nombre2, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR 
+                concat(nombre1, ' ', apellido1, ' ', apellido2) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
+                concat(nacionalidad, ' ', cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR 
+                concat(nacionalidad, cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%' OR
+                concat(nacionalidad, '-', cedula) LIKE '%".htmlspecialchars($datos['campo_busqueda'])."%')
             AND t_datos_personales.tipo_persona='F'
             AND t_datos_personales.estatus LIKE '%".htmlspecialchars($datos['estatus'])."%'
         "; // SENTENTCIA

@@ -5,7 +5,6 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
     $descripcion = ['Aprendices activos', 'Total aprendices', 'Oficios disponibles', 'Facilitadores'];
 // DASHBOARD DEL PERSONAL ADMINISTRATIVO
 }
-
 // DASHBOARD DEL LOS APRENDICES
 
 // DASHBOARD DEL LOS FACILITADORES
@@ -50,8 +49,16 @@ if ($_SESSION['usuario']['tipo_persona'] == 'A') {
             <p class="px-1 pb-1 m-0 text-white" style="opacity: .7;"><?php echo $descripcion[3];?></p>
         </div>
     </div>
+
+    <div class="col-sm-12">
+        <h5 class="font-weight-normal text-secondary text-center text-uppercase">Entrevistas en los ultimos meses</h5>
+
+        <div class="ct-chart"></div>
+    </div>
 </div>
 
 <!-- PASAR DATOS DE PHP A JAVASCRIPT -->
 <script> let url = '<?php echo SERVERURL; ?>'; </script>
+<link href="<?php echo SERVERURL; ?>styles/chartist/chartist.min.css" rel="stylesheet">
+<script src="<?php echo SERVERURL; ?>javascripts/chartist/chartist.min.js"></script>
 <script src="<?php echo SERVERURL; ?>javascripts/dashboard.js"></script>

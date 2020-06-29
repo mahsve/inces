@@ -115,13 +115,17 @@
             <div class="tab-content border rounded position-relative">
                 <div id="pills-modulo" class="tab-pane fade px-3 py-2 show active" role="tabpanel" aria-labelledby="pills-modulo-tab">
                     <div class="form-row">
-                        <div class="col-sm-12 offset-md-2 col-md-8 offset-xl-3 col-xl-6">
+                        <!-- FECHA DE INICIO -->
+                        <div class="col-sm-12 col-lg-6 col-xl-3">
                             <div class="form-group position-relative mb-2">
                                 <label for="fecha" class="d-inline-block w-100 position-relative small m-0">Fecha de inicio<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <input type="text" name="fecha" id="fecha" class="campos_formularios input_fecha form-control form-control-sm" style="background-color: white; padding-right: 30px;" data-date-format="dd-mm-yyyy" placeholder="dd-mm-aaaa" readonly="true"/>
                                 <label for="fecha" class="position-absolute text-info m-0" style="bottom: 4px; right: 8px; cursor: pointer;"><i class="fas fa-calendar-day"></i></label>
                             </div>
-                            
+                        </div>
+
+                        <!-- OFICIO -->
+                        <div class="col-sm-12 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
                                 <label class="d-inline-block w-100 position-relative small m-0">Oficio
                                     <i class="fas fa-asterisk text-danger position-absolute required"></i>
@@ -132,44 +136,69 @@
                                     <option value="">Elija una opción</option>
                                 </select>
                             </div>
+                        </div>
 
+                        <!-- MODULO -->
+                        <div class="col-sm-12 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
                                 <label for="modulo" class="d-inline-block w-100 position-relative small m-0">Módulo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <select name="modulo" id="modulo" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija un oficio</option>
                                 </select>
                             </div>
+                        </div>
 
-                            <div class="form-group mb-2">
-                                <label for="cant_seccion" class="d-inline-block w-100 position-relative small m-0">Cantidad de secciones hábiles<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="cant_seccion" id="cant_seccion" class="campos_formularios custom-select custom-select-sm">
-                                    <option value="">Elija el n° de secciones</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                </select>
-                            </div>
-
+                        <!-- TITULO -->
+                        <div class="col-sm-12">
                             <h5 class="font-weight-normal text-secondary text-center text-uppercase position-relative mt-4">Asignaturas
                                 <i id="loader-asignaturas" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; top: 4px; right: 5px;"></i>
                                 <i id="loader-asignaturas-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; top: 4px; right: 5px; cursor: pointer;"></i>  
                             </h5>
-                            <p class="text-secondary mb-0 small">Asignaturas presentes en este módulo</p>
+                        </div>
 
-                            <div id="contenedor_asignaturas" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 300px;"></div>
+                        <!-- DESCRIPCION -->
+                        <div class="col-sm-12">
+                            <p class="text-secondary small mb-1">Asignaturas presentes en este módulo</p>
+                        </div>
+
+                        <!-- CONTENEDOR ASIGNATURAS -->
+                        <div class="col-sm-12">
+                            <div class="overflow-auto">
+                                <div id="contenedor_asignaturas" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 300px; min-width: 600px;">
+                                    <!-- JAVASCRIPT -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="pills-secciones" class="tab-pane fade px-3 py-2" role="tabpanel" aria-labelledby="pills-secciones-tab">
                     <div class="form-row">
-                        <div id="lista_secciones" class="col-sm-12">
-                            <!-- LISTA DE SECCIONES CON SUS APRENDICES POR SECCION Y TURNO JAVASCRIPT -->
+                        <!-- TITULO -->
+                        <div class="col-sm-12">
+                            <h4 class="font-weight-normal text-secondary text-center text-uppercase">Secciones hábiles</h4>    
+                        </div>
+
+                        <!-- DESCRIPCION Y BOTON -->
+                        <div class="col-sm-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <p class="text-secondary small mb-0">Agrega las secciones hábiles para este módulo y el turno a cursar</p>
+                                <button type="button" id="btn-agregar-seccion" class="btn btn-sm btn-info descripcion-tooltip" data-toggle="tooltip" data-placement="left" title="Agregar sección"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- CONTENEDOR SECCIONES -->
+                        <div class="col-sm-12">
+                            <div class="overflow-auto">
+                                <div id="lista_secciones" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 500px; min-width: 800px;">
+                                    <!-- JAVASCRIPT -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- CONTENDOR DE CARGA -->
                 <div id="carga_espera" class="position-absolute rounded w-100 h-100" style="top: 0px; left: 0px;display: none;">
                     <div class="d-flex justify-content-center align-items-center w-100 h-100">
                         <p class="h4 text-white m-0"><i class="fas fa-spinner fa-spin mr-3"></i><span>Cargando algunos datos...</span></p>

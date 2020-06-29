@@ -33,7 +33,6 @@ if ($_POST['opcion']) {
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
             $campo_ordenar = 'nombre '.$campo_m_ordenar;
             if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
-            
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 

@@ -289,3 +289,9 @@ footer {
         min-height: 45px;
     }
 }
+.ct-series-a .ct-bar {
+    stroke: #17a2b8 !important;
+}
+.ct-series-b .ct-bar {
+    stroke: #17c1b8 !important;
+}

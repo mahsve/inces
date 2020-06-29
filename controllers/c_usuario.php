@@ -5,23 +5,45 @@ if ($_POST['opcion']) {
     $objeto = new model_usuario;
     
     switch ($_POST['opcion']) {
-        case 'Registrar':
+        // CONSULTAR DATOS
+        case 'Traer datos':
+            $resultados = [];
             $objeto->conectar();
-            // SE CONFIRMA QUE NO ESTE REGISTRADO
-            if ($objeto->confirmarExistenciaR($_POST) == 0) {
-                // SE PROCEDE A REGISTRAR
-                if ($objeto->registrarOcupacion($_POST)) {
-                    echo 'Registro exitoso';
-                } else {
-                    echo 'Registro fallido';
-                }
+            $resultados['roles']   = $objeto->consultarRoles();
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+        // FIN CONSULTAR DATOS
+
+
+        // OPERACIONES BASICAS
+        case 'Registrar':
+            // ESTABLECEMOS LA CONTRASEÑA QUE SERA LA MISMA CEDULA
+            $_POST['contrasena'] = password_hash($_POST['cedula'], PASSWORD_DEFAULT);
+
+            $objeto->conectar();
+            if ($objeto->registrarUsuario($_POST)) {
+                echo 'Registro exitoso';
             } else {
-                echo 'Ya está registrado';
+                echo 'Registro fallido';
+            }
+            $objeto->desconectar();
+        break;
+
+        case 'Modificar':
+            $objeto->conectar();
+            if ($objeto->modificarUsuario($_POST)) {
+                echo 'Modificación exitosa';
+            } else {
+                echo 'Modificación fallida';
             }
             $objeto->desconectar();
         break;
 
         case 'Consultar':
+            // OBTENEMOS LA CEDULA DEL USUARIO
+            $_POST['cedula_usuario']   = $_SESSION['usuario']['nacionalidad'].'-'.$_SESSION['usuario']['cedula'];
+
             $resultados = [];
             $objeto->conectar();
             ////////////////////////////////////////////////////////////
@@ -30,44 +52,36 @@ if ($_POST['opcion']) {
             if      ($_POST['campo_m_ordenar'] == 1) { $campo_m_ordenar = 'ASC'; }
             else if ($_POST['campo_m_ordenar'] == 2) { $campo_m_ordenar = 'DESC'; }
             ///////////////// ESTABLECER TIPO DE ORDEN /////////////////
-            $campo_ordenar = 'nombre '.$campo_m_ordenar;
-            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 'nombre '.$campo_m_ordenar; }
-            else if ($_POST['campo_ordenar'] == 2) { $campo_ordenar = 'formulario '.$campo_m_ordenar; }
+            $campo_ordenar = 't_datos_personales.cedula '.$campo_m_ordenar;
+            if      ($_POST['campo_ordenar'] == 1) { $campo_ordenar = 't_datos_personales.cedula '.$campo_m_ordenar; }
             $_POST['campo_ordenar'] = $campo_ordenar;
             ////////////////////////////////////////////////////////////
 
             ///////////////////// HACER CONSULTAS //////////////////////
-            $resultados['resultados']   = $objeto->consultarOcupaciones($_POST);
-            $resultados['total']        = $objeto->consultarOcupacionesTotal($_POST);
+            $resultados['resultados']   = $objeto->consultarUsuarios($_POST);
+            $resultados['total']        = $objeto->consultarUsuariosTotal($_POST);
             $objeto->desconectar();
             echo json_encode($resultados);
-        break;
-        
-        case 'Modificar':
-            $objeto->conectar();
-            // SE CONFIRMA QUE NO ESTE REGISTRADO
-            if ($objeto->confirmarExistenciaM($_POST) == 0) {
-                // SE PROCEDE A MODIFICAR
-                if ($objeto->modificarOcupacion($_POST)) {
-                    echo 'Modificación exitosa';
-                } else {
-                    echo 'Modificación fallida';
-                }
-            } else {
-                echo 'Ya está registrado';
-            }
-            $objeto->desconectar();
         break;
 
         case 'Estatus':
             $objeto->conectar();
-            if ($objeto->estatusOcupacion($_POST)) {
+            if ($_POST['estatus'] == 'C') {
+                $estatus = $objeto->cancelarUsuario($_POST);
+            } else {
+                // ESTABLECEMOS LA CONTRASEÑA QUE SERA LA MISMA CEDULA
+                $_POST['contrasena'] = password_hash($_POST['cedula'], PASSWORD_DEFAULT);
+                $estatus = $objeto->restablecerUsuario($_POST);
+            }
+
+            if ($estatus) {
                 echo 'Modificación exitosa';
             } else {
                 echo 'Modificación fallida';
             }
             $objeto->desconectar();
         break;
+        // FIN OPERACIONES BASICAS
     }
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
 } else {

@@ -12,13 +12,13 @@ if ($_POST['opcion']) {
             // SE CONFIRMA QUE NO ESTE REGISTRADO
             if ($objeto->confirmarExistenciaR($_POST) == 0) {
                 // SE PROCEDE A REGISTRAR
-                if ($n_oficio = $objeto->registrarOficio($_POST)) {
+                if ($objeto->registrarOficio($_POST)) {
                     // CONSULTAMOS LOS MODULO QUE SE REPITEN EN TODO LOS OFICIOS
                     $errores = 0;
                     $modulosG = $objeto->consultarModulosGenerales();
                     for ($var = 0; $var < count($modulosG); $var++) {
                         $datosModulos = [
-                            'codigo_oficio' => $n_oficio,
+                            'codigo_oficio' => $_POST['codigo'],
                             'codigo_modulo' => $modulosG[$var]['codigo']
                         ];
 
@@ -34,7 +34,7 @@ if ($_POST['opcion']) {
                         $objeto->calcelarTransaccion();
                     }
                 } else {
-                    echo 'Registro fallido: Oficios';
+                    echo 'Registro fallido: Oficio';
                     $objeto->calcelarTransaccion();
                 }
             } else {
