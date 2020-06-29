@@ -20,7 +20,6 @@ class model_empresa extends conexion {
         mysqli_close($this->data_conexion);
     }
 
-
     
     ///////////////// INFORMACION FORMULARIO /////////////////
     // FUNCION PARA CONSULTAR LAS ACTIVIDADES ECONOMICAS.
@@ -67,9 +66,30 @@ class model_empresa extends conexion {
 		}
 		return $resultado;
     }
+
+    // FUNCION PARA CONSULTAR LOS MUNICIPIOS DE UN ESTADO
+	public function consultarMunicipios ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_municipio WHERE codigo_estado='".$datos['estado']."' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
+
+    // FUNCION PARA CONSULTAR LAS PARROQUIAS DE UN MUNICIPIO
+	public function consultarParroquias ($datos) {
+        $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
+		$sentencia = "SELECT * FROM t_parroquia WHERE codigo_municipio='".$datos['municipio']."' AND estatus='A'"; // SENTENTCIA
+        $consulta = mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
+        while ($columna = mysqli_fetch_assoc($consulta)) {
+			$resultado[] = $columna;
+		}
+		return $resultado; // RETORNAMOS LOS DATOS.
+    }
     /////////////// FIN INFORMACION FORMULARIO ///////////////
     //////////////////////////////////////////////////////////
-
 
 
     /////////////////// VERIFICAR REGISTROS ///////////////////
@@ -100,7 +120,6 @@ class model_empresa extends conexion {
     }
     ///////////////// FIN VERIFICAR REGISTROS /////////////////
     //////////////////////////////////////////////////////////
-
 
 
     //////////////////////////////////////////////////////////
@@ -160,15 +179,21 @@ class model_empresa extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    // FIN FUNCIONES PARA REGISTROS RAPIDOS DE FORMULARIO
     //////////////////////////////////////////////////////////
 
 
-
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA REGISTROS DEL MODULO
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
     public function registrarEmpresa ($datos) {
+        $valor_municipio = "NULL"; if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
+        $valor_parroquia = "NULL"; if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
+
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "INSERT INTO t_empresa (
             rif,
+            fecha,
             nil,
             razon_social,
             codigo_actividad,
@@ -177,9 +202,13 @@ class model_empresa extends conexion {
             telefono2,
             correo,
             codigo_ciudad,
-            direccion
+            codigo_municipio,
+            codigo_parroquia,
+            direccion,
+            punto_referencia
         ) VALUES (
             '".htmlspecialchars($datos['rif'])."',
+            '".htmlspecialchars($datos['fecha'])."',
             '".htmlspecialchars($datos['nil'])."',
             '".ucwords(mb_strtolower(htmlspecialchars($datos['razon_social'])))."',
             '".htmlspecialchars($datos['actividad_economica'])."',
@@ -188,7 +217,10 @@ class model_empresa extends conexion {
             '".htmlspecialchars($datos['telefono_2'])."',
             '".mb_strtolower(htmlspecialchars($datos['correo']))."',
             '".htmlspecialchars($datos['ciudad'])."',
-            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."'
+            $valor_municipio,
+            $valor_parroquia,
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."',
+            '".ucfirst(mb_strtolower(htmlspecialchars($datos['punto_referencia'])))."'
         )"; // SENTENTCIA
         mysqli_query($this->data_conexion,$sentencia); // REALIZAMOS LA CONSULTA.
         if (mysqli_affected_rows($this->data_conexion) > 0) {
@@ -248,8 +280,7 @@ class model_empresa extends conexion {
             direccion='".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion_contacto'])))."',
             telefono1='".htmlspecialchars($datos['telefono1_contacto'])."',
             telefono2='".htmlspecialchars($datos['telefono2_contacto'])."',
-            correo='".mb_strtolower(htmlspecialchars($datos['correo_contacto']))."',
-            tipo_persona='C'
+            correo='".mb_strtolower(htmlspecialchars($datos['correo_contacto']))."'
             WHERE nacionalidad='".htmlspecialchars($datos['nacionalidad_contacto2'])."'
             AND cedula='".htmlspecialchars($datos['cedula_contacto2'])."'
         "; // SENTENTCIA
@@ -295,9 +326,11 @@ class model_empresa extends conexion {
         }
 		return $resultado;
     }
+    // FIN FUNCIONES PARA REGISTROS DEL MODULO
+    //////////////////////////////////////////////////////////
 
 
-
+    //////////////////////////////////////////////////////////
     // FUNCION PARA CONSULTAR TODOS LOS OFICIOS REGISTRADOS
 	public function consultarEmpresas ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -344,14 +377,20 @@ class model_empresa extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
-    
 
+    //////////////////////////////////////////////////////////
+    // FUNCIONES PARA MODIFICAR UNA EMPRESA
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
     public function modificarEmpresa ($datos) {
+        $valor_municipio = "NULL"; if ($datos['municipio'] != '') { $valor_municipio = htmlspecialchars($datos['municipio']); }
+        $valor_parroquia = "NULL"; if ($datos['parroquia'] != '') { $valor_parroquia = htmlspecialchars($datos['parroquia']); }
+
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
         $sentencia = "UPDATE t_empresa SET
             rif='".htmlspecialchars($datos['rif'])."',
+            fecha='".htmlspecialchars($datos['fecha'])."',
             nil='".htmlspecialchars($datos['nil'])."',
             razon_social='".ucwords(mb_strtolower(htmlspecialchars($datos['razon_social'])))."',
             codigo_actividad='".htmlspecialchars($datos['actividad_economica'])."',
@@ -360,7 +399,10 @@ class model_empresa extends conexion {
             telefono2='".htmlspecialchars($datos['telefono_2'])."',
             correo='".mb_strtolower(htmlspecialchars($datos['correo']))."',
             codigo_ciudad='".htmlspecialchars($datos['ciudad'])."',
-            direccion='".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."'
+            codigo_municipio=$valor_municipio,
+            codigo_parroquia=$valor_parroquia,
+            direccion='".ucfirst(mb_strtolower(htmlspecialchars($datos['direccion'])))."',
+            punto_referencia='".ucfirst(mb_strtolower(htmlspecialchars($datos['punto_referencia'])))."'
             WHERE rif='".htmlspecialchars($datos['rif2'])."'
         "; // SENTENTCIA
         if (mysqli_query($this->data_conexion,$sentencia)) {
@@ -417,10 +459,11 @@ class model_empresa extends conexion {
         }
 		return $resultado;
     }
-
+    // FIN FUNCIONES PARA MODIFICAR UNA EMPRESA
+    //////////////////////////////////////////////////////////
 
     
-
+    //////////////////////////////////////////////////////////
     // FUNCION PARA CAMBIAR EL ESTATUS DE UNA ACTIVIDAD ECONOMICA.
     public function estatusEmpresa ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.
@@ -434,6 +477,7 @@ class model_empresa extends conexion {
         }
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
+    //////////////////////////////////////////////////////////
 
 
     ///////////////////// TRANSACCIONES /////////////////////

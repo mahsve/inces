@@ -197,7 +197,7 @@
                             <select name="ocupacion" id="ocupacion" class="campos_formularios custom-select custom-select-sm">
                                 <option value="">Elija una opción</option>
                             </select>
-                            <button type="button" id="btn-ocupacion-aprendiz" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="left" title="Registrar ocupación"><i class="fas fa-plus"></i></button>
+                            <button type="button" id="btn-ocupacion-administrativo" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="left" title="Registrar ocupación"><i class="fas fa-plus"></i></button>
                         </div>
                     </div>
                 </div>

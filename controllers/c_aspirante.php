@@ -44,7 +44,7 @@ if ($_POST['opcion']) {
             echo json_encode($resultados);
         break;
         // FIN CONSULTAR DATOS
-
+        
 
         // REGISTROS RAPIDOS
         case 'Registrar ocupacion':

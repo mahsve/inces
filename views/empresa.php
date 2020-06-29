@@ -101,6 +101,18 @@
         </div>
 
         <form name="formulario" id="formulario" class="formulario">
+            <!-- INPUT DE FECHA DE REGISTRO -->
+            <div class="form-row justify-content-end">
+                <div class="col-sm-6 col-lg-3 col-xl-2 mb-2">
+                    <div class="form-group position-relative mb-2">
+                        <label for="fecha" class="d-inline-block w-100 position-relative small m-0">Fecha<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                        <input type="text" name="fecha" id="fecha" class="campos_formularios input_fecha form-control form-control-sm" style="background-color: white; padding-right: 30px;" data-date-format="dd-mm-yyyy" placeholder="dd-mm-aaaa" readonly="true"/>
+                        <label for="fecha" class="position-absolute text-info m-0" style="bottom: 4px; right: 8px; cursor: pointer;"><i class="fas fa-calendar-day"></i></label>
+                    </div>
+                </div>
+            </div>
+            <!-- FIN INPUT DE FECHA DE REGISTRO -->
+
             <ul class="nav nav-pills mb-2" role="tablist">
                 <li class="nav-item">
                     <a class="nav-link active" id="pills-datos-empresa-tab" data-toggle="pill" href="#pills-datos-empresa" role="tab" aria-controls="pills-datos-empresa" aria-selected="true">
@@ -159,6 +171,14 @@
                             </div>
                         </div>
 
+                        <!-- PUNTO DE REFERENCIA -->
+                        <div class="col-sm-12">
+                            <div class="form-group mb-2">
+                                <label for="punto_referencia" class="d-inline-block w-100 position-relative small m-0">Punto de referencia<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <textarea name="punto_referencia" id="punto_referencia" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la dirección de la empresa" maxlength="200" style="height: 80px;"></textarea>
+                            </div>
+                        </div>
+
                         <!-- ESTADO -->
                         <div class="col-sm-6 col-lg-6 col-xl-4">
                             <div class="form-group mb-2">
@@ -183,8 +203,31 @@
                             </div>
                         </div>
 
+                        <!-- MUNICIPIO -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label class="d-inline-block w-100 position-relative small m-0">Municipio
+                                    <i id="loader-parroquia" class="fas fa-spinner fa-spin position-absolute" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-parroquia-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
+                                </label>
+                                <select name="municipio" id="municipio" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija un estado</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- PARROQUIA -->
+                        <div class="col-sm-6 col-lg-6 col-xl-4">
+                            <div class="form-group mb-2">
+                                <label for="parroquia" class="d-inline-block w-100 position-relative small m-0">Parroquia</label>
+                                <select name="parroquia" id="parroquia" class="campos_formularios custom-select custom-select-sm">
+                                    <option value="">Elija un municipio</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <!-- CODIGO APORTANTE -->
-                        <div class="col-sm-12 col-xl-4">
+                        <div class="col-sm-12 col-lg-6 col-xl-2">
                             <div class="form-group mb-2">
                                 <label for="codigo_aportante" class="d-inline-block w-100 position-relative small m-0">Código aportante<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <input type="text" name="codigo_aportante" id="codigo_aportante" class="campos_formularios form-control form-control-sm" placeholder="1180123585" maxlength="10" autocomplete="off"/>
@@ -237,6 +280,7 @@
                             <h3 class="font-weight-normal text-secondary text-center text-uppercase">Contactos de la empresa</h3>    
                         </div>
 
+                        <!-- DESCRIPCION Y BOTON -->
                         <div class="col-sm-12">
                             <div class="d-flex justify-content-between align-items-center mb-1">
                                 <p class="text-secondary mb-0 small">Agregue a los contactos dentro de la empresa, mínimo 1 persona.</p>
@@ -244,9 +288,12 @@
                             </div>
                         </div>
 
-                        <div class="col-sm-12 overflow-auto">
-                            <div id="contenedor-personas-contacto" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 400px; min-width: 900px;">
-                                <!-- JAVASCRIPT -->
+                        <!-- CONTENEDOR DE PERSONAS DE CONTACTOS -->
+                        <div class="col-sm-12">
+                            <div class="overflow-auto">
+                                <div id="contenedor-personas-contacto" class="border rounded overflow-auto px-3 py-2 mb-2" style="max-height: 400px; min-width: 900px;">
+                                    <!-- JAVASCRIPT -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -333,7 +380,7 @@
                                     <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
                                     <i id="loader-cedula-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <input type="text" name="cedula" id="cedula" class="campos_formularios_persona_contacto form-control form-control-sm" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="campos_formularios_persona_contacto form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                                 <input type="hidden" name="cedula2" id="cedula2" class="cedula2"/>
                             </div>
                         </div>
@@ -378,7 +425,7 @@
                                     <select name="cargo_contacto" id="cargo_contacto" class="campos_formularios_persona_contacto custom-select custom-select-sm">
                                         <option value="">Elija una opción</option>
                                     </select>
-                                    <button type="button" id="btn-cargo" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="top" title="Registrar cargo"><i class="fas fa-plus"></i></button>
+                                    <button type="button" id="btn-cargo" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="left" title="Registrar cargo"><i class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -399,7 +446,7 @@
                         <!-- TELEFONO CELULAR -->
                         <div class="col-sm-6 col-lg-3 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="telefono_2_c" class="d-inline-block w-100 position-relative small m-0">Tlf. célular</label>
+                                <label for="telefono_2_c" class="d-inline-block w-100 position-relative small m-0">Tlf. celular</label>
                                 <input type="text" name="telefono_2_c" id="telefono_2_c" class="campos_formularios_persona_contacto form-control form-control-sm solo-numeros" placeholder="Ingrese el teléfono (Opcional)" maxlength="11" autocomplete="off"/>
                             </div>
                         </div>

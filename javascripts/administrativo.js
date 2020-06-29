@@ -104,11 +104,11 @@ $(function() {
                             //////////////////////////////////////////////////////////
                             nombre_completo = abreviarDescripcion(nombre_completo, 20);
 
-                            // ORDENAR FECHA DE NACIMIENTO
-                            let fecha_nacimiento = dataListado.resultados[i].fecha_n.substr(8, 2)+'-'+dataListado.resultados[i].fecha_n.substr(5, 2)+'-'+dataListado.resultados[i].fecha_n.substr(0, 4);
-
                             // ORDENAR CORREO PERSONAL
                             let correo_personal = abreviarDescripcion(dataListado.resultados[i].correo, 20);
+
+                            // ORDENAR FECHA DE NACIMIENTO
+                            let fecha_nacimiento = dataListado.resultados[i].fecha_n.substr(8, 2)+'-'+dataListado.resultados[i].fecha_n.substr(5, 2)+'-'+dataListado.resultados[i].fecha_n.substr(0, 4);
 
                             let estatus_td = '';
                             if      (dataListado.resultados[i].estatus == 'A') { estatus_td = '<span class="badge badge-success"><i class="fas fa-check"></i> <span>Activo</span></span>'; }
@@ -122,7 +122,7 @@ $(function() {
                             contenido_tabla += '<td class="py-2 px-1 text-center">'+calcularEdad(fecha, fecha_nacimiento)+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataSexo[dataListado.resultados[i].sexo]+'</td>';
                             contenido_tabla += '<td class="py-2 px-1">'+dataListado.resultados[i].telefono1+'</td>';
-                            contenido_tabla += '<td class="py-2 px-1"><span class="tooltip-table" data-toggle="tooltip" data-placement="right" title="'+dataListado.resultados[i].correo+'">'+correo_personal+'<span></td>';
+                            contenido_tabla += '<td class="py-2 px-1"><span class="tooltip-table" data-toggle="tooltip" data-placement="left" title="'+dataListado.resultados[i].correo+'">'+correo_personal+'<span></td>';
                             contenido_tabla += '<td class="text-center py-2 px-1">'+estatus_td+'</td>';
                             ////////////////////////////////////////////////////////
                             if (permisos.modificar == 1 || permisos.act_desc == 1) {
@@ -147,7 +147,7 @@ $(function() {
                         let contenido_tabla = '';
                         contenido_tabla += '<tr>';
                         contenido_tabla += '<td colspan="'+filas+'" class="text-center text-secondary border-bottom p-2">';
-                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay oficios registrados.</span>';
+                        contenido_tabla += '<i class="fas fa-file-alt"></i> <span style="font-weight: 500;"> No hay personal administrativo registrados.</span>';
                         contenido_tabla += '</td>';
                         contenido_tabla += '</tr>';
                         $('#listado_tabla tbody').html(contenido_tabla);
@@ -564,12 +564,9 @@ $(function() {
     /////////////////////////////////////////////////////////////////////
     // AGREGAR INFORMACION AL FORMULARIO DINAMICAMENTE.
     // REGISTRAR NUEVA OCUPACION
-    $('#btn-ocupacion-aprendiz').click(function (e) {
+    $('#btn-ocupacion-administrativo').click(function (e) {
         e.preventDefault();
-        modalOcupacion();
         window.formulario_ocupacion = 'A'; // PARA EL FORMULARIO DE APRENDIZ
-    });
-    function modalOcupacion () {
         document.form_registrar_ocupacion.reset();
         $(".campos_formularios_ocupacion").css('background-color', '');
         $('.botones_formulario_ocupacion').attr('disabled', false);
@@ -577,7 +574,7 @@ $(function() {
         $('#btn-registrar-ocupacion span').html('Guardar');
         $('#contenedor-mensaje-ocupacion').empty();
         $('#modal-ocupacion').modal();
-    }
+    });
     function validar_ocupacion () {
         vd_ocupacion = true;
         let nombre_ocupacion = $("#nombre_ocupacion").val();
@@ -631,8 +628,9 @@ $(function() {
                             color_alerta = 'alert-success';
                             icono_alerta = '<i class="fas fa-check"></i>';
 
-                            // CARGAR LAS OCUPACIONES DEL APRENDIS
-                            let valor_anterior = $("#ocupacion").val();
+                            // GUARDAMOS EL VALOR SELECCIONADO
+                            let valor_respaldo = $("#ocupacion").val();
+
                             $("#ocupacion").html('<option value="">Elija una opción</option>');
                             let dataOcupaciones = resultados.ocupaciones;
                             if (dataOcupaciones) {
@@ -642,7 +640,7 @@ $(function() {
                             } else {
                                 $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
                             }
-                            $('#ocupacion').val(valor_anterior);
+                            $('#ocupacion').val(valor_respaldo);
                             
                             // CERRAMOS LA VENTANA.
                             $('#modal-ocupacion').modal('hide');
@@ -713,7 +711,7 @@ $(function() {
 
             setTimeout(() => {
                 $.ajax({
-                    url: url + "controllers/c_aspirante.php",
+                    url: url + "controllers/c_administrativo.php",
                     type: "POST",
                     dataType: 'JSON',
                     data: {
@@ -746,20 +744,25 @@ $(function() {
                             $("#municipio").html('<option value="">No hay municipios</option>');
                         }
 
+                        // CARGAMOS EL VALOR DE CIUDAD SI EXISTE
                         if (window.valor_ciudad != undefined) {
                             $('#ciudad').val(window.valor_ciudad);
                             delete window.valor_ciudad;
                         }
 
+                        // CARGAMOS EL VALOR DE MUNICIPIO SI EXISTE
                         if (window.valor_municipio != undefined) {
                             $('#municipio').val(window.valor_municipio);
                             delete window.valor_municipio;
                             $('#municipio').trigger('change');
                         }
 
-                        if (window.valor_parroquias == undefined) {
-                            $('#carga_espera').hide(400);
-                            verificarParte1();
+                        // SI NO EXISTE EL VALOR DE PARROQUIAS SE PROCEDE A MOSTRAR EL FORMULARIO
+                        if (tipoEnvio == 'Modificar') {
+                            if (window.valor_parroquia == undefined) {
+                                $('#carga_espera').hide(400);
+                                verificarParte1();
+                            }
                         }
                     },
                     error: function (errorConsulta) {
@@ -802,7 +805,7 @@ $(function() {
 
             setTimeout(() => {
                 $.ajax({
-                    url : url+'controllers/c_aspirante.php',
+                    url : url+'controllers/c_administrativo.php',
                     type: 'POST',
                     dataType: 'JSON',
                     data: {
@@ -824,9 +827,9 @@ $(function() {
                             $('#parroquia').html('<option value="">No hay parroquias</option>');
                         }
 
-                        if (window.valor_parroquias != undefined) {
-                            $('#parroquia').val(window.valor_parroquias);
-                            delete window.valor_parroquias;
+                        if (window.valor_parroquia != undefined) {
+                            $('#parroquia').val(window.valor_parroquia);
+                            delete window.valor_parroquia;
                             verificarParte1();
                             $('#carga_espera').hide(400);
                         }
@@ -894,14 +897,14 @@ $(function() {
         $('#telefono_2').val(dataListado.resultados[posicion].telefono2);
         $('#correo').val(dataListado.resultados[posicion].correo);
         
+        window.valor_ciudad = dataListado.resultados[posicion].codigo_ciudad;
+        if (dataListado.resultados[posicion].codigo_municipio != null) { window.valor_municipio = dataListado.resultados[posicion].codigo_municipio; }
+        if (dataListado.resultados[posicion].codigo_parroquia != null) { window.valor_parroquia = dataListado.resultados[posicion].codigo_parroquia; }
+
         $('#estado').val(dataListado.resultados[posicion].codigo_estado);
         $('#direccion').val(dataListado.resultados[posicion].direccion);
         $('#punto_referencia').val(dataListado.resultados[posicion].punto_referencia);
         $('#estado').trigger('change');
-
-        window.valor_ciudad = dataListado.resultados[posicion].codigo_ciudad;
-        if (dataListado.resultados[posicion].codigo_municipio != null) { window.valor_municipio = dataListado.resultados[posicion].codigo_municipio; }
-        if (dataListado.resultados[posicion].codigo_parroquia != null) { window.valor_parroquias = dataListado.resultados[posicion].codigo_parroquia; }
     }
     // FUNCION PARA GUARDAR LOS DATOS (REGISTRAR / MODIFICAR).
     $('#guardar-datos').click(function (e) {

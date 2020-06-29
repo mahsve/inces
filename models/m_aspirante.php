@@ -149,8 +149,6 @@ class model_aspirante extends conexion {
     //////////////////////////////////////////////////////////
 
 
-
-
     //////////////////////////////////////////////////////////
     // FUNCIONES PARA REGISTROS DEL MODULO
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
@@ -336,8 +334,8 @@ class model_aspirante extends conexion {
 		return $resultado; // RETORNAMOS LOS DATOS.
     }
     //////////////////////////////////////////////////////////
-    
 
+    
     // FUNCION PARA REGISTRAR LA NUEVA EMPRESA.
     public function modificarEmpresa ($datos) {
         $resultado = false; // VARIABLE PARA GUARDAR LOS DATOS.

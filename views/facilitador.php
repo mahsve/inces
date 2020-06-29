@@ -1,19 +1,19 @@
-<div id="info_table" style="">
+<div id="info_table">
     <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-2">
-        <h4 class="text-uppercase text-secondary font-weight-normal mb-0"><?php echo $titulo; ?></h4>
+        <h4 class="text-secondary text-uppercase font-weight-normal mb-0"><?php echo $titulo; ?></h4>
 
         <?php if ($permisos['registrar'] == 1){ ?>
-            <button type="button" id="show_form" class="btn btn-sm btn-info hide-descrip"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
+            <button type="button" id="show_form" class="botones_formulario btn btn-sm btn-info" disabled="true"><i class="fas fa-plus"></i><span class="ml-1">Registrar</span></button>
         <?php } ?>
     </div>
 
-    <div class="row justify-content-between">
+    <div class="row align-items-center justify-content-between">
         <!-- CANTIDAD DE FILAS POR BUSQUEDAS -->
         <div class="col-sm-12 col-xl-9">
             <div class="form-row">
-                <div class="col-sm-6 col-lg-3 col-xl-2 form-group d-flex align-items-center text-info mb-2">
-                    <label for="cantidad_a_buscar" class="pr-2 m-0"><i class="fas fa-list-ul"></i></label>
-                    <select id="cantidad_a_buscar" class="custom-select custom-select-sm">
+                <div class="form-group col-sm-6 col-lg-3 col-xl-2 d-flex align-items-center text-info mb-2">
+                    <label for="campo_cantidad" class="pr-2 m-0"><i class="fas fa-list-ul"></i></label>
+                    <select id="campo_cantidad" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="10">10</option>
                         <option value="20">20</option>
                         <option value="30">30</option>
@@ -22,25 +22,25 @@
                     </select>
                 </div>
 
-                <div class="col-sm-6 col-lg-3 col-xl-3 form-group d-flex align-items-center text-info mb-2">
-                    <label for="ordenar_por" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
-                    <select id="ordenar_por" class="custom-select custom-select-sm">
+                <div class="form-group col-sm-6 col-lg-3 col-xl-3 d-flex align-items-center text-info mb-2">
+                    <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-alpha-down"></i></label>
+                    <select id="campo_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="1">Cédula</option>
                         <option value="2">Nombre</option>
                     </select>
                 </div>
 
-                <div class="col-sm-6 col-lg-3 col-xl-2 form-group d-flex align-items-center text-info mb-2">
-                    <label for="campo_ordenar" class="pr-2 m-0"><i class="fas fa-sort-numeric-down"></i></label>
-                    <select id="campo_ordenar" class="custom-select custom-select-sm">
-                        <option value="1">ASC</option>
-                        <option value="2">DESC</option>
+                <div class="form-group col-sm-6 col-lg-3 col-xl-3 d-flex align-items-center text-info mb-2">
+                    <label for="campo_manera_ordenar" class="pr-2 m-0"><i class="fas fa-sort-numeric-down"></i></label>
+                    <select id="campo_manera_ordenar" class="campos_de_busqueda custom-select custom-select-sm">
+                        <option value="1">Ascendente</option>
+                        <option value="2">Descendente</option>
                     </select>
                 </div>
 
-                <div class="col-sm-6 col-lg-3 col-xl-3 form-group d-flex align-items-center text-info mb-2">
-                    <label for="buscar_estatus" class="pr-2 m-0"><i class="fas fa-toggle-on"></i></label>
-                    <select id="buscar_estatus" class="custom-select custom-select-sm">
+                <div class="form-group col-sm-6 col-lg-3 col-xl-2 d-flex align-items-center text-info mb-2">
+                    <label for="campo_estatus" class="pr-2 m-0"><i class="fas fa-toggle-on"></i></label>
+                    <select id="campo_estatus" class="campos_de_busqueda custom-select custom-select-sm">
                         <option value="">Todos</option>
                         <option value="A">Activos</option>
                         <option value="I">Inactivos</option>
@@ -50,11 +50,9 @@
         </div>
 
         <!-- CANTIDAD DE FILAS POR BUSQUEDAS -->
-        <div class="col-sm-12 col-xl-3 mb-2">
-            <div class="form-group d-flex align-items-center text-info position-relative mb-0">
-                <label for="campo_busqueda" class="position-absolute pr-2 m-0" style="right: 2px;"><i class="fas fa-search"></i></label>
-                <input type="text" id="campo_busqueda" class="form-control form-control-sm" style="padding-right:30px;" placeholder="Buscar por cédula o nombre" autocomplete="off"/>
-            </div>
+        <div class="form-group col-sm-12 col-xl-3 d-flex align-items-center text-info position-relative mb-2">
+            <label for="campo_busqueda" class="position-absolute pr-4 m-0" style="right: 0px; cursor: pointer;"><i class="fas fa-search"></i></label>
+            <input type="text" id="campo_busqueda" class="campos_de_busqueda form-control form-control-sm" style="padding-right: 30px;" placeholder="Buscar por nombre" autocomplete="off"/>
         </div>
     </div>
 
@@ -79,18 +77,14 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <p class="font-weight-bold text-secondary" style="font-size: 13px;">Total registros
-                <span id="total_registros">0</span>
-            </p>
+        <div class="col-sm-12 col-md-6 align-self-center">
+            <p class="font-weight-bold text-secondary m-0" style="font-size: 13px;">Total registros <span id="total_registros">0</span> </p>
         </div>
 
-        <div class="col-sm-12 col-md-6">
-            <nav aria-label="Page navigation">
-                <ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul>
-            </nav>
+        <div class="col-sm-12 col-md-6 align-self-center">
+            <nav aria-label="Page navigation"><ul id="paginacion" class="pagination pagination-sm justify-content-end mb-0"></ul></nav>
         </div>
-
+        
         <div id="contenedor-mensaje" class="col-sm-12"></div>
     </div>
 </div>
@@ -127,14 +121,14 @@
                     <div class="form-row">
                         <!-- TITULO -->
                         <div class="col-sm-12">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h3>    
+                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Datos personales</h3>
                         </div>
 
                         <!-- NACIONALIDAD -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nacionalidad" class="d-inline-block w-100 position-relative small m-0">Nacionalidad<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="nacionalidad" id="nacionalidad" class="custom-select custom-select-sm">
+                                <select name="nacionalidad" id="nacionalidad" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
                                     <option value="V">Venezolano</option>
                                     <option value="E">Extranjero</option>
@@ -145,11 +139,13 @@
                         <!-- CEDULA -->
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
-                                <label for="cedula" class="d-inline-block w-100 position-relative small m-0">Cédula<i class="fas fa-asterisk text-danger position-absolute required"></i>
+                                <label class="d-inline-block w-100 position-relative small m-0">Cédula
+                                    <i class="fas fa-asterisk text-danger position-absolute required"></i>
                                     <i id="spinner-cedula" class="fas fa-spinner fa-spin position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
-                                    <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="spinner-cedula-confirm" class="fas position-absolute ocultar-iconos limpiar-estatus" style="display: none; font-size: 16px; right: 5px;"></i>
+                                    <i id="loader-cedula-reload" class="fas fa-sync-alt text-danger position-absolute btn-recargar" title="Recargar" style="display: none; font-size: 16px; right: 5px; cursor: pointer;"></i>
                                 </label>
-                                <input type="text" name="cedula" id="cedula" class="form-control form-control-sm solo-numeros" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
+                                <input type="text" name="cedula" id="cedula" class="campos_formularios form-control form-control-sm" placeholder="Ingrese la cédula" maxlength="8" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -157,7 +153,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nombre_1" class="d-inline-block w-100 position-relative small m-0">Primer nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="nombre_1" id="nombre_1" class="form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="nombre_1" id="nombre_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -165,7 +161,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="nombre_2" class="d-inline-block w-100 position-relative small m-0">Segundo nombre</label>
-                                <input type="text" name="nombre_2" id="nombre_2" class="form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="nombre_2" id="nombre_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el nombre (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -173,7 +169,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="apellido_1" class="d-inline-block w-100 position-relative small m-0">Primer Apellido<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="apellido_1" id="apellido_1" class="form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="apellido_1" id="apellido_1" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -181,7 +177,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="apellido_2" class="d-inline-block w-100 position-relative small m-0">Segundo Apellido</label>
-                                <input type="text" name="apellido_2" id="apellido_2" class="form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
+                                <input type="text" name="apellido_2" id="apellido_2" class="campos_formularios form-control form-control-sm" placeholder="Ingrese el apellido (Opcional)" maxlength="25" autocomplete="off"/>
                             </div>
                         </div>
 
@@ -189,7 +185,7 @@
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="sexo" class="d-inline-block w-100 position-relative small m-0">Sexo<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="sexo" id="sexo" class="custom-select custom-select-sm">
+                                <select name="sexo" id="sexo" class="campos_formularios custom-select custom-select-sm">
                                     <option value="">Elija una opción</option>
                                     <option value="M">Masculino</option>
                                     <option value="F">Femenino</option>
@@ -201,8 +197,8 @@
                         <div class="col-sm-6 col-lg-3 col-xl-2">
                             <div class="form-group position-relative mb-2">
                                 <label for="fecha_n" class="d-inline-block w-100 position-relative small m-0">Fecha de nacimiento<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="fecha_n" id="fecha_n" class="form-control form-control-sm input_fecha" style="background-color: white;" data-date-format="dd-mm-yyyy" placeholder="aaaa-mm-dd" autocomplete="off" readonly="true"/>
-                                <label for="fecha_n" class="text-info position-absolute m-0" style="bottom: 4px; right: 8px;"><i class="fas fa-calendar-day"></i></label>
+                                <input type="text" name="fecha_n" id="fecha_n" class="campos_formularios input_fecha form-control form-control-sm" style="background-color: white; padding-right: 30px;" data-date-format="dd-mm-yyyy" placeholder="dd-mm-aaaa" readonly="true"/>
+                                <label for="fecha_n" class="position-absolute text-info m-0" style="bottom: 4px; right: 8px; cursor: pointer;"><i class="fas fa-calendar-day"></i></label>
                             </div>
                         </div>
 
@@ -214,28 +210,8 @@
                             </div>
                         </div>
 
-                        <!-- LUGAR DE NACIMIENTO -->
-                        <div class="col-sm-10 col-lg-4 col-xl-4">
-                            <div class="form-group mb-2">
-                                <label for="lugar_n" class="d-inline-block w-100 position-relative small m-0">Lugar de nacimiento</label>
-                                <input type="text" name="lugar_n" id="lugar_n" class="form-control form-control-sm" placeholder="Ingrese el lugar de nacimiento (Opcional)" maxlength="100" autocomplete="off"/>
-                            </div>
-                        </div>
-
-                        <!-- OCUPACION -->
-                        <div class="col-sm-12 col-lg-6 col-xl-5">
-                            <div class="form-group mb-2">
-                                <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <div class="d-flex">
-                                    <select name="ocupacion" id="ocupacion" class="custom-select custom-select-sm"></select>
-                                    <button type="button" id="btn-agregar-ocupacion" class="btn btn-sm btn-info ml-2" style=""><i class="fas fa-plus"></i></button>
-                                    <button type="button" id="btn-buscar-ocupacion" class="btn btn-sm btn-info ml-2" style="display: none;"><i class="fas fa-sync-alt"></i></button>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- TELEFONO DE HABITACION -->
-                        <div class="col-sm-6 col-lg-3 col-xl-3">
+                        <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="form-group mb-2">
                                 <label for="telefono_1" class="d-inline-block w-100 position-relative small m-0">Tlf. de habitación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
                                 <input type="text" name="telefono_1" id="telefono_1" class="form-control form-control-sm solo-numeros" placeholder="Ingrese el telefono" maxlength="11" autocomplete="off"/>
@@ -258,63 +234,24 @@
                             </div>
                         </div>
 
-                        <!-- TITULO -->
-                        <div class="col-sm-12 mt-3">
-                            <h3 class="font-weight-normal text-secondary text-center text-uppercase">Estatus de la persona</h3>    
+                        <!-- OCUPACION -->
+                        <div class="col-sm-12 col-lg-6 col-xl-5">
+                            <div class="form-group mb-2">
+                                <label for="ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <div class="d-flex">
+                                    <select name="ocupacion" id="ocupacion" class="campos_formularios custom-select custom-select-sm">
+                                        <option value="">Elija una opción</option>
+                                    </select>
+                                    <button type="button" id="btn-ocupacion-aprendiz" class="btn btn-sm btn-info descripcion-tooltip ml-1" data-toggle="tooltip" data-placement="left" title="Registrar ocupación"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </div>
                         </div>
 
-                        <!-- ESTADO CIVIL Y GRADO DE INSTRUCCIÓN -->
-                        <div class="col-sm-12 mt-2 pb-2">
-                            <div class="table-responsive pb-2">
-                                <table class="table table-bordered mb-0" style="min-width: 850px;">
-                                    <tr>
-                                        <!-- ESTADO CIVIL -->
-                                        <td class="align-text-top w-25 p-2">
-                                            <span class="d-inline-block w-100 position-relative small mb-2">Estado civil<i class="fas fa-asterisk text-danger position-absolute required"></i></span>
-
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_1" name="estado_civil" class="custom-control-input radio_estado_c" value="S">
-                                                <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_1">Soltero</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_2" name="estado_civil" class="custom-control-input radio_estado_c" value="C">
-                                                <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_2">Casado</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_3" name="estado_civil" class="custom-control-input radio_estado_c" value="X">
-                                                <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_3">Concubino</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_4" name="estado_civil" class="custom-control-input radio_estado_c" value="D">
-                                                <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_4">Divorciado</label>
-                                            </div>
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="estado_civil_5" name="estado_civil" class="custom-control-input radio_estado_c" value="V">
-                                                <label class="custom-control-label radio_estado_c_label v_radio" for="estado_civil_5">Viudo</label>
-                                            </div>
-                                        </td>
-
-                                        <!-- GRADO DE INSTRUCCION -->
-                                        <td class="align-text-top w-75 p-2">
-                                            <span class="d-inline-block w-100 position-relative small mb-2">Grado de instrucción<i class="fas fa-asterisk text-danger position-absolute required"></i></span>
-                                            
-                                            <div>
-                                                <div class="form-group form-row align-items-center mt-2 mb-0">
-                                                    <label for="titulo" class="col-sm-4 col-form-label py-0" style="font-size: 80%;">Título</label>
-                                                    <div class="col-sm-8">
-                                                        <input type="text" name="titulo" id="titulo" class="form-control form-control-sm" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off" readonly="true"/>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group form-row align-items-center mt-2 mb-0">
-                                                    <label for="alguna_mision" class="col-sm-4 col-form-label py-0" style="font-size: 13px;">Ha participado en alguna  misión. Indique</label>
-                                                    <div class="col-sm-8">
-                                                        <input type="text" name="alguna_mision" id="alguna_mision" class="form-control form-control-sm" placeholder="(Opcional)" maxlength="150" autocomplete="off"/>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
+                        <!-- TITULO UNIVERSITARIO -->
+                        <div class="col-sm-12 col-lg-6 col-xl-5">
+                            <div class="form-group mb-2">
+                                <label for="titulo_univ" class="d-inline-block w-100 position-relative small m-0">Título</label>
+                                <input type="email" name="titulo_univ" id="titulo_univ" class="form-control form-control-sm" placeholder="Ingrese el título académico" maxlength="100" autocomplete="off"/>
                             </div>
                         </div>
                     </div>
@@ -431,42 +368,30 @@
         </div>
     </div>
 
-    <div id="modal-registrar-ocupacion" class="modal" tabindex="-1" role="dialog">
+    <div id="modal-ocupacion" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header py-2">
                     <h5 class="modal-title text-secondary">Registrar ocupación</h5>
-                    <button type="button" id="btn-cancelar-ocupacion2" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="close botones_formulario_ocupacion" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <div class="modal-body py-2">
                     <form name="form_registrar_ocupacion" id="form_registrar_ocupacion" class="form-row">
                         <div class="col-sm-12">
                             <div class="form-group mb-2">
-                                <label for="nueva-nombre-ocupacion" class="d-inline-block w-100 position-relative small m-0">Ocupación <i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <input type="text" name="nueva_nombre_ocupacion" id="nueva-nombre-ocupacion" class="form-control form-control-sm" placeholder="Ocupación (Mecanico, Estudiante,...)" autocomplete="off"/>
+                                <label for="nombre_ocupacion" class="d-inline-block w-100 position-relative small m-0">Nombre<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
+                                <input type="text" name="nombre_ocupacion" id="nombre_ocupacion" class="campos_formularios_ocupacion form-control form-control-sm" placeholder="Ingrese la ocupación" autocomplete="off"/>
                             </div>
+
+                            <div id="contenedor-mensaje-ocupacion"></div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group mb-2">
-                                <label for="nueva-fomulario-ocupacion" class="d-inline-block w-100 position-relative small m-0">Formulario<i class="fas fa-asterisk text-danger position-absolute required"></i></label>
-                                <select name="nueva_fomulario_ocupacion" id="nueva-fomulario-ocupacion" class="custom-select custom-select-sm">
-                                    <option value="">Elija el formulario a mostrar</option>
-                                    <option value="A">Aprendiz</option>
-                                    <option value="B">Familia del aprendiz</option>
-                                    <option value="F">Facilitador</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="contenedor-mensaje-ocupacion" class="col-sm-12"></div>
                     </form>
                 </div>
 
                 <div class="modal-footer justify-content-between py-2">
-                    <button type="button" class="btn btn-sm btn-info" id="btn-registrar-ocupacion"><i class="fas fa-save"></i> <span></span></button>
-                    <button type="button" class="btn btn-sm btn-secondary" id="btn-cancelar-ocupacion" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
+                    <button type="button" class="btn btn-sm btn-info botones_formulario_ocupacion" id="btn-registrar-ocupacion"><i class="fas fa-save"></i> <span></span></button>
+                    <button type="button" class="btn btn-sm btn-secondary botones_formulario_ocupacion" data-dismiss="modal"><i class="fas fa-times"></i> <span>Cerrar</span></button>
                 </div>
             </div>
         </div>

@@ -3,8 +3,7 @@ session_start();
 date_default_timezone_set("America/Caracas");   // ESTABLECEMOS LA ZONA HORARIA.
 $date = date('Y-m-d', time());
 
-if ($_POST['opcion'])
-{
+if ($_POST['opcion']) {
     require_once('../models/m_datos_personales.php');
     $objeto = new model_datos_personales;
     
@@ -52,12 +51,10 @@ if ($_POST['opcion'])
             $objeto->desconectar();
         break;
     }
-}
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
-	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-	$_SESSION['msj']['type'] = 'danger';
-	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
-	header('Location: ../intranet/dashboard');
+} else {
+    // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
+    $_SESSION['msj']['type'] = 'danger';
+    $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
+    header('Location: ../intranet/dashboard');
 }

@@ -293,5 +293,8 @@ footer {
     stroke: #17a2b8 !important;
 }
 .ct-series-b .ct-bar {
-    stroke: #17c1b8 !important;
+    stroke: #00B27F !important;
+}
+.ct-series-c .ct-bar {
+    stroke: #3878B8 !important;
 }

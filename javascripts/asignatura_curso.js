@@ -241,6 +241,145 @@ $(function () {
 
     /////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////
+    // AGREGAR INFORMACION AL FORMULARIO DINAMICAMENTE.
+    // REGISTRAR NUEVA OCUPACION
+    $('#btn-ocupacion-aprendiz').click(function (e) {
+        e.preventDefault();
+
+        window.formulario_ocupacion = 'A'; // PARA EL FORMULARIO DE APRENDIZ
+        document.form_registrar_ocupacion.reset();
+        $(".campos_formularios_ocupacion").css('background-color', '');
+        $('.botones_formulario_ocupacion').attr('disabled', false);
+        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+        $('#btn-registrar-ocupacion span').html('Guardar');
+        $('#contenedor-mensaje-ocupacion').empty();
+        $('#modal-mostrar-facilitadores').modal();
+    });
+    function validar_ocupacion () {
+        vd_ocupacion = true;
+        let nombre_ocupacion = $("#nombre_ocupacion").val();
+        if (nombre_ocupacion != '') {
+            if (nombre_ocupacion.match(validar_caracteresEspeciales)) {
+                $("#nombre_ocupacion").css("background-color", colorb);
+            } else {
+                $("#nombre_ocupacion").css("background-color", colorm);
+                vd_ocupacion = false;
+            }
+        } else {
+            $("#nombre_ocupacion").css("background-color", colorm);
+            vd_ocupacion = false;
+        }
+    }
+    $('#btn-registrar-ocupacion').click(function (e) {
+        e.preventDefault();
+        validar_ocupacion();
+
+        if (vd_ocupacion) {
+            let data = $("#form_registrar_ocupacion").serializeArray();
+            data.push({ name: 'opcion', value: 'Registrar ocupacion' });
+            data.push({ name: 'formulario_ocupacion', value: window.formulario_ocupacion });
+
+            // DESHABILITAMOS LOS BOTONES PARA EVITAR QUE CLIQUEE DOS VECES REPITIENDO LA CONSULTA O QUE SALGA DEL FORMULARIO SIN TERMINAR
+            $('.botones_formulario_ocupacion').attr('disabled', true);
+            $('#btn-registrar-ocupacion i.fa-save').addClass('fa-spin');
+            $('#btn-registrar-ocupacion span').html('Guardando...');
+            $('#contenedor-mensaje-ocupacion').empty();
+
+            setTimeout(() => {
+                $.ajax({
+                    url : url+'controllers/c_administrativo.php',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: data,
+                    success: function (resultados) {
+                        let color_alerta = '';
+                        let icono_alerta = '';
+
+                        if (resultados == 'Ya está registrado') {
+                            // MENSAJE AL USUARIO SI YA ESTA REGISTRADO.
+                            color_alerta = 'alert-warning';
+                            icono_alerta = '<i class="fas fa-exclamation-circle"></i>';
+                        } else if (resultados == 'Registro fallido') {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-danger';
+                            icono_alerta = '<i class="fas fa-times"></i>';
+                        } else {
+                            // MENSAJE AL USUARIO SI HUBO ALGUN ERROR
+                            color_alerta = 'alert-success';
+                            icono_alerta = '<i class="fas fa-check"></i>';
+
+                            // CARGAR LAS OCUPACIONES DEL APRENDIS
+                            let valor_anterior = $("#ocupacion").val();
+                            $("#ocupacion").html('<option value="">Elija una opción</option>');
+                            let dataOcupaciones = resultados.ocupaciones;
+                            if (dataOcupaciones) {
+                                for (let i in dataOcupaciones) {
+                                    $("#ocupacion").append('<option value="'+dataOcupaciones[i].codigo +'">'+dataOcupaciones[i].nombre+"</option>");
+                                }
+                            } else {
+                                $("#ocupacion").html('<option value="">No hay ocupaciones</option>');
+                            }
+                            $('#ocupacion').val(valor_anterior);
+                            
+                            // CERRAMOS LA VENTANA.
+                            $('#modal-ocupacion').modal('hide');
+                            resultados = 'Registro exitoso';
+                        }
+
+                        // MENSAJE SOBRE EL ESTATUS DE LA CONSULTA.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert '+color_alerta+' mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += icono_alerta+' '+resultados;
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+
+                        // CARGAMOS EL MENSAJE EN EL CONTENEDOR CORRESPONDIENTE.
+                        if (resultados == 'Ya está registrado' || resultados == 'Registro fallido') { $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje); }
+                        else { $('#contenedor-mensaje2').html(contenedor_mensaje); }
+
+                        // OCULTAMOS EL MENSAJE DESPUES DE 5 SEGUNDOS.
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-ocupacion span').html('Guardar');
+                    },
+                    error: function (errorConsulta) {
+                        // MENSAJE DE ERROR DE CONEXION.
+                        let idAlerta = Math.random().toString().replace('.', '-'); // GENERA UN ID ALEATORIO.
+                        let contenedor_mensaje = '';
+                        contenedor_mensaje += '<div id="alerta-'+idAlerta+'" class="alert alert-danger mt-2 mb-0 py-2 px-3" role="alert">';
+                        contenedor_mensaje += '<i class="fas fa-ethernet"></i> <span style="font-weight: 500;">[Error] No se pudo realizar la conexión.</span>';
+                        contenedor_mensaje += '<button type="button" class="close" data-dismiss="alert" aria-label="Close">';
+                        contenedor_mensaje += '<span aria-hidden="true">&times;</span>';
+                        contenedor_mensaje += '</button>';
+                        contenedor_mensaje += '</div>';
+                        $('#contenedor-mensaje-ocupacion').html(contenedor_mensaje);
+
+                        // DESPUES DE 5 SEGUNDOS SE OCULTARA EL MENSAJE QUE HAYA DADO EL SERVIDOR
+                        setTimeout(() => { $('#alerta-'+idAlerta).fadeOut(500); }, 5000);
+    
+                        // HABILITAMOS NUEVAMENTE LOS BOTONES AL TERMINAR LA CONSULTA AJAX
+                        $('.botones_formulario_ocupacion').attr('disabled', false);
+                        $('#btn-registrar-ocupacion i.fa-save').removeClass('fa-spin');
+                        $('#btn-registrar-ocupacion span').html('Guardar');
+
+                        // EN CASO DE ERROR MOSTRAMOS POR CONSOLA LA INFORMACION DE DICHO ERROR.
+                        console.log('Error: '+errorConsulta.status+' - '+errorConsulta.statusText);
+                        console.log(errorConsulta.responseText);
+                    }, timer: 15000
+                });
+            }, 500);
+        }
+    });
+    /////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////////
     // FUNCION PARA ABRIR EL FORMULARIO Y PODER EDITAR LA INFORMACION.
     function editarRegistro () {
         let posicion = $(this).attr('data-posicion');

@@ -1,29 +1,43 @@
 <?php 
 session_start();
+date_default_timezone_set("America/Caracas");
+$fecha_actual = date('d-m-Y', time());
+
 if ($_POST['opcion']) {
     require_once('../models/m_empresa.php');
     $objeto = new model_empresa;
     
     switch ($_POST['opcion']) {
+        // CONSULTAR DATOS
         case 'Traer datos':
             ///////////////////// HACER CONSULTAS //////////////////////
-            $data = [];
             $objeto->conectar();
-            $data['actividades']= $objeto->consultarActividades();
-            $data['cargos']     = $objeto->consultarCargos();
-            $data['estados']    = $objeto->consultarEstados();
+            $resultados = [];
+            $resultados['fecha']        = $fecha_actual;
+            $resultados['actividades']  = $objeto->consultarActividades();
+            $resultados['cargos']       = $objeto->consultarCargos();
+            $resultados['estados']      = $objeto->consultarEstados();
             $objeto->desconectar();
-            echo json_encode($data);
+            echo json_encode($resultados);
         break;
 
-        case 'Traer ciudades':
-            $data = [];
+        case 'Traer divisiones':
             $objeto->conectar();
-            $data['ciudades'] = $objeto->consultarCiudades($_POST);
+            $resultados = [];
+            $resultados['ciudades']     = $objeto->consultarCiudades($_POST);
+            $resultados['municipios']   = $objeto->consultarMunicipios($_POST);
             $objeto->desconectar();
-            echo json_encode($data);
+            echo json_encode($resultados);
         break;
 
+        case 'Traer parroquias':
+            $objeto->conectar();
+            $resultados = [];
+            $resultados['parroquias']   = $objeto->consultarParroquias($_POST);
+            $objeto->desconectar();
+            echo json_encode($resultados);
+        break;
+        
         case 'Verificar RIF':
             $objeto->conectar();
             $data = $objeto->verificarRIF($_POST);
@@ -37,7 +51,10 @@ if ($_POST['opcion']) {
             $objeto->desconectar();
             echo json_encode($data);
         break;
+        // FIN CONSULTAR DATOS
 
+
+        // REGISTROS RAPIDOS
         case 'Registrar actividad economica':
             $data = [];
             $objeto->conectar();
@@ -73,8 +90,14 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // REGISTROS RAPIDOS
 
+        
+        // OPERACIONES BASICAS
         case 'Registrar': 
+            // REORDENAMOS LA FECHA
+            $fecha_c = $_POST['fecha'];   $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+
             $objeto->conectar();
             $objeto->nuevaTransaccion();
 
@@ -168,6 +191,9 @@ if ($_POST['opcion']) {
         break;
 
         case 'Modificar':
+            // REORDENAMOS LA FECHA
+            $fecha_c = $_POST['fecha'];   $_POST['fecha'] = date("Y-m-d", strtotime($fecha_c));
+
             $objeto->conectar();
             $objeto->nuevaTransaccion();
 
@@ -279,13 +305,12 @@ if ($_POST['opcion']) {
             }
             $objeto->desconectar();
         break;
+        // OPERACIONES BASICAS
     }
-}
 // SI INTENTA ENTRAR AL CONTROLADOR POR RAZONES AJENAS MARCA ERROR.
-else
-{
-	// MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
-	$_SESSION['msj']['type'] = 'danger';
-	$_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
-	header('Location: ../iniciar');
+} else {
+    // MANDAMOS UN MENSAJE Y REDIRECCIONAMOS A LA PAGINA DE INICAR SESION.
+    $_SESSION['msj']['type'] = 'danger';
+    $_SESSION['msj']['text'] = '<i class="fas fa-times mr-2"></i>Discúlpe ha habido un error.';
+    header('Location: ../intranet/dashboard');
 }

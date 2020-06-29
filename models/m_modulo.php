@@ -20,6 +20,7 @@ class model_modulo extends conexion {
         mysqli_close($this->data_conexion);
     }
 
+    
     ///////////////// INFORMACION FORMULARIO /////////////////
     // FUNCION PARA CONSULTAR LOS OFICIOS.
 	public function consultarOficios () {
